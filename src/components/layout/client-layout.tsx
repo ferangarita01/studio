@@ -20,8 +20,11 @@ function AuthGuard({ children, lang }: { children: React.ReactNode, lang: Locale
 
   React.useEffect(() => {
     if (!isLoading) {
-      if (!isAuthenticated && !pathname.endsWith('/login')) {
+      const isLoginPage = pathname.endsWith('/login');
+      if (!isAuthenticated && !isLoginPage) {
         router.push(`/${lang}/login`);
+      } else if (isAuthenticated && isLoginPage) {
+        router.push(`/${lang}`);
       }
     }
   }, [isLoading, isAuthenticated, router, lang, pathname]);
@@ -36,17 +39,11 @@ function AuthGuard({ children, lang }: { children: React.ReactNode, lang: Locale
   
   const isLoginPage = pathname.endsWith('/login');
 
-  if (!isAuthenticated) {
-    // If not authenticated, only render children if it's the login page
-    return isLoginPage ? <>{children}</> : null;
-  }
-  
-  // If authenticated and on login page, let the app shell handle navigation or show dashboard
-  if (isLoginPage) {
-     return <AppShell>{children}</AppShell>;
+  if (!isAuthenticated && !isLoginPage) {
+     return null;
   }
 
-  return <AppShell>{children}</AppShell>;
+  return <>{children}</>;
 }
 
 export function ClientLayout({ children, dictionary, lang }: { children: React.ReactNode, dictionary: Dictionary, lang: Locale }) {
@@ -62,13 +59,9 @@ export function ClientLayout({ children, dictionary, lang }: { children: React.R
         >
             <AuthProvider>
                 <DictionariesProvider dictionary={dictionary}>
-                    {isLoginPage ? (
-                       <>{children}</>
-                    ) : (
-                       <AuthGuard lang={lang}>
-                           {children}
-                       </AuthGuard>
-                    )}
+                    <AuthGuard lang={lang}>
+                       {isLoginPage ? children : <AppShell>{children}</AppShell>}
+                    </AuthGuard>
                 </DictionariesProvider>
             </AuthProvider>
             <Toaster />

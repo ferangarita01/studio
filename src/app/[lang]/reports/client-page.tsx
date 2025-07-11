@@ -67,7 +67,7 @@ function ReportView({
   
   return (
     <div className="grid gap-4 md:gap-8">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{dictionary.cards.collectionCosts.title}</CardTitle>
@@ -114,7 +114,7 @@ function ReportView({
         </Card>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+      <div className="grid gap-4 md:gap-8 lg:grid-cols-7">
         <Card className="lg:col-span-4">
           <CardHeader>
             <CardTitle>{dictionary.chart.title}</CardTitle>
@@ -144,33 +144,35 @@ function ReportView({
             <CardDescription>{dictionary.transactions.description}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{dictionary.transactions.table.description}</TableHead>
-                  <TableHead className="text-right">{dictionary.transactions.table.amount}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.transactions.map((tx) => (
-                  <TableRow key={tx.id}>
-                    <TableCell>
-                      <div className="font-medium">{tx.description}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {new Date(tx.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                       {isClient ? (
-                          <Badge variant={tx.type === 'income' ? 'default' : 'destructive'} className="font-semibold">
-                            {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
-                          </Badge>
-                       ) : <Skeleton className="h-6 w-20 float-right" /> }
-                    </TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{dictionary.transactions.table.description}</TableHead>
+                    <TableHead className="text-right">{dictionary.transactions.table.amount}</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {data.transactions.map((tx) => (
+                    <TableRow key={tx.id}>
+                      <TableCell>
+                        <div className="font-medium">{tx.description}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {new Date(tx.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                         {isClient ? (
+                            <Badge variant={tx.type === 'income' ? 'default' : 'destructive'} className="font-semibold">
+                              {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
+                            </Badge>
+                         ) : <Skeleton className="h-6 w-20 float-right" /> }
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       </div>

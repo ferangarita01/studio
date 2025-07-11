@@ -109,12 +109,12 @@ export function ScheduleClient({ dictionary, allEvents }: ScheduleClientProps) {
   return (
     <>
       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-        <div className="flex items-center">
+        <div className="flex flex-col sm:flex-row sm:items-center">
           <div>
             <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
             <p className="text-sm text-muted-foreground">{dictionary.description}</p>
           </div>
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex items-center gap-2 mt-4 sm:mt-0">
             <Button size="sm" className="h-8 gap-1" onClick={() => setRequestDialogOpen(true)}>
               <PlusCircle className="h-3.5 w-3.5" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -137,7 +137,7 @@ export function ScheduleClient({ dictionary, allEvents }: ScheduleClientProps) {
         <div className="rounded-lg border">
           <div className="grid grid-cols-7 text-center text-xs font-medium text-muted-foreground">
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-              <div key={day} className="py-2">{day}</div>
+              <div key={day} className="py-2">{day.substring(0,3)}</div>
             ))}
           </div>
           <div className="grid grid-cols-7 text-sm">
@@ -146,7 +146,7 @@ export function ScheduleClient({ dictionary, allEvents }: ScheduleClientProps) {
                 key={day.toString()}
                 className={cn(
                   dayIdx === 0 && colStartClasses[getDay(day)],
-                  "h-28 border-t border-r p-1.5",
+                  "h-20 sm:h-28 border-t border-r p-1.5",
                   !isSameMonth(day, currentMonth) && "text-muted-foreground opacity-50"
                 )}
               >
@@ -161,7 +161,7 @@ export function ScheduleClient({ dictionary, allEvents }: ScheduleClientProps) {
                 >
                   {format(day, "d")}
                 </button>
-                <div className="mt-1 flex flex-col gap-1 overflow-y-auto">
+                <div className="mt-1 hidden sm:flex flex-col gap-1 overflow-y-auto">
                   {events
                     .filter((event) => isSameDay(event.date, day))
                     .map((event) => (
@@ -182,6 +182,16 @@ export function ScheduleClient({ dictionary, allEvents }: ScheduleClientProps) {
                           {event.wasteTypes.join(", ")}
                         </span>
                       </div>
+                    ))}
+                </div>
+                 <div className="mt-1 flex sm:hidden flex-wrap gap-1">
+                    {events
+                    .filter((event) => isSameDay(event.date, day))
+                    .map((event) => (
+                      <div
+                        key={event.id}
+                        className={cn("h-1.5 w-1.5 rounded-full", statusColors[event.status])}
+                        />
                     ))}
                 </div>
               </div>

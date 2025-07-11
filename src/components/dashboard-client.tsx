@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -83,12 +84,12 @@ export function DashboardClient({
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col">
+    <div className="flex w-full flex-col">
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <div className="flex items-center">
           <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
         </div>
-        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
@@ -205,37 +206,40 @@ export function DashboardClient({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{dictionary.recentEntries.table.date}</TableHead>
-                  <TableHead>{dictionary.recentEntries.table.type}</TableHead>
-                  <TableHead className="text-right">{dictionary.recentEntries.table.quantity}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {wasteLog.length > 0 ? (
-                  wasteLog.slice(0, 5).map((entry: WasteEntry) => (
-                    <TableRow key={entry.id}>
-                      <TableCell>
-                        {isClient ? formatShortDate(entry.date) : <Skeleton className="h-4 w-20" />}
-                      </TableCell>
-                      <TableCell>{entry.type}</TableCell>
-                      <TableCell className="text-right">{entry.quantity}</TableCell>
-                    </TableRow>
-                  ))
-                ) : (
+             <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={3} className="h-24 text-center">
-                      No recent entries.
-                    </TableCell>
+                    <TableHead>{dictionary.recentEntries.table.date}</TableHead>
+                    <TableHead>{dictionary.recentEntries.table.type}</TableHead>
+                    <TableHead className="text-right">{dictionary.recentEntries.table.quantity}</TableHead>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {wasteLog.length > 0 ? (
+                    wasteLog.slice(0, 5).map((entry: WasteEntry) => (
+                      <TableRow key={entry.id}>
+                        <TableCell>
+                          {isClient ? formatShortDate(entry.date) : <Skeleton className="h-4 w-20" />}
+                        </TableCell>
+                        <TableCell>{entry.type}</TableCell>
+                        <TableCell className="text-right">{entry.quantity.toFixed(2)} kg</TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={3} className="h-24 text-center">
+                        No recent entries.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       </main>
     </div>
   );
 }
+

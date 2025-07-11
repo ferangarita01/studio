@@ -81,59 +81,61 @@ export function LogClient({ dictionary, allWasteLog }: LogClientProps) {
             <CardDescription>{dictionary.cardDescription}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{dictionary.table.date}</TableHead>
-                  <TableHead>{dictionary.table.type}</TableHead>
-                  <TableHead className="text-right">{dictionary.table.quantity}</TableHead>
-                  <TableHead className="text-right">{dictionary.table.price}</TableHead>
-                  <TableHead className="text-right">{dictionary.table.serviceCost}</TableHead>
-                  <TableHead className="text-right">{dictionary.table.totalValue}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {wasteLog.length > 0 ? (
-                  wasteLog.map((entry) => {
-                    return (
-                      <TableRow key={entry.id}>
-                        <TableCell>
-                          {isClient ? formatDate(entry.date) : <Skeleton className="h-4 w-32" />}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{dictionary.types[entry.type]}</Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {entry.quantity.toFixed(2)} kg
-                        </TableCell>
-                         <TableCell className="text-right">
-                          {isClient ? formatCurrency(entry.price) : <Skeleton className="h-4 w-16 float-right" />}
-                        </TableCell>
-                         <TableCell className="text-right">
-                          {isClient ? formatCurrency(entry.serviceCost) : <Skeleton className="h-4 w-16 float-right" />}
-                        </TableCell>
-                        <TableCell className="text-right">
-                           {isClient ? (() => {
-                              const totalValue = (entry.price || 0) * entry.quantity - (entry.serviceCost || 0);
-                              return (
-                                <span className={totalValue >= 0 ? 'text-primary' : 'text-destructive'}>
-                                  {formatCurrency(totalValue)}
-                                </span>
-                              )
-                           })() : <Skeleton className="h-4 w-20 float-right" />}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center">
-                      {dictionary.noEntries}
-                    </TableCell>
+                    <TableHead>{dictionary.table.date}</TableHead>
+                    <TableHead>{dictionary.table.type}</TableHead>
+                    <TableHead className="text-right">{dictionary.table.quantity}</TableHead>
+                    <TableHead className="text-right">{dictionary.table.price}</TableHead>
+                    <TableHead className="text-right">{dictionary.table.serviceCost}</TableHead>
+                    <TableHead className="text-right">{dictionary.table.totalValue}</TableHead>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {wasteLog.length > 0 ? (
+                    wasteLog.map((entry) => {
+                      return (
+                        <TableRow key={entry.id}>
+                          <TableCell>
+                            {isClient ? formatDate(entry.date) : <Skeleton className="h-4 w-32" />}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{dictionary.types[entry.type]}</Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {entry.quantity.toFixed(2)} kg
+                          </TableCell>
+                           <TableCell className="text-right">
+                            {isClient ? formatCurrency(entry.price) : <Skeleton className="h-4 w-16 float-right" />}
+                          </TableCell>
+                           <TableCell className="text-right">
+                            {isClient ? formatCurrency(entry.serviceCost) : <Skeleton className="h-4 w-16 float-right" />}
+                          </TableCell>
+                          <TableCell className="text-right">
+                             {isClient ? (() => {
+                                const totalValue = (entry.price || 0) * entry.quantity - (entry.serviceCost || 0);
+                                return (
+                                  <span className={totalValue >= 0 ? 'text-primary' : 'text-destructive'}>
+                                    {formatCurrency(totalValue)}
+                                  </span>
+                                )
+                             })() : <Skeleton className="h-4 w-20 float-right" />}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={6} className="h-24 text-center">
+                        {dictionary.noEntries}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       </div>
