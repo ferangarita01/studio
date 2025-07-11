@@ -7,7 +7,8 @@
       "analyzer": "AI Analyzer",
       "log": "Waste Log",
       "schedule": "Schedule",
-      "reports": "Reports"
+      "reports": "Reports",
+      "materials": "Materials"
     },
     "themeToggle": {
       "toggle": "Toggle theme",
@@ -190,6 +191,67 @@
           "description": "Description",
           "amount": "Amount"
         }
+      }
+    }
+  },
+  "materialsPage": {
+    "title": "Manage Materials",
+    "addMaterial": "Add New Material",
+    "cardTitle": "Materials List",
+    "cardDescription": "Add, edit, or remove materials and set their buyback prices.",
+    "noMaterials": "No materials found. Add one to get started.",
+    "table": {
+      "name": "Material Name",
+      "type": "Type",
+      "pricePerKg": "Price / kg",
+      "actions": "Actions",
+      "openMenu": "Open menu",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "types": {
+      "Recycling": "Recycling",
+      "Organic": "Organic",
+      "General": "General",
+      "Hazardous": "Hazardous"
+    },
+    "materialDialog": {
+      "addTitle": "Add New Material",
+      "editTitle": "Edit Material",
+      "description": "Fill in the details for the material. Click save when you're done.",
+      "name": "Material Name",
+      "namePlaceholder": "e.g., Aluminum Cans",
+      "type": "Waste Type",
+      "selectType": "Select a type",
+      "price": "Price per kg ($)",
+      "pricePlaceholder": "e.g., 1.20",
+      "save": "Save Material",
+      "types": {
+        "Recycling": "Recycling",
+        "Organic": "Organic",
+        "General": "General",
+        "Hazardous": "Hazardous"
+      },
+      "validation": {
+        "name": {
+          "min": "Name must be at least 2 characters."
+        },
+        "type": {
+          "required": "Please select a waste type."
+        },
+        "price": {
+          "min": "Price cannot be negative."
+        }
+      }
+    },
+    "toast": {
+      "save": {
+        "title": "Material Saved",
+        "description": "The material has been successfully saved."
+      },
+      "delete": {
+        "title": "Material Deleted",
+        "description": "The material has been successfully deleted."
       }
     }
   }

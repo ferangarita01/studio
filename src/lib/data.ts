@@ -1,9 +1,21 @@
-import type { WasteEntry, DisposalEvent, ReportData, Company } from "./types";
+import type { WasteEntry, DisposalEvent, ReportData, Company, Material } from "./types";
 
 export const companies: Company[] = [
   { id: "c1", name: "Innovate Inc." },
   { id: "c2", name: "EcoSolutions" },
 ];
+
+export const materials: Material[] = [
+  { id: "m1", name: "Plastic Bottles (PET)", type: "Recycling", pricePerKg: 0.55 },
+  { id: "m2", name: "Cardboard", type: "Recycling", pricePerKg: 0.30 },
+  { id: "m3", name: "Aluminum Cans", type: "Recycling", pricePerKg: 1.20 },
+  { id: "m4", name: "Glass", type: "Recycling", pricePerKg: 0.15 },
+  { id: "m5", name: "Food Scraps", type: "Organic", pricePerKg: 0 },
+  { id: "m6", name: "Office Paper", type: "Recycling", pricePerKg: 0.40 },
+  { id: "m7", name: "Mixed Municipal Waste", type: "General", pricePerKg: 0 },
+  { id: "m8", name: "Used Batteries", type: "Hazardous", pricePerKg: 0 },
+];
+
 
 export const wasteLog: WasteEntry[] = [
   { id: "1", companyId: "c1", date: new Date("2024-05-20"), type: "Recycling", quantity: 15.5, price: 0.5, serviceCost: 5.0 },

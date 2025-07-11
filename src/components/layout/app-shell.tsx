@@ -17,6 +17,7 @@ import {
   Building,
   ChevronsUpDown,
   PlusCircle,
+  Package,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -63,6 +64,7 @@ const navItems = [
     { href: '/log', icon: Trash2, labelKey: 'log' },
     { href: '/schedule', icon: Calendar, labelKey: 'schedule' },
     { href: '/reports', icon: FileText, labelKey: 'reports' },
+    { href: '/materials', icon: Package, labelKey: 'materials' },
 ] as const;
 
 
@@ -252,7 +254,7 @@ export function AppShell({ children, dictionary }: { children: React.ReactNode; 
             <SidebarMenu>
               {navItems.map((item) => {
                   const href = getHref(item.href);
-                  const label = dictionary.links[item.labelKey];
+                  const label = dictionary.links[item.labelKey as keyof typeof dictionary.links];
                   const isActive = pathname === href || (item.href !== '/' && pathname.startsWith(href));
                   return (
                       <SidebarMenuItem key={href}>

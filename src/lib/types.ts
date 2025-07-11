@@ -5,8 +5,15 @@ export type Company = {
   name: string;
 };
 
-export type WasteEntry = {
+export type Material = {
   id: string;
+  name: string;
+  type: WasteType;
+  pricePerKg: number; // price per kg, for recyclables
+};
+
+export type WasteEntry = {
+  id:string;
   companyId: string;
   date: Date;
   type: WasteType;

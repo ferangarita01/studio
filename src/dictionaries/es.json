@@ -7,7 +7,8 @@
       "analyzer": "Analizador IA",
       "log": "Registro de Residuos",
       "schedule": "Calendario",
-      "reports": "Reportes"
+      "reports": "Reportes",
+      "materials": "Materiales"
     },
     "themeToggle": {
       "toggle": "Cambiar tema",
@@ -190,6 +191,67 @@
           "description": "Descripción",
           "amount": "Monto"
         }
+      }
+    }
+  },
+    "materialsPage": {
+    "title": "Gestionar Materiales",
+    "addMaterial": "Añadir Nuevo Material",
+    "cardTitle": "Lista de Materiales",
+    "cardDescription": "Añade, edita o elimina materiales y establece sus precios de recompra.",
+    "noMaterials": "No se encontraron materiales. Añade uno para empezar.",
+    "table": {
+      "name": "Nombre del Material",
+      "type": "Tipo",
+      "pricePerKg": "Precio / kg",
+      "actions": "Acciones",
+      "openMenu": "Abrir menú",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "types": {
+      "Recycling": "Reciclaje",
+      "Organic": "Orgánico",
+      "General": "General",
+      "Hazardous": "Peligroso"
+    },
+    "materialDialog": {
+      "addTitle": "Añadir Nuevo Material",
+      "editTitle": "Editar Material",
+      "description": "Completa los detalles del material. Haz clic en guardar cuando termines.",
+      "name": "Nombre del Material",
+      "namePlaceholder": "ej., Latas de Aluminio",
+      "type": "Tipo de Residuo",
+      "selectType": "Selecciona un tipo",
+      "price": "Precio por kg ($)",
+      "pricePlaceholder": "ej., 1.20",
+      "save": "Guardar Material",
+      "types": {
+        "Recycling": "Reciclaje",
+        "Organic": "Orgánico",
+        "General": "General",
+        "Hazardous": "Peligroso"
+      },
+      "validation": {
+        "name": {
+          "min": "El nombre debe tener al menos 2 caracteres."
+        },
+        "type": {
+          "required": "Por favor, selecciona un tipo de residuo."
+        },
+        "price": {
+          "min": "El precio no puede ser negativo."
+        }
+      }
+    },
+    "toast": {
+      "save": {
+        "title": "Material Guardado",
+        "description": "El material se ha guardado correctamente."
+      },
+      "delete": {
+        "title": "Material Eliminado",
+        "description": "El material se ha eliminado correctamente."
       }
     }
   }

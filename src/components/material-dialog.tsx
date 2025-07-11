@@ -1,0 +1,145 @@
+"use client";
+
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Dictionary } from "@/lib/get-dictionary";
+import type { Material, WasteType } from "@/lib/types";
+
+const formSchema = (dictionary: Dictionary["materialsPage"]["materialDialog"]["validation"]) => z.object({
+  id: z.string().optional(),
+  name: z.string().min(2, { message: dictionary.name.min }),
+  type: z.enum(["Recycling", "Organic", "General", "Hazardous"], {
+    required_error: dictionary.type.required,
+  }),
+  pricePerKg: z.coerce.number().min(0, { message: dictionary.price.min }),
+});
+
+interface MaterialDialogProps {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    dictionary: Dictionary["materialsPage"]["materialDialog"];
+    onSave: (material: Material) => void;
+    material: Material | null;
+}
+
+export function MaterialDialog({ open, onOpenChange, dictionary, onSave, material }: MaterialDialogProps) {
+  const form = useForm<z.infer<ReturnType<typeof formSchema>>>({
+    resolver: zodResolver(formSchema(dictionary.validation)),
+    defaultValues: {
+      name: "",
+      type: undefined,
+      pricePerKg: 0,
+    },
+  });
+  
+  useEffect(() => {
+    if (material) {
+      form.reset(material);
+    } else {
+      form.reset({ name: "", type: undefined, pricePerKg: 0 });
+    }
+  }, [material, form, open]);
+
+
+  const onSubmit = (values: z.infer<ReturnType<typeof formSchema>>) => {
+    onSave(values as Material);
+  };
+  
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[425px]">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <DialogHeader>
+              <DialogTitle>{material ? dictionary.editTitle : dictionary.addTitle}</DialogTitle>
+              <DialogDescription>
+                {dictionary.description}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{dictionary.name}</FormLabel>
+                    <FormControl>
+                      <Input placeholder={dictionary.namePlaceholder} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{dictionary.type}</FormLabel>
+                     <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder={dictionary.selectType} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {Object.keys(dictionary.types).map((key) => (
+                          <SelectItem key={key} value={key}>{dictionary.types[key as WasteType]}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="pricePerKg"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{dictionary.price}</FormLabel>
+                    <FormControl>
+                      <Input type="number" step="0.01" placeholder={dictionary.pricePlaceholder} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <DialogFooter>
+              <Button type="submit">{dictionary.save}</Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
