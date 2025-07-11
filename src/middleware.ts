@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { i18n } from './i18n-config';
+import { i18n } from '@/i18n-config';
 import { match as matchLocale } from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
 
@@ -19,7 +19,7 @@ function getLocale(request: NextRequest): string | undefined {
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // `/_next/` and `/api/` are ignored by the watcher, but we need to ignore files in `public`
+  // Ignore specific paths that should not be localized
   const publicFile = /\.(.*)$/;
   if (
     pathname.startsWith('/_next') ||
@@ -27,9 +27,9 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/static') ||
     publicFile.test(pathname)
   ) {
-    return;
+    return NextResponse.next();
   }
-  
+
   // Check if there is any supported locale in the pathname
   const pathnameIsMissingLocale = i18n.locales.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
@@ -38,11 +38,21 @@ export function middleware(request: NextRequest) {
   // Redirect if there is no locale
   if (pathnameIsMissingLocale) {
     const locale = getLocale(request);
-    
+
+    // If the root is accessed, redirect to the login page of the detected locale.
+    if (pathname === '/') {
+       return NextResponse.redirect(
+        new URL(`/${locale}/login`, request.url)
+      );
+    }
+
+    // For other paths, prepend the locale.
     return NextResponse.redirect(
       new URL(`/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`, request.url)
     );
   }
+
+  return NextResponse.next();
 }
 
 export const config = {
