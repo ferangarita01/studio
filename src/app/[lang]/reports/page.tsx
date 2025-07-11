@@ -1,29 +1,19 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText } from "lucide-react";
-import type { Dictionary } from "@/lib/get-dictionary";
 import { getDictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
+import { ReportsClient } from "./client-page";
+import { weeklyReportData, monthlyReportData } from "@/lib/data";
 
 export default async function ReportsPage({
-  params,
+  params: { lang },
 }: {
   params: { lang: Locale };
 }) {
-  const dictionary = (await getDictionary(params.lang)).reportsPage;
+  const dictionary = (await getDictionary(lang)).reportsPage;
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-      <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
-      <Card>
-        <CardHeader>
-          <CardTitle>{dictionary.cardTitle}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center justify-center gap-4 py-16 text-muted-foreground">
-            <FileText className="h-16 w-16" />
-            <p>{dictionary.cardContent}</p>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+    <ReportsClient
+      dictionary={dictionary}
+      weeklyData={weeklyReportData}
+      monthlyData={monthlyReportData}
+    />
   );
 }

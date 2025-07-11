@@ -121,8 +121,37 @@
     "cardContent": "The disposal scheduling calendar and management tools will be here soon."
   },
   "reportsPage": {
-    "title": "Report Generation",
-    "cardTitle": "Coming Soon",
-    "cardContent": "Compliance report generation and templates will be available here soon."
+    "title": "Financial Reports",
+    "tabs": {
+      "weekly": "Weekly",
+      "monthly": "Monthly"
+    },
+    "reportView": {
+      "cards": {
+        "collectionCosts": {
+          "title": "Total Collection Costs",
+          "description": "Sum of payments for waste collection."
+        },
+        "recyclingIncome": {
+          "title": "Total Recycling Income",
+          "description": "Sum of income from selling recyclables."
+        },
+        "netResult": {
+          "title": "Net Cost / Profit",
+          "description": "Income minus costs for the period."
+        }
+      },
+      "chart": {
+        "title": "Costs vs. Income"
+      },
+      "transactions": {
+        "title": "Recent Transactions",
+        "description": "A log of payments and income.",
+        "table": {
+          "description": "Description",
+          "amount": "Amount"
+        }
+      }
+    }
   }
 }

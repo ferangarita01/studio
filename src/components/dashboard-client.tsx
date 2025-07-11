@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { PlusCircle, Activity, Calendar as CalendarIcon } from "lucide-react";
+import { PlusCircle, Activity, Calendar as CalendarIcon, Trash2, Recycle } from "lucide-react";
 
 import {
   Card,
@@ -79,7 +79,7 @@ export function DashboardClient({
               <CardTitle className="text-sm font-medium">
                 {dictionary.cards.totalWaste.title}
               </CardTitle>
-              <TrashIcon className="h-4 w-4 text-muted-foreground" />
+              <Trash2 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">1,254 kg</div>
@@ -91,7 +91,7 @@ export function DashboardClient({
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">{dictionary.cards.recyclingRate.title}</CardTitle>
-              <RecycleIcon className="h-4 w-4 text-muted-foreground" />
+              <Recycle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">68%</div>
@@ -215,50 +215,5 @@ export function DashboardClient({
         dictionary={dictionary.addWasteDialog}
       />
     </div>
-  );
-}
-
-function TrashIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M3 6h18" />
-      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-    </svg>
-  );
-}
-
-function RecycleIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1 .034-1.834L8.615 4.97a1.83 1.83 0 0 1 1.57-.881h0a1.785 1.785 0 0 1 1.834.034l1.332.894" />
-      <path d="m14 13-3.138-2.105a1.785 1.785 0 0 0-2.158.33l-1.35 2.025" />
-      <path d="M14 13h2.185a1.83 1.83 0 0 1 1.57.881 1.785 1.785 0 0 1-.034 1.834l-5.337 8.01a1.83 1.83 0 0 1-1.57.881H9.5a1.785 1.785 0 0 1-1.834-.034l-1.332-.894" />
-      <path d="m7 16 3.138 2.105a1.785 1.785 0 0 0 2.158-.33l1.35-2.025" />
-      <path d="m11 4 3 4" />
-      <path d="m18 11 2.5-1.5" />
-      <path d="m5 13-2.5 1.5" />
-    </svg>
   );
 }

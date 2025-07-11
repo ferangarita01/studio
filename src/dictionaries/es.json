@@ -121,8 +121,37 @@
     "cardContent": "El calendario de programación de eliminación y las herramientas de gestión estarán aquí pronto."
   },
   "reportsPage": {
-    "title": "Generación de Reportes",
-    "cardTitle": "Próximamente",
-    "cardContent": "La generación de informes de cumplimiento y las plantillas estarán disponibles aquí pronto."
+    "title": "Reportes Financieros",
+    "tabs": {
+      "weekly": "Semanal",
+      "monthly": "Mensual"
+    },
+    "reportView": {
+      "cards": {
+        "collectionCosts": {
+          "title": "Costos Totales de Recolección",
+          "description": "Suma de pagos por la recolección de residuos."
+        },
+        "recyclingIncome": {
+          "title": "Ingresos Totales por Reciclaje",
+          "description": "Suma de ingresos por la venta de reciclables."
+        },
+        "netResult": {
+          "title": "Resultado Neto / Ganancia",
+          "description": "Ingresos menos costos del período."
+        }
+      },
+      "chart": {
+        "title": "Costos vs. Ingresos"
+      },
+      "transactions": {
+        "title": "Transacciones Recientes",
+        "description": "Un registro de pagos e ingresos.",
+        "table": {
+          "description": "Descripción",
+          "amount": "Monto"
+        }
+      }
+    }
   }
 }
