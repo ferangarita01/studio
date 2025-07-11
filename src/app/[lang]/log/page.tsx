@@ -1,11 +1,15 @@
-import { getDictionary } from "@/lib/get-dictionary";
-import type { Locale } from "@/i18n-config";
+
+'use client';
+
+import { useDictionaries } from "@/context/dictionary-context";
 import { LogClient } from "./client-page";
 import { wasteLog } from "@/lib/data";
 
-export default async function LogPage({ params }: { params: { lang: Locale } }) {
-  const dictionary = (await getDictionary(params.lang)).logPage;
+export default function LogPage() {
+  const dictionary = useDictionaries()?.logPage;
   
+  if (!dictionary) return <div>Loading...</div>;
+
   // In a real app, you would fetch this data
   const allWasteLog = wasteLog;
   

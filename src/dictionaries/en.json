@@ -31,7 +31,8 @@
       "namePlaceholder": "e.g., Global Exports Ltd.",
       "cancel": "Cancel",
       "create": "Create Company"
-    }
+    },
+    "logout": "Logout"
   },
   "loginPage": {
     "title": "Login",

@@ -31,7 +31,8 @@
       "namePlaceholder": "ej., Exportaciones Globales S.A.",
       "cancel": "Cancelar",
       "create": "Crear Empresa"
-    }
+    },
+    "logout": "Cerrar Sesión"
   },
   "loginPage": {
     "title": "Iniciar Sesión",

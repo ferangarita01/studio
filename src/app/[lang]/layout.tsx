@@ -3,14 +3,67 @@ import '../globals.css';
 import { AppShell } from '@/components/layout/app-shell';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/theme-provider';
+import React from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { AuthProvider, useAuth } from '@/context/auth-context';
 import { getDictionary } from '@/lib/get-dictionary';
 import type { Locale } from '@/i18n-config';
-import React from 'react';
+import { DictionariesProvider } from '@/context/dictionary-context';
 
 export const metadata: Metadata = {
   title: 'EcoCircle',
   description: "A business waste management platform to track and manage waste generation and disposal for companies.",
 };
+
+function AuthGuard({ children, lang }: { children: React.ReactNode, lang: Locale }) {
+  const { isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  React.useEffect(() => {
+    if (!isLoading && !isAuthenticated && pathname !== `/${lang}/login`) {
+      router.push(`/${lang}/login`);
+    }
+  }, [isLoading, isAuthenticated, router, lang, pathname]);
+
+  if (isLoading) {
+    return (
+       <div className="flex h-screen w-full items-center justify-center">
+        <div>Loading...</div>
+      </div>
+    );
+  }
+
+  // The login page does not need the AppShell.
+  if (!isAuthenticated) {
+    return <>{children}</>;
+  }
+  
+  // Authenticated users get the AppShell
+  return <AppShell>{children}</AppShell>;
+}
+
+function ClientLayout({ children, dictionary, lang }: { children: React.ReactNode, dictionary: any, lang: Locale }) {
+    'use client';
+    
+    return (
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+        >
+            <AuthProvider>
+                <DictionariesProvider dictionary={dictionary}>
+                    <AuthGuard lang={lang}>
+                        {children}
+                    </AuthGuard>
+                </DictionariesProvider>
+            </AuthProvider>
+            <Toaster />
+        </ThemeProvider>
+    )
+}
 
 export default async function RootLayout({
   children,
@@ -20,7 +73,7 @@ export default async function RootLayout({
   params: { lang: Locale };
 }>) {
   const dictionary = await getDictionary(params.lang);
-  
+
   return (
     <html lang={params.lang} suppressHydrationWarning>
       <head>
@@ -29,17 +82,9 @@ export default async function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-        >
-            <AppShell dictionary={dictionary.navigation}>
-              {children}
-            </AppShell>
-            <Toaster />
-        </ThemeProvider>
+         <ClientLayout dictionary={dictionary} lang={params.lang}>
+            {children}
+         </ClientLayout>
       </body>
     </html>
   );

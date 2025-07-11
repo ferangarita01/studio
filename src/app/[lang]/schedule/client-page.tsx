@@ -37,6 +37,7 @@ import type { Dictionary } from "@/lib/get-dictionary";
 import type { DisposalEvent } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useCompany } from "@/components/layout/app-shell";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const statusColors: Record<DisposalEvent["status"], string> = {
   Scheduled: "bg-blue-500",
@@ -54,7 +55,12 @@ export function ScheduleClient({ dictionary, allEvents }: ScheduleClientProps) {
   const [currentMonth, setCurrentMonth] = React.useState(new Date());
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
   const [isSheetOpen, setSheetOpen] = React.useState(false);
+  const [isClient, setIsClient] = React.useState(false);
   const { selectedCompany } = useCompany();
+
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const events = allEvents.filter(event => event.companyId === selectedCompany.id);
 
@@ -172,7 +178,11 @@ export function ScheduleClient({ dictionary, allEvents }: ScheduleClientProps) {
           <SheetHeader>
             <SheetTitle>
               {dictionary.details.title}:{" "}
-              {selectedDate && format(selectedDate, "MMMM d, yyyy")}
+              {isClient && selectedDate ? (
+                format(selectedDate, "MMMM d, yyyy")
+              ) : (
+                <Skeleton className="h-6 w-32 inline-block" />
+              )}
             </SheetTitle>
             <SheetDescription>
               {dictionary.details.description}

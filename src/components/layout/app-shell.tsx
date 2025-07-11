@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -18,6 +19,7 @@ import {
   ChevronsUpDown,
   PlusCircle,
   Package,
+  LogOut,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -45,18 +47,24 @@ import {
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import type { Dictionary } from "@/lib/get-dictionary";
 import { companies as initialCompanies } from "@/lib/data";
 import type { Company } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { CreateCompanyDialog } from "@/components/create-company-dialog";
+import { useAuth } from "@/context/auth-context";
+import { useDictionaries } from "@/context/dictionary-context";
 
-const Logo = ({ dictionary }: { dictionary: Dictionary["navigation"] }) => (
-  <Link href="/" className="flex items-center gap-2 font-semibold text-primary">
-    <Recycle className="h-6 w-6" />
-    <span className="text-lg">{dictionary.title}</span>
-  </Link>
-);
+const Logo = () => {
+  const dictionary = useDictionaries()?.navigation;
+  if (!dictionary) return null;
+  return (
+    <Link href="/" className="flex items-center gap-2 font-semibold text-primary">
+      <Recycle className="h-6 w-6" />
+      <span className="text-lg">{dictionary.title}</span>
+    </Link>
+  );
+};
+
 
 const navItems = [
     { href: '/', icon: LayoutDashboard, labelKey: 'dashboard' },
@@ -68,8 +76,10 @@ const navItems = [
 ] as const;
 
 
-function ThemeToggle({ dictionary }: { dictionary: Dictionary["navigation"]["themeToggle"] }) {
+function ThemeToggle() {
   const { setTheme } = useTheme();
+  const dictionary = useDictionaries()?.navigation.themeToggle;
+  if (!dictionary) return null;
 
   return (
     <DropdownMenu>
@@ -95,9 +105,11 @@ function ThemeToggle({ dictionary }: { dictionary: Dictionary["navigation"]["the
   );
 }
 
-function LanguageToggle({ dictionary }: { dictionary: Dictionary["navigation"]["languageToggle"] }) {
+function LanguageToggle() {
     const pathname = usePathname()
     const pathWithoutLocale = pathname.split('/').slice(2).join('/');
+    const dictionary = useDictionaries()?.navigation.languageToggle;
+    if (!dictionary) return null;
 
 
   return (
@@ -137,10 +149,13 @@ export const useCompany = () => {
   return context;
 };
 
-function CompanySwitcher({ dictionary }: { dictionary: Dictionary["navigation"] }) {
+function CompanySwitcher() {
+  const dictionary = useDictionaries()?.navigation;
   const { companies, selectedCompany, setSelectedCompany, addCompany } = useCompany();
   const [search, setSearch] = useState("");
   const [isCreateOpen, setCreateOpen] = useState(false);
+  
+  if (!dictionary) return null;
 
   const filteredCompanies = companies.filter(company => 
     company.name.toLowerCase().includes(search.toLowerCase())
@@ -217,12 +232,16 @@ function CompanySwitcher({ dictionary }: { dictionary: Dictionary["navigation"] 
 }
 
 
-export function AppShell({ children, dictionary }: { children: React.ReactNode; dictionary: Dictionary["navigation"] }) {
+export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const currentLang = pathname.split('/')[1] || 'en';
   
   const [companies, setCompanies] = useState<Company[]>(initialCompanies);
   const [selectedCompany, setSelectedCompany] = useState<Company>(companies[0]);
+  const { logout } = useAuth();
+  const dictionary = useDictionaries()?.navigation;
+
+  if (!dictionary) return null;
 
   const addCompany = (company: Company) => {
     setCompanies(prev => [...prev, company]);
@@ -239,17 +258,17 @@ export function AppShell({ children, dictionary }: { children: React.ReactNode; 
         <Sidebar>
           <SidebarHeader>
               <div className="flex items-center justify-between">
-                  <Logo dictionary={dictionary} />
+                  <Logo />
                   <div className="flex items-center gap-2 md:hidden">
-                      <LanguageToggle dictionary={dictionary.languageToggle} />
-                      <ThemeToggle dictionary={dictionary.themeToggle} />
+                      <LanguageToggle />
+                      <ThemeToggle />
                       <SidebarTrigger/>
                   </div>
               </div>
           </SidebarHeader>
           <SidebarContent>
             <div className="p-2">
-              <CompanySwitcher dictionary={dictionary} />
+              <CompanySwitcher />
             </div>
             <SidebarMenu>
               {navItems.map((item) => {
@@ -273,10 +292,18 @@ export function AppShell({ children, dictionary }: { children: React.ReactNode; 
               })}
             </SidebarMenu>
           </SidebarContent>
-          <SidebarFooter className="hidden md:flex p-2 mt-auto">
-               <div className="flex items-center justify-end gap-2">
-                  <LanguageToggle dictionary={dictionary.languageToggle} />
-                  <ThemeToggle dictionary={dictionary.themeToggle} />
+          <SidebarFooter className="p-2 mt-auto">
+                <SidebarMenu>
+                    <SidebarMenuItem>
+                         <SidebarMenuButton onClick={logout} tooltip={dictionary.logout}>
+                            <LogOut />
+                            <span>{dictionary.logout}</span>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarMenu>
+               <div className="hidden md:flex items-center justify-end gap-2 pt-2">
+                  <LanguageToggle />
+                  <ThemeToggle />
               </div>
           </SidebarFooter>
         </Sidebar>
@@ -285,3 +312,4 @@ export function AppShell({ children, dictionary }: { children: React.ReactNode; 
     </CompanyContext.Provider>
   );
 }
+

@@ -1,14 +1,14 @@
-import { getDictionary } from "@/lib/get-dictionary";
-import type { Locale } from "@/i18n-config";
+
+'use client';
+
+import { useDictionaries } from "@/context/dictionary-context";
 import { DashboardClient } from "@/components/dashboard-client";
 import { wasteData, wasteLog } from "@/lib/data";
 
-export default async function DashboardPage({
-  params,
-}: {
-  params: { lang: Locale };
-}) {
-  const dictionary = await getDictionary(params.lang);
+export default function DashboardPage() {
+  const dictionary = useDictionaries();
+
+  if (!dictionary) return <div>Loading...</div>;
 
   return (
       <DashboardClient
