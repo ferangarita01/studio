@@ -17,6 +17,9 @@
     },
     "languageToggle": {
       "toggle": "Cambiar idioma"
+    },
+    "companySwitcher": {
+      "label": "Cambiar Empresa"
     }
   },
   "dashboard": {
@@ -52,7 +55,8 @@
       "status": {
         "Scheduled": "Programado",
         "Completed": "Completado",
-        "Cancelled": "Cancelado"
+        "Cancelled": "Cancelado",
+        "Ongoing": "En curso"
       }
     },
     "recentEntries": {

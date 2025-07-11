@@ -23,6 +23,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import type { Dictionary } from "@/lib/get-dictionary";
 import type { ReportData } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
+import { useCompany } from "@/components/layout/app-shell";
 
 const chartConfig = {
   costs: {
@@ -37,8 +38,8 @@ const chartConfig = {
 
 interface ReportsClientProps {
   dictionary: Dictionary["reportsPage"];
-  weeklyData: ReportData;
-  monthlyData: ReportData;
+  weeklyDataAll: Record<string, ReportData>;
+  monthlyDataAll: Record<string, ReportData>;
 }
 
 function ReportView({
@@ -150,9 +151,22 @@ function ReportView({
 
 export function ReportsClient({
   dictionary,
-  weeklyData,
-  monthlyData,
+  weeklyDataAll,
+  monthlyDataAll,
 }: ReportsClientProps) {
+  const { selectedCompany } = useCompany();
+
+  const weeklyData = weeklyDataAll[selectedCompany.id];
+  const monthlyData = monthlyDataAll[selectedCompany.id];
+
+  if (!weeklyData || !monthlyData) {
+    return (
+      <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 items-center justify-center">
+        <p>No report data available for this company.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
       <div className="flex items-center">

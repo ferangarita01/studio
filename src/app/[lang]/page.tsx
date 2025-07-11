@@ -13,8 +13,8 @@ export default async function DashboardPage({
   return (
     <DashboardClient
       dictionary={dictionary}
-      wasteData={wasteData}
-      wasteLog={wasteLog}
+      wasteDataAll={wasteData}
+      wasteLogAll={wasteLog}
     />
   );
 }

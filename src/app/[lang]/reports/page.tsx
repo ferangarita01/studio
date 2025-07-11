@@ -12,8 +12,8 @@ export default async function ReportsPage({
   return (
     <ReportsClient
       dictionary={dictionary}
-      weeklyData={weeklyReportData}
-      monthlyData={monthlyReportData}
+      weeklyDataAll={weeklyReportData}
+      monthlyDataAll={monthlyReportData}
     />
   );
 }

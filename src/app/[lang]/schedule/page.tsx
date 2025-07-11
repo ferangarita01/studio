@@ -12,5 +12,5 @@ export default async function SchedulePage({
   // In a real app, you'd fetch this data
   const events = disposalEvents;
   
-  return <ScheduleClient dictionary={dictionary} events={events} />;
+  return <ScheduleClient dictionary={dictionary} allEvents={events} />;
 }

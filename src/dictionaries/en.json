@@ -17,6 +17,9 @@
     },
     "languageToggle": {
       "toggle": "Change language"
+    },
+    "companySwitcher": {
+      "label": "Switch Company"
     }
   },
   "dashboard": {
@@ -52,7 +55,8 @@
       "status": {
         "Scheduled": "Scheduled",
         "Completed": "Completed",
-        "Cancelled": "Cancelled"
+        "Cancelled": "Cancelled",
+        "Ongoing": "Ongoing"
       }
     },
     "recentEntries": {

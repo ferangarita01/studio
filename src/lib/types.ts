@@ -1,7 +1,13 @@
 export type WasteType = "Recycling" | "Organic" | "General" | "Hazardous";
 
+export type Company = {
+  id: string;
+  name: string;
+};
+
 export type WasteEntry = {
   id: string;
+  companyId: string;
   date: Date;
   type: WasteType;
   quantity: number; // in kg
@@ -17,6 +23,7 @@ export type Attachment = {
 
 export type DisposalEvent = {
   id: string;
+  companyId: string;
   date: Date;
   wasteTypes: WasteType[];
   status: "Scheduled" | "Completed" | "Cancelled" | "Ongoing";
@@ -35,6 +42,7 @@ export type FinancialTransaction = {
 };
 
 export type ReportData = {
+  companyId: string;
   totalCosts: number;
   totalIncome: number;
   netResult: number;

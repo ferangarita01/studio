@@ -26,6 +26,7 @@ import { AddWasteDialog } from "@/components/add-waste-dialog";
 import type { WasteEntry, DisposalEvent } from "@/lib/types";
 import type { Dictionary } from "@/lib/get-dictionary";
 import { disposalEvents } from "@/lib/data";
+import { useCompany } from "./layout/app-shell";
 
 const chartConfig = {
   quantity: {
@@ -47,17 +48,21 @@ const chartConfig = {
 
 interface DashboardClientProps {
   dictionary: Dictionary["dashboard"];
-  wasteData: any[];
-  wasteLog: WasteEntry[];
+  wasteDataAll: Record<string, any[]>;
+  wasteLogAll: WasteEntry[];
 }
 
 export function DashboardClient({
   dictionary,
-  wasteData,
-  wasteLog,
+  wasteDataAll,
+  wasteLogAll,
 }: DashboardClientProps) {
   const [isAddWasteDialogOpen, setAddWasteDialogOpen] = React.useState(false);
-  const upcomingDisposals = disposalEvents.filter(d => d.status === 'Scheduled' || d.status === 'Ongoing');
+  const { selectedCompany } = useCompany();
+
+  const wasteData = wasteDataAll[selectedCompany.id] || [];
+  const wasteLog = wasteLogAll.filter(entry => entry.companyId === selectedCompany.id);
+  const upcomingDisposals = disposalEvents.filter(d => (d.status === 'Scheduled' || d.status === 'Ongoing') && d.companyId === selectedCompany.id);
 
 
   return (

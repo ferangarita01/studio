@@ -36,6 +36,7 @@ import { Separator } from "@/components/ui/separator";
 import type { Dictionary } from "@/lib/get-dictionary";
 import type { DisposalEvent } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useCompany } from "@/components/layout/app-shell";
 
 const statusColors: Record<DisposalEvent["status"], string> = {
   Scheduled: "bg-blue-500",
@@ -46,13 +47,16 @@ const statusColors: Record<DisposalEvent["status"], string> = {
 
 interface ScheduleClientProps {
   dictionary: Dictionary["schedulePage"];
-  events: DisposalEvent[];
+  allEvents: DisposalEvent[];
 }
 
-export function ScheduleClient({ dictionary, events }: ScheduleClientProps) {
+export function ScheduleClient({ dictionary, allEvents }: ScheduleClientProps) {
   const [currentMonth, setCurrentMonth] = React.useState(new Date());
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
   const [isSheetOpen, setSheetOpen] = React.useState(false);
+  const { selectedCompany } = useCompany();
+
+  const events = allEvents.filter(event => event.companyId === selectedCompany.id);
 
   const firstDayOfMonth = startOfMonth(currentMonth);
   const lastDayOfMonth = endOfMonth(currentMonth);
