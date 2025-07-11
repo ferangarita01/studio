@@ -27,9 +27,9 @@ export default function LoginPage({
   const router = useRouter();
   const dictionary = useDictionaries()?.loginPage;
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent, role: "admin" | "client") => {
     e.preventDefault();
-    login();
+    login(role);
     router.push(`/${lang}`);
   };
 
@@ -47,7 +47,7 @@ export default function LoginPage({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin}>
+          <form>
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="email">{dictionary.email}</Label>
@@ -71,12 +71,14 @@ export default function LoginPage({
                 </div>
                 <Input id="password" type="password" required defaultValue="Admin1" />
               </div>
-              <Button type="submit" className="w-full">
-                {dictionary.loginButton}
-              </Button>
-              <Button variant="outline" className="w-full">
-                {dictionary.loginWithGoogle}
-              </Button>
+              <div className="flex flex-col gap-2">
+                <Button onClick={(e) => handleLogin(e, 'admin')} className="w-full">
+                  {dictionary.loginAsAdmin}
+                </Button>
+                <Button onClick={(e) => handleLogin(e, 'client')} variant="secondary" className="w-full">
+                 {dictionary.loginAsClient}
+                </Button>
+              </div>
             </div>
           </form>
           <div className="mt-4 text-center text-sm">
@@ -90,4 +92,3 @@ export default function LoginPage({
     </div>
   );
 }
-

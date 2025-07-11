@@ -41,6 +41,8 @@
     "password": "Contraseña",
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "loginButton": "Iniciar Sesión",
+    "loginAsAdmin": "Iniciar Sesión como Admin",
+    "loginAsClient": "Iniciar Sesión como Cliente",
     "loginWithGoogle": "Iniciar sesión con Google",
     "noAccount": "¿No tienes una cuenta?",
     "signUp": "Regístrate"
@@ -226,6 +228,7 @@
       "weekly": "Semanal",
       "monthly": "Mensual"
     },
+    "downloadPdf": "Descargar PDF",
     "reportView": {
       "cards": {
         "collectionCosts": {

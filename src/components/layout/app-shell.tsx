@@ -2,8 +2,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from 'next/navigation';
-import React, { useState, createContext, useContext } from "react";
+import { usePathname, useRouter } from 'next/navigation';
+import React, { useState, createContext, useContext, useMemo } from "react";
 import {
   BrainCircuit,
   Calendar,
@@ -57,14 +57,13 @@ const Logo = () => {
   );
 };
 
-
-const navItems = [
-    { href: '/', icon: LayoutDashboard, labelKey: 'dashboard' },
-    { href: '/analyzer', icon: BrainCircuit, labelKey: 'analyzer' },
-    { href: '/log', icon: Trash2, labelKey: 'log' },
-    { href: '/schedule', icon: Calendar, labelKey: 'schedule' },
-    { href: '/reports', icon: FileText, labelKey: 'reports' },
-    { href: '/materials', icon: Package, labelKey: 'materials' },
+const allNavItems = [
+    { href: '/', icon: LayoutDashboard, labelKey: 'dashboard', roles: ['admin', 'client'] },
+    { href: '/analyzer', icon: BrainCircuit, labelKey: 'analyzer', roles: ['admin'] },
+    { href: '/log', icon: Trash2, labelKey: 'log', roles: ['admin'] },
+    { href: '/schedule', icon: Calendar, labelKey: 'schedule', roles: ['admin', 'client'] },
+    { href: '/reports', icon: FileText, labelKey: 'reports', roles: ['admin', 'client'] },
+    { href: '/materials', icon: Package, labelKey: 'materials', roles: ['admin'] },
 ] as const;
 
 
@@ -143,6 +142,7 @@ export const useCompany = () => {
 
 function CompanySwitcher() {
   const dictionary = useDictionaries()?.navigation;
+  const { role } = useAuth();
   const { companies, selectedCompany, setSelectedCompany, addCompany } = useCompany();
   const [search, setSearch] = useState("");
   const [isCreateOpen, setCreateOpen] = useState(false);
@@ -205,11 +205,15 @@ function CompanySwitcher() {
               </DropdownMenuRadioItem>
             ))}
           </DropdownMenuRadioGroup>
-          <DropdownMenuSeparator />
-           <DropdownMenuItem onSelect={() => setCreateOpen(true)}>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            {dictionary.companySwitcher.createCompany}
-          </DropdownMenuItem>
+          {role === 'admin' && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onSelect={() => setCreateOpen(true)}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                {dictionary.companySwitcher.createCompany}
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
       <CreateCompanyDialog
@@ -225,15 +229,37 @@ function CompanySwitcher() {
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const currentLang = pathname.split('/')[1] || 'en';
   
   const [companies, setCompanies] = useState<Company[]>(initialCompanies);
   const [selectedCompany, setSelectedCompany] = useState<Company>(companies[0]);
-  const { logout } = useAuth();
+  const { logout, role } = useAuth();
   const dictionary = useDictionaries()?.navigation;
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const navItems = useMemo(() => {
+    return allNavItems.filter(item => item.roles.includes(role || 'client'));
+  }, [role]);
+
+  const currentPath = `/${pathname.split('/').slice(2).join('/')}`;
+  const isAuthorized = navItems.some(item => item.href === currentPath || (item.href !== '/' && currentPath.startsWith(item.href)));
+
+  React.useEffect(() => {
+    if (!isAuthorized && role) {
+       router.push(`/${currentLang}`);
+    }
+  }, [isAuthorized, role, router, currentLang]);
+
+
   if (!dictionary) return null;
+   if (!isAuthorized && role) {
+    return (
+       <div className="flex h-screen w-full items-center justify-center">
+        <div>Loading...</div>
+      </div>
+    );
+  }
 
   const addCompany = (company: Company) => {
     setCompanies(prev => [...prev, company]);

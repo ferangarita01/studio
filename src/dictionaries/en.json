@@ -41,6 +41,8 @@
     "password": "Password",
     "forgotPassword": "Forgot your password?",
     "loginButton": "Login",
+    "loginAsAdmin": "Login as Admin",
+    "loginAsClient": "Login as Client",
     "loginWithGoogle": "Login with Google",
     "noAccount": "Don't have an account?",
     "signUp": "Sign up"
@@ -226,6 +228,7 @@
       "weekly": "Weekly",
       "monthly": "Monthly"
     },
+    "downloadPdf": "Download PDF",
     "reportView": {
       "cards": {
         "collectionCosts": {
