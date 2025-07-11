@@ -29,10 +29,11 @@ Organic,120
 General,320`;
 
 export default function AIAnalyzerPage({
-  dictionary,
+  dictionary: fullDictionary,
 }: {
-  dictionary: Dictionary["analyzerPage"];
+  dictionary: Dictionary;
 }) {
+  const dictionary = fullDictionary.analyzerPage;
   const [wasteDataInput, setWasteDataInput] = useState(placeholderData);
   const [analysis, setAnalysis] = useState<AnalyzeWasteDataOutput | null>(null);
   const [isPending, startTransition] = useTransition();

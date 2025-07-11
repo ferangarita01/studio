@@ -46,10 +46,11 @@ const chartConfig = {
 };
 
 export default function DashboardPage({
-  dictionary,
+  dictionary: fullDictionary,
 }: {
-  dictionary: Dictionary["dashboard"];
+  dictionary: Dictionary;
 }) {
+  const dictionary = fullDictionary.dashboard;
   const [isAddWasteDialogOpen, setAddWasteDialogOpen] = React.useState(false);
   
   return (

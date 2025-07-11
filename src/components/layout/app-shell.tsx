@@ -37,7 +37,7 @@ import {
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/lib/get-dictionary";
 
-const Logo = ({ dictionary }: { dictionary: { title: string } }) => (
+const Logo = ({ dictionary }: { dictionary: Dictionary["navigation"] }) => (
   <Link href="/" className="flex items-center gap-2 font-semibold text-primary">
     <Recycle className="h-6 w-6" />
     <span className="text-lg">{dictionary.title}</span>
@@ -106,9 +106,10 @@ function LanguageToggle({ dictionary }: { dictionary: Dictionary["navigation"]["
   );
 }
 
-export function AppShell({ children, dictionary }: { children: React.ReactNode; dictionary: Dictionary["navigation"] }) {
+export function AppShell({ children, dictionary }: { children: React.ReactNode; dictionary: Dictionary }) {
   const pathname = usePathname();
   const currentLang = pathname.split('/')[1];
+  const navigationDictionary = dictionary.navigation;
 
   const getHref = (href: string) => {
     if (href === '/') return `/${currentLang}`;
@@ -120,10 +121,10 @@ export function AppShell({ children, dictionary }: { children: React.ReactNode; 
       <Sidebar>
         <SidebarHeader>
             <div className="flex items-center justify-between">
-                <Logo dictionary={dictionary} />
+                <Logo dictionary={navigationDictionary} />
                 <div className="flex items-center gap-2">
-                    <LanguageToggle dictionary={dictionary.languageToggle} />
-                    <ThemeToggle dictionary={dictionary.themeToggle} />
+                    <LanguageToggle dictionary={navigationDictionary.languageToggle} />
+                    <ThemeToggle dictionary={navigationDictionary.themeToggle} />
                     <SidebarTrigger className="md:hidden" />
                 </div>
             </div>
@@ -132,10 +133,10 @@ export function AppShell({ children, dictionary }: { children: React.ReactNode; 
           <SidebarMenu>
             {navItems.map((item) => {
                 const href = getHref(item.href);
-                const label = dictionary.links[item.labelKey];
+                const label = navigationDictionary.links[item.labelKey];
                 return (
                     <SidebarMenuItem key={href}>
-                        <Link href={href}>
+                      <Link href={href} className="w-full">
                           <SidebarMenuButton
                             isActive={pathname === href || (item.href !== '/' && pathname.startsWith(href))}
                             tooltip={label}
@@ -151,8 +152,8 @@ export function AppShell({ children, dictionary }: { children: React.ReactNode; 
         </SidebarContent>
         <div className="hidden md:flex md:flex-col p-2 mt-auto">
              <div className="flex items-center justify-end gap-2">
-                <LanguageToggle dictionary={dictionary.languageToggle} />
-                <ThemeToggle dictionary={dictionary.themeToggle} />
+                <LanguageToggle dictionary={navigationDictionary.languageToggle} />
+                <ThemeToggle dictionary={navigationDictionary.themeToggle} />
             </div>
         </div>
       </Sidebar>

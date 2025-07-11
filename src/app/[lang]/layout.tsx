@@ -34,10 +34,10 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
         >
-            <AppShell dictionary={dictionary.navigation}>
+            <AppShell dictionary={dictionary}>
             {React.Children.map(children, (child) =>
               React.isValidElement(child)
-                ? React.cloneElement(child, { dictionary: (dictionary as any)[child.type.name.replace(/^[A-Z]/, (c: string) => c.toLowerCase()).replace(/Page$/, "")] } as any)
+                ? React.cloneElement(child, { dictionary } as any)
                 : child
             )}
             </AppShell>
