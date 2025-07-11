@@ -1,0 +1,123 @@
+
+{
+  "navigation": {
+    "title": "WasteWise",
+    "links": {
+      "dashboard": "Dashboard",
+      "analyzer": "AI Analyzer",
+      "log": "Waste Log",
+      "schedule": "Schedule",
+      "reports": "Reports"
+    },
+    "themeToggle": {
+      "toggle": "Toggle theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "languageToggle": {
+      "toggle": "Change language"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "addWasteEntry": "Add Waste Entry",
+    "cards": {
+      "totalWaste": {
+        "title": "Total Waste This Month",
+        "change": "+15.2% from last month"
+      },
+      "recyclingRate": {
+        "title": "Recycling Rate",
+        "change": "+5% from last month"
+      },
+      "upcomingDisposals": {
+        "title": "Upcoming Disposals",
+        "next": "Next one in 2 days"
+      },
+      "complianceStatus": {
+        "title": "Compliance Status",
+        "status": "On Track",
+        "detail": "All reports filed on time"
+      }
+    },
+    "wasteOverview": {
+      "title": "Waste Generation Overview",
+      "description": "Monthly waste generation by type."
+    },
+    "disposals": {
+      "title": "Upcoming Disposals",
+      "description": "Scheduled waste pickup and disposal events.",
+      "pickup": "Pickup",
+      "status": {
+        "Scheduled": "Scheduled",
+        "Completed": "Completed",
+        "Cancelled": "Cancelled"
+      }
+    },
+    "recentEntries": {
+      "title": "Recent Waste Entries",
+      "description": "A log of the most recently recorded waste entries.",
+      "table": {
+        "date": "Date",
+        "type": "Type",
+        "quantity": "Quantity (kg)"
+      }
+    },
+    "addWasteDialog": {
+      "title": "Add New Waste Entry",
+      "description": "Record a new waste entry. Click save when you're done.",
+      "wasteType": "Waste Type",
+      "selectType": "Select a type",
+      "types": {
+        "Recycling": "Recycling",
+        "Organic": "Organic",
+        "General": "General",
+        "Hazardous": "Hazardous"
+      },
+      "quantity": "Quantity (kg)",
+      "quantityPlaceholder": "e.g., 25.5",
+      "save": "Save Entry",
+      "toast": {
+        "title": "Entry Added",
+        "description": "Your waste entry has been successfully recorded."
+      }
+    }
+  },
+  "analyzerPage": {
+    "title": "AI Waste Reduction Tool",
+    "description": "Paste your waste data in CSV format to get AI-powered reduction insights.",
+    "inputCard": {
+      "title": "Waste Data Input",
+      "description": "Provide waste type and quantity.",
+      "placeholder": "Paste your CSV data here",
+      "button": "Analyze Data"
+    },
+    "loading": "Analyzing your data...",
+    "summaryCard": {
+      "title": "Analysis Summary"
+    },
+    "recommendationsCard": {
+      "title": "Reduction Recommendations"
+    },
+    "toast": {
+      "title": "Analysis Failed",
+      "description": "Could not analyze the waste data. Please try again."
+    }
+  },
+  "logPage": {
+    "title": "Waste Log",
+    "cardTitle": "Coming Soon",
+    "cardContent": "A detailed table of all waste entries will be available here soon."
+  },
+  "schedulePage": {
+    "title": "Disposal Scheduling",
+    "cardTitle": "Coming Soon",
+    "cardContent": "The disposal scheduling calendar and management tools will be here soon."
+  },
+  "reportsPage": {
+    "title": "Report Generation",
+    "cardTitle": "Coming Soon",
+    "cardContent": "Compliance report generation and templates will be available here soon."
+  }
+}

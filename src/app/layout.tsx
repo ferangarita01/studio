@@ -1,39 +1,6 @@
-import type { Metadata } from 'next';
-import './globals.css';
-import { AppShell } from '@/components/layout/app-shell';
-import { Toaster } from '@/components/ui/toaster';
-import { ThemeProvider } from '@/components/theme-provider';
+import { redirect } from 'next/navigation';
 
-export const metadata: Metadata = {
-  title: 'WasteWise',
-  description: "A business waste management platform to track and manage waste generation and disposal for companies.",
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      </head>
-      <body className="font-body antialiased">
-        <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-        >
-            <AppShell>
-            {children}
-            </AppShell>
-            <Toaster />
-        </ThemeProvider>
-      </body>
-    </html>
-  );
+// This is the root layout, which redirects to the default language
+export default function RootLayout() {
+  redirect('/en');
 }

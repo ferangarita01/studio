@@ -1,0 +1,123 @@
+
+{
+  "navigation": {
+    "title": "WasteWise",
+    "links": {
+      "dashboard": "Tablero",
+      "analyzer": "Analizador IA",
+      "log": "Registro de Residuos",
+      "schedule": "Calendario",
+      "reports": "Reportes"
+    },
+    "themeToggle": {
+      "toggle": "Cambiar tema",
+      "light": "Claro",
+      "dark": "Oscuro",
+      "system": "Sistema"
+    },
+    "languageToggle": {
+      "toggle": "Cambiar idioma"
+    }
+  },
+  "dashboard": {
+    "title": "Tablero",
+    "addWasteEntry": "Añadir Entrada de Residuos",
+    "cards": {
+      "totalWaste": {
+        "title": "Residuos Totales Este Mes",
+        "change": "+15.2% desde el mes pasado"
+      },
+      "recyclingRate": {
+        "title": "Tasa de Reciclaje",
+        "change": "+5% desde el mes pasado"
+      },
+      "upcomingDisposals": {
+        "title": "Próximas Eliminaciones",
+        "next": "La próxima en 2 días"
+      },
+      "complianceStatus": {
+        "title": "Estado de Cumplimiento",
+        "status": "En Regla",
+        "detail": "Todos los informes presentados a tiempo"
+      }
+    },
+    "wasteOverview": {
+      "title": "Visión General de Generación de Residuos",
+      "description": "Generación mensual de residuos por tipo."
+    },
+    "disposals": {
+      "title": "Próximas Eliminaciones",
+      "description": "Eventos programados de recogida y eliminación de residuos.",
+      "pickup": "Recogida",
+      "status": {
+        "Scheduled": "Programado",
+        "Completed": "Completado",
+        "Cancelled": "Cancelado"
+      }
+    },
+    "recentEntries": {
+      "title": "Entradas Recientes de Residuos",
+      "description": "Un registro de las entradas de residuos más recientes.",
+      "table": {
+        "date": "Fecha",
+        "type": "Tipo",
+        "quantity": "Cantidad (kg)"
+      }
+    },
+    "addWasteDialog": {
+      "title": "Añadir Nueva Entrada de Residuos",
+      "description": "Registre una nueva entrada de residuos. Haga clic en guardar cuando haya terminado.",
+      "wasteType": "Tipo de Residuo",
+      "selectType": "Seleccione un tipo",
+      "types": {
+        "Recycling": "Reciclaje",
+        "Organic": "Orgánico",
+        "General": "General",
+        "Hazardous": "Peligroso"
+      },
+      "quantity": "Cantidad (kg)",
+      "quantityPlaceholder": "ej., 25.5",
+      "save": "Guardar Entrada",
+      "toast": {
+        "title": "Entrada Añadida",
+        "description": "Su entrada de residuos ha sido registrada exitosamente."
+      }
+    }
+  },
+  "analyzerPage": {
+    "title": "Herramienta de Reducción de Residuos con IA",
+    "description": "Pegue sus datos de residuos en formato CSV para obtener información sobre reducción impulsada por IA.",
+    "inputCard": {
+      "title": "Entrada de Datos de Residuos",
+      "description": "Proporcione el tipo y la cantidad de residuos.",
+      "placeholder": "Pegue sus datos CSV aquí",
+      "button": "Analizar Datos"
+    },
+    "loading": "Analizando sus datos...",
+    "summaryCard": {
+      "title": "Resumen del Análisis"
+    },
+    "recommendationsCard": {
+      "title": "Recomendaciones de Reducción"
+    },
+    "toast": {
+      "title": "Análisis Fallido",
+      "description": "No se pudieron analizar los datos de residuos. Por favor, inténtelo de nuevo."
+    }
+  },
+  "logPage": {
+    "title": "Registro de Residuos",
+    "cardTitle": "Próximamente",
+    "cardContent": "Una tabla detallada de todas las entradas de residuos estará disponible aquí pronto."
+  },
+  "schedulePage": {
+    "title": "Programación de Eliminación",
+    "cardTitle": "Próximamente",
+    "cardContent": "El calendario de programación de eliminación y las herramientas de gestión estarán aquí pronto."
+  },
+  "reportsPage": {
+    "title": "Generación de Reportes",
+    "cardTitle": "Próximamente",
+    "cardContent": "La generación de informes de cumplimiento y las plantillas estarán disponibles aquí pronto."
+  }
+}

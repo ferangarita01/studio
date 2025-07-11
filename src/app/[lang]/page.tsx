@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
-import { PlusCircle, Activity, ArrowUpRight, Calendar as CalendarIcon, DollarSign, Users } from "lucide-react";
+import { PlusCircle, Activity, Calendar as CalendarIcon } from "lucide-react";
 
 import {
   Card,
@@ -25,6 +25,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { AddWasteDialog } from "@/components/add-waste-dialog";
 import { upcomingDisposals, wasteData, wasteLog } from "@/lib/data";
 import type { WasteEntry } from "@/lib/types";
+import type { Dictionary } from "@/lib/get-dictionary";
 
 const chartConfig = {
   quantity: {
@@ -44,19 +45,23 @@ const chartConfig = {
   },
 };
 
-export default function DashboardPage() {
+export default function DashboardPage({
+  dictionary,
+}: {
+  dictionary: Dictionary["dashboard"];
+}) {
   const [isAddWasteDialogOpen, setAddWasteDialogOpen] = React.useState(false);
   
   return (
     <div className="flex min-h-screen w-full flex-col">
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <div className="flex items-center">
-          <h1 className="text-lg font-semibold md:text-2xl">Dashboard</h1>
+          <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
           <div className="ml-auto flex items-center gap-2">
             <Button size="sm" className="h-8 gap-1" onClick={() => setAddWasteDialogOpen(true)}>
               <PlusCircle className="h-3.5 w-3.5" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                Add Waste Entry
+                {dictionary.addWasteEntry}
               </span>
             </Button>
           </div>
@@ -65,50 +70,50 @@ export default function DashboardPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Total Waste This Month
+                {dictionary.cards.totalWaste.title}
               </CardTitle>
               <TrashIcon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">1,254 kg</div>
               <p className="text-xs text-muted-foreground">
-                +15.2% from last month
+                {dictionary.cards.totalWaste.change}
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Recycling Rate</CardTitle>
+              <CardTitle className="text-sm font-medium">{dictionary.cards.recyclingRate.title}</CardTitle>
               <RecycleIcon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">68%</div>
               <p className="text-xs text-muted-foreground">
-                +5% from last month
+                {dictionary.cards.recyclingRate.change}
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Upcoming Disposals</CardTitle>
+              <CardTitle className="text-sm font-medium">{dictionary.cards.upcomingDisposals.title}</CardTitle>
               <CalendarIcon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">3</div>
               <p className="text-xs text-muted-foreground">
-                Next one in 2 days
+                {dictionary.cards.upcomingDisposals.next}
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Compliance Status</CardTitle>
+              <CardTitle className="text-sm font-medium">{dictionary.cards.complianceStatus.title}</CardTitle>
               <Activity className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">On Track</div>
+              <div className="text-2xl font-bold text-primary">{dictionary.cards.complianceStatus.status}</div>
               <p className="text-xs text-muted-foreground">
-                All reports filed on time
+                {dictionary.cards.complianceStatus.detail}
               </p>
             </CardContent>
           </Card>
@@ -116,9 +121,9 @@ export default function DashboardPage() {
         <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
           <Card className="xl:col-span-2">
             <CardHeader>
-              <CardTitle>Waste Generation Overview</CardTitle>
+              <CardTitle>{dictionary.wasteOverview.title}</CardTitle>
               <CardDescription>
-                Monthly waste generation by type.
+                {dictionary.wasteOverview.description}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -143,9 +148,9 @@ export default function DashboardPage() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Upcoming Disposals</CardTitle>
+              <CardTitle>{dictionary.disposals.title}</CardTitle>
               <CardDescription>
-                Scheduled waste pickup and disposal events.
+                {dictionary.disposals.description}
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
@@ -154,12 +159,12 @@ export default function DashboardPage() {
                   <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
                   <div className="grid gap-1">
                     <p className="font-medium">
-                      {disposal.wasteTypes.join(', ')} Pickup
+                      {disposal.wasteTypes.join(', ')} {dictionary.disposals.pickup}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {disposal.date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                     </p>
-                    <Badge variant="secondary">{disposal.status}</Badge>
+                    <Badge variant="secondary">{dictionary.disposals.status[disposal.status as keyof typeof dictionary.disposals.status]}</Badge>
                   </div>
                 </div>
               ))}
@@ -168,18 +173,18 @@ export default function DashboardPage() {
         </div>
         <Card>
           <CardHeader>
-            <CardTitle>Recent Waste Entries</CardTitle>
+            <CardTitle>{dictionary.recentEntries.title}</CardTitle>
             <CardDescription>
-              A log of the most recently recorded waste entries.
+              {dictionary.recentEntries.description}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead className="text-right">Quantity (kg)</TableHead>
+                  <TableHead>{dictionary.recentEntries.table.date}</TableHead>
+                  <TableHead>{dictionary.recentEntries.table.type}</TableHead>
+                  <TableHead className="text-right">{dictionary.recentEntries.table.quantity}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -197,7 +202,11 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </main>
-      <AddWasteDialog open={isAddWasteDialogOpen} onOpenChange={setAddWasteDialogOpen} />
+      <AddWasteDialog 
+        open={isAddWasteDialogOpen} 
+        onOpenChange={setAddWasteDialogOpen}
+        dictionary={dictionary.addWasteDialog}
+      />
     </div>
   );
 }

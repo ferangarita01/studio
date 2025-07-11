@@ -19,22 +19,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import type { WasteType } from "@/lib/types";
+import type { Dictionary } from "@/lib/get-dictionary";
 
 interface AddWasteDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    dictionary: Dictionary["dashboard"]["addWasteDialog"];
 }
 
-export function AddWasteDialog({ open, onOpenChange }: AddWasteDialogProps) {
+export function AddWasteDialog({ open, onOpenChange, dictionary }: AddWasteDialogProps) {
   const { toast } = useToast();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Here you would typically handle form submission, e.g., send data to an API
     toast({
-        title: "Entry Added",
-        description: "Your waste entry has been successfully recorded.",
+        title: dictionary.toast.title,
+        description: dictionary.toast.description,
     });
     onOpenChange(false);
   };
@@ -44,43 +44,43 @@ export function AddWasteDialog({ open, onOpenChange }: AddWasteDialogProps) {
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
             <DialogHeader>
-            <DialogTitle>Add New Waste Entry</DialogTitle>
+            <DialogTitle>{dictionary.title}</DialogTitle>
             <DialogDescription>
-                Record a new waste entry. Click save when you're done.
+                {dictionary.description}
             </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="waste-type" className="text-right">
-                Waste Type
+                {dictionary.wasteType}
                 </Label>
                 <Select required>
                     <SelectTrigger id="waste-type" className="col-span-3">
-                        <SelectValue placeholder="Select a type" />
+                        <SelectValue placeholder={dictionary.selectType} />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="Recycling">Recycling</SelectItem>
-                        <SelectItem value="Organic">Organic</SelectItem>
-                        <SelectItem value="General">General</SelectItem>
-                        <SelectItem value="Hazardous">Hazardous</SelectItem>
+                        <SelectItem value="Recycling">{dictionary.types.Recycling}</SelectItem>
+                        <SelectItem value="Organic">{dictionary.types.Organic}</SelectItem>
+                        <SelectItem value="General">{dictionary.types.General}</SelectItem>
+                        <SelectItem value="Hazardous">{dictionary.types.Hazardous}</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="quantity" className="text-right">
-                Quantity (kg)
+                {dictionary.quantity}
                 </Label>
                 <Input
                 id="quantity"
                 type="number"
-                placeholder="e.g., 25.5"
+                placeholder={dictionary.quantityPlaceholder}
                 className="col-span-3"
                 required
                 />
             </div>
             </div>
             <DialogFooter>
-            <Button type="submit">Save Entry</Button>
+            <Button type="submit">{dictionary.save}</Button>
             </DialogFooter>
         </form>
       </DialogContent>
