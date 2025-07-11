@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -94,7 +95,6 @@ export function LogClient({ dictionary, allWasteLog }: LogClientProps) {
               <TableBody>
                 {wasteLog.length > 0 ? (
                   wasteLog.map((entry) => {
-                    const totalValue = (entry.price || 0) * entry.quantity - (entry.serviceCost || 0);
                     return (
                       <TableRow key={entry.id}>
                         <TableCell>
@@ -113,11 +113,14 @@ export function LogClient({ dictionary, allWasteLog }: LogClientProps) {
                           {isClient ? formatCurrency(entry.serviceCost) : <Skeleton className="h-4 w-16 float-right" />}
                         </TableCell>
                         <TableCell className="text-right">
-                           {isClient ? (
-                            <span className={totalValue >= 0 ? 'text-primary' : 'text-destructive'}>
-                              {formatCurrency(totalValue)}
-                            </span>
-                           ) : <Skeleton className="h-4 w-20 float-right" />}
+                           {isClient ? (() => {
+                              const totalValue = (entry.price || 0) * entry.quantity - (entry.serviceCost || 0);
+                              return (
+                                <span className={totalValue >= 0 ? 'text-primary' : 'text-destructive'}>
+                                  {formatCurrency(totalValue)}
+                                </span>
+                              )
+                           })() : <Skeleton className="h-4 w-20 float-right" />}
                         </TableCell>
                       </TableRow>
                     );

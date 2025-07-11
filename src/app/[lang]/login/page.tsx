@@ -53,10 +53,10 @@ export default function LoginPage({
                 <Label htmlFor="email">{dictionary.email}</Label>
                 <Input
                   id="email"
-                  type="email"
-                  placeholder="m@example.com"
+                  type="text"
+                  placeholder="Admin"
                   required
-                  defaultValue="demo@example.com"
+                  defaultValue="Admin"
                 />
               </div>
               <div className="grid gap-2">
@@ -69,7 +69,7 @@ export default function LoginPage({
                     {dictionary.forgotPassword}
                   </Link>
                 </div>
-                <Input id="password" type="password" required defaultValue="password" />
+                <Input id="password" type="password" required defaultValue="Admin1" />
               </div>
               <Button type="submit" className="w-full">
                 {dictionary.loginButton}
