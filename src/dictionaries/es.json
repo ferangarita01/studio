@@ -34,7 +34,6 @@
   },
   "dashboard": {
     "title": "Tablero",
-    "addWasteEntry": "Añadir Entrada de Residuos",
     "cards": {
       "totalWaste": {
         "title": "Residuos Totales Este Mes",
@@ -77,25 +76,6 @@
         "type": "Tipo",
         "quantity": "Cantidad (kg)"
       }
-    },
-    "addWasteDialog": {
-      "title": "Añadir Nueva Entrada de Residuos",
-      "description": "Registre una nueva entrada de residuos. Haga clic en guardar cuando haya terminado.",
-      "wasteType": "Tipo de Residuo",
-      "selectType": "Seleccione un tipo",
-      "types": {
-        "Recycling": "Reciclaje",
-        "Organic": "Orgánico",
-        "General": "General",
-        "Hazardous": "Peligroso"
-      },
-      "quantity": "Cantidad (kg)",
-      "quantityPlaceholder": "ej., 25.5",
-      "save": "Guardar Entrada",
-      "toast": {
-        "title": "Entrada Añadida",
-        "description": "Su entrada de residuos ha sido registrada exitosamente."
-      }
     }
   },
   "analyzerPage": {
@@ -126,6 +106,7 @@
   },
   "logPage": {
     "title": "Registro de Residuos",
+    "addWasteEntry": "Añadir Entrada de Residuos",
     "cardTitle": "Todas las Entradas de Residuos",
     "cardDescription": "Un registro detallado de todas las entradas de residuos para la empresa seleccionada.",
     "noEntries": "No se encontraron entradas de residuos para esta empresa.",
@@ -142,6 +123,25 @@
       "Organic": "Orgánico",
       "General": "General",
       "Hazardous": "Peligroso"
+    },
+     "addWasteDialog": {
+      "title": "Añadir Nueva Entrada de Residuos",
+      "description": "Registre una nueva entrada de residuos. Haga clic en guardar cuando haya terminado.",
+      "wasteType": "Tipo de Residuo",
+      "selectType": "Seleccione un tipo",
+      "types": {
+        "Recycling": "Reciclaje",
+        "Organic": "Orgánico",
+        "General": "General",
+        "Hazardous": "Peligroso"
+      },
+      "quantity": "Cantidad (kg)",
+      "quantityPlaceholder": "ej., 25.5",
+      "save": "Guardar Entrada",
+      "toast": {
+        "title": "Entrada Añadida",
+        "description": "Su entrada de residuos ha sido registrada exitosamente."
+      }
     }
   },
   "schedulePage": {

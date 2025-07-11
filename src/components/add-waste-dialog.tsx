@@ -24,7 +24,7 @@ import type { Dictionary } from "@/lib/get-dictionary";
 interface AddWasteDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    dictionary: Dictionary["dashboard"]["addWasteDialog"];
+    dictionary: Dictionary["logPage"]["addWasteDialog"];
 }
 
 export function AddWasteDialog({ open, onOpenChange, dictionary }: AddWasteDialogProps) {

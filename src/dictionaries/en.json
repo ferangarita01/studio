@@ -34,7 +34,6 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "addWasteEntry": "Add Waste Entry",
     "cards": {
       "totalWaste": {
         "title": "Total Waste This Month",
@@ -77,25 +76,6 @@
         "type": "Type",
         "quantity": "Quantity (kg)"
       }
-    },
-    "addWasteDialog": {
-      "title": "Add New Waste Entry",
-      "description": "Record a new waste entry. Click save when you're done.",
-      "wasteType": "Waste Type",
-      "selectType": "Select a type",
-      "types": {
-        "Recycling": "Recycling",
-        "Organic": "Organic",
-        "General": "General",
-        "Hazardous": "Hazardous"
-      },
-      "quantity": "Quantity (kg)",
-      "quantityPlaceholder": "e.g., 25.5",
-      "save": "Save Entry",
-      "toast": {
-        "title": "Entry Added",
-        "description": "Your waste entry has been successfully recorded."
-      }
     }
   },
   "analyzerPage": {
@@ -126,6 +106,7 @@
   },
   "logPage": {
     "title": "Waste Log",
+    "addWasteEntry": "Add Waste Entry",
     "cardTitle": "All Waste Entries",
     "cardDescription": "A detailed log of all recorded waste entries for the selected company.",
     "noEntries": "No waste entries found for this company.",
@@ -142,6 +123,25 @@
       "Organic": "Organic",
       "General": "General",
       "Hazardous": "Hazardous"
+    },
+    "addWasteDialog": {
+      "title": "Add New Waste Entry",
+      "description": "Record a new waste entry. Click save when you're done.",
+      "wasteType": "Waste Type",
+      "selectType": "Select a type",
+      "types": {
+        "Recycling": "Recycling",
+        "Organic": "Organic",
+        "General": "General",
+        "Hazardous": "Hazardous"
+      },
+      "quantity": "Quantity (kg)",
+      "quantityPlaceholder": "e.g., 25.5",
+      "save": "Save Entry",
+      "toast": {
+        "title": "Entry Added",
+        "description": "Your waste entry has been successfully recorded."
+      }
     }
   },
   "schedulePage": {

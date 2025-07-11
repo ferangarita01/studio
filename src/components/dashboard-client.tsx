@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { PlusCircle, Activity, CalendarIcon, Trash2, Recycle } from "lucide-react";
+import { Activity, CalendarIcon, Trash2, Recycle } from "lucide-react";
 
 import {
   Card,
@@ -11,7 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -22,8 +21,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { AddWasteDialog } from "@/components/add-waste-dialog";
-import type { WasteEntry, DisposalEvent } from "@/lib/types";
+import type { WasteEntry } from "@/lib/types";
 import type { Dictionary } from "@/lib/get-dictionary";
 import { disposalEvents } from "@/lib/data";
 import { useCompany } from "./layout/app-shell";
@@ -57,7 +55,6 @@ export function DashboardClient({
   wasteDataAll,
   wasteLogAll,
 }: DashboardClientProps) {
-  const [isAddWasteDialogOpen, setAddWasteDialogOpen] = React.useState(false);
   const { selectedCompany } = useCompany();
 
   const wasteData = wasteDataAll[selectedCompany.id] || [];
@@ -70,14 +67,6 @@ export function DashboardClient({
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <div className="flex items-center">
           <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
-          <div className="ml-auto flex items-center gap-2">
-            <Button size="sm" className="h-8 gap-1" onClick={() => setAddWasteDialogOpen(true)}>
-              <PlusCircle className="h-3.5 w-3.5" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {dictionary.addWasteEntry}
-              </span>
-            </Button>
-          </div>
         </div>
         <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
           <Card>
@@ -215,11 +204,6 @@ export function DashboardClient({
           </CardContent>
         </Card>
       </main>
-      <AddWasteDialog 
-        open={isAddWasteDialogOpen} 
-        onOpenChange={setAddWasteDialogOpen}
-        dictionary={dictionary.addWasteDialog}
-      />
     </div>
   );
 }
