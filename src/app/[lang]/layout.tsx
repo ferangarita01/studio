@@ -11,18 +11,23 @@ import type { Locale } from '@/i18n-config';
 import { DictionariesProvider } from '@/context/dictionary-context';
 
 export const metadata: Metadata = {
-  title: 'EcoCircle',
+  title: 'WasteWise',
   description: "A business waste management platform to track and manage waste generation and disposal for companies.",
 };
 
+// This component uses client-side hooks, so it must be part of the ClientLayout scope.
 function AuthGuard({ children, lang }: { children: React.ReactNode, lang: Locale }) {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   React.useEffect(() => {
-    if (!isLoading && !isAuthenticated && pathname !== `/${lang}/login`) {
-      router.push(`/${lang}/login`);
+    // Ensure this logic only runs after initial loading.
+    if (!isLoading) {
+      // If user is not authenticated and not on the login page, redirect to login.
+      if (!isAuthenticated && !pathname.endsWith('/login')) {
+        router.push(`/${lang}/login`);
+      }
     }
   }, [isLoading, isAuthenticated, router, lang, pathname]);
 
@@ -33,16 +38,18 @@ function AuthGuard({ children, lang }: { children: React.ReactNode, lang: Locale
       </div>
     );
   }
-
+  
   // The login page does not need the AppShell.
+  // It is rendered directly if the user is not authenticated.
   if (!isAuthenticated) {
     return <>{children}</>;
   }
   
-  // Authenticated users get the AppShell
+  // Authenticated users get the AppShell.
   return <AppShell>{children}</AppShell>;
 }
 
+// All client-side logic is now encapsulated in this component.
 function ClientLayout({ children, dictionary, lang }: { children: React.ReactNode, dictionary: any, lang: Locale }) {
     'use client';
     
@@ -65,6 +72,7 @@ function ClientLayout({ children, dictionary, lang }: { children: React.ReactNod
     )
 }
 
+// This remains a Server Component to fetch data and render the main HTML structure.
 export default async function RootLayout({
   children,
   params,
