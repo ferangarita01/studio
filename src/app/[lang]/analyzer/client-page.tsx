@@ -16,8 +16,6 @@ import { analyzeWasteData } from "@/ai/flows/analyze-waste-data";
 import type { AnalyzeWasteDataOutput } from "@/ai/flows/analyze-waste-data";
 import { useToast } from "@/hooks/use-toast";
 import type { Dictionary } from "@/lib/get-dictionary";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
 
 const placeholderData = `Waste Type,Quantity (kg)
 Recycling,186
@@ -57,25 +55,26 @@ export function AIAnalyzerClient({
     });
   };
 
-  const handleDownloadPdf = () => {
+  const handleDownloadPdf = async () => {
     const input = reportRef.current;
-    if (input) {
-      html2canvas(input, { scale: 2 }).then((canvas) => {
-        const imgData = canvas.toDataURL("image/png");
-        const pdf = new jsPDF("p", "mm", "a4");
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-        const canvasWidth = canvas.width;
-        const canvasHeight = canvas.height;
-        const ratio = canvasWidth / canvasHeight;
-        const width = pdfWidth - 20;
-        const height = width / ratio;
+    if (!input) return;
 
-        let position = 10;
-        pdf.addImage(imgData, "PNG", 10, position, width, height);
-        pdf.save("WasteWise_Analysis_Report.pdf");
-      });
-    }
+    // Dynamically import the libraries only when needed
+    const html2canvas = (await import("html2canvas")).default;
+    const jsPDF = (await import("jspdf")).default;
+
+    html2canvas(input, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const canvasWidth = canvas.width;
+      const canvasHeight = canvas.height;
+      const ratio = canvasWidth / canvasHeight;
+      const height = pdfWidth / ratio;
+      
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, height);
+      pdf.save("WasteWise_Analysis_Report.pdf");
+    });
   };
 
   return (

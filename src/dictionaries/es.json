@@ -116,9 +116,19 @@
     "cardContent": "Una tabla detallada de todas las entradas de residuos estará disponible aquí pronto."
   },
   "schedulePage": {
-    "title": "Programación de Eliminación",
-    "cardTitle": "Próximamente",
-    "cardContent": "El calendario de programación de eliminación y las herramientas de gestión estarán aquí pronto."
+    "title": "Calendario de Eliminación",
+    "details": {
+      "title": "Detalles de la Recolección",
+      "description": "Mostrando todos los eventos de recolección para la fecha seleccionada.",
+      "instructions": "Instrucciones",
+      "attachments": "Archivos Adjuntos",
+      "status": {
+        "Scheduled": "Programado",
+        "Ongoing": "En Curso",
+        "Completed": "Completado",
+        "Cancelled": "Cancelado"
+      }
+    }
   },
   "reportsPage": {
     "title": "Reportes Financieros",

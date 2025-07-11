@@ -116,9 +116,19 @@
     "cardContent": "A detailed table of all waste entries will be available here soon."
   },
   "schedulePage": {
-    "title": "Disposal Scheduling",
-    "cardTitle": "Coming Soon",
-    "cardContent": "The disposal scheduling calendar and management tools will be here soon."
+    "title": "Disposal Schedule",
+    "details": {
+      "title": "Collection Details",
+      "description": "Showing all collection events for the selected date.",
+      "instructions": "Instructions",
+      "attachments": "Attachments",
+      "status": {
+        "Scheduled": "Scheduled",
+        "Ongoing": "Ongoing",
+        "Completed": "Completed",
+        "Cancelled": "Cancelled"
+      }
+    }
   },
   "reportsPage": {
     "title": "Financial Reports",

@@ -1,7 +1,7 @@
 import { getDictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import { DashboardClient } from "@/components/dashboard-client";
-import { wasteData, upcomingDisposals, wasteLog } from "@/lib/data";
+import { wasteData, wasteLog } from "@/lib/data";
 
 export default async function DashboardPage({
   params,
@@ -14,7 +14,6 @@ export default async function DashboardPage({
     <DashboardClient
       dictionary={dictionary}
       wasteData={wasteData}
-      upcomingDisposals={upcomingDisposals}
       wasteLog={wasteLog}
     />
   );

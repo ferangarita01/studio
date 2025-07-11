@@ -9,24 +9,54 @@ export const wasteLog: WasteEntry[] = [
   { id: "6", date: new Date("2024-05-16"), type: "Organic", quantity: 28.0 },
 ];
 
-export const upcomingDisposals: DisposalEvent[] = [
+export const disposalEvents: DisposalEvent[] = [
   {
-    id: "disp1",
+    id: "disp-prev-1",
+    date: new Date(new Date().setDate(new Date().getDate() - 15)),
+    wasteTypes: ["General", "Recycling"],
+    status: "Completed",
+    instructions: "Standard collection. No issues reported.",
+    attachments: [
+      { id: 'att1', name: 'Delivery_Act_01.pdf', type: 'pdf', url: '#' },
+      { id: 'att2', name: 'Collection_Photo_1.jpg', type: 'image', url: 'https://placehold.co/600x400.png' },
+    ],
+  },
+  {
+    id: "disp-ongoing-1",
+    date: new Date(),
+    wasteTypes: ["Organic"],
+    status: "Ongoing",
+    instructions: "Driver is on the way. Expected arrival in 1 hour.",
+  },
+  {
+    id: "disp-upcoming-1",
     date: new Date(new Date().setDate(new Date().getDate() + 2)),
     wasteTypes: ["General", "Recycling"],
     status: "Scheduled",
+    instructions: "Please ensure the gate is unlocked by 8 AM. Call John on arrival.",
   },
   {
-    id: "disp2",
+    id: "disp-upcoming-2",
     date: new Date(new Date().setDate(new Date().getDate() + 7)),
     wasteTypes: ["Organic"],
     status: "Scheduled",
   },
   {
-    id: "disp3",
+    id: "disp-upcoming-3",
     date: new Date(new Date().setDate(new Date().getDate() + 14)),
     wasteTypes: ["Hazardous"],
     status: "Scheduled",
+    instructions: "Special handling required. Please use provided containers.",
+    attachments: [
+      { id: 'att3', name: 'Safety_Protocol.pdf', type: 'pdf', url: '#' },
+    ],
+  },
+  {
+    id: "disp-cancelled-1",
+    date: new Date(new Date().setDate(new Date().getDate() - 5)),
+    wasteTypes: ["General"],
+    status: "Cancelled",
+    instructions: "Cancelled due to holiday.",
   },
 ];
 

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { PlusCircle, Activity, Calendar as CalendarIcon, Trash2, Recycle } from "lucide-react";
+import { PlusCircle, Activity, CalendarIcon, Trash2, Recycle } from "lucide-react";
 
 import {
   Card,
@@ -25,6 +25,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { AddWasteDialog } from "@/components/add-waste-dialog";
 import type { WasteEntry, DisposalEvent } from "@/lib/types";
 import type { Dictionary } from "@/lib/get-dictionary";
+import { disposalEvents } from "@/lib/data";
 
 const chartConfig = {
   quantity: {
@@ -47,17 +48,17 @@ const chartConfig = {
 interface DashboardClientProps {
   dictionary: Dictionary["dashboard"];
   wasteData: any[];
-  upcomingDisposals: DisposalEvent[];
   wasteLog: WasteEntry[];
 }
 
 export function DashboardClient({
   dictionary,
   wasteData,
-  upcomingDisposals,
   wasteLog,
 }: DashboardClientProps) {
   const [isAddWasteDialogOpen, setAddWasteDialogOpen] = React.useState(false);
+  const upcomingDisposals = disposalEvents.filter(d => d.status === 'Scheduled' || d.status === 'Ongoing');
+
 
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -106,7 +107,7 @@ export function DashboardClient({
               <CalendarIcon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">3</div>
+              <div className="text-2xl font-bold">{upcomingDisposals.length}</div>
               <p className="text-xs text-muted-foreground">
                 {dictionary.cards.upcomingDisposals.next}
               </p>

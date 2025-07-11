@@ -8,11 +8,20 @@ export type WasteEntry = {
   notes?: string;
 };
 
+export type Attachment = {
+  id: string;
+  name: string;
+  type: "image" | "pdf" | "audio";
+  url: string;
+};
+
 export type DisposalEvent = {
   id: string;
   date: Date;
   wasteTypes: WasteType[];
-  status: "Scheduled" | "Completed" | "Cancelled";
+  status: "Scheduled" | "Completed" | "Cancelled" | "Ongoing";
+  instructions?: string;
+  attachments?: Attachment[];
 };
 
 export type TransactionType = "payment" | "income";
