@@ -93,10 +93,10 @@ function LanguageToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem>
+        <DropdownMenuItem asChild>
             <Link href={pathWithoutLocale} locale="en">English</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem asChild>
             <Link href={pathWithoutLocale} locale="es">Español</Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -124,9 +124,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <SidebarMenu>
             {navItems.map((item) => (
                 <SidebarMenuItem key={item.href}>
-                    <Link href={item.href} legacyBehavior passHref>
+                    <Link href={item.href}>
                       <SidebarMenuButton
-                        as="a"
                         isActive={pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))}
                         tooltip={item.label}
                       >
