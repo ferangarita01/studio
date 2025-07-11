@@ -20,7 +20,16 @@
     },
     "companySwitcher": {
       "label": "Cambiar Empresa",
-      "searchPlaceholder": "Buscar empresa..."
+      "searchPlaceholder": "Buscar empresa...",
+      "createCompany": "Crear Nueva Empresa"
+    },
+    "createCompanyDialog": {
+      "title": "Crear Nueva Empresa",
+      "description": "Ingrese el nombre para el nuevo perfil de empresa.",
+      "nameLabel": "Nombre de la Empresa",
+      "namePlaceholder": "ej., Exportaciones Globales S.A.",
+      "cancel": "Cancelar",
+      "create": "Crear Empresa"
     }
   },
   "dashboard": {

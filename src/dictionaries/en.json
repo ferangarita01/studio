@@ -20,7 +20,16 @@
     },
     "companySwitcher": {
       "label": "Switch Company",
-      "searchPlaceholder": "Search company..."
+      "searchPlaceholder": "Search company...",
+      "createCompany": "Create New Company"
+    },
+    "createCompanyDialog": {
+      "title": "Create New Company",
+      "description": "Enter the name for the new company profile.",
+      "nameLabel": "Company Name",
+      "namePlaceholder": "e.g., Global Exports Ltd.",
+      "cancel": "Cancel",
+      "create": "Create Company"
     }
   },
   "dashboard": {
