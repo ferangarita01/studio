@@ -39,11 +39,6 @@ export function middleware(request: NextRequest) {
   if (pathnameIsMissingLocale) {
     const locale = getLocale(request);
     
-    // Redirect to login page if the path is the root
-    if (pathname === '/') {
-        return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
-    }
-    
     return NextResponse.redirect(
       new URL(`/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`, request.url)
     );
