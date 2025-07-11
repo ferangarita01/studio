@@ -94,6 +94,7 @@
       "button": "Analyze Data"
     },
     "loading": "Analyzing your data...",
+    "downloadPdf": "Download PDF",
     "carbonFootprintCard": {
       "title": "Estimated Carbon Footprint Reduction",
       "description": "Based on the total amount of recycled materials provided."

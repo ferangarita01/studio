@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
-import { Loader2, Sparkles, Leaf } from "lucide-react";
+import React, { useState, useTransition, useRef } from "react";
+import { Loader2, Sparkles, Leaf, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,6 +16,8 @@ import { analyzeWasteData } from "@/ai/flows/analyze-waste-data";
 import type { AnalyzeWasteDataOutput } from "@/ai/flows/analyze-waste-data";
 import { useToast } from "@/hooks/use-toast";
 import type { Dictionary } from "@/lib/get-dictionary";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 const placeholderData = `Waste Type,Quantity (kg)
 Recycling,186
@@ -37,6 +39,7 @@ export function AIAnalyzerClient({
   const [analysis, setAnalysis] = useState<AnalyzeWasteDataOutput | null>(null);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const reportRef = useRef<HTMLDivElement>(null);
 
   const handleAnalyze = () => {
     startTransition(async () => {
@@ -52,6 +55,27 @@ export function AIAnalyzerClient({
         });
       }
     });
+  };
+
+  const handleDownloadPdf = () => {
+    const input = reportRef.current;
+    if (input) {
+      html2canvas(input, { scale: 2 }).then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF("p", "mm", "a4");
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+        const ratio = canvasWidth / canvasHeight;
+        const width = pdfWidth - 20;
+        const height = width / ratio;
+
+        let position = 10;
+        pdf.addImage(imgData, "PNG", 10, position, width, height);
+        pdf.save("WasteWise_Analysis_Report.pdf");
+      });
+    }
   };
 
   return (
@@ -99,37 +123,45 @@ export function AIAnalyzerClient({
         )}
 
         {analysis && (
-          <div className="mt-8 grid gap-6">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {dictionary.carbonFootprintCard.title}
-                </CardTitle>
-                <Leaf className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{analysis.carbonFootprint.toFixed(2)} kg CO₂e</div>
-                <p className="text-xs text-muted-foreground">
-                  {dictionary.carbonFootprintCard.description}
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>{dictionary.summaryCard.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="whitespace-pre-wrap">{analysis.summary}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>{dictionary.recommendationsCard.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="whitespace-pre-wrap">{analysis.recommendations}</p>
-              </CardContent>
-            </Card>
+          <div className="mt-8">
+            <div className="flex justify-end mb-4">
+              <Button onClick={handleDownloadPdf} variant="outline">
+                <Download className="mr-2 h-4 w-4" />
+                {dictionary.downloadPdf}
+              </Button>
+            </div>
+            <div className="grid gap-6" ref={reportRef}>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    {dictionary.carbonFootprintCard.title}
+                  </CardTitle>
+                  <Leaf className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{analysis.carbonFootprint.toFixed(2)} kg CO₂e</div>
+                  <p className="text-xs text-muted-foreground">
+                    {dictionary.carbonFootprintCard.description}
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>{dictionary.summaryCard.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="whitespace-pre-wrap">{analysis.summary}</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>{dictionary.recommendationsCard.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="whitespace-pre-wrap">{analysis.recommendations}</p>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         )}
       </div>
