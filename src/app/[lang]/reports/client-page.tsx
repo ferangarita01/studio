@@ -188,31 +188,29 @@ export function ReportsClient({
   const weeklyData = weeklyDataAll[selectedCompany.id];
   const monthlyData = monthlyDataAll[selectedCompany.id];
 
-  if (!weeklyData || !monthlyData) {
-    return (
-      <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 items-center justify-center">
-        <p>No report data available for this company.</p>
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
       <div className="flex items-center">
         <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
       </div>
-      <Tabs defaultValue="weekly" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="weekly">{dictionary.tabs.weekly}</TabsTrigger>
-          <TabsTrigger value="monthly">{dictionary.tabs.monthly}</TabsTrigger>
-        </TabsList>
-        <TabsContent value="weekly" className="space-y-4">
-          <ReportView dictionary={dictionary.reportView} data={weeklyData} />
-        </TabsContent>
-        <TabsContent value="monthly" className="space-y-4">
-          <ReportView dictionary={dictionary.reportView} data={monthlyData} />
-        </TabsContent>
-      </Tabs>
+      {(!weeklyData || !monthlyData) ? (
+        <div className="flex flex-1 flex-col items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
+          <p className="text-center text-muted-foreground">No report data available for this company.</p>
+        </div>
+      ) : (
+        <Tabs defaultValue="weekly" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="weekly">{dictionary.tabs.weekly}</TabsTrigger>
+            <TabsTrigger value="monthly">{dictionary.tabs.monthly}</TabsTrigger>
+          </TabsList>
+          <TabsContent value="weekly" className="space-y-4">
+            <ReportView dictionary={dictionary.reportView} data={weeklyData} />
+          </TabsContent>
+          <TabsContent value="monthly" className="space-y-4">
+            <ReportView dictionary={dictionary.reportView} data={monthlyData} />
+          </TabsContent>
+        </Tabs>
+      )}
     </div>
   );
 }

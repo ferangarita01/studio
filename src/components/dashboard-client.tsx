@@ -25,6 +25,7 @@ import type { WasteEntry } from "@/lib/types";
 import type { Dictionary } from "@/lib/get-dictionary";
 import { disposalEvents } from "@/lib/data";
 import { useCompany } from "./layout/app-shell";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const chartConfig = {
   quantity: {
@@ -56,11 +57,30 @@ export function DashboardClient({
   wasteLogAll,
 }: DashboardClientProps) {
   const { selectedCompany } = useCompany();
+  const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const wasteData = wasteDataAll[selectedCompany.id] || [];
   const wasteLog = wasteLogAll.filter(entry => entry.companyId === selectedCompany.id);
   const upcomingDisposals = disposalEvents.filter(d => (d.status === 'Scheduled' || d.status === 'Ongoing') && d.companyId === selectedCompany.id);
 
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString(undefined, {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  }
+  
+  const formatShortDate = (date: Date) => {
+    return new Date(date).toLocaleDateString(undefined, {
+      month: 'long',
+      day: 'numeric'
+    });
+  }
 
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -165,7 +185,7 @@ export function DashboardClient({
                         {disposal.wasteTypes.join(', ')} {dictionary.disposals.pickup}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {new Date(disposal.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
+                        {isClient ? formatDate(disposal.date) : <Skeleton className="h-4 w-28" />}
                       </p>
                       <Badge variant="secondary">{dictionary.disposals.status[disposal.status as keyof typeof dictionary.disposals.status]}</Badge>
                     </div>
@@ -198,7 +218,7 @@ export function DashboardClient({
                   wasteLog.slice(0, 5).map((entry: WasteEntry) => (
                     <TableRow key={entry.id}>
                       <TableCell>
-                        {new Date(entry.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric' })}
+                        {isClient ? formatShortDate(entry.date) : <Skeleton className="h-4 w-20" />}
                       </TableCell>
                       <TableCell>{entry.type}</TableCell>
                       <TableCell className="text-right">{entry.quantity}</TableCell>
