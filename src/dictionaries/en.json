@@ -159,6 +159,8 @@
   },
   "schedulePage": {
     "title": "Disposal Schedule",
+    "description": "View and manage upcoming waste collections.",
+    "requestCollection": "Request Collection",
     "details": {
       "title": "Collection Details",
       "description": "Showing all collection events for the selected date.",
@@ -169,6 +171,52 @@
         "Ongoing": "Ongoing",
         "Completed": "Completed",
         "Cancelled": "Cancelled"
+      }
+    },
+    "requestCollectionDialog": {
+      "title": "Request a New Collection",
+      "description": "Fill out the form to schedule a new waste pickup.",
+      "wasteType": {
+        "label": "Waste Type",
+        "placeholder": "Select a waste type"
+      },
+      "date": {
+        "label": "Pickup Date",
+        "placeholder": "Pick a date"
+      },
+      "time": {
+        "label": "Pickup Time"
+      },
+      "instructions": {
+        "label": "Special Instructions",
+        "placeholder": "e.g., Please use the back entrance."
+      },
+      "recurrent": {
+        "label": "Recurrent Collection",
+        "description": "Request this collection to occur weekly."
+      },
+      "types": {
+        "General": "General",
+        "Recycling": "Recycling",
+        "Organic": "Organic",
+        "Hazardous": "Hazardous"
+      },
+      "cancel": "Cancel",
+      "submit": "Submit Request",
+      "toast": {
+        "title": "Collection Requested",
+        "description": "Your request has been submitted successfully."
+      },
+      "validation": {
+        "wasteType": {
+          "required": "Please select a waste type."
+        },
+        "date": {
+          "required": "A pickup date is required."
+        },
+        "time": {
+          "invalid": "Please enter a valid time (HH:MM)."
+        }
       }
     }
   },

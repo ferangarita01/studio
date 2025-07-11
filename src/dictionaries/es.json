@@ -159,6 +159,8 @@
   },
   "schedulePage": {
     "title": "Calendario de Eliminación",
+    "description": "Vea y gestione las próximas recolecciones de residuos.",
+    "requestCollection": "Solicitar Recolección",
     "details": {
       "title": "Detalles de la Recolección",
       "description": "Mostrando todos los eventos de recolección para la fecha seleccionada.",
@@ -169,6 +171,52 @@
         "Ongoing": "En Curso",
         "Completed": "Completado",
         "Cancelled": "Cancelado"
+      }
+    },
+    "requestCollectionDialog": {
+      "title": "Solicitar Nueva Recolección",
+      "description": "Complete el formulario para programar una nueva recogida de residuos.",
+      "wasteType": {
+        "label": "Tipo de Residuo",
+        "placeholder": "Seleccione un tipo de residuo"
+      },
+      "date": {
+        "label": "Fecha de Recogida",
+        "placeholder": "Elija una fecha"
+      },
+      "time": {
+        "label": "Hora de Recogida"
+      },
+      "instructions": {
+        "label": "Instrucciones Especiales",
+        "placeholder": "ej., Por favor, usar la entrada trasera."
+      },
+      "recurrent": {
+        "label": "Recolección Recurrente",
+        "description": "Solicitar que esta recolección ocurra semanalmente."
+      },
+      "types": {
+        "General": "General",
+        "Recycling": "Reciclaje",
+        "Organic": "Orgánico",
+        "Hazardous": "Peligroso"
+      },
+      "cancel": "Cancelar",
+      "submit": "Enviar Solicitud",
+      "toast": {
+        "title": "Recolección Solicitada",
+        "description": "Su solicitud ha sido enviada con éxito."
+      },
+      "validation": {
+        "wasteType": {
+          "required": "Por favor, seleccione un tipo de residuo."
+        },
+        "date": {
+          "required": "Se requiere una fecha de recogida."
+        },
+        "time": {
+          "invalid": "Por favor, ingrese una hora válida (HH:MM)."
+        }
       }
     }
   },
