@@ -94,6 +94,10 @@
       "button": "Analizar Datos"
     },
     "loading": "Analizando sus datos...",
+    "carbonFootprintCard": {
+      "title": "Reducción Estimada de la Huella de Carbono",
+      "description": "Basado en la cantidad total de materiales reciclados proporcionados."
+    },
     "summaryCard": {
       "title": "Resumen del Análisis"
     },

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -100,6 +100,20 @@ export function AIAnalyzerClient({
 
         {analysis && (
           <div className="mt-8 grid gap-6">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {dictionary.carbonFootprintCard.title}
+                </CardTitle>
+                <Leaf className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{analysis.carbonFootprint.toFixed(2)} kg CO₂e</div>
+                <p className="text-xs text-muted-foreground">
+                  {dictionary.carbonFootprintCard.description}
+                </p>
+              </CardContent>
+            </Card>
             <Card>
               <CardHeader>
                 <CardTitle>{dictionary.summaryCard.title}</CardTitle>

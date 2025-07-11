@@ -41,6 +41,7 @@ const AnalyzeWasteDataOutputSchema = z.object({
     .describe(
       'Specific recommendations for waste reduction, including potential areas of improvement.'
     ),
+  carbonFootprint: z.number().describe('Estimated carbon footprint reduction in kg of CO2 equivalent based on the amount of recycling. For every 1kg of recycling, assume a reduction of 1kg of CO2.'),
 });
 export type AnalyzeWasteDataOutput = z.infer<typeof AnalyzeWasteDataOutputSchema>;
 
@@ -58,7 +59,9 @@ If you need more context, you can use the getWasteLog tool to get the full histo
 
 Waste Data: {{{wasteData}}}
 
-Respond with a summary of the waste data and specific recommendations for waste reduction.
+Also, calculate the carbon footprint reduction. For every 1kg of "Recycling" waste, assume a reduction of 1kg of CO2 equivalent. Sum up all recycling quantities to get the total and set the carbonFootprint field.
+
+Respond with a summary of the waste data, specific recommendations for waste reduction, and the calculated carbon footprint.
 `,
 });
 
