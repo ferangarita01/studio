@@ -126,8 +126,23 @@
   },
   "logPage": {
     "title": "Registro de Residuos",
-    "cardTitle": "Próximamente",
-    "cardContent": "Una tabla detallada de todas las entradas de residuos estará disponible aquí pronto."
+    "cardTitle": "Todas las Entradas de Residuos",
+    "cardDescription": "Un registro detallado de todas las entradas de residuos para la empresa seleccionada.",
+    "noEntries": "No se encontraron entradas de residuos para esta empresa.",
+    "table": {
+      "date": "Fecha",
+      "type": "Tipo",
+      "quantity": "Cantidad",
+      "price": "Precio/kg",
+      "serviceCost": "Costo de Servicio",
+      "totalValue": "Valor Total"
+    },
+    "types": {
+      "Recycling": "Reciclaje",
+      "Organic": "Orgánico",
+      "General": "General",
+      "Hazardous": "Peligroso"
+    }
   },
   "schedulePage": {
     "title": "Calendario de Eliminación",

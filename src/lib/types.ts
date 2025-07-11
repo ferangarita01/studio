@@ -11,6 +11,8 @@ export type WasteEntry = {
   date: Date;
   type: WasteType;
   quantity: number; // in kg
+  price?: number; // price per kg, for recyclables
+  serviceCost?: number; // cost for disposal service
   notes?: string;
 };
 

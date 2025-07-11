@@ -6,14 +6,15 @@ export const companies: Company[] = [
 ];
 
 export const wasteLog: WasteEntry[] = [
-  { id: "1", companyId: "c1", date: new Date("2024-05-20"), type: "Recycling", quantity: 15.5 },
-  { id: "2", companyId: "c1", date: new Date("2024-05-20"), type: "Organic", quantity: 30.2 },
-  { id: "3", companyId: "c1", date: new Date("2024-05-19"), type: "General", quantity: 55.0 },
-  { id: "4", companyId: "c1", date: new Date("2024-05-18"), type: "Recycling", quantity: 22.1 },
-  { id: "5", companyId: "c1", date: new Date("2024-05-17"), type: "Hazardous", quantity: 2.5 },
-  { id: "6", companyId: "c1", date: new Date("2024-05-16"), type: "Organic", quantity: 28.0 },
-  { id: "7", companyId: "c2", date: new Date("2024-05-20"), type: "Recycling", quantity: 45.0 },
-  { id: "8", companyId: "c2", date: new Date("2024-05-19"), type: "General", quantity: 105.0 },
+  { id: "1", companyId: "c1", date: new Date("2024-05-20"), type: "Recycling", quantity: 15.5, price: 0.5, serviceCost: 5.0 },
+  { id: "2", companyId: "c1", date: new Date("2024-05-20"), type: "Organic", quantity: 30.2, serviceCost: 10.0 },
+  { id: "3", companyId: "c1", date: new Date("2024-05-19"), type: "General", quantity: 55.0, serviceCost: 25.0 },
+  { id: "4", companyId: "c1", date: new Date("2024-05-18"), type: "Recycling", quantity: 22.1, price: 0.55, serviceCost: 5.0 },
+  { id: "5", companyId: "c1", date: new Date("2024-05-17"), type: "Hazardous", quantity: 2.5, serviceCost: 50.0 },
+  { id: "6", companyId: "c1", date: new Date("2024-05-16"), type: "Organic", quantity: 28.0, serviceCost: 10.0 },
+  { id: "7", companyId: "c2", date: new Date("2024-05-20"), type: "Recycling", quantity: 45.0, price: 0.6, serviceCost: 15.0 },
+  { id: "8", companyId: "c2", date: new Date("2024-05-19"), type: "General", quantity: 105.0, serviceCost: 40.0 },
+  { id: "9", companyId: "c2", date: new Date("2024-05-18"), type: "Organic", quantity: 80.0, serviceCost: 30.0 },
 ];
 
 export const disposalEvents: DisposalEvent[] = [

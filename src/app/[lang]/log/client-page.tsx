@@ -1,0 +1,122 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { Dictionary } from "@/lib/get-dictionary";
+import type { WasteEntry } from "@/lib/types";
+import { useCompany } from "@/components/layout/app-shell";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+
+interface LogClientProps {
+  dictionary: Dictionary["logPage"];
+  allWasteLog: WasteEntry[];
+}
+
+export function LogClient({ dictionary, allWasteLog }: LogClientProps) {
+  const { selectedCompany } = useCompany();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const wasteLog = allWasteLog.filter(
+    (entry) => entry.companyId === selectedCompany.id
+  );
+
+  const formatCurrency = (amount: number | undefined) => {
+    if (amount === undefined) return "N/A";
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(amount);
+  };
+  
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString(undefined, {
+      month: "long",
+      day: "numeric",
+      year: "numeric"
+    });
+  }
+
+  return (
+    <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+      <div className="flex items-center">
+        <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
+      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>{dictionary.cardTitle}</CardTitle>
+          <CardDescription>{dictionary.cardDescription}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{dictionary.table.date}</TableHead>
+                <TableHead>{dictionary.table.type}</TableHead>
+                <TableHead className="text-right">{dictionary.table.quantity}</TableHead>
+                <TableHead className="text-right">{dictionary.table.price}</TableHead>
+                <TableHead className="text-right">{dictionary.table.serviceCost}</TableHead>
+                <TableHead className="text-right">{dictionary.table.totalValue}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {wasteLog.length > 0 ? (
+                wasteLog.map((entry) => {
+                  const totalValue = (entry.price || 0) * entry.quantity - (entry.serviceCost || 0);
+                  return (
+                    <TableRow key={entry.id}>
+                      <TableCell>
+                        {isClient ? formatDate(entry.date) : <Skeleton className="h-4 w-32" />}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{dictionary.types[entry.type]}</Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {entry.quantity.toFixed(2)} kg
+                      </TableCell>
+                       <TableCell className="text-right">
+                        {isClient ? formatCurrency(entry.price) : <Skeleton className="h-4 w-16 float-right" />}
+                      </TableCell>
+                       <TableCell className="text-right">
+                        {isClient ? formatCurrency(entry.serviceCost) : <Skeleton className="h-4 w-16 float-right" />}
+                      </TableCell>
+                      <TableCell className="text-right">
+                         <span className={totalValue >= 0 ? 'text-primary' : 'text-destructive'}>
+                           {isClient ? formatCurrency(totalValue) : <Skeleton className="h-4 w-20 float-right" />}
+                         </span>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-24 text-center">
+                    {dictionary.noEntries}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

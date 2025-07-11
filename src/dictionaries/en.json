@@ -126,8 +126,23 @@
   },
   "logPage": {
     "title": "Waste Log",
-    "cardTitle": "Coming Soon",
-    "cardContent": "A detailed table of all waste entries will be available here soon."
+    "cardTitle": "All Waste Entries",
+    "cardDescription": "A detailed log of all recorded waste entries for the selected company.",
+    "noEntries": "No waste entries found for this company.",
+    "table": {
+      "date": "Date",
+      "type": "Type",
+      "quantity": "Quantity",
+      "price": "Price/kg",
+      "serviceCost": "Service Cost",
+      "totalValue": "Total Value"
+    },
+    "types": {
+      "Recycling": "Recycling",
+      "Organic": "Organic",
+      "General": "General",
+      "Hazardous": "Hazardous"
+    }
   },
   "schedulePage": {
     "title": "Disposal Schedule",
