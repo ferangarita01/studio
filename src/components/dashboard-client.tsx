@@ -156,20 +156,24 @@ export function DashboardClient({
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
-              {upcomingDisposals.map((disposal) => (
-                <div key={disposal.id} className="grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
-                  <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
-                  <div className="grid gap-1">
-                    <p className="font-medium">
-                      {disposal.wasteTypes.join(', ')} {dictionary.disposals.pickup}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(disposal.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
-                    </p>
-                    <Badge variant="secondary">{dictionary.disposals.status[disposal.status as keyof typeof dictionary.disposals.status]}</Badge>
+              {upcomingDisposals.length > 0 ? (
+                upcomingDisposals.map((disposal) => (
+                  <div key={disposal.id} className="grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
+                    <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+                    <div className="grid gap-1">
+                      <p className="font-medium">
+                        {disposal.wasteTypes.join(', ')} {dictionary.disposals.pickup}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(disposal.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
+                      </p>
+                      <Badge variant="secondary">{dictionary.disposals.status[disposal.status as keyof typeof dictionary.disposals.status]}</Badge>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">No upcoming disposals.</p>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -190,15 +194,23 @@ export function DashboardClient({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {wasteLog.slice(0, 5).map((entry: WasteEntry) => (
-                  <TableRow key={entry.id}>
-                    <TableCell>
-                      {new Date(entry.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric' })}
+                {wasteLog.length > 0 ? (
+                  wasteLog.slice(0, 5).map((entry: WasteEntry) => (
+                    <TableRow key={entry.id}>
+                      <TableCell>
+                        {new Date(entry.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric' })}
+                      </TableCell>
+                      <TableCell>{entry.type}</TableCell>
+                      <TableCell className="text-right">{entry.quantity}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={3} className="h-24 text-center">
+                      No recent entries.
                     </TableCell>
-                    <TableCell>{entry.type}</TableCell>
-                    <TableCell className="text-right">{entry.quantity}</TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </CardContent>

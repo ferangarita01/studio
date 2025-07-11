@@ -2,6 +2,7 @@
 
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { ArrowDownCircle, ArrowUpCircle, DollarSign } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
 import {
   Card,
@@ -24,6 +25,7 @@ import type { Dictionary } from "@/lib/get-dictionary";
 import type { ReportData } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { useCompany } from "@/components/layout/app-shell";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const chartConfig = {
   costs: {
@@ -49,6 +51,19 @@ function ReportView({
   dictionary: Dictionary["reportsPage"]["reportView"];
   data: ReportData;
 }) {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(amount);
+  };
+  
   return (
     <div className="grid gap-4 md:gap-8">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -58,7 +73,11 @@ function ReportView({
             <ArrowDownCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${data.totalCosts.toFixed(2)}</div>
+            {isClient ? (
+              <div className="text-2xl font-bold">{formatCurrency(data.totalCosts)}</div>
+            ) : (
+              <Skeleton className="h-8 w-24" />
+            )}
             <p className="text-xs text-muted-foreground">{dictionary.cards.collectionCosts.description}</p>
           </CardContent>
         </Card>
@@ -68,7 +87,11 @@ function ReportView({
             <ArrowUpCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${data.totalIncome.toFixed(2)}</div>
+            {isClient ? (
+              <div className="text-2xl font-bold">{formatCurrency(data.totalIncome)}</div>
+            ) : (
+               <Skeleton className="h-8 w-24" />
+            )}
             <p className="text-xs text-muted-foreground">{dictionary.cards.recyclingIncome.description}</p>
           </CardContent>
         </Card>
@@ -78,9 +101,13 @@ function ReportView({
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${data.netResult >= 0 ? 'text-primary' : 'text-destructive'}`}>
-              ${data.netResult.toFixed(2)}
-            </div>
+            {isClient ? (
+              <div className={`text-2xl font-bold ${data.netResult >= 0 ? 'text-primary' : 'text-destructive'}`}>
+                {formatCurrency(data.netResult)}
+              </div>
+            ): (
+               <Skeleton className="h-8 w-24" />
+            )}
             <p className="text-xs text-muted-foreground">{dictionary.cards.netResult.description}</p>
           </CardContent>
         </Card>
@@ -101,8 +128,8 @@ function ReportView({
                   tickMargin={10}
                   axisLine={false}
                 />
-                <YAxis />
-                <ChartTooltip content={<ChartTooltipContent />} />
+                <YAxis tickFormatter={(value) => `$${value}`} />
+                <ChartTooltip content={<ChartTooltipContent formatter={(value) => formatCurrency(value as number)} />} />
                 <Bar dataKey="costs" fill="var(--color-costs)" radius={4} />
                 <Bar dataKey="income" fill="var(--color-income)" radius={4} />
               </BarChart>
@@ -133,9 +160,11 @@ function ReportView({
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Badge variant={tx.type === 'income' ? 'default' : 'destructive'} className="font-semibold">
-                         {tx.type === 'income' ? '+' : '-'}${tx.amount.toFixed(2)}
-                      </Badge>
+                       {isClient ? (
+                          <Badge variant={tx.type === 'income' ? 'default' : 'destructive'} className="font-semibold">
+                            {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
+                          </Badge>
+                       ) : <Skeleton className="h-6 w-20 float-right" /> }
                     </TableCell>
                   </TableRow>
                 ))}
