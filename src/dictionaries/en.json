@@ -33,6 +33,17 @@
       "create": "Create Company"
     }
   },
+  "loginPage": {
+    "title": "Login",
+    "description": "Enter your email below to login to your account.",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot your password?",
+    "loginButton": "Login",
+    "loginWithGoogle": "Login with Google",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up"
+  },
   "dashboard": {
     "title": "Dashboard",
     "cards": {

@@ -19,6 +19,17 @@ function getLocale(request: NextRequest): string | undefined {
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
+  // `/_next/` and `/api/` are ignored by the watcher, but we need to ignore files in `public`
+  const publicFile = /\.(.*)$/;
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/static') ||
+    publicFile.test(pathname)
+  ) {
+    return;
+  }
+  
   // Check if there is any supported locale in the pathname
   const pathnameIsMissingLocale = i18n.locales.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
@@ -27,6 +38,11 @@ export function middleware(request: NextRequest) {
   // Redirect if there is no locale
   if (pathnameIsMissingLocale) {
     const locale = getLocale(request);
+    
+    // Redirect to login page if the path is the root
+    if (pathname === '/') {
+        return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
+    }
     
     return NextResponse.redirect(
       new URL(`/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`, request.url)

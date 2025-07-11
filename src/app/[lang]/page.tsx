@@ -8,13 +8,13 @@ export default async function DashboardPage({
 }: {
   params: { lang: Locale };
 }) {
-  const dictionary = (await getDictionary(params.lang)).dashboard;
+  const dictionary = await getDictionary(params.lang);
 
   return (
-    <DashboardClient
-      dictionary={dictionary}
-      wasteDataAll={wasteData}
-      wasteLogAll={wasteLog}
-    />
+      <DashboardClient
+        dictionary={dictionary.dashboard}
+        wasteDataAll={wasteData}
+        wasteLogAll={wasteLog}
+      />
   );
 }
