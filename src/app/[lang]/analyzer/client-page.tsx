@@ -73,7 +73,7 @@ export function AIAnalyzerClient({
       const height = pdfWidth / ratio;
       
       pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, height);
-      pdf.save("WasteWise_Analysis_Report.pdf");
+      pdf.save("EcoCircle_Analysis_Report.pdf");
     });
   };
 

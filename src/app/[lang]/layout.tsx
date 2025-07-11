@@ -8,7 +8,7 @@ import type { Locale } from '@/i18n-config';
 import React from 'react';
 
 export const metadata: Metadata = {
-  title: 'WasteWise',
+  title: 'EcoCircle',
   description: "A business waste management platform to track and manage waste generation and disposal for companies.",
 };
 
