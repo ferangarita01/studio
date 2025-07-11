@@ -107,7 +107,7 @@ function LanguageToggle({ dictionary }: { dictionary: Dictionary["navigation"]["
 
 export function AppShell({ children, dictionary }: { children: React.ReactNode; dictionary: Dictionary["navigation"] }) {
   const pathname = usePathname();
-  const currentLang = pathname.split('/')[1];
+  const currentLang = pathname.split('/')[1] || 'en';
 
   const getHref = (href: string) => {
     if (href === '/') return `/${currentLang}`;
@@ -132,17 +132,19 @@ export function AppShell({ children, dictionary }: { children: React.ReactNode; 
             {navItems.map((item) => {
                 const href = getHref(item.href);
                 const label = dictionary.links[item.labelKey];
+                const isActive = pathname === href || (item.href !== '/' && pathname.startsWith(href));
                 return (
                     <SidebarMenuItem key={href}>
-                      <Link href={href}>
-                          <SidebarMenuButton
-                            isActive={pathname === href || (item.href !== '/' && pathname.startsWith(href))}
+                      <Link href={href} passHref legacyBehavior>
+                        <SidebarMenuButton
+                            as="a"
+                            isActive={isActive}
                             tooltip={label}
                           >
-                            <item.icon />
-                            <span>{label}</span>
-                          </SidebarMenuButton>
-                        </Link>
+                          <item.icon />
+                          <span>{label}</span>
+                        </SidebarMenuButton>
+                      </Link>
                     </SidebarMenuItem>
                 )
             })}
