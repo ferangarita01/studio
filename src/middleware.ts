@@ -28,13 +28,8 @@ export function middleware(request: NextRequest) {
   if (pathnameIsMissingLocale) {
     const locale = getLocale(request);
     
-    // Evita la redirección para la ruta raíz si ya está implícitamente manejada
-    if (pathname === '/') {
-        return NextResponse.redirect(new URL(`/${locale}`, request.url));
-    }
-
     return NextResponse.redirect(
-      new URL(`/${locale}${pathname}`, request.url)
+      new URL(`/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`, request.url)
     );
   }
 }

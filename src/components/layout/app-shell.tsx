@@ -135,12 +135,12 @@ export function AppShell({ children, dictionary }: { children: React.ReactNode; 
                 const isActive = pathname === href || (item.href !== '/' && pathname.startsWith(href));
                 return (
                     <SidebarMenuItem key={href}>
-                      <Link href={href} passHref legacyBehavior>
+                      <Link href={href} passHref>
                         <SidebarMenuButton
-                            as="a"
-                            isActive={isActive}
-                            tooltip={label}
-                          >
+                          as="a"
+                          isActive={isActive}
+                          tooltip={label}
+                        >
                           <item.icon />
                           <span>{label}</span>
                         </SidebarMenuButton>

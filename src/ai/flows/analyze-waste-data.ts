@@ -1,4 +1,4 @@
-// 'use server';
+'use server';
 
 /**
  * @fileOverview Analyzes waste data and provides waste reduction recommendations.
@@ -8,10 +8,22 @@
  * - AnalyzeWasteDataOutput - The return type for the analyzeWasteData function.
  */
 
-'use server';
-
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { getWasteLog as getWasteLogService } from '@/services/waste-data-service';
+
+const getWasteLog = ai.defineTool(
+  {
+    name: 'getWasteLog',
+    description: 'Returns the full log of waste entries.',
+    inputSchema: z.undefined(),
+    outputSchema: z.any(),
+  },
+  async () => {
+    return await getWasteLogService();
+  }
+)
+
 
 const AnalyzeWasteDataInputSchema = z.object({
   wasteData: z
@@ -40,7 +52,9 @@ const prompt = ai.definePrompt({
   name: 'analyzeWasteDataPrompt',
   input: {schema: AnalyzeWasteDataInputSchema},
   output: {schema: AnalyzeWasteDataOutputSchema},
+  tools: [getWasteLog],
   prompt: `You are an AI-powered waste management assistant. Analyze the provided waste data and provide actionable recommendations for waste reduction.
+If you need more context, you can use the getWasteLog tool to get the full history of waste entries.
 
 Waste Data: {{{wasteData}}}
 

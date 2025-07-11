@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { analyzeWasteData } from "@/ai/flows/analyze-waste-data";
 import type { AnalyzeWasteDataOutput } from "@/ai/flows/analyze-waste-data";
 import { useToast } from "@/hooks/use-toast";
+import type { Dictionary } from "@/lib/get-dictionary";
 
 const placeholderData = `Waste Type,Quantity (kg)
 Recycling,186
@@ -27,7 +28,11 @@ Recycling,237
 Organic,120
 General,320`;
 
-export default function AIAnalyzerPage() {
+export function AIAnalyzerClient({
+  dictionary,
+}: {
+  dictionary: Dictionary["analyzerPage"];
+}) {
   const [wasteDataInput, setWasteDataInput] = useState(placeholderData);
   const [analysis, setAnalysis] = useState<AnalyzeWasteDataOutput | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -41,8 +46,8 @@ export default function AIAnalyzerPage() {
         setAnalysis(result);
       } else {
         toast({
-          title: "Analysis Failed",
-          description: "Could not analyze the waste data. Please try again.",
+          title: dictionary.toast.title,
+          description: dictionary.toast.description,
           variant: "destructive",
         });
       }
@@ -52,23 +57,23 @@ export default function AIAnalyzerPage() {
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
       <div className="mx-auto grid w-full max-w-4xl gap-2">
-        <h1 className="text-3xl font-semibold">AI Waste Reduction Tool</h1>
+        <h1 className="text-3xl font-semibold">{dictionary.title}</h1>
         <p className="text-muted-foreground">
-          Paste your waste data in CSV format to get AI-powered reduction insights.
+          {dictionary.description}
         </p>
       </div>
 
       <div className="mx-auto w-full max-w-4xl">
         <Card>
           <CardHeader>
-            <CardTitle>Waste Data Input</CardTitle>
+            <CardTitle>{dictionary.inputCard.title}</CardTitle>
             <CardDescription>
-              Provide waste type and quantity.
+              {dictionary.inputCard.description}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Textarea
-              placeholder="Paste your CSV data here"
+              placeholder={dictionary.inputCard.placeholder}
               className="min-h-[200px] font-mono"
               value={wasteDataInput}
               onChange={(e) => setWasteDataInput(e.target.value)}
@@ -81,7 +86,7 @@ export default function AIAnalyzerPage() {
               ) : (
                 <Sparkles className="mr-2 h-4 w-4" />
               )}
-              Analyze Data
+              {dictionary.inputCard.button}
             </Button>
           </CardFooter>
         </Card>
@@ -89,7 +94,7 @@ export default function AIAnalyzerPage() {
         {isPending && (
           <div className="mt-8 flex items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="ml-4 text-muted-foreground">Analyzing your data...</p>
+            <p className="ml-4 text-muted-foreground">{dictionary.loading}</p>
           </div>
         )}
 
@@ -97,7 +102,7 @@ export default function AIAnalyzerPage() {
           <div className="mt-8 grid gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Analysis Summary</CardTitle>
+                <CardTitle>{dictionary.summaryCard.title}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="whitespace-pre-wrap">{analysis.summary}</p>
@@ -105,7 +110,7 @@ export default function AIAnalyzerPage() {
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle>Reduction Recommendations</CardTitle>
+                <CardTitle>{dictionary.recommendationsCard.title}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="whitespace-pre-wrap">{analysis.recommendations}</p>
