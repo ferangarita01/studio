@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { PlusCircle, Activity, Calendar as CalendarIcon } from "lucide-react";
@@ -25,7 +23,8 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { AddWasteDialog } from "@/components/add-waste-dialog";
 import { upcomingDisposals, wasteData, wasteLog } from "@/lib/data";
 import type { WasteEntry } from "@/lib/types";
-import type { Dictionary } from "@/lib/get-dictionary";
+import { getDictionary } from "@/lib/get-dictionary";
+import type { Locale } from "@/i18n-config";
 
 const chartConfig = {
   quantity: {
@@ -45,12 +44,12 @@ const chartConfig = {
   },
 };
 
-export default function DashboardPage({
-  dictionary: fullDictionary,
+export default async function DashboardPage({
+  params,
 }: {
-  dictionary: Dictionary;
+  params: { lang: Locale };
 }) {
-  const dictionary = fullDictionary.dashboard;
+  const dictionary = (await getDictionary(params.lang)).dashboard;
   const [isAddWasteDialogOpen, setAddWasteDialogOpen] = React.useState(false);
   
   return (

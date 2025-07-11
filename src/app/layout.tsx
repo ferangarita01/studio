@@ -1,6 +1,7 @@
-import { redirect } from 'next/navigation';
+import type { ReactNode } from 'react';
 
-// This is the root layout, which redirects to the default language
-export default function RootLayout() {
-  redirect('/en');
+// Este layout raíz simplemente renderiza a sus hijos.
+// La lógica de redirección está en el middleware.
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return children;
 }

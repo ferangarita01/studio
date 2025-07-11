@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/theme-provider';
 import { getDictionary } from '@/lib/get-dictionary';
 import type { Locale } from '@/i18n-config';
+import React from 'react';
 
 export const metadata: Metadata = {
   title: 'WasteWise',
@@ -34,12 +35,8 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
         >
-            <AppShell dictionary={dictionary}>
-            {React.Children.map(children, (child) =>
-              React.isValidElement(child)
-                ? React.cloneElement(child, { dictionary } as any)
-                : child
-            )}
+            <AppShell dictionary={dictionary.navigation}>
+              {children}
             </AppShell>
             <Toaster />
         </ThemeProvider>

@@ -1,13 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trash2 } from "lucide-react";
 import type { Dictionary } from "@/lib/get-dictionary";
+import { getDictionary } from "@/lib/get-dictionary";
+import type { Locale } from "@/i18n-config";
 
-export default function LogPage({
-  dictionary: fullDictionary,
-}: {
-  dictionary: Dictionary;
-}) {
-  const dictionary = fullDictionary.logPage;
+export default async function LogPage({ params }: { params: { lang: Locale } }) {
+  const dictionary = (await getDictionary(params.lang)).logPage;
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
       <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
