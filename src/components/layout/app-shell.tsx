@@ -48,19 +48,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <SidebarHeader>
             <div className="flex items-center justify-between">
                 <Logo />
-                <SidebarTrigger asChild>
-                    <Button variant="ghost" size="icon" className="md:hidden" >
-                        <Recycle className="h-6 w-6" />
-                    </Button>
-                </SidebarTrigger>
+                <SidebarTrigger className="md:hidden" />
             </div>
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>
             {navItems.map((item) => (
                 <SidebarMenuItem key={item.href}>
-                    <Link href={item.href}>
+                    <Link href={item.href} legacyBehavior={false}>
                       <SidebarMenuButton
+                        as="a"
+                        href={item.href}
                         isActive={pathname === item.href}
                         tooltip={item.label}
                       >
