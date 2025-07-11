@@ -46,6 +46,7 @@ import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/lib/get-dictionary";
 import { companies } from "@/lib/data";
 import type { Company } from "@/lib/types";
+import { Input } from "@/components/ui/input";
 
 const Logo = ({ dictionary }: { dictionary: Dictionary["navigation"] }) => (
   <Link href="/" className="flex items-center gap-2 font-semibold text-primary">
@@ -132,6 +133,11 @@ export const useCompany = () => {
 
 function CompanySwitcher({ dictionary }: { dictionary: Dictionary["navigation"]["companySwitcher"] }) {
   const { selectedCompany, setSelectedCompany } = useCompany();
+  const [search, setSearch] = useState("");
+
+  const filteredCompanies = companies.filter(company => 
+    company.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <DropdownMenu>
@@ -148,7 +154,14 @@ function CompanySwitcher({ dictionary }: { dictionary: Dictionary["navigation"][
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
-        <DropdownMenuLabel>{dictionary.label}</DropdownMenuLabel>
+        <div className="p-2">
+            <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={dictionary.searchPlaceholder}
+                className="w-full"
+            />
+        </div>
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup
           value={selectedCompany.id}
@@ -156,10 +169,11 @@ function CompanySwitcher({ dictionary }: { dictionary: Dictionary["navigation"][
             const company = companies.find((c) => c.id === id);
             if (company) {
               setSelectedCompany(company);
+              setSearch("");
             }
           }}
         >
-          {companies.map((company) => (
+          {filteredCompanies.map((company) => (
             <DropdownMenuRadioItem key={company.id} value={company.id}>
               {company.name}
             </DropdownMenuRadioItem>

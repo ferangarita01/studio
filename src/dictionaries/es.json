@@ -19,7 +19,8 @@
       "toggle": "Cambiar idioma"
     },
     "companySwitcher": {
-      "label": "Cambiar Empresa"
+      "label": "Cambiar Empresa",
+      "searchPlaceholder": "Buscar empresa..."
     }
   },
   "dashboard": {

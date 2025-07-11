@@ -19,7 +19,8 @@
       "toggle": "Change language"
     },
     "companySwitcher": {
-      "label": "Switch Company"
+      "label": "Switch Company",
+      "searchPlaceholder": "Search company..."
     }
   },
   "dashboard": {
