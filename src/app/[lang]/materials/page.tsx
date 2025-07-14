@@ -2,16 +2,27 @@
 'use client';
 
 import { useDictionaries } from "@/context/dictionary-context";
-import { materials } from "@/lib/data";
+import { getMaterials } from "@/services/waste-data-service";
 import { MaterialsClient } from "./client-page";
+import { useEffect, useState } from "react";
+import type { Material } from "@/lib/types";
 
 export default function MaterialsPage() {
   const dictionary = useDictionaries()?.materialsPage;
+  const [allMaterials, setAllMaterials] = useState<Material[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const materialsData = await getMaterials();
+      setAllMaterials(materialsData);
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
   
-  if (!dictionary) return <div>Loading...</div>;
-  
-  // In a real app, you'd fetch this data
-  const allMaterials = materials;
+  if (loading || !dictionary) return <div>Loading...</div>;
   
   return <MaterialsClient dictionary={dictionary} initialMaterials={allMaterials} />;
 }

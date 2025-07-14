@@ -22,11 +22,11 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import type { WasteEntry } from "@/lib/types";
+import type { DisposalEvent, WasteEntry } from "@/lib/types";
 import type { Dictionary } from "@/lib/get-dictionary";
-import { disposalEvents } from "@/lib/data";
 import { useCompany } from "./layout/app-shell";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getDisposalEvents } from "@/services/waste-data-service";
 
 const chartConfig = {
   quantity: {
@@ -59,9 +59,15 @@ export function DashboardClient({
 }: DashboardClientProps) {
   const { selectedCompany } = useCompany();
   const [isClient, setIsClient] = React.useState(false);
+  const [disposalEvents, setDisposalEvents] = React.useState<DisposalEvent[]>([]);
 
   React.useEffect(() => {
     setIsClient(true);
+    const fetchEvents = async () => {
+      const events = await getDisposalEvents();
+      setDisposalEvents(events);
+    }
+    fetchEvents();
   }, []);
 
   const wasteData = wasteDataAll[selectedCompany.id] || [];
@@ -242,4 +248,3 @@ export function DashboardClient({
     </div>
   );
 }
-
