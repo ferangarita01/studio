@@ -1,7 +1,7 @@
 
 {
   "navigation": {
-    "title": "EcoCircle",
+    "title": "WasteWise",
     "links": {
       "dashboard": "Dashboard",
       "analyzer": "AI Analyzer",
@@ -104,9 +104,21 @@
     },
     "loading": "Analyzing your data...",
     "downloadPdf": "Download PDF",
+    "report": {
+      "title": "AI Waste Analysis Report",
+      "generatedOn": "Generated on",
+      "totalWaste": {
+        "title": "Total Waste Analyzed",
+        "description": "Sum of all waste types from input."
+      },
+      "wasteBreakdown": {
+        "barChartTitle": "Waste Breakdown by Quantity",
+        "pieChartTitle": "Waste Composition"
+      }
+    },
     "carbonFootprintCard": {
-      "title": "Estimated Carbon Footprint Reduction",
-      "description": "Based on the total amount of recycled materials provided."
+      "title": "Est. Carbon Footprint Reduction",
+      "description": "Based on total recycled materials."
     },
     "summaryCard": {
       "title": "Analysis Summary"

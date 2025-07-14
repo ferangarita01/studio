@@ -1,7 +1,7 @@
 
 {
   "navigation": {
-    "title": "EcoCircle",
+    "title": "WasteWise",
     "links": {
       "dashboard": "Tablero",
       "analyzer": "Analizador IA",
@@ -104,9 +104,21 @@
     },
     "loading": "Analizando sus datos...",
     "downloadPdf": "Descargar PDF",
+    "report": {
+      "title": "Reporte de Análisis de Residuos con IA",
+      "generatedOn": "Generado el",
+      "totalWaste": {
+        "title": "Total de Residuos Analizados",
+        "description": "Suma de todos los tipos de residuos."
+      },
+      "wasteBreakdown": {
+        "barChartTitle": "Desglose de Residuos por Cantidad",
+        "pieChartTitle": "Composición de Residuos"
+      }
+    },
     "carbonFootprintCard": {
-      "title": "Reducción Estimada de la Huella de Carbono",
-      "description": "Basado en la cantidad total de materiales reciclados proporcionados."
+      "title": "Reducción Estimada de Huella de Carbono",
+      "description": "Basado en el total de materiales reciclados."
     },
     "summaryCard": {
       "title": "Resumen del Análisis"
