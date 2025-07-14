@@ -30,9 +30,10 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import type { Dictionary } from "@/lib/get-dictionary";
-import { addWasteEntry } from "@/services/waste-data-service";
-import type { WasteEntry, WasteType } from "@/lib/types";
+import { addWasteEntry, getMaterials } from "@/services/waste-data-service";
+import type { WasteEntry, WasteType, Material } from "@/lib/types";
 import { useCompany } from "./layout/app-shell";
+import { useEffect, useState } from "react";
 
 const formSchema = (dictionary: Dictionary["logPage"]["addWasteDialog"]["validation"]) => z.object({
     type: z.enum(["Recycling", "Organic", "General", "Hazardous"], {
@@ -53,6 +54,17 @@ interface AddWasteDialogProps {
 export function AddWasteDialog({ open, onOpenChange, dictionary, onEntryAdded }: AddWasteDialogProps) {
   const { toast } = useToast();
   const { selectedCompany } = useCompany();
+  const [materials, setMaterials] = useState<Material[]>([]);
+
+  useEffect(() => {
+    if (open) {
+      const fetchMaterials = async () => {
+        const fetchedMaterials = await getMaterials();
+        setMaterials(fetchedMaterials);
+      };
+      fetchMaterials();
+    }
+  }, [open]);
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema(dictionary.validation)),
@@ -64,11 +76,28 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntryAdded }:
 
   const onSubmit = async (values: FormSchema) => {
     try {
+        const entryType = values.type as WasteType;
+        let price: number | undefined = undefined;
+        let serviceCost: number | undefined = 20; // Default service cost
+
+        if (entryType === 'Recycling') {
+            // This is a simplification. A real app might have a dropdown for specific materials.
+            // Here we just find a representative price for general recycling.
+            const recyclingMaterial = materials.find(m => m.type === 'Recycling');
+            price = recyclingMaterial?.pricePerKg;
+            serviceCost = 5; // Lower service cost for recycling
+        } else if (entryType === 'Hazardous') {
+            serviceCost = 100; // Higher service cost for hazardous
+        }
+
+
         const newEntryData = {
             companyId: selectedCompany.id,
-            type: values.type as WasteType,
+            type: entryType,
             quantity: values.quantity,
             date: new Date(),
+            price,
+            serviceCost,
         }
         const newEntry = await addWasteEntry(newEntryData);
         onEntryAdded(newEntry);
