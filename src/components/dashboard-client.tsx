@@ -69,6 +69,22 @@ export function DashboardClient({
     }
     fetchEvents();
   }, []);
+  
+  if (!selectedCompany) {
+    return (
+       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+          <div className="flex items-center">
+            <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
+          </div>
+          <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
+            <div className="text-center">
+              <h3 className="mt-4 text-lg font-semibold">Welcome to EcoCircle</h3>
+              <p className="text-muted-foreground">Please select or create a company to get started.</p>
+            </div>
+          </div>
+       </div>
+    );
+  }
 
   const wasteData = wasteDataAll[selectedCompany.id] || [];
   const wasteLog = wasteLogAll.filter(entry => entry.companyId === selectedCompany.id);

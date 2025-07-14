@@ -6,12 +6,14 @@ import { DashboardClient } from "@/components/dashboard-client";
 import { getWasteChartData, getWasteLog } from "@/services/waste-data-service";
 import type { WasteEntry } from "@/lib/types";
 import { useEffect, useState } from "react";
+import { useCompany } from "@/components/layout/app-shell";
 
 export default function DashboardPage() {
   const dictionary = useDictionaries();
   const [wasteDataAll, setWasteDataAll] = useState<Record<string, any[]>>({});
   const [wasteLogAll, setWasteLogAll] = useState<WasteEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const { isLoading: isLoadingCompany } = useCompany();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,10 +26,12 @@ export default function DashboardPage() {
       setWasteLogAll(logData);
       setLoading(false);
     };
-    fetchData();
-  }, []);
+    if (!isLoadingCompany) {
+      fetchData();
+    }
+  }, [isLoadingCompany]);
 
-  if (loading || !dictionary) return <div>Loading...</div>;
+  if (loading || isLoadingCompany || !dictionary) return <div>Loading...</div>;
 
   return (
       <DashboardClient

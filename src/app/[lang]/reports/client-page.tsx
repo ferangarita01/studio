@@ -229,6 +229,21 @@ export function ReportsClient({
     setIsClient(true);
   }, []);
 
+  if (!selectedCompany) {
+    return (
+       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+          <div className="flex items-center">
+            <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
+          </div>
+          <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
+            <div className="text-center">
+              <p className="text-muted-foreground">Please select a company to see reports.</p>
+            </div>
+          </div>
+       </div>
+    );
+  }
+
   const weeklyData = weeklyDataAll[selectedCompany.id];
   const monthlyData = monthlyDataAll[selectedCompany.id];
 

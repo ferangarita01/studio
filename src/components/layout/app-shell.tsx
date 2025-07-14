@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
-import React, { useState, createContext, useContext, useMemo } from "react";
+import React, { useState, createContext, useContext, useMemo, useEffect } from "react";
 import {
   BrainCircuit,
   Calendar,
@@ -39,12 +39,13 @@ import {
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { companies as initialCompanies } from "@/lib/data";
 import type { Company } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { CreateCompanyDialog } from "@/components/create-company-dialog";
 import { useAuth } from "@/context/auth-context";
 import { useDictionaries } from "@/context/dictionary-context";
+import { addCompany as addCompanyService, getCompanies } from "@/services/waste-data-service";
+import { Skeleton } from "../ui/skeleton";
 
 const Logo = () => {
   const dictionary = useDictionaries()?.navigation;
@@ -124,10 +125,11 @@ function LanguageToggle() {
 }
 
 interface CompanyContextType {
-  selectedCompany: Company;
+  selectedCompany: Company | null;
   setSelectedCompany: (company: Company) => void;
   companies: Company[];
   addCompany: (company: Company) => void;
+  isLoading: boolean;
 }
 
 const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
@@ -143,25 +145,43 @@ export const useCompany = () => {
 function CompanySwitcher() {
   const dictionary = useDictionaries()?.navigation;
   const { role } = useAuth();
-  const { companies, selectedCompany, setSelectedCompany, addCompany } = useCompany();
+  const { companies, selectedCompany, setSelectedCompany, addCompany, isLoading } = useCompany();
   const [search, setSearch] = useState("");
   const [isCreateOpen, setCreateOpen] = useState(false);
   
   if (!dictionary) return null;
 
-  const filteredCompanies = companies.filter(company => 
-    company.name.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const handleCreateCompany = (name: string) => {
-    const newCompany: Company = {
-        id: `c${companies.length + 1}`, 
-        name,
-    };
+  const handleCreateCompany = async (name: string) => {
+    const newCompany = await addCompanyService({ name });
     addCompany(newCompany);
     setSelectedCompany(newCompany);
     setCreateOpen(false);
   };
+  
+  if (isLoading) {
+    return <Skeleton className="h-9 w-full" />;
+  }
+
+  if (!selectedCompany) {
+    return (
+      <div className="text-sm text-muted-foreground p-2 text-center">
+        No companies found.
+        {role === 'admin' && (
+           <Button variant="link" size="sm" onClick={() => setCreateOpen(true)} className="p-1">Create one?</Button>
+        )}
+         <CreateCompanyDialog
+            dictionary={dictionary.createCompanyDialog}
+            open={isCreateOpen}
+            onOpenChange={setCreateOpen}
+            onCreate={handleCreateCompany}
+          />
+      </div>
+    );
+  }
+  
+  const filteredCompanies = companies.filter(company => 
+    company.name.toLowerCase().includes(search.toLowerCase())
+  );
 
 
   return (
@@ -232,11 +252,30 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const currentLang = pathname.split('/')[1] || 'en';
   
-  const [companies, setCompanies] = useState<Company[]>(initialCompanies);
-  const [selectedCompany, setSelectedCompany] = useState<Company>(companies[0]);
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
+  const [isLoadingCompanies, setIsLoadingCompanies] = useState(true);
+
   const { logout, role } = useAuth();
   const dictionary = useDictionaries()?.navigation;
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      setIsLoadingCompanies(true);
+      const fetchedCompanies = await getCompanies();
+      setCompanies(fetchedCompanies);
+      if (fetchedCompanies.length > 0) {
+        setSelectedCompany(fetchedCompanies[0]);
+      } else {
+        setSelectedCompany(null);
+      }
+      setIsLoadingCompanies(false);
+    };
+    if (role) { // Only fetch if user is logged in
+      fetchCompanies();
+    }
+  }, [role]);
 
   const navItems = useMemo(() => {
     return allNavItems.filter(item => item.roles.includes(role || 'client'));
@@ -285,7 +324,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
   
   return (
-    <CompanyContext.Provider value={{ selectedCompany, setSelectedCompany, companies, addCompany }}>
+    <CompanyContext.Provider value={{ selectedCompany, setSelectedCompany, companies, addCompany, isLoading: isLoadingCompanies }}>
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
         <div className="hidden border-r bg-muted/40 md:block">
           <div className="flex h-full max-h-screen flex-col gap-2">

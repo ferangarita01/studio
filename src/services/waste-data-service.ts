@@ -1,3 +1,4 @@
+
 // IMPORTANT: This service now uses Firestore.
 // You will need to set up Firestore in your Firebase project and
 // create collections named 'materials', 'wasteLog', and 'disposalEvents'.
@@ -17,7 +18,23 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { wasteData, weeklyReportData, monthlyReportData } from "@/lib/data";
-import type { WasteEntry, Material, DisposalEvent, ReportData } from "@/lib/types";
+import type { WasteEntry, Material, DisposalEvent, ReportData, Company } from "@/lib/types";
+
+// --- Company Service Functions ---
+
+export async function getCompanies(): Promise<Company[]> {
+  const companiesCol = collection(db, "companies");
+  const q = query(companiesCol, orderBy("name", "asc"));
+  const companySnapshot = await getDocs(q);
+  const companyList = companySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Company));
+  return companyList;
+}
+
+export async function addCompany(company: Omit<Company, 'id'>): Promise<Company> {
+  const companiesCol = collection(db, "companies");
+  const docRef = await addDoc(companiesCol, company);
+  return { id: docRef.id, ...company };
+}
 
 // --- Material Service Functions ---
 
