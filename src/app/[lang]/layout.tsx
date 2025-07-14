@@ -18,16 +18,17 @@ export default async function RootLayout({
   params: { lang: Locale };
 }>) {
   const dictionary = await getDictionary(params.lang);
+  const { lang } = params;
 
   return (
-    <html lang={params.lang} suppressHydrationWarning>
+    <html lang={lang} suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-         <ClientLayout dictionary={dictionary} lang={params.lang}>
+         <ClientLayout dictionary={dictionary} lang={lang}>
             {children}
          </ClientLayout>
       </body>
