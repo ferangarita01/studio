@@ -17,9 +17,14 @@ function AuthGuard({ children, lang }: { children: React.ReactNode, lang: Locale
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const [isClient, setIsClient] = React.useState(false);
 
   React.useEffect(() => {
-    if (!isLoading) {
+    setIsClient(true);
+  }, []);
+
+  React.useEffect(() => {
+    if (!isLoading && isClient) {
       const isLoginPage = pathname.endsWith('/login');
       if (!isAuthenticated && !isLoginPage) {
         router.push(`/${lang}/login`);
@@ -27,9 +32,9 @@ function AuthGuard({ children, lang }: { children: React.ReactNode, lang: Locale
         router.push(`/${lang}`);
       }
     }
-  }, [isLoading, isAuthenticated, router, lang, pathname]);
+  }, [isLoading, isAuthenticated, router, lang, pathname, isClient]);
 
-  if (isLoading) {
+  if (isLoading || !isClient) {
     return (
        <div className="flex h-screen w-full items-center justify-center">
         <div>Loading...</div>
