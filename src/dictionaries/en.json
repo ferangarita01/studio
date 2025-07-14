@@ -153,9 +153,18 @@
       "quantity": "Quantity (kg)",
       "quantityPlaceholder": "e.g., 25.5",
       "save": "Save Entry",
+      "cancel": "Cancel",
       "toast": {
         "title": "Entry Added",
         "description": "Your waste entry has been successfully recorded."
+      },
+      "validation": {
+        "type": {
+          "required": "Please select a waste type."
+        },
+        "quantity": {
+          "min": "Quantity must be greater than 0."
+        }
       }
     }
   },
@@ -179,8 +188,8 @@
       "title": "Request a New Collection",
       "description": "Fill out the form to schedule a new waste pickup.",
       "wasteType": {
-        "label": "Waste Type",
-        "placeholder": "Select a waste type"
+        "label": "Waste Types",
+        "placeholder": "Select one or more waste types"
       },
       "date": {
         "label": "Pickup Date",
@@ -211,7 +220,7 @@
       },
       "validation": {
         "wasteType": {
-          "required": "Please select a waste type."
+          "required": "Please select at least one waste type."
         },
         "date": {
           "required": "A pickup date is required."
@@ -278,6 +287,12 @@
       "General": "General",
       "Hazardous": "Hazardous"
     },
+    "deleteDialog": {
+      "title": "Are you sure?",
+      "description": "This action cannot be undone. This will permanently delete the material.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
     "materialDialog": {
       "addTitle": "Add New Material",
       "editTitle": "Edit Material",
@@ -289,6 +304,7 @@
       "price": "Price per kg ($)",
       "pricePlaceholder": "e.g., 1.20",
       "save": "Save Material",
+       "cancel": "Cancel",
       "types": {
         "Recycling": "Recycling",
         "Organic": "Organic",

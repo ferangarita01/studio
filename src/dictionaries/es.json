@@ -153,9 +153,18 @@
       "quantity": "Cantidad (kg)",
       "quantityPlaceholder": "ej., 25.5",
       "save": "Guardar Entrada",
+      "cancel": "Cancelar",
       "toast": {
         "title": "Entrada Añadida",
         "description": "Su entrada de residuos ha sido registrada exitosamente."
+      },
+      "validation": {
+        "type": {
+          "required": "Por favor, seleccione un tipo de residuo."
+        },
+        "quantity": {
+          "min": "La cantidad debe ser mayor que 0."
+        }
       }
     }
   },
@@ -179,8 +188,8 @@
       "title": "Solicitar Nueva Recolección",
       "description": "Complete el formulario para programar una nueva recogida de residuos.",
       "wasteType": {
-        "label": "Tipo de Residuo",
-        "placeholder": "Seleccione un tipo de residuo"
+        "label": "Tipos de Residuo",
+        "placeholder": "Seleccione uno o más tipos de residuo"
       },
       "date": {
         "label": "Fecha de Recogida",
@@ -211,7 +220,7 @@
       },
       "validation": {
         "wasteType": {
-          "required": "Por favor, seleccione un tipo de residuo."
+          "required": "Por favor, seleccione al menos un tipo de residuo."
         },
         "date": {
           "required": "Se requiere una fecha de recogida."
@@ -257,7 +266,7 @@
       }
     }
   },
-    "materialsPage": {
+  "materialsPage": {
     "title": "Gestionar Materiales",
     "addMaterial": "Añadir Nuevo Material",
     "cardTitle": "Lista de Materiales",
@@ -272,11 +281,17 @@
       "edit": "Editar",
       "delete": "Eliminar"
     },
-    "types": {
-      "Recycling": "Reciclaje",
-      "Organic": "Orgánico",
-      "General": "General",
-      "Hazardous": "Peligroso"
+     "types": {
+        "Recycling": "Reciclaje",
+        "Organic": "Orgánico",
+        "General": "General",
+        "Hazardous": "Peligroso"
+    },
+    "deleteDialog": {
+      "title": "¿Estás seguro?",
+      "description": "Esta acción no se puede deshacer. Esto eliminará permanentemente el material.",
+      "cancel": "Cancelar",
+      "confirm": "Eliminar"
     },
     "materialDialog": {
       "addTitle": "Añadir Nuevo Material",
@@ -289,6 +304,7 @@
       "price": "Precio por kg ($)",
       "pricePlaceholder": "ej., 1.20",
       "save": "Guardar Material",
+      "cancel": "Cancelar",
       "types": {
         "Recycling": "Reciclaje",
         "Organic": "Orgánico",

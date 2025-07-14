@@ -54,16 +54,22 @@ interface ScheduleClientProps {
   allEvents: DisposalEvent[];
 }
 
-export function ScheduleClient({ dictionary, allEvents }: ScheduleClientProps) {
+export function ScheduleClient({ dictionary, allEvents: initialEvents }: ScheduleClientProps) {
   const [currentMonth, setCurrentMonth] = React.useState(new Date());
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
   const [isSheetOpen, setSheetOpen] = React.useState(false);
   const [isRequestDialogOpen, setRequestDialogOpen] = React.useState(false);
   const [isClient, setIsClient] = React.useState(false);
   const { selectedCompany } = useCompany();
+  const [allEvents, setAllEvents] = React.useState(initialEvents);
 
   React.useEffect(() => {
     setIsClient(true);
+    setAllEvents(initialEvents);
+  }, [initialEvents]);
+  
+  const handleEventAdded = React.useCallback((newEvent: DisposalEvent) => {
+    setAllEvents(currentEvents => [...currentEvents, newEvent].sort((a, b) => b.date.getTime() - a.date.getTime()));
   }, []);
 
   const events = allEvents.filter(event => event.companyId === selectedCompany.id);
@@ -158,6 +164,7 @@ export function ScheduleClient({ dictionary, allEvents }: ScheduleClientProps) {
                     events.some((event) => isSameDay(event.date, day)) &&
                       "font-bold hover:bg-accent"
                   )}
+                  disabled={!events.some((event) => isSameDay(event.date, day))}
                 >
                   {format(day, "d")}
                 </button>
@@ -168,17 +175,12 @@ export function ScheduleClient({ dictionary, allEvents }: ScheduleClientProps) {
                       <div
                         key={event.id}
                         className={cn(
-                          "flex items-center gap-1 text-xs",
-                          statusColors[event.status]
+                          "flex items-center gap-1 text-xs rounded-sm",
+                          "text-white p-1"
                         )}
+                         style={{ backgroundColor: statusColors[event.status].replace('bg-', 'var(--color-') }}
                       >
-                        <div
-                          className={cn(
-                            "h-full w-1 flex-shrink-0",
-                            statusColors[event.status]
-                          )}
-                        />
-                        <span className="ml-1 truncate font-medium text-white">
+                        <span className="ml-1 truncate font-medium">
                           {event.wasteTypes.join(", ")}
                         </span>
                       </div>
@@ -278,6 +280,7 @@ export function ScheduleClient({ dictionary, allEvents }: ScheduleClientProps) {
         open={isRequestDialogOpen}
         onOpenChange={setRequestDialogOpen}
         dictionary={dictionary.requestCollectionDialog}
+        onEventAdded={handleEventAdded}
       />
     </>
   );

@@ -44,11 +44,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import type { Dictionary } from "@/lib/get-dictionary";
 import { cn } from "@/lib/utils";
+import type { DisposalEvent, WasteType } from "@/lib/types";
+import { useCompany } from "./layout/app-shell";
+import { addDisposalEvent } from "@/services/waste-data-service";
+
 
 const formSchema = (dictionary: Dictionary["schedulePage"]["requestCollectionDialog"]["validation"]) =>
   z.object({
-    wasteType: z.string({
-      required_error: dictionary.wasteType.required,
+    wasteTypes: z.array(z.string()).refine(value => value.some(item => item), {
+      message: dictionary.wasteType.required,
     }),
     date: z.date({
       required_error: dictionary.date.required,
@@ -60,37 +64,66 @@ const formSchema = (dictionary: Dictionary["schedulePage"]["requestCollectionDia
     isRecurrent: z.boolean().default(false).optional(),
   });
 
-type FormSchema = ReturnType<typeof formSchema>;
+type FormSchema = z.infer<ReturnType<typeof formSchema>>;
 
 interface RequestCollectionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   dictionary: Dictionary["schedulePage"]["requestCollectionDialog"];
+  onEventAdded: (event: DisposalEvent) => void;
 }
 
 export function RequestCollectionDialog({
   open,
   onOpenChange,
   dictionary,
+  onEventAdded,
 }: RequestCollectionDialogProps) {
   const { toast } = useToast();
-  const form = useForm<z.infer<FormSchema>>({
+  const { selectedCompany } = useCompany();
+
+  const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema(dictionary.validation)),
     defaultValues: {
         isRecurrent: false,
         time: "09:00",
+        wasteTypes: [],
     },
   });
 
-  const onSubmit = (values: z.infer<FormSchema>) => {
-    console.log("Collection Request:", values);
-    toast({
-      title: dictionary.toast.title,
-      description: dictionary.toast.description,
-    });
-    form.reset();
-    onOpenChange(false);
+  const onSubmit = async (values: FormSchema) => {
+    const [hours, minutes] = values.time.split(':').map(Number);
+    const collectionDate = new Date(values.date);
+    collectionDate.setHours(hours, minutes);
+
+    const newEventData = {
+        companyId: selectedCompany.id,
+        date: collectionDate,
+        wasteTypes: values.wasteTypes as WasteType[],
+        status: 'Scheduled' as const,
+        instructions: values.instructions,
+    };
+
+    try {
+        const newEvent = await addDisposalEvent(newEventData);
+        onEventAdded(newEvent);
+        toast({
+            title: dictionary.toast.title,
+            description: dictionary.toast.description,
+        });
+        form.reset();
+        onOpenChange(false);
+    } catch (error) {
+        console.error("Failed to request collection:", error);
+         toast({
+            title: "Error",
+            description: "Failed to request collection. Please try again.",
+            variant: "destructive"
+        });
+    }
   };
+
+  const wasteTypes = ["General", "Recycling", "Organic", "Hazardous"];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -105,27 +138,52 @@ export function RequestCollectionDialog({
             <div className="space-y-4 p-1">
               <FormField
                 control={form.control}
-                name="wasteType"
-                render={({ field }) => (
+                name="wasteTypes"
+                render={() => (
                   <FormItem>
-                    <FormLabel>{dictionary.wasteType.label}</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder={dictionary.wasteType.placeholder} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="General">{dictionary.types.General}</SelectItem>
-                        <SelectItem value="Recycling">{dictionary.types.Recycling}</SelectItem>
-                        <SelectItem value="Organic">{dictionary.types.Organic}</SelectItem>
-                        <SelectItem value="Hazardous">{dictionary.types.Hazardous}</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div className="mb-4">
+                      <FormLabel className="text-base">{dictionary.wasteType.label}</FormLabel>
+                      <FormDescription>
+                        {dictionary.wasteType.placeholder}
+                      </FormDescription>
+                    </div>
+                    {wasteTypes.map((item) => (
+                      <FormField
+                        key={item}
+                        control={form.control}
+                        name="wasteTypes"
+                        render={({ field }) => {
+                          return (
+                            <FormItem
+                              key={item}
+                              className="flex flex-row items-start space-x-3 space-y-0"
+                            >
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value?.includes(item)}
+                                  onCheckedChange={(checked) => {
+                                    return checked
+                                      ? field.onChange([...(field.value || []), item])
+                                      : field.onChange(
+                                          field.value?.filter(
+                                            (value) => value !== item
+                                          )
+                                        )
+                                  }}
+                                />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                {dictionary.types[item as keyof typeof dictionary.types]}
+                              </FormLabel>
+                            </FormItem>
+                          )
+                        }}
+                      />
+                    ))}
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+                />
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}

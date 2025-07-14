@@ -24,5 +24,5 @@ export default function LogPage() {
   
   if (loading || !dictionary) return <div>Loading...</div>;
   
-  return <LogClient dictionary={dictionary} allWasteLog={allWasteLog} />;
+  return <LogClient dictionary={dictionary} initialWasteLog={allWasteLog} />;
 }

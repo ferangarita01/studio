@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { PlusCircle } from "lucide-react";
 import {
   Card,
@@ -28,17 +28,22 @@ import { AddWasteDialog } from "@/components/add-waste-dialog";
 
 interface LogClientProps {
   dictionary: Dictionary["logPage"];
-  allWasteLog: WasteEntry[];
+  initialWasteLog: WasteEntry[];
 }
 
-export function LogClient({ dictionary, allWasteLog }: LogClientProps) {
+export function LogClient({ dictionary, initialWasteLog }: LogClientProps) {
   const { selectedCompany } = useCompany();
   const [isClient, setIsClient] = useState(false);
   const [isAddWasteDialogOpen, setAddWasteDialogOpen] = useState(false);
-
+  const [allWasteLog, setAllWasteLog] = useState(initialWasteLog);
 
   useEffect(() => {
     setIsClient(true);
+  }, []);
+
+  const handleEntryAdded = useCallback((newEntry: WasteEntry) => {
+    // Add new entry to the top of the list
+    setAllWasteLog(currentLog => [newEntry, ...currentLog]);
   }, []);
 
   const wasteLog = allWasteLog.filter(
@@ -143,6 +148,7 @@ export function LogClient({ dictionary, allWasteLog }: LogClientProps) {
         open={isAddWasteDialogOpen} 
         onOpenChange={setAddWasteDialogOpen}
         dictionary={dictionary.addWasteDialog}
+        onEntryAdded={handleEntryAdded}
       />
     </>
   );

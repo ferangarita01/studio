@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { MoreHorizontal, PlusCircle } from "lucide-react";
 import {
   Card,
@@ -31,6 +31,19 @@ import { Button } from "@/components/ui/button";
 import { MaterialDialog } from "@/components/material-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { addMaterial, updateMaterial, deleteMaterial } from "@/services/waste-data-service";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 
 interface MaterialsClientProps {
   dictionary: Dictionary["materialsPage"];
@@ -46,7 +59,8 @@ export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClien
   
   useEffect(() => {
     setIsClient(true);
-  }, []);
+    setMaterials(initialMaterials);
+  }, [initialMaterials]);
 
   const handleAdd = () => {
     setSelectedMaterial(null);
@@ -58,29 +72,45 @@ export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClien
     setDialogOpen(true);
   };
 
-  const handleDelete = (materialId: string) => {
-    // This is a mock implementation. In a real app, you'd call an API.
-    setMaterials(materials.filter(m => m.id !== materialId));
-    toast({
-      title: dictionary.toast.delete.title,
-      description: dictionary.toast.delete.description,
-    });
+  const handleDelete = async (materialId: string) => {
+    try {
+      await deleteMaterial(materialId);
+      setMaterials(materials.filter(m => m.id !== materialId));
+      toast({
+        title: dictionary.toast.delete.title,
+        description: dictionary.toast.delete.description,
+      });
+    } catch (error) {
+       toast({
+        title: "Error",
+        description: "Failed to delete material.",
+        variant: "destructive"
+      });
+    }
   };
   
-  const handleSave = (material: Material) => {
-    // This is a mock implementation. In a real app, you'd call an API.
-    if (selectedMaterial) {
-      setMaterials(materials.map(m => m.id === material.id ? material : m));
-    } else {
-      const newMaterial = { ...material, id: `m${materials.length + 1}` };
-      setMaterials([...materials, newMaterial]);
+  const handleSave = useCallback(async (materialData: Material) => {
+    try {
+      if (materialData.id) { // Editing existing material
+        await updateMaterial(materialData);
+        setMaterials(materials.map(m => m.id === materialData.id ? materialData : m));
+      } else { // Adding new material
+        const newMaterial = await addMaterial(materialData);
+        setMaterials(currentMaterials => [...currentMaterials, newMaterial]);
+      }
+      toast({
+        title: dictionary.toast.save.title,
+        description: dictionary.toast.save.description,
+      });
+      setDialogOpen(false);
+    } catch (error) {
+       toast({
+        title: "Error",
+        description: "Failed to save material.",
+        variant: "destructive"
+      });
     }
-    toast({
-      title: dictionary.toast.save.title,
-      description: dictionary.toast.save.description,
-    });
-    setDialogOpen(false);
-  };
+  }, [materials, toast, dictionary]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -110,51 +140,71 @@ export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClien
             <CardDescription>{dictionary.cardDescription}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{dictionary.table.name}</TableHead>
-                  <TableHead>{dictionary.table.type}</TableHead>
-                  <TableHead className="text-right">{dictionary.table.pricePerKg}</TableHead>
-                  <TableHead className="w-[50px]"><span className="sr-only">{dictionary.table.actions}</span></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {materials.length > 0 ? (
-                  materials.map((material) => (
-                    <TableRow key={material.id}>
-                      <TableCell className="font-medium">{material.name}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{dictionary.types[material.type]}</Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {isClient ? formatCurrency(material.pricePerKg) : <Skeleton className="h-4 w-16 float-right" />}
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <span className="sr-only">{dictionary.table.openMenu}</span>
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleEdit(material)}>{dictionary.table.edit}</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDelete(material.id)} className="text-destructive">{dictionary.table.delete}</DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{dictionary.table.name}</TableHead>
+                    <TableHead>{dictionary.table.type}</TableHead>
+                    <TableHead className="text-right">{dictionary.table.pricePerKg}</TableHead>
+                    <TableHead className="w-[50px]"><span className="sr-only">{dictionary.table.actions}</span></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {materials.length > 0 ? (
+                    materials.map((material) => (
+                      <TableRow key={material.id}>
+                        <TableCell className="font-medium">{material.name}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{dictionary.types[material.type]}</Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {isClient ? formatCurrency(material.pricePerKg) : <Skeleton className="h-4 w-16 float-right" />}
+                        </TableCell>
+                        <TableCell>
+                          <AlertDialog>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                  <span className="sr-only">{dictionary.table.openMenu}</span>
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => handleEdit(material)}>{dictionary.table.edit}</DropdownMenuItem>
+                                <AlertDialogTrigger asChild>
+                                  <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()}>
+                                    {dictionary.table.delete}
+                                  </DropdownMenuItem>
+                                </AlertDialogTrigger>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                             <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>{dictionary.deleteDialog.title}</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    {dictionary.deleteDialog.description}
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>{dictionary.deleteDialog.cancel}</AlertDialogCancel>
+                                  <AlertDialogAction onClick={() => handleDelete(material.id)}>{dictionary.deleteDialog.confirm}</AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                          </AlertDialog>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={4} className="h-24 text-center">
+                        {dictionary.noMaterials}
                       </TableCell>
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={4} className="h-24 text-center">
-                      {dictionary.noMaterials}
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       </div>
