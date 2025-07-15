@@ -32,23 +32,31 @@ const snapshotToArray = (snapshot: any) => {
 
 export async function getCompanies(userId?: string, role?: UserRole | null): Promise<Company[]> {
     const dbRef = ref(db, 'companies');
-    let q;
-
-    if (userId && role === 'admin') {
-        q = query(dbRef, orderByChild('createdBy'), equalTo(userId));
-    } else if (userId && role === 'client') {
-        q = query(dbRef, orderByChild('assignedUserUid'), equalTo(userId));
-    } else {
-        q = dbRef;
-    }
     
-    const snapshot = await get(q);
-    if (snapshot.exists()) {
-        const allCompanies = snapshotToArray(snapshot).sort((a,b) => a.name.localeCompare(b.name));
-        return allCompanies;
+    // Fetch all companies first, then filter on the client side.
+    // This avoids the need for composite indexes in Firebase for this query.
+    const snapshot = await get(dbRef);
+
+    if (!snapshot.exists()) {
+        return [];
     }
-    return [];
+
+    const allCompanies = snapshotToArray(snapshot);
+
+    if (!userId || !role) {
+        return allCompanies.sort((a,b) => a.name.localeCompare(b.name));
+    }
+
+    let userCompanies: Company[] = [];
+    if (role === 'admin') {
+        userCompanies = allCompanies.filter(company => company.createdBy === userId);
+    } else if (role === 'client') {
+        userCompanies = allCompanies.filter(company => company.assignedUserUid === userId);
+    }
+
+    return userCompanies.sort((a,b) => a.name.localeCompare(b.name));
 }
+
 
 export async function addCompany(name: string, userId: string): Promise<Company> {
   const companyData = { name, createdBy: userId };
