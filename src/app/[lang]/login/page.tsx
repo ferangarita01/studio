@@ -53,10 +53,9 @@ export default function LoginPage({
                 <Label htmlFor="email">{dictionary.email}</Label>
                 <Input
                   id="email"
-                  type="text"
-                  placeholder="Admin"
+                  type="email"
+                  placeholder="nombre@ejemplo.com"
                   required
-                  defaultValue="Admin"
                 />
               </div>
               <div className="grid gap-2">
@@ -69,7 +68,7 @@ export default function LoginPage({
                     {dictionary.forgotPassword}
                   </Link>
                 </div>
-                <Input id="password" type="password" required defaultValue="Admin1" />
+                <Input id="password" type="password" required />
               </div>
               <div className="flex flex-col gap-2">
                 <Button onClick={(e) => handleLogin(e, 'admin')} className="w-full">
