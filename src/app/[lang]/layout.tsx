@@ -2,7 +2,10 @@ import type { Metadata } from 'next';
 import '../globals.css';
 import { getDictionary } from '@/lib/get-dictionary';
 import type { Locale } from '@/i18n-config';
-import { ClientLayoutProviders } from '@/components/layout/client-layout-providers';
+import { AuthProvider } from '@/context/auth-context';
+import { DictionariesProvider } from '@/context/dictionary-context';
+import { ThemeProvider } from '@/components/theme-provider';
+import { ClientLayoutContent } from '@/components/layout/client-layout-content';
 
 export const metadata: Metadata = {
   title: 'WasteWise',
@@ -16,8 +19,8 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { lang: Locale };
 }>) {
+  const dictionary = await getDictionary(params.lang);
   const { lang } = params;
-  const dictionary = await getDictionary(lang);
 
   return (
     <html lang={lang} suppressHydrationWarning>
@@ -27,9 +30,20 @@ export default async function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <ClientLayoutProviders dictionary={dictionary} lang={lang}>
-          {children}
-        </ClientLayoutProviders>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <DictionariesProvider dictionary={dictionary}>
+            <AuthProvider>
+              <ClientLayoutContent lang={lang}>
+                {children}
+              </ClientLayoutContent>
+            </AuthProvider>
+          </DictionariesProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
