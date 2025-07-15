@@ -65,11 +65,16 @@ function ReportView({
   }, []);
 
   const formatCurrency = (amount: number) => {
+    if (typeof amount !== 'number') return '';
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
     }).format(amount);
   };
+  
+  const formatDate = (date: string) => {
+    return new Date(date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+  }
 
   const handleDownloadPdf = async () => {
     const input = reportRef.current;
@@ -109,11 +114,7 @@ function ReportView({
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {isClient ? (
-                  <span>{formatCurrency(data.totalCosts)}</span>
-                ) : (
-                  <Skeleton className="h-8 w-24" />
-                )}
+                {!isClient ? <Skeleton className="h-8 w-24" /> : <span>{formatCurrency(data.totalCosts)}</span>}
               </div>
               <p className="text-xs text-muted-foreground">{dictionary.cards.collectionCosts.description}</p>
             </CardContent>
@@ -125,11 +126,7 @@ function ReportView({
             </CardHeader>
             <CardContent>
                <div className="text-2xl font-bold">
-                  {isClient ? (
-                    <span>{formatCurrency(data.totalIncome)}</span>
-                  ) : (
-                    <Skeleton className="h-8 w-24" />
-                  )}
+                  {!isClient ? <Skeleton className="h-8 w-24" /> : <span>{formatCurrency(data.totalIncome)}</span>}
                 </div>
               <p className="text-xs text-muted-foreground">{dictionary.cards.recyclingIncome.description}</p>
             </CardContent>
@@ -141,11 +138,7 @@ function ReportView({
             </CardHeader>
             <CardContent>
               <div className={`text-2xl font-bold ${data.netResult >= 0 ? 'text-primary' : 'text-destructive'}`}>
-                {isClient ? (
-                  <span>{formatCurrency(data.netResult)}</span>
-                ): (
-                  <Skeleton className="h-8 w-24" />
-                )}
+                 {!isClient ? <Skeleton className="h-8 w-24" /> : <span>{formatCurrency(data.netResult)}</span>}
               </div>
               <p className="text-xs text-muted-foreground">{dictionary.cards.netResult.description}</p>
             </CardContent>
@@ -195,18 +188,18 @@ function ReportView({
                       <TableRow key={tx.id}>
                         <TableCell>
                           <div className="font-medium">{tx.description}</div>
-                           {isClient ? (
+                           {!isClient ? <Skeleton className="h-4 w-28 mt-1" /> : (
                               <div className="text-sm text-muted-foreground">
-                                {new Date(tx.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
+                                {formatDate(tx.date)}
                               </div>
-                           ) : <Skeleton className="h-4 w-28 mt-1" />}
+                           )}
                         </TableCell>
                         <TableCell className="text-right">
-                           {isClient ? (
+                           {!isClient ? <Skeleton className="h-6 w-20 float-right" /> : (
                               <Badge variant={tx.type === 'income' ? 'default' : 'destructive'} className="font-semibold">
                                 {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
                               </Badge>
-                           ) : <Skeleton className="h-6 w-20 float-right" /> }
+                           )}
                         </TableCell>
                       </TableRow>
                     ))}

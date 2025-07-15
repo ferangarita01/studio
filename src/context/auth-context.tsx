@@ -34,6 +34,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [role, setRole] = useState<UserRole | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
@@ -47,8 +48,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (user) {
         const profile = await getUserProfile(user.uid);
         setUserProfile(profile);
+
+        // Explicitly set the role for the admin account
+        if (user.email === 'prueba2@admin.co') {
+          setRole('admin');
+        } else if (profile) {
+          setRole(profile.role);
+        } else {
+          setRole(null);
+        }
+
       } else {
         setUserProfile(null);
+        setRole(null);
       }
       setIsLoading(false);
     });
@@ -59,28 +71,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (email: string, password: string):Promise<any> => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    // onAuthStateChanged will handle fetching the profile
+    // onAuthStateChanged will handle fetching the profile and setting the role
     return userCredential;
   };
 
   const signUp = async (email: string, password: string):Promise<any> => {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const newUser = userCredential.user;
-    if (newUser) {
-      // Create a user profile in the database with the 'client' role
-      await createUserProfile(newUser.uid, { 
-        email: newUser.email!, 
-        role: 'client' 
-      });
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const newUser = userCredential.user;
+        if (newUser) {
+          // Create a user profile in the database with the 'client' role
+          await createUserProfile(newUser.uid, { 
+            email: newUser.email!, 
+            role: 'client' 
+          });
+        }
+        // onAuthStateChanged will handle setting the new user and profile
+        return userCredential;
+    } catch (err) {
+        throw err;
     }
-    // onAuthStateChanged will handle setting the new user and profile
-    return userCredential;
   };
 
   const logout = useCallback(async () => {
     await signOut(auth);
     setUser(null);
     setUserProfile(null);
+    setRole(null);
     router.push(`/${lang}/login`);
   }, [router, lang]);
 
@@ -92,7 +109,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         login, 
         logout, 
         signUp,
-        role: userProfile?.role || null, 
+        role, 
         userProfile,
     }}>
       {children}
