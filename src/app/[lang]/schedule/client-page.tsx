@@ -226,7 +226,7 @@ export function ScheduleClient({ dictionary, allEvents: initialEvents }: Schedul
               <SheetTitle>
                 {dictionary.details.title}:{" "}
                 {isClient && selectedDate ? (
-                  format(selectedDate, "MMMM d, yyyy")
+                  <span>{format(selectedDate, "MMMM d, yyyy")}</span>
                 ) : (
                   <Skeleton className="h-6 w-32 inline-block" />
                 )}
