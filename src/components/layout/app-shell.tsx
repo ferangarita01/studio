@@ -65,7 +65,7 @@ const Logo = () => {
 const allNavItems = [
     { href: '/', icon: LayoutDashboard, labelKey: 'dashboard', roles: ['admin', 'client'] },
     { href: '/analyzer', icon: BrainCircuit, labelKey: 'analyzer', roles: ['admin'] },
-    { href: '/log', icon: Trash2, labelKey: 'log', roles: ['admin'] },
+    { href: '/log', icon: Trash2, labelKey: 'log', roles: ['admin', 'client'] },
     { href: '/schedule', icon: Calendar, labelKey: 'schedule', roles: ['admin', 'client'] },
     { 
       icon: FileText, 
@@ -139,7 +139,7 @@ function LanguageToggle() {
 
 interface CompanyContextType {
   selectedCompany: Company | null;
-  setSelectedCompany: (company: Company) => void;
+  setSelectedCompany: (company: Company | null) => void;
   companies: Company[];
   addCompany: (company: Company) => void;
   isLoading: boolean;
@@ -174,7 +174,22 @@ function CompanySwitcher({ isClient }: { isClient: boolean }) {
   if (isLoading) {
     return <Skeleton className="h-9 w-full" />;
   }
+  
+  // A client user should not see the company switcher if they only have one company.
+  // The switcher is primarily for admins.
+  if (role === 'client') {
+      if (!selectedCompany) {
+         return <div className="p-2 text-sm text-center text-muted-foreground">No company assigned.</div>;
+      }
+      return (
+         <div className="flex items-center gap-2 truncate p-2 border rounded-md bg-muted/50">
+            <Building className="h-4 w-4 flex-shrink-0" />
+            <span className="truncate font-medium">{selectedCompany.name}</span>
+          </div>
+      );
+  }
 
+  // Admin view
   if (!selectedCompany && !isLoading) {
     return (
       <div className="text-sm text-muted-foreground p-2 text-center">
@@ -192,8 +207,6 @@ function CompanySwitcher({ isClient }: { isClient: boolean }) {
     );
   }
 
-  // This should not happen if isLoading is false and companies have been fetched.
-  // But as a safeguard:
   if (!selectedCompany) {
     return <Skeleton className="h-9 w-full" />;
   }
@@ -276,7 +289,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [isLoadingCompanies, setIsLoadingCompanies] = useState(true);
   const [isClient, setIsClient] = useState(false);
 
-  const { logout, role } = useAuth();
+  const { logout, role, companyId: clientCompanyId } = useAuth();
   const dictionary = useDictionaries()?.navigation;
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   
@@ -287,10 +300,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const fetchCompanies = async () => {
       setIsLoadingCompanies(true);
-      const fetchedCompanies = await getCompanies();
+      // For clients, fetch only their assigned company. For admins, fetch all.
+      const companyIdToFetch = role === 'client' ? clientCompanyId : undefined;
+      const fetchedCompanies = await getCompanies(companyIdToFetch || undefined);
+
       setCompanies(fetchedCompanies);
+
       if (fetchedCompanies.length > 0) {
-        setSelectedCompany(fetchedCompanies[0]);
+         setSelectedCompany(fetchedCompanies[0]);
       } else {
         setSelectedCompany(null);
       }
@@ -299,7 +316,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     if (role) { // Only fetch if user is logged in
       fetchCompanies();
     }
-  }, [role]);
+  }, [role, clientCompanyId]);
 
   const navItems = useMemo(() => {
     if (!role) return [];
@@ -330,6 +347,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     setCompanies(prev => [...prev, company]);
   };
 
+  const companyContextValue = useMemo(() => ({
+    selectedCompany,
+    setSelectedCompany: (company: Company | null) => {
+      // Clients should not be able to change their selected company.
+      if (role === 'admin') {
+        setSelectedCompany(company);
+      }
+    },
+    companies,
+    addCompany,
+    isLoading: isLoadingCompanies,
+  }), [selectedCompany, companies, addCompany, isLoadingCompanies, role]);
+
   const getHref = (href: string) => {
     if (href === '/') return `/${currentLang}`;
     return `/${currentLang}${href}`;
@@ -356,10 +386,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </CollapsibleTrigger>
               <CollapsibleContent className="space-y-1 py-1 pl-7">
                 {item.subItems.map(subItem => {
-                  const subHref = getHref(subItem.href);
-                  const subLabel = dictionary.links[subItem.labelKey as keyof typeof dictionary.links];
-                  const isSubActive = pathname === subHref;
-                  return (
+                   if (!subItem.roles.includes(role!)) return null;
+                   const subHref = getHref(subItem.href);
+                   const subLabel = dictionary.links[subItem.labelKey as keyof typeof dictionary.links];
+                   const isSubActive = pathname === subHref;
+                   return (
                     <Link
                       key={subItem.labelKey}
                       href={subHref}
@@ -415,7 +446,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
   
   return (
-    <CompanyContext.Provider value={{ selectedCompany, setSelectedCompany, companies, addCompany, isLoading: isLoadingCompanies }}>
+    <CompanyContext.Provider value={companyContextValue}>
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
         <div className="hidden border-r bg-muted/40 md:block">
           <div className="flex h-full max-h-screen flex-col gap-2">

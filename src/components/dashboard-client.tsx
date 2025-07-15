@@ -64,11 +64,16 @@ export function DashboardClient({
   React.useEffect(() => {
     setIsClient(true);
     const fetchEvents = async () => {
-      const events = await getDisposalEvents();
-      setDisposalEvents(events);
+      if (selectedCompany) {
+        const events = await getDisposalEvents(selectedCompany.id);
+        setDisposalEvents(events);
+      } else {
+        const events = await getDisposalEvents();
+        setDisposalEvents(events);
+      }
     }
     fetchEvents();
-  }, []);
+  }, [selectedCompany]);
   
   if (!selectedCompany) {
     return (
@@ -113,18 +118,18 @@ export function DashboardClient({
   const upcomingDisposals = disposalEvents.filter(d => (d.status === 'Scheduled' || d.status === 'Ongoing') && d.companyId === selectedCompany.id);
 
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString(undefined, {
+    return new Intl.DateTimeFormat(undefined, {
       month: 'long',
       day: 'numeric',
       year: 'numeric'
-    });
+    }).format(date);
   }
   
   const formatShortDate = (date: Date) => {
-    return new Date(date).toLocaleDateString(undefined, {
+     return new Intl.DateTimeFormat(undefined, {
       month: 'long',
       day: 'numeric'
-    });
+    }).format(date);
   }
 
   return (
@@ -233,9 +238,11 @@ export function DashboardClient({
                       <p className="font-medium">
                         {disposal.wasteTypes.join(', ')} {dictionary.disposals.pickup}
                       </p>
-                      <p className="text-sm text-muted-foreground">
-                        {isClient ? formatDate(disposal.date) : <Skeleton className="h-4 w-28" />}
-                      </p>
+                      {isClient ? (
+                        <p className="text-sm text-muted-foreground">
+                            {formatDate(disposal.date)}
+                        </p>
+                      ) : <Skeleton className="h-4 w-28" /> }
                       <Badge variant="secondary">{dictionary.disposals.status[disposal.status as keyof typeof dictionary.disposals.status]}</Badge>
                     </div>
                   </div>

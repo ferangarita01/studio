@@ -10,7 +10,6 @@ import {
   query,
   orderBy,
   addDoc,
-  serverTimestamp,
   updateDoc,
   doc,
   deleteDoc,
@@ -22,13 +21,21 @@ import type { WasteEntry, Material, DisposalEvent, ReportData, Company } from "@
 
 // --- Company Service Functions ---
 
-export async function getCompanies(): Promise<Company[]> {
+export async function getCompanies(companyId?: string): Promise<Company[]> {
   const companiesCol = collection(db, "companies");
-  const q = query(companiesCol, orderBy("name", "asc"));
+  let q;
+  if (companyId) {
+    // A client should only fetch their own company information
+    q = query(companiesCol, where('__name__', '==', companyId));
+  } else {
+    // An admin fetches all companies
+    q = query(companiesCol, orderBy("name", "asc"));
+  }
   const companySnapshot = await getDocs(q);
   const companyList = companySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Company));
   return companyList;
 }
+
 
 export async function addCompany(name: string): Promise<Company> {
   const companyData = { name };
@@ -67,9 +74,15 @@ export async function deleteMaterial(materialId: string): Promise<void> {
 
 // --- Waste Log Service Functions ---
 
-export async function getWasteLog(): Promise<WasteEntry[]> {
+export async function getWasteLog(companyId?: string): Promise<WasteEntry[]> {
   const wasteLogCol = collection(db, "wasteLog");
-  const q = query(wasteLogCol, orderBy("date", "desc"));
+  let q;
+  if (companyId) {
+    q = query(wasteLogCol, where("companyId", "==", companyId), orderBy("date", "desc"));
+  } else {
+    q = query(wasteLogCol, orderBy("date", "desc"));
+  }
+  
   const wasteLogSnapshot = await getDocs(q);
   const wasteLogList = wasteLogSnapshot.docs.map(doc => {
     const data = doc.data();
@@ -98,9 +111,15 @@ export async function addWasteEntry(entry: Omit<WasteEntry, 'id' | 'date'> & { d
 
 // --- Disposal Event Service Functions ---
 
-export async function getDisposalEvents(): Promise<DisposalEvent[]> {
+export async function getDisposalEvents(companyId?: string): Promise<DisposalEvent[]> {
   const eventsCol = collection(db, "disposalEvents");
-  const q = query(eventsCol, orderBy("date", "desc"));
+  let q;
+  if (companyId) {
+      q = query(eventsCol, where("companyId", "==", companyId), orderBy("date", "desc"));
+  } else {
+      q = query(eventsCol, orderBy("date", "desc"));
+  }
+  
   const eventSnapshot = await getDocs(q);
   const eventList = eventSnapshot.docs.map(doc => {
     const data = doc.data();
@@ -122,29 +141,38 @@ export async function addDisposalEvent(event: Omit<DisposalEvent, 'id'>): Promis
 
 // --- Mocked Data for Reports and Chart (can be migrated to Firestore Cloud Functions later) ---
 
-export async function getWeeklyReportData(): Promise<Record<string, ReportData>> {
-    // Simulate async operation
+export async function getWeeklyReportData(companyId?: string): Promise<Record<string, ReportData>> {
      return new Promise((resolve) => {
         setTimeout(() => {
-            resolve(weeklyReportData);
+            if (companyId) {
+                resolve({ [companyId]: weeklyReportData[companyId] });
+            } else {
+                resolve(weeklyReportData);
+            }
         }, 300);
     });
 }
 
-export async function getMonthlyReportData(): Promise<Record<string, ReportData>> {
-    // Simulate async operation
+export async function getMonthlyReportData(companyId?: string): Promise<Record<string, ReportData>> {
     return new Promise((resolve) => {
         setTimeout(() => {
-            resolve(monthlyReportData);
+             if (companyId) {
+                resolve({ [companyId]: monthlyReportData[companyId] });
+            } else {
+                resolve(monthlyReportData);
+            }
         }, 300);
     });
 }
 
-export async function getWasteChartData(): Promise<Record<string, any[]>> {
-    // Simulate async operation
+export async function getWasteChartData(companyId?: string): Promise<Record<string, any[]>> {
     return new Promise((resolve) => {
         setTimeout(() => {
-            resolve(wasteData);
+            if (companyId) {
+                resolve({ [companyId]: wasteData[companyId] });
+            } else {
+                resolve(wasteData);
+            }
         }, 300);
     });
 }
