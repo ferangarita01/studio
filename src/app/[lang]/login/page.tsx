@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,13 +18,11 @@ import { useDictionaries } from "@/context/dictionary-context";
 import type { Locale } from "@/i18n-config";
 
 
-export default function LoginPage({
-  params: { lang },
-}: {
-  params: { lang: Locale };
-}) {
+export default function LoginPage() {
   const { login } = useAuth();
   const router = useRouter();
+  const params = useParams();
+  const lang = params.lang as Locale;
   const dictionary = useDictionaries()?.loginPage;
 
   const handleLogin = (e: React.FormEvent, role: "admin" | "client") => {
