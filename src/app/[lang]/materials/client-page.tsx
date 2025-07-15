@@ -159,7 +159,11 @@ export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClien
                           <Badge variant="outline">{dictionary.types[material.type]}</Badge>
                         </TableCell>
                         <TableCell className="text-right">
-                          {isClient ? formatCurrency(material.pricePerKg) : <Skeleton className="h-4 w-16 float-right" />}
+                          {isClient ? (
+                            <span>{formatCurrency(material.pricePerKg)}</span>
+                          ) : (
+                            <Skeleton className="h-4 w-16 float-right" />
+                          )}
                         </TableCell>
                         <TableCell>
                           <AlertDialog>

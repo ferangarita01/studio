@@ -19,7 +19,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
+      // Don't set loading to true here, causes flicker. Let the initial state handle it.
       const companyIdToFetch = role === 'client' ? companyId : undefined;
       
       const [chartData, logData] = await Promise.all([
@@ -31,12 +31,15 @@ export default function DashboardPage() {
       setWasteLogAll(logData);
       setLoading(false);
     };
-    if (!isLoadingCompany && role) {
+    
+    // Fetch data as soon as role is determined. The dashboard component itself handles the case where a company isn't selected yet.
+    if (role) {
       fetchData();
     }
-  }, [isLoadingCompany, role, companyId]);
+  }, [role, companyId]);
 
-  if (loading || isLoadingCompany || !dictionary) return <div>Loading...</div>;
+  if ((loading || isLoadingCompany) && role) return <div>Loading...</div>;
+  if (!dictionary) return <div>Loading...</div>;
 
   return (
       <DashboardClient
