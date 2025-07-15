@@ -159,10 +159,10 @@ export const monthlyReportData: Record<string, ReportData> = {
     totalIncome: 2482.00,
     netResult: 679.00,
     chartData: [
-      { name: 'April', costs: 480, income: 600 },
+      { name: 'Apr', costs: 480, income: 600 },
       { name: 'May', costs: 440, income: 720 },
-      { name: 'June', costs: 500, income: 640 },
-      { name: 'July', costs: 383, income: 522 },
+      { name: 'Jun', costs: 500, income: 640 },
+      { name: 'Jul', costs: 383, income: 522 },
     ],
     transactions: [
       { id: 'minc1', date: '2024-07-28', description: 'Sale of Mixed Recyclables', amount: 522.00, type: 'income' },
@@ -178,10 +178,10 @@ export const monthlyReportData: Record<string, ReportData> = {
     totalIncome: 4200.00,
     netResult: 800.00,
     chartData: [
-      { name: 'April', costs: 880, income: 1000 },
+      { name: 'Apr', costs: 880, income: 1000 },
       { name: 'May', costs: 840, income: 1120 },
-      { name: 'June', costs: 900, income: 1040 },
-      { name: 'July', costs: 780, income: 1042 },
+      { name: 'Jun', costs: 900, income: 1040 },
+      { name: 'Jul', costs: 780, income: 1042 },
     ],
     transactions: [
       { id: 'c2-minc1', date: '2024-07-28', description: 'Monthly Bulk Sale', amount: 1042.00, type: 'income' },

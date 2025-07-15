@@ -88,7 +88,7 @@ function ReportView({
       const height = pdfWidth / ratio;
       
       pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, height);
-      pdf.save("EcoCircle_Report.pdf");
+      pdf.save("WasteWise_Report.pdf");
     });
   };
   
@@ -191,9 +191,11 @@ function ReportView({
                       <TableRow key={tx.id}>
                         <TableCell>
                           <div className="font-medium">{tx.description}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {new Date(tx.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
-                          </div>
+                           {isClient ? (
+                              <div className="text-sm text-muted-foreground">
+                                {new Date(tx.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
+                              </div>
+                           ) : <Skeleton className="h-4 w-28 mt-1" />}
                         </TableCell>
                         <TableCell className="text-right">
                            {isClient ? (
