@@ -62,21 +62,19 @@ export async function getUsers(role?: UserRole): Promise<UserProfile[]> {
 
 export async function getCompanies(userId?: string): Promise<Company[]> {
     const dbRef = ref(db, 'companies');
-    let q;
+    const snapshot = await get(dbRef);
+
+    if (!snapshot.exists()) {
+        return [];
+    }
+
+    let allCompanies = snapshotToArray(snapshot);
+
     if (userId) {
-        // Query for companies created by the given user (admin)
-        q = query(dbRef, orderByChild('createdBy'), equalTo(userId));
-    } else {
-        // Get all companies if no user ID is provided
-        q = dbRef;
+        allCompanies = allCompanies.filter(company => company.createdBy === userId);
     }
     
-    const snapshot = await get(q);
-    if (snapshot.exists()) {
-        const allCompanies = snapshotToArray(snapshot).sort((a,b) => a.name.localeCompare(b.name));
-        return allCompanies;
-    }
-    return [];
+    return allCompanies.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 
@@ -261,4 +259,3 @@ export async function getWasteChartData(companyId?: string): Promise<Record<stri
     });
 }
 
-    
