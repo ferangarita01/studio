@@ -279,17 +279,16 @@ function CompanySwitcher({ isClient }: { isClient: boolean }) {
 }
 
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+export function AppShell({ children, lang }: { children: React.ReactNode, lang: string }) {
   const pathname = usePathname();
   const router = useRouter();
-  const currentLang = pathname.split('/')[1] || 'en';
   
   const [companies, setCompanies] = useState<Company[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [isLoadingCompanies, setIsLoadingCompanies] = useState(true);
   const [isClient, setIsClient] = useState(false);
 
-  const { logout, role, companyId: clientCompanyId } = useAuth();
+  const { isAuthenticated, isLoading: isAuthLoading, logout, role, companyId: clientCompanyId } = useAuth();
   const dictionary = useDictionaries()?.navigation;
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   
@@ -298,9 +297,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, []);
   
   useEffect(() => {
+    if (isAuthLoading) return;
+    if (!isAuthenticated && !pathname.endsWith('/login')) {
+      router.push(`/${lang}/login`);
+    }
+  }, [isAuthenticated, isAuthLoading, pathname, router, lang]);
+  
+  useEffect(() => {
     const fetchCompanies = async () => {
       setIsLoadingCompanies(true);
-      // For clients, fetch only their assigned company. For admins, fetch all.
       const companyIdToFetch = role === 'client' ? clientCompanyId : undefined;
       const fetchedCompanies = await getCompanies(companyIdToFetch || undefined);
 
@@ -313,7 +318,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       }
       setIsLoadingCompanies(false);
     };
-    if (role) { // Only fetch if user is logged in
+    if (role) {
       fetchCompanies();
     }
   }, [role, clientCompanyId]);
@@ -329,10 +334,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   React.useEffect(() => {
     if (role && navItems.length > 0 && !isAuthorized) {
-       router.push(`/${currentLang}`);
+       router.push(`/${lang}`);
     }
-  }, [isAuthorized, role, router, currentLang, navItems.length]);
-
+  }, [isAuthorized, role, router, lang, navItems.length]);
+  
+  if (isAuthLoading) {
+    return <div className="flex h-screen w-full items-center justify-center">Loading...</div>;
+  }
+  
+  if (!isAuthenticated || pathname.endsWith('/login')) {
+    return <>{children}</>;
+  }
 
   if (!dictionary) return null;
    if (role && navItems.length > 0 && !isAuthorized) {
@@ -350,7 +362,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const companyContextValue = useMemo(() => ({
     selectedCompany,
     setSelectedCompany: (company: Company | null) => {
-      // Clients should not be able to change their selected company.
       if (role === 'admin') {
         setSelectedCompany(company);
       }
@@ -361,8 +372,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }), [selectedCompany, companies, addCompany, isLoadingCompanies, role]);
 
   const getHref = (href: string) => {
-    if (href === '/') return `/${currentLang}`;
-    return `/${currentLang}${href}`;
+    if (href === '/') return `/${lang}`;
+    return `/${lang}${href}`;
   }
 
   const NavContent = () => (

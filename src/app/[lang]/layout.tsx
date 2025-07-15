@@ -5,7 +5,8 @@ import type { Locale } from '@/i18n-config';
 import { AuthProvider } from '@/context/auth-context';
 import { DictionariesProvider } from '@/context/dictionary-context';
 import { ThemeProvider } from '@/components/theme-provider';
-import { ClientLayoutContent } from '@/components/layout/client-layout-content';
+import { AppShell } from '@/components/layout/app-shell';
+import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: 'WasteWise',
@@ -38,9 +39,10 @@ export default async function RootLayout({
         >
           <DictionariesProvider dictionary={dictionary}>
             <AuthProvider>
-              <ClientLayoutContent lang={lang}>
+              <AppShell lang={lang}>
                 {children}
-              </ClientLayoutContent>
+              </AppShell>
+              <Toaster />
             </AuthProvider>
           </DictionariesProvider>
         </ThemeProvider>
