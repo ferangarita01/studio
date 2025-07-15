@@ -25,6 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { AddWasteDialog } from "@/components/add-waste-dialog";
+import { useAuth } from "@/context/auth-context";
 
 interface LogClientProps {
   dictionary: Dictionary["logPage"];
@@ -36,6 +37,7 @@ export function LogClient({ dictionary, initialWasteLog }: LogClientProps) {
   const [isClient, setIsClient] = useState(false);
   const [isAddWasteDialogOpen, setAddWasteDialogOpen] = useState(false);
   const [allWasteLog, setAllWasteLog] = useState(initialWasteLog);
+  const { role } = useAuth();
 
   useEffect(() => {
     setIsClient(true);
@@ -91,14 +93,16 @@ export function LogClient({ dictionary, initialWasteLog }: LogClientProps) {
       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <div className="flex items-center">
           <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
-           <div className="ml-auto flex items-center gap-2">
-            <Button size="sm" className="h-8 gap-1" onClick={() => setAddWasteDialogOpen(true)}>
-              <PlusCircle className="h-3.5 w-3.5" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {dictionary.addWasteEntry}
-              </span>
-            </Button>
-          </div>
+           {isClient && role === 'admin' && (
+             <div className="ml-auto flex items-center gap-2">
+              <Button size="sm" className="h-8 gap-1" onClick={() => setAddWasteDialogOpen(true)}>
+                <PlusCircle className="h-3.5 w-3.5" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  {dictionary.addWasteEntry}
+                </span>
+              </Button>
+            </div>
+           )}
         </div>
         <Card>
           <CardHeader>
