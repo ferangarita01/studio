@@ -112,12 +112,12 @@ export function DashboardClient({
                 <div className="mt-8 text-left">
                   <h4 className="font-semibold text-lg mb-4 text-center">¿Qué puedes esperar de EcoCircle?</h4>
                   <div className="grid md:grid-cols-2 gap-6">
-                      <p><strong>Tablero Centralizado:</strong> Un espacio intuitivo donde podrás visualizar y gestionar todas tus actividades ambientales de un vistazo.</p>
-                      <p><strong>Analizador IA:</strong> Próximamente, nuestra potente inteligencia artificial te brindará insights profundos para la optimización de tus procesos de residuos.</p>
-                      <p><strong>Registro de Residuos:</strong> Simplifica el seguimiento y la documentación de tus residuos, asegurando la trazabilidad y el cumplimiento normativo.</p>
-                      <p><strong>Calendario:</strong> Organiza y programa tus actividades ambientales, desde recolecciones hasta auditorías.</p>
-                      <p><strong>Reportes Detallados:</strong> Genera informes completos para evaluar tu desempeño ambiental, identificar áreas de mejora y cumplir con las regulaciones.</p>
-                      <p><strong>Materiales:</strong> Accede a recursos y documentación relevante para una gestión ambiental efectiva.</p>
+                      <div><strong>Tablero Centralizado:</strong> Un espacio intuitivo donde podrás visualizar y gestionar todas tus actividades ambientales de un vistazo.</div>
+                      <div><strong>Analizador IA:</strong> Próximamente, nuestra potente inteligencia artificial te brindará insights profundos para la optimización de tus procesos de residuos.</div>
+                      <div><strong>Registro de Residuos:</strong> Simplifica el seguimiento y la documentación de tus residuos, asegurando la trazabilidad y el cumplimiento normativo.</div>
+                      <div><strong>Calendario:</strong> Organiza y programa tus actividades ambientales, desde recolecciones hasta auditorías.</div>
+                      <div><strong>Reportes Detallados:</strong> Genera informes completos para evaluar tu desempeño ambiental, identificar áreas de mejora y cumplir con las regulaciones.</div>
+                      <div><strong>Materiales:</strong> Accede a recursos y documentación relevante para una gestión ambiental efectiva.</div>
                   </div>
                 </div>
 
@@ -153,6 +153,10 @@ export function DashboardClient({
     }).format(new Date(date));
   }
 
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat().format(num);
+  }
+
   return (
     <div className="flex w-full flex-col">
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -169,7 +173,7 @@ export function DashboardClient({
             </CardHeader>
             <CardContent>
               {isClient ? (
-                <div className="text-2xl font-bold">1,254 kg</div>
+                <div className="text-2xl font-bold">{formatNumber(1254)} kg</div>
               ) : (
                 <Skeleton className="h-8 w-24" />
               )}
@@ -185,7 +189,7 @@ export function DashboardClient({
             </CardHeader>
             <CardContent>
               {isClient ? (
-                <div className="text-2xl font-bold">68%</div>
+                <div className="text-2xl font-bold">{formatNumber(68)}%</div>
               ) : (
                 <Skeleton className="h-8 w-16" />
               )}
@@ -304,7 +308,7 @@ export function DashboardClient({
                     wasteLog.slice(0, 5).map((entry: WasteEntry) => (
                       <TableRow key={entry.id}>
                         <TableCell>
-                         {isClient ? formatShortDate(entry.date) : <Skeleton className="h-4 w-20" />}
+                         {isClient ? <span>{formatShortDate(entry.date)}</span> : <Skeleton className="h-4 w-20" />}
                         </TableCell>
                         <TableCell>{entry.type}</TableCell>
                         <TableCell className="text-right">{entry.quantity.toFixed(2)} kg</TableCell>
@@ -326,3 +330,4 @@ export function DashboardClient({
     </div>
   );
 }
+
