@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -66,3 +67,5 @@ export function CreateCompanyDialog({ open, onOpenChange, onCreate, dictionary }
     </Dialog>
   );
 }
+
+    

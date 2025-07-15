@@ -567,3 +567,5 @@ export function AppShell({ children, lang, dictionary }: { children: React.React
     </ThemeProvider>
    )
 }
+
+    

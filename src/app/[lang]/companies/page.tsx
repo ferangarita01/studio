@@ -34,3 +34,5 @@ export default async function CompaniesPage({
 
   return <CompaniesClient dictionary={dictionary.companiesPage} initialCompanies={companiesWithClientNames} />;
 }
+
+    

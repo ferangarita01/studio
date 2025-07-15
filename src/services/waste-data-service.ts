@@ -60,30 +60,23 @@ export async function getUsers(role?: UserRole): Promise<UserProfile[]> {
 
 // --- Company Service Functions ---
 
-export async function getCompanies(userId?: string, role?: UserRole): Promise<Company[]> {
+export async function getCompanies(userId?: string): Promise<Company[]> {
     const dbRef = ref(db, 'companies');
-    // Fetch all companies first, then filter in the application code.
-    // This avoids the Firebase ".indexOn" error if the database isn't indexed.
-    const snapshot = await get(dbRef);
-
-    if (!snapshot.exists()) {
-        return [];
+    let q;
+    if (userId) {
+        // Query for companies created by the given user (admin)
+        q = query(dbRef, orderByChild('createdBy'), equalTo(userId));
+    } else {
+        // Get all companies if no user ID is provided
+        q = dbRef;
     }
-
-    const allCompanies = snapshotToArray(snapshot);
-
-    let userCompanies: Company[] = [];
-
-    if (role === 'admin' && userId) {
-        userCompanies = allCompanies.filter(company => company.createdBy === userId);
-    } else if (role === 'client' && userId) {
-        userCompanies = allCompanies.filter(company => company.assignedUserUid === userId);
-    } else if (!userId) {
-        // If no user/role specified, return all companies
-        userCompanies = allCompanies;
+    
+    const snapshot = await get(q);
+    if (snapshot.exists()) {
+        const allCompanies = snapshotToArray(snapshot).sort((a,b) => a.name.localeCompare(b.name));
+        return allCompanies;
     }
-
-    return userCompanies.sort((a,b) => a.name.localeCompare(b.name));
+    return [];
 }
 
 
@@ -164,8 +157,6 @@ export async function getWasteLog(companyId?: string): Promise<WasteEntry[]> {
   if (companyId) {
     q = query(wasteLogRef, orderByChild("companyId"), equalTo(companyId));
   } else {
-    // Fetch all waste logs without ordering by date to avoid needing a Firebase index.
-    // We will sort them in the application code.
     q = wasteLogRef;
   }
   
@@ -269,3 +260,5 @@ export async function getWasteChartData(companyId?: string): Promise<Record<stri
         }, 300);
     });
 }
+
+    

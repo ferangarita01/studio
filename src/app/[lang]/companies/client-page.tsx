@@ -139,3 +139,4 @@ export function CompaniesClient({ dictionary, initialCompanies }: CompaniesClien
   );
 }
 
+    
