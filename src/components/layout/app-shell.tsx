@@ -46,6 +46,7 @@ import { useAuth } from "@/context/auth-context";
 import { useDictionaries } from "@/context/dictionary-context";
 import { addCompany as addCompanyService, getCompanies } from "@/services/waste-data-service";
 import { Skeleton } from "../ui/skeleton";
+import { Badge } from "../ui/badge";
 
 const Logo = () => {
   const dictionary = useDictionaries()?.navigation;
@@ -313,13 +314,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
      <Link
       href={href}
       className={cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+        "flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
         isActive && "bg-muted text-primary"
       )}
       onClick={() => setMobileMenuOpen(false)}
     >
-      <item.icon className="h-4 w-4" />
-      {label}
+      <div className="flex items-center gap-3">
+        <item.icon className="h-4 w-4" />
+        {label}
+      </div>
+       {role === 'admin' && item.labelKey === 'analyzer' && (
+        <Badge variant="outline" className="text-xs">Beta</Badge>
+      )}
     </Link>
   );
   
