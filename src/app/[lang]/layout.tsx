@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import '../globals.css';
 import { getDictionary } from '@/lib/get-dictionary';
 import type { Locale } from '@/i18n-config';
-import { ClientLayout } from '@/components/layout/client-layout';
+import { ClientLayoutProviders } from '@/components/layout/client-layout-providers';
 
 export const metadata: Metadata = {
   title: 'WasteWise',
@@ -20,8 +20,17 @@ export default async function RootLayout({
   const { lang } = params;
 
   return (
-    <ClientLayout dictionary={dictionary} lang={lang}>
-      {children}
-    </ClientLayout>
+    <html lang={lang} suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+      </head>
+      <body className="font-body antialiased">
+        <ClientLayoutProviders dictionary={dictionary} lang={lang}>
+          {children}
+        </ClientLayoutProviders>
+      </body>
+    </html>
   );
 }
