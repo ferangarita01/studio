@@ -93,7 +93,9 @@ export async function getWasteLog(companyId?: string): Promise<WasteEntry[]> {
   if (companyId) {
     q = query(wasteLogRef, orderByChild("companyId"), equalTo(companyId));
   } else {
-    q = query(wasteLogRef, orderByChild("date"));
+    // Fetch all waste logs without ordering by date to avoid needing a Firebase index.
+    // We will sort them in the application code.
+    q = wasteLogRef;
   }
   
   const snapshot = await get(q);

@@ -125,7 +125,7 @@ export function LogClient({ dictionary, initialWasteLog }: LogClientProps) {
                       return (
                         <TableRow key={entry.id}>
                           <TableCell>
-                            {isClient ? formatDate(entry.date) : <Skeleton className="h-4 w-32" />}
+                            {isClient ? <span>{formatDate(entry.date)}</span> : <Skeleton className="h-4 w-32" />}
                           </TableCell>
                           <TableCell>
                             <Badge variant="outline">{dictionary.types[entry.type]}</Badge>
@@ -134,10 +134,10 @@ export function LogClient({ dictionary, initialWasteLog }: LogClientProps) {
                             {entry.quantity.toFixed(2)} kg
                           </TableCell>
                            <TableCell className="text-right">
-                            {isClient ? formatCurrency(entry.price) : <Skeleton className="h-4 w-16 float-right" />}
+                            {isClient ? <span>{formatCurrency(entry.price)}</span> : <Skeleton className="h-4 w-16 float-right" />}
                           </TableCell>
                            <TableCell className="text-right">
-                            {isClient ? formatCurrency(entry.serviceCost) : <Skeleton className="h-4 w-16 float-right" />}
+                            {isClient ? <span>{formatCurrency(entry.serviceCost)}</span> : <Skeleton className="h-4 w-16 float-right" />}
                           </TableCell>
                           <TableCell className="text-right">
                              {isClient ? (
