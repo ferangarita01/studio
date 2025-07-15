@@ -388,7 +388,8 @@
       "actions": "Actions",
       "assign": "Assign Client",
       "reassign": "Re-assign",
-      "unassigned": "Unassigned"
+      "unassigned": "Unassigned",
+      "edit": "Edit"
     },
     "assignDialog": {
       "title": "Assign Client",
@@ -400,10 +401,22 @@
       "assign": "Assign Client",
       "unassign": "None (Unassign)"
     },
+    "editDialog": {
+      "title": "Edit Company Name",
+      "description": "Update the name for this company.",
+      "nameLabel": "Company Name",
+      "namePlaceholder": "e.g., Global Exports Ltd.",
+      "cancel": "Cancel",
+      "update": "Update Name"
+    },
     "toast": {
       "assign": {
         "title": "Client Assigned",
         "description": "The client has been successfully assigned to the company."
+      },
+      "update": {
+        "title": "Company Updated",
+        "description": "The company name has been successfully updated."
       }
     }
   }

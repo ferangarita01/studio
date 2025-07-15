@@ -388,7 +388,8 @@
       "actions": "Acciones",
       "assign": "Asignar Cliente",
       "reassign": "Re-asignar",
-      "unassigned": "Sin asignar"
+      "unassigned": "Sin asignar",
+      "edit": "Editar"
     },
     "assignDialog": {
       "title": "Asignar Cliente",
@@ -400,10 +401,22 @@
       "assign": "Asignar Cliente",
       "unassign": "Ninguno (Desasignar)"
     },
+    "editDialog": {
+      "title": "Editar Nombre de la Empresa",
+      "description": "Actualice el nombre de esta empresa.",
+      "nameLabel": "Nombre de la Empresa",
+      "namePlaceholder": "ej., Exportaciones Globales S.A.",
+      "cancel": "Cancelar",
+      "update": "Actualizar Nombre"
+    },
     "toast": {
       "assign": {
         "title": "Cliente Asignado",
         "description": "El cliente ha sido asignado exitosamente a la empresa."
+      },
+      "update": {
+        "title": "Empresa Actualizada",
+        "description": "El nombre de la empresa se ha actualizado correctamente."
       }
     }
   }

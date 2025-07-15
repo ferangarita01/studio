@@ -86,6 +86,11 @@ export async function addCompany(name: string, userId: string): Promise<Company>
   return { id: newCompanyRef.key!, ...companyData };
 }
 
+export async function updateCompany(companyId: string, newName: string): Promise<void> {
+  const companyRef = ref(db, `companies/${companyId}`);
+  await update(companyRef, { name: newName });
+}
+
 export async function assignUserToCompany(companyId: string, userId: string | null): Promise<void> {
     const companyRef = ref(db, `companies/${companyId}`);
 
@@ -258,4 +263,3 @@ export async function getWasteChartData(companyId?: string): Promise<Record<stri
         }, 300);
     });
 }
-

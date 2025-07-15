@@ -21,8 +21,9 @@ import type { Dictionary } from "@/lib/get-dictionary";
 import type { Company, UserProfile } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { getUsers, assignUserToCompany } from "@/services/waste-data-service";
+import { getUsers, assignUserToCompany, updateCompany } from "@/services/waste-data-service";
 import { AssignUserDialog } from "@/components/assign-user-dialog";
+import { EditCompanyDialog } from "@/components/edit-company-dialog";
 
 interface CompaniesClientProps {
   dictionary: Dictionary["companiesPage"];
@@ -32,7 +33,8 @@ interface CompaniesClientProps {
 export function CompaniesClient({ dictionary, initialCompanies }: CompaniesClientProps) {
   const [companies, setCompanies] = useState<Company[]>(initialCompanies);
   const [clients, setClients] = useState<UserProfile[]>([]);
-  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [isAssignDialogOpen, setAssignDialogOpen] = useState(false);
+  const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [isClient, setIsClient] = useState(false);
   const { toast } = useToast();
@@ -46,10 +48,15 @@ export function CompaniesClient({ dictionary, initialCompanies }: CompaniesClien
     fetchClients();
   }, []);
 
-  const handleOpenDialog = (company: Company) => {
+  const handleOpenAssignDialog = (company: Company) => {
     setSelectedCompany(company);
-    setDialogOpen(true);
+    setAssignDialogOpen(true);
   };
+
+  const handleOpenEditDialog = (company: Company) => {
+    setSelectedCompany(company);
+    setEditDialogOpen(true);
+  }
   
   const handleAssignUser = useCallback(async (companyId: string, userId: string | null) => {
     try {
@@ -68,7 +75,7 @@ export function CompaniesClient({ dictionary, initialCompanies }: CompaniesClien
         title: dictionary.toast.assign.title,
         description: dictionary.toast.assign.description,
       });
-      setDialogOpen(false);
+      setAssignDialogOpen(false);
     } catch (error) {
        toast({
         title: "Error",
@@ -77,6 +84,26 @@ export function CompaniesClient({ dictionary, initialCompanies }: CompaniesClien
       });
     }
   }, [companies, clients, toast, dictionary]);
+
+  const handleUpdateCompany = useCallback(async (companyId: string, newName: string) => {
+    try {
+      await updateCompany(companyId, newName);
+      setCompanies(prevCompanies => prevCompanies.map(c => 
+        c.id === companyId ? { ...c, name: newName } : c
+      ));
+      toast({
+        title: dictionary.toast.update.title,
+        description: dictionary.toast.update.description,
+      });
+      setEditDialogOpen(false);
+    } catch (error) {
+       toast({
+        title: "Error",
+        description: "Failed to update company name.",
+        variant: "destructive"
+      });
+    }
+  }, [toast, dictionary]);
 
   return (
     <>
@@ -96,7 +123,7 @@ export function CompaniesClient({ dictionary, initialCompanies }: CompaniesClien
                   <TableRow>
                     <TableHead>{dictionary.table.companyName}</TableHead>
                     <TableHead>{dictionary.table.assignedClient}</TableHead>
-                    <TableHead className="w-[150px] text-right"><span className="sr-only">{dictionary.table.actions}</span></TableHead>
+                    <TableHead className="w-[250px] text-right"><span className="sr-only">{dictionary.table.actions}</span></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -107,8 +134,11 @@ export function CompaniesClient({ dictionary, initialCompanies }: CompaniesClien
                         <TableCell>
                           {company.assignedUserName || <span className="text-muted-foreground">{dictionary.table.unassigned}</span>}
                         </TableCell>
-                        <TableCell className="text-right">
-                            <Button variant="outline" size="sm" onClick={() => handleOpenDialog(company)}>
+                        <TableCell className="text-right space-x-2">
+                            <Button variant="outline" size="sm" onClick={() => handleOpenEditDialog(company)}>
+                                {dictionary.table.edit}
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={() => handleOpenAssignDialog(company)}>
                                 {company.assignedUserUid ? dictionary.table.reassign : dictionary.table.assign}
                             </Button>
                         </TableCell>
@@ -128,15 +158,20 @@ export function CompaniesClient({ dictionary, initialCompanies }: CompaniesClien
         </Card>
       </div>
       <AssignUserDialog
-        open={isDialogOpen}
-        onOpenChange={setDialogOpen}
+        open={isAssignDialogOpen}
+        onOpenChange={setAssignDialogOpen}
         dictionary={dictionary.assignDialog}
         clients={clients}
         company={selectedCompany}
         onAssign={handleAssignUser}
       />
+      <EditCompanyDialog
+        open={isEditDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        dictionary={dictionary.editDialog}
+        company={selectedCompany}
+        onUpdate={handleUpdateCompany}
+      />
     </>
   );
 }
-
-    
