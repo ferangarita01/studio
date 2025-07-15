@@ -394,7 +394,8 @@
       "title": "Assign Client",
       "description": "Select a client to assign to",
       "selectLabel": "Client User",
-      "selectPlaceholder": "Select a client",
+      "selectPlaceholder": "Select a client...",
+      "searchPlaceholder": "Search clients...",
       "cancel": "Cancel",
       "assign": "Assign Client",
       "unassign": "None (Unassign)"
@@ -407,5 +408,3 @@
     }
   }
 }
-
-    

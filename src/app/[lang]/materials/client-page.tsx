@@ -113,6 +113,7 @@ export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClien
   }, [materials, toast, dictionary]);
 
   const formatCurrency = (amount: number) => {
+    if (typeof amount !== 'number') return '';
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
@@ -159,11 +160,7 @@ export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClien
                           <Badge variant="outline">{dictionary.types[material.type]}</Badge>
                         </TableCell>
                         <TableCell className="text-right">
-                          {isClient ? (
-                            <span>{formatCurrency(material.pricePerKg)}</span>
-                          ) : (
-                            <Skeleton className="h-4 w-16 float-right" />
-                          )}
+                           {!isClient ? <Skeleton className="h-4 w-16 float-right" /> : <span>{formatCurrency(material.pricePerKg)}</span>}
                         </TableCell>
                         <TableCell>
                           <AlertDialog>

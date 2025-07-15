@@ -394,7 +394,8 @@
       "title": "Asignar Cliente",
       "description": "Seleccione un cliente para asignar a",
       "selectLabel": "Usuario Cliente",
-      "selectPlaceholder": "Seleccione un cliente",
+      "selectPlaceholder": "Seleccionar un cliente...",
+      "searchPlaceholder": "Buscar clientes...",
       "cancel": "Cancelar",
       "assign": "Asignar Cliente",
       "unassign": "Ninguno (Desasignar)"
@@ -407,5 +408,3 @@
     }
   }
 }
-
-    
