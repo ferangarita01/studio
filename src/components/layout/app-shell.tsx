@@ -155,7 +155,7 @@ export const useCompany = () => {
   return context;
 };
 
-function CompanySwitcher() {
+function CompanySwitcher({ isClient }: { isClient: boolean }) {
   const dictionary = useDictionaries()?.navigation;
   const { role } = useAuth();
   const { companies, selectedCompany, setSelectedCompany, addCompany, isLoading } = useCompany();
@@ -179,7 +179,7 @@ function CompanySwitcher() {
     return (
       <div className="text-sm text-muted-foreground p-2 text-center">
         No companies found.
-        {role === 'admin' && (
+        {isClient && role === 'admin' && (
            <Button variant="link" size="sm" onClick={() => setCreateOpen(true)} className="p-1">Create one?</Button>
         )}
          <CreateCompanyDialog
@@ -238,7 +238,7 @@ function CompanySwitcher() {
               </DropdownMenuRadioItem>
             ))}
           </DropdownMenuRadioGroup>
-          {role === 'admin' && (
+          {isClient && role === 'admin' && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem onSelect={() => setCreateOpen(true)}>
@@ -332,7 +332,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const NavContent = () => (
     <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
       <div className="p-2">
-        <CompanySwitcher />
+        <CompanySwitcher isClient={isClient} />
       </div>
       {navItems.map((item) => {
         const label = dictionary.links[item.labelKey as keyof typeof dictionary.links];
@@ -388,7 +388,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <item.icon className="h-4 w-4" />
               {label}
             </div>
-            {role === 'admin' && item.labelKey === 'analyzer' && (
+            {isClient && role === 'admin' && item.labelKey === 'analyzer' && (
               <Badge variant="outline" className="text-xs">Beta</Badge>
             )}
           </Link>
