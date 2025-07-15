@@ -22,11 +22,12 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import type { DisposalEvent, WasteEntry } from "@/lib/types";
+import type { DisposalEvent, WasteEntry, Company } from "@/lib/types";
 import type { Dictionary } from "@/lib/get-dictionary";
 import { useCompany } from "./layout/app-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getDisposalEvents } from "@/services/waste-data-service";
+import { useAuth } from "@/context/auth-context";
 
 const chartConfig = {
   quantity: {
@@ -50,32 +51,45 @@ interface DashboardClientProps {
   dictionary: Dictionary["dashboard"];
   wasteDataAll: Record<string, any[]>;
   wasteLogAll: WasteEntry[];
+  companies: Company[];
 }
 
 export function DashboardClient({
   dictionary,
   wasteDataAll,
   wasteLogAll,
+  companies,
 }: DashboardClientProps) {
-  const { selectedCompany } = useCompany();
+  const { role, companyId: clientCompanyId } = useAuth();
+  const { selectedCompany, setCompanies, setSelectedCompany, isLoading: isCompanyContextLoading } = useCompany();
   const [isClient, setIsClient] = React.useState(false);
   const [disposalEvents, setDisposalEvents] = React.useState<DisposalEvent[]>([]);
 
   React.useEffect(() => {
     setIsClient(true);
-    const fetchEvents = async () => {
-      if (selectedCompany) {
-        const events = await getDisposalEvents(selectedCompany.id);
-        setDisposalEvents(events);
-      } else {
-        const events = await getDisposalEvents();
-        setDisposalEvents(events);
-      }
+  }, []);
+
+  React.useEffect(() => {
+    const relevantCompanies = role === 'client' 
+      ? companies.filter(c => c.id === clientCompanyId)
+      : companies;
+    setCompanies(relevantCompanies);
+    if (relevantCompanies.length > 0 && !selectedCompany) {
+      setSelectedCompany(relevantCompanies[0]);
     }
+  }, [companies, role, clientCompanyId, setCompanies, setSelectedCompany, selectedCompany]);
+
+
+  React.useEffect(() => {
+    const fetchEvents = async () => {
+      // Fetch all events initially, then filter on client
+      const events = await getDisposalEvents();
+      setDisposalEvents(events);
+    };
     fetchEvents();
-  }, [selectedCompany]);
+  }, []);
   
-  if (!selectedCompany) {
+  if (isCompanyContextLoading || !selectedCompany) {
     return (
        <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="flex items-center">
@@ -283,7 +297,7 @@ export function DashboardClient({
                     wasteLog.slice(0, 5).map((entry: WasteEntry) => (
                       <TableRow key={entry.id}>
                         <TableCell>
-                          {isClient ? <span>{formatShortDate(entry.date)}</span> : <Skeleton className="h-4 w-20" />}
+                         {isClient ? <span>{formatShortDate(entry.date)}</span> : <Skeleton className="h-4 w-20" />}
                         </TableCell>
                         <TableCell>{entry.type}</TableCell>
                         <TableCell className="text-right">{entry.quantity.toFixed(2)} kg</TableCell>

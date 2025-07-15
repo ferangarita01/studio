@@ -1,51 +1,30 @@
 
-'use client';
-
-import { useDictionaries } from "@/context/dictionary-context";
-import { DashboardClient } from "@/components/dashboard-client";
 import { getWasteChartData, getWasteLog } from "@/services/waste-data-service";
-import type { WasteEntry } from "@/lib/types";
-import { useEffect, useState } from "react";
-import { useCompany } from "@/components/layout/app-shell";
-import { useAuth } from "@/context/auth-context";
+import { getCompanies } from "@/services/waste-data-service";
+import { DashboardClient } from "@/components/dashboard-client";
+import { getDictionary } from "@/lib/get-dictionary";
+import type { Locale } from "@/i18n-config";
 
-export default function DashboardPage() {
-  const dictionary = useDictionaries();
-  const [wasteDataAll, setWasteDataAll] = useState<Record<string, any[]>>({});
-  const [wasteLogAll, setWasteLogAll] = useState<WasteEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { isLoading: isLoadingCompany } = useCompany();
-  const { role, companyId } = useAuth();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      // Don't set loading to true here, causes flicker. Let the initial state handle it.
-      const companyIdToFetch = role === 'client' ? companyId : undefined;
-      
-      const [chartData, logData] = await Promise.all([
-        getWasteChartData(companyIdToFetch || undefined),
-        getWasteLog(companyIdToFetch || undefined)
-      ]);
-
-      setWasteDataAll(chartData);
-      setWasteLogAll(logData);
-      setLoading(false);
-    };
-    
-    // Fetch data as soon as role is determined. The dashboard component itself handles the case where a company isn't selected yet.
-    if (role) {
-      fetchData();
-    }
-  }, [role, companyId]);
-
-  if ((loading || isLoadingCompany) && role) return <div>Loading...</div>;
-  if (!dictionary) return <div>Loading...</div>;
+export default async function DashboardPage({
+  params: { lang },
+}: {
+  params: { lang: Locale };
+}) {
+  const dictionary = await getDictionary(lang);
+  
+  // Fetch all data on the server
+  const [wasteDataAll, wasteLogAll, companies] = await Promise.all([
+    getWasteChartData(),
+    getWasteLog(),
+    getCompanies(),
+  ]);
 
   return (
-      <DashboardClient
-        dictionary={dictionary.dashboard}
-        wasteDataAll={wasteDataAll}
-        wasteLogAll={wasteLogAll}
-      />
+    <DashboardClient
+      dictionary={dictionary.dashboard}
+      wasteDataAll={wasteDataAll}
+      wasteLogAll={wasteLogAll}
+      companies={companies}
+    />
   );
 }

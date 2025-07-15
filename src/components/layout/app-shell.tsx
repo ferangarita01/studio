@@ -144,6 +144,7 @@ interface CompanyContextType {
   selectedCompany: Company | null;
   setSelectedCompany: (company: Company | null) => void;
   companies: Company[];
+  setCompanies: (companies: Company[]) => void;
   addCompany: (company: Company) => void;
   isLoading: boolean;
 }
@@ -279,16 +280,52 @@ function CompanySwitcher({ isClient }: { isClient: boolean }) {
   );
 }
 
+function CompanyProvider({ children }: { children: React.ReactNode }) {
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const { role, companyId: clientCompanyId } = useAuth();
+
+  useEffect(() => {
+    // This effect now primarily manages selection based on auth role
+    // The initial full list of companies comes from page props on dashboard
+    if (role === 'client' && companies.length > 0) {
+      const clientCompany = companies.find(c => c.id === clientCompanyId);
+      setSelectedCompany(clientCompany || null);
+    }
+  }, [role, clientCompanyId, companies]);
+  
+  const addCompany = (company: Company) => {
+    setCompanies(prev => [...prev, company]);
+  };
+  
+  const companyContextValue = useMemo(() => ({
+    selectedCompany,
+    setSelectedCompany: (company: Company | null) => {
+      if (role !== 'client') {
+        setSelectedCompany(company);
+      }
+    },
+    companies,
+    setCompanies, // Expose setCompanies
+    addCompany,
+    isLoading: false, // Loading is handled by page-level suspense
+  }), [selectedCompany, companies, addCompany, role]);
+
+  return (
+      <CompanyContext.Provider value={companyContextValue}>
+          {children}
+      </CompanyContext.Provider>
+  )
+}
+
 function AppShellContent({ children, lang }: { children: React.ReactNode, lang: string }) {
   const pathname = usePathname();
   const router = useRouter();
   
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
-  const [isLoadingCompanies, setIsLoadingCompanies] = useState(true);
   const [isClient, setIsClient] = useState(false);
 
-  const { isAuthenticated, isLoading: isAuthLoading, logout, role, companyId: clientCompanyId } = useAuth();
+  const { isAuthenticated, isLoading: isAuthLoading, logout, role } = useAuth();
   const dictionary = useDictionaries()?.navigation;
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   
@@ -303,56 +340,23 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     }
   }, [isAuthenticated, isAuthLoading, pathname, router, lang]);
   
-  useEffect(() => {
-    const fetchCompanies = async () => {
-      setIsLoadingCompanies(true);
-      const companyIdToFetch = role === 'client' ? clientCompanyId : undefined;
-      const fetchedCompanies = await getCompanies(companyIdToFetch || undefined);
-
-      setCompanies(fetchedCompanies);
-
-      if (fetchedCompanies.length > 0) {
-         setSelectedCompany(fetchedCompanies[0]);
-      } else {
-        setSelectedCompany(null);
-      }
-      setIsLoadingCompanies(false);
-    };
-    if (role) {
-      fetchCompanies();
-    }
-  }, [role, clientCompanyId]);
-
   const navItems = useMemo(() => {
     if (!role) return [];
     return allNavItems.filter(item => item.roles.includes(role));
   }, [role]);
 
   const currentPath = `/${pathname.split('/').slice(2).join('/')}`;
-  const isAuthorized = navItems.some(item => 'href' in item && (item.href === '/' ? currentPath === item.href : currentPath.startsWith(item.href))) ||
-    navItems.some(item => 'subItems' in item && item.subItems.some(sub => sub.href === '/' ? currentPath === sub.href : currentPath.startsWith(sub.href)));
+  const isAuthorized = useMemo(() => {
+    if (!role) return false;
+    return navItems.some(item => 'href' in item && (item.href === '/' ? currentPath === item.href : currentPath.startsWith(item.href))) ||
+      navItems.some(item => 'subItems' in item && item.subItems.some(sub => sub.href === '/' ? currentPath === sub.href : currentPath.startsWith(sub.href)));
+  }, [role, navItems, currentPath]);
 
   useEffect(() => {
     if (role && navItems.length > 0 && !isAuthorized) {
        router.push(`/${lang}`);
     }
   }, [isAuthorized, role, router, lang, navItems.length]);
-  
-  const addCompany = (company: Company) => {
-    setCompanies(prev => [...prev, company]);
-  };
-
-  const companyContextValue = useMemo(() => ({
-    selectedCompany,
-    setSelectedCompany: (company: Company | null) => {
-      if (role === 'admin') {
-        setSelectedCompany(company);
-      }
-    },
-    companies,
-    addCompany,
-    isLoading: isLoadingCompanies,
-  }), [selectedCompany, companies, addCompany, isLoadingCompanies, role]);
   
   if (isAuthLoading) {
     return <div className="flex h-screen w-full items-center justify-center">Loading...</div>;
@@ -458,7 +462,6 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   );
   
   return (
-    <CompanyContext.Provider value={companyContextValue}>
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
         <div className="hidden border-r bg-muted/40 md:block">
           <div className="flex h-full max-h-screen flex-col gap-2">
@@ -515,8 +518,6 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
           <main className="flex-1 overflow-auto bg-background/50">{children}</main>
         </div>
       </div>
-      <Toaster />
-    </CompanyContext.Provider>
   );
 }
 
@@ -528,13 +529,16 @@ export function AppShell({ children, lang, dictionary }: { children: React.React
         enableSystem
         disableTransitionOnChange
     >
-        <DictionariesProvider dictionary={dictionary}>
-            <AuthProvider>
-                <AppShellContent lang={lang}>
-                    {children}
-                </AppShellContent>
-            </AuthProvider>
-        </DictionariesProvider>
+      <Toaster />
+      <DictionariesProvider dictionary={dictionary}>
+        <AuthProvider>
+          <CompanyProvider>
+            <AppShellContent lang={lang}>
+                {children}
+            </AppShellContent>
+          </CompanyProvider>
+        </AuthProvider>
+      </DictionariesProvider>
     </ThemeProvider>
    )
 }
