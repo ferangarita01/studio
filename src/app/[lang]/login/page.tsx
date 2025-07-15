@@ -64,11 +64,11 @@ export default function LoginPage() {
           <CardTitle className="text-2xl">{dictionary.title}</CardTitle>
           <CardDescription>
             {dictionary.description}
-             <div className="text-xs text-muted-foreground mt-2">
+            <span className="block text-xs text-muted-foreground mt-2">
                 <span>Admin: admin@demo.com / admin123</span>
                 <br />
                 <span>Client: client@demo.com / client123</span>
-            </div>
+            </span>
           </CardDescription>
         </CardHeader>
         <CardContent>

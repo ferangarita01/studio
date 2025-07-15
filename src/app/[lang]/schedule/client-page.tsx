@@ -149,11 +149,7 @@ export function ScheduleClient({ dictionary, allEvents: initialEvents }: Schedul
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <span className="text-lg font-semibold w-36 text-center">
-              {isClient ? (
-                format(currentMonth, "MMMM yyyy")
-              ) : (
-                <Skeleton className="h-6 w-full" />
-              )}
+              {isClient ? format(currentMonth, "MMMM yyyy") : <Skeleton className="h-6 w-full" />}
             </span>
             <Button variant="outline" size="icon" onClick={goToNextMonth}>
               <ChevronRight className="h-4 w-4" />
