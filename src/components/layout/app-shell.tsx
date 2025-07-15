@@ -44,12 +44,15 @@ import { cn } from "@/lib/utils";
 import type { Company } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { CreateCompanyDialog } from "@/components/create-company-dialog";
-import { useAuth } from "@/context/auth-context";
-import { useDictionaries } from "@/context/dictionary-context";
+import { useAuth, AuthProvider } from "@/context/auth-context";
+import { useDictionaries, DictionariesProvider } from "@/context/dictionary-context";
 import { addCompany as addCompanyService, getCompanies } from "@/services/waste-data-service";
 import { Skeleton } from "../ui/skeleton";
 import { Badge } from "../ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
+import type { Dictionary } from "@/lib/get-dictionary";
+import { ThemeProvider } from "../theme-provider";
+import { Toaster } from "../ui/toaster";
 
 const Logo = () => {
   const dictionary = useDictionaries()?.navigation;
@@ -175,8 +178,6 @@ function CompanySwitcher({ isClient }: { isClient: boolean }) {
     return <Skeleton className="h-9 w-full" />;
   }
   
-  // A client user should not see the company switcher if they only have one company.
-  // The switcher is primarily for admins.
   if (role === 'client') {
       if (!selectedCompany) {
          return <div className="p-2 text-sm text-center text-muted-foreground">No company assigned.</div>;
@@ -278,8 +279,7 @@ function CompanySwitcher({ isClient }: { isClient: boolean }) {
   );
 }
 
-
-export function AppShell({ children, lang }: { children: React.ReactNode, lang: string }) {
+function AppShellContent({ children, lang }: { children: React.ReactNode, lang: string }) {
   const pathname = usePathname();
   const router = useRouter();
   
@@ -514,6 +514,26 @@ export function AppShell({ children, lang }: { children: React.ReactNode, lang: 
           <main className="flex-1 overflow-auto bg-background/50">{children}</main>
         </div>
       </div>
+      <Toaster />
     </CompanyContext.Provider>
   );
+}
+
+export function AppShell({ children, lang, dictionary }: { children: React.ReactNode, lang: string, dictionary: Dictionary }) {
+   return (
+    <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+    >
+        <DictionariesProvider dictionary={dictionary}>
+            <AuthProvider>
+                <AppShellContent lang={lang}>
+                    {children}
+                </AppShellContent>
+            </AuthProvider>
+        </DictionariesProvider>
+    </ThemeProvider>
+   )
 }
