@@ -166,7 +166,11 @@ export function DashboardClient({
               <CalendarIcon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{upcomingDisposals.length}</div>
+              {isClient ? (
+                 <div className="text-2xl font-bold">{upcomingDisposals.length}</div>
+              ) : (
+                <Skeleton className="h-8 w-8" />
+              )}
               <p className="text-xs text-muted-foreground">
                 {dictionary.cards.upcomingDisposals.next}
               </p>
