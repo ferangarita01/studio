@@ -25,7 +25,9 @@
     "companySwitcher": {
       "label": "Switch Company",
       "searchPlaceholder": "Search company...",
-      "createCompany": "Create New Company"
+      "createCompany": "Create New Company",
+      "noCompanies": "No companies found.",
+      "createOne": "Create one?"
     },
     "createCompanyDialog": {
       "title": "Create New Company",
@@ -373,5 +375,3 @@
     }
   }
 }
-
-    

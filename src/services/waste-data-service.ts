@@ -30,10 +30,11 @@ export async function getCompanies(): Promise<Company[]> {
   return companyList;
 }
 
-export async function addCompany(company: Omit<Company, 'id'>): Promise<Company> {
+export async function addCompany(name: string): Promise<Company> {
+  const companyData = { name };
   const companiesCol = collection(db, "companies");
-  const docRef = await addDoc(companiesCol, company);
-  return { id: docRef.id, ...company };
+  const docRef = await addDoc(companiesCol, companyData);
+  return { id: docRef.id, ...companyData };
 }
 
 // --- Material Service Functions ---

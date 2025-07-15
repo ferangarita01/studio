@@ -25,7 +25,9 @@
     "companySwitcher": {
       "label": "Cambiar Empresa",
       "searchPlaceholder": "Buscar empresa...",
-      "createCompany": "Crear Nueva Empresa"
+      "createCompany": "Crear Nueva Empresa",
+      "noCompanies": "No se encontraron empresas.",
+      "createOne": "¿Crear una?"
     },
     "createCompanyDialog": {
       "title": "Crear Nueva Empresa",
@@ -373,5 +375,3 @@
     }
   }
 }
-
-    

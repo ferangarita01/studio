@@ -165,7 +165,7 @@ function CompanySwitcher({ isClient }: { isClient: boolean }) {
   if (!dictionary) return null;
 
   const handleCreateCompany = async (name: string) => {
-    const newCompany = await addCompanyService({ name });
+    const newCompany = await addCompanyService(name);
     addCompany(newCompany);
     setSelectedCompany(newCompany);
     setCreateOpen(false);
@@ -175,12 +175,12 @@ function CompanySwitcher({ isClient }: { isClient: boolean }) {
     return <Skeleton className="h-9 w-full" />;
   }
 
-  if (!selectedCompany) {
+  if (!selectedCompany && !isLoading) {
     return (
       <div className="text-sm text-muted-foreground p-2 text-center">
-        No companies found.
+        {dictionary.companySwitcher.noCompanies}
         {isClient && role === 'admin' && (
-           <Button variant="link" size="sm" onClick={() => setCreateOpen(true)} className="p-1">Create one?</Button>
+           <Button variant="link" size="sm" onClick={() => setCreateOpen(true)} className="p-1">{dictionary.companySwitcher.createOne}</Button>
         )}
          <CreateCompanyDialog
             dictionary={dictionary.createCompanyDialog}
@@ -190,6 +190,12 @@ function CompanySwitcher({ isClient }: { isClient: boolean }) {
           />
       </div>
     );
+  }
+
+  // This should not happen if isLoading is false and companies have been fetched.
+  // But as a safeguard:
+  if (!selectedCompany) {
+    return <Skeleton className="h-9 w-full" />;
   }
   
   const filteredCompanies = companies.filter(company => 
@@ -301,8 +307,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, [role]);
 
   const currentPath = `/${pathname.split('/').slice(2).join('/')}`;
-  const isAuthorized = navItems.some(item => 'href' in item && (item.href === currentPath || (item.href !== '/' && currentPath.startsWith(item.href)))) ||
-    navItems.some(item => 'subItems' in item && item.subItems.some(sub => sub.href === currentPath || (sub.href !== '/' && currentPath.startsWith(sub.href))));
+  const isAuthorized = navItems.some(item => 'href' in item && (item.href === '/' ? currentPath === item.href : currentPath.startsWith(item.href))) ||
+    navItems.some(item => 'subItems' in item && item.subItems.some(sub => sub.href === '/' ? currentPath === sub.href : currentPath.startsWith(sub.href)));
 
   React.useEffect(() => {
     if (role && navItems.length > 0 && !isAuthorized) {
@@ -469,5 +475,3 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     </CompanyContext.Provider>
   );
 }
-
-    
