@@ -21,6 +21,7 @@ import {
   Package,
   LogOut,
   Gavel,
+  ChevronDown,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -48,6 +49,7 @@ import { useDictionaries } from "@/context/dictionary-context";
 import { addCompany as addCompanyService, getCompanies } from "@/services/waste-data-service";
 import { Skeleton } from "../ui/skeleton";
 import { Badge } from "../ui/badge";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 
 const Logo = () => {
   const dictionary = useDictionaries()?.navigation;
@@ -65,7 +67,15 @@ const allNavItems = [
     { href: '/analyzer', icon: BrainCircuit, labelKey: 'analyzer', roles: ['admin'] },
     { href: '/log', icon: Trash2, labelKey: 'log', roles: ['admin'] },
     { href: '/schedule', icon: Calendar, labelKey: 'schedule', roles: ['admin', 'client'] },
-    { href: '/reports', icon: FileText, labelKey: 'reports', roles: ['admin', 'client'] },
+    { 
+      icon: FileText, 
+      labelKey: 'reports', 
+      roles: ['admin', 'client'],
+      subItems: [
+        { href: '/reports', labelKey: 'financialReports', roles: ['admin', 'client'] },
+        { href: '/reports/disposal', labelKey: 'finalDisposal', roles: ['admin', 'client'] }
+      ]
+    },
     { href: '/materials', icon: Package, labelKey: 'materials', roles: ['admin'] },
     { href: '/compliance', icon: Gavel, labelKey: 'compliance', roles: ['admin', 'client'] },
 ] as const;
@@ -258,10 +268,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [isLoadingCompanies, setIsLoadingCompanies] = useState(true);
+  const [isClient, setIsClient] = useState(false);
 
   const { logout, role } = useAuth();
   const dictionary = useDictionaries()?.navigation;
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   
   useEffect(() => {
     const fetchCompanies = async () => {
@@ -281,21 +296,23 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, [role]);
 
   const navItems = useMemo(() => {
-    return allNavItems.filter(item => item.roles.includes(role || 'client'));
+    if (!role) return [];
+    return allNavItems.filter(item => item.roles.includes(role));
   }, [role]);
 
   const currentPath = `/${pathname.split('/').slice(2).join('/')}`;
-  const isAuthorized = navItems.some(item => item.href === currentPath || (item.href !== '/' && currentPath.startsWith(item.href)));
+  const isAuthorized = navItems.some(item => 'href' in item && (item.href === currentPath || (item.href !== '/' && currentPath.startsWith(item.href)))) ||
+    navItems.some(item => 'subItems' in item && item.subItems.some(sub => sub.href === currentPath || (sub.href !== '/' && currentPath.startsWith(sub.href))));
 
   React.useEffect(() => {
-    if (!isAuthorized && role) {
+    if (role && navItems.length > 0 && !isAuthorized) {
        router.push(`/${currentLang}`);
     }
-  }, [isAuthorized, role, router, currentLang]);
+  }, [isAuthorized, role, router, currentLang, navItems.length]);
 
 
   if (!dictionary) return null;
-   if (!isAuthorized && role) {
+   if (role && navItems.length > 0 && !isAuthorized) {
     return (
        <div className="flex h-screen w-full items-center justify-center">
         <div>Loading...</div>
@@ -312,23 +329,83 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return `/${currentLang}${href}`;
   }
 
-  const NavLink = ({ href, item, label, isActive }: { href: string, item: any, label: string, isActive: boolean }) => (
-     <Link
-      href={href}
-      className={cn(
-        "flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-        isActive && "bg-muted text-primary"
-      )}
-      onClick={() => setMobileMenuOpen(false)}
-    >
-      <div className="flex items-center gap-3">
-        <item.icon className="h-4 w-4" />
-        {label}
+  const NavContent = () => (
+    <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+      <div className="p-2">
+        <CompanySwitcher />
       </div>
-       {role === 'admin' && item.labelKey === 'analyzer' && (
-        <Badge variant="outline" className="text-xs">Beta</Badge>
-      )}
-    </Link>
+      {navItems.map((item) => {
+        const label = dictionary.links[item.labelKey as keyof typeof dictionary.links];
+        
+        if ('subItems' in item) {
+          const isActive = item.subItems.some(sub => pathname.startsWith(getHref(sub.href)));
+          return (
+            <Collapsible key={item.labelKey} defaultOpen={isActive}>
+              <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&[data-state=open]>svg]:rotate-180">
+                <div className="flex items-center gap-3">
+                  <item.icon className="h-4 w-4" />
+                  {label}
+                </div>
+                <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-1 py-1 pl-7">
+                {item.subItems.map(subItem => {
+                  const subHref = getHref(subItem.href);
+                  const subLabel = dictionary.links[subItem.labelKey as keyof typeof dictionary.links];
+                  const isSubActive = pathname === subHref;
+                  return (
+                    <Link
+                      key={subItem.labelKey}
+                      href={subHref}
+                      className={cn(
+                        "flex items-center gap-3 rounded-md px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+                        isSubActive && "bg-muted text-primary"
+                      )}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {subLabel}
+                    </Link>
+                  );
+                })}
+              </CollapsibleContent>
+            </Collapsible>
+          );
+        }
+
+        const href = getHref(item.href);
+        const isActive = pathname === href || (item.href !== '/' && pathname.startsWith(href) && item.href.length > 1);
+        return (
+          <Link
+            key={item.labelKey}
+            href={href}
+            className={cn(
+              "flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+              isActive && "bg-muted text-primary"
+            )}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <div className="flex items-center gap-3">
+              <item.icon className="h-4 w-4" />
+              {label}
+            </div>
+            {role === 'admin' && item.labelKey === 'analyzer' && (
+              <Badge variant="outline" className="text-xs">Beta</Badge>
+            )}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+
+  const NavSkeleton = () => (
+     <div className="grid items-start gap-2 px-2 text-sm font-medium lg:px-4">
+        <div className="p-2">
+            <Skeleton className="h-9 w-full" />
+        </div>
+        {[...Array(5)].map((_, i) => (
+             <Skeleton key={i} className="h-10 w-full" />
+        ))}
+     </div>
   );
   
   return (
@@ -339,18 +416,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
               <Logo />
             </div>
-            <div className="flex-1">
-              <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-                 <div className="p-2">
-                   <CompanySwitcher />
-                 </div>
-                {navItems.map((item) => {
-                  const href = getHref(item.href);
-                  const label = dictionary.links[item.labelKey as keyof typeof dictionary.links];
-                  const isActive = pathname === href || (item.href !== '/' && pathname.startsWith(href));
-                  return <NavLink key={href} href={href} item={item} label={label} isActive={isActive} />;
-                })}
-              </nav>
+            <div className="flex-1 overflow-y-auto">
+              {isClient ? <NavContent /> : <NavSkeleton />}
             </div>
              <div className="mt-auto p-4">
                  <Button size="sm" variant="ghost" onClick={logout} className="w-full justify-start gap-2">
@@ -373,22 +440,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <span className="sr-only">Toggle navigation menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="flex flex-col">
+              <SheetContent side="left" className="flex flex-col p-0">
                  <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
                     <Logo />
                  </div>
-                 <div className="p-2">
-                   <CompanySwitcher />
+                 <div className="flex-1 overflow-y-auto">
+                    {isClient ? <NavContent /> : <NavSkeleton />}
                  </div>
-                <nav className="grid gap-2 text-base font-medium">
-                  {navItems.map((item) => {
-                    const href = getHref(item.href);
-                    const label = dictionary.links[item.labelKey as keyof typeof dictionary.links];
-                    const isActive = pathname === href || (item.href !== '/' && pathname.startsWith(href));
-                    return <NavLink key={href} href={href} item={item} label={label} isActive={isActive} />;
-                  })}
-                </nav>
-                 <div className="mt-auto">
+                 <div className="mt-auto p-4 border-t">
                    <Button size="sm" variant="ghost" onClick={logout} className="w-full justify-start gap-2">
                       <LogOut className="h-4 w-4"/>
                       <span>{dictionary.logout}</span>
@@ -410,3 +469,5 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     </CompanyContext.Provider>
   );
 }
+
+    

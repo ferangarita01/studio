@@ -8,6 +8,8 @@
       "log": "Waste Log",
       "schedule": "Schedule",
       "reports": "Reports",
+      "financialReports": "Financial Reports",
+      "finalDisposal": "Final Disposal",
       "materials": "Materials",
       "compliance": "Legal Compliance"
     },
@@ -109,7 +111,8 @@
       "wasteBreakdown": {
         "barChartTitle": "Waste Breakdown by Quantity",
         "pieChartTitle": "Waste Composition"
-      }
+      },
+      "generatedOn": "Generated on:"
     },
     "carbonFootprintCard": {
       "title": "Est. Carbon Footprint Reduction",
@@ -370,3 +373,5 @@
     }
   }
 }
+
+    

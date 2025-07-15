@@ -7,7 +7,7 @@ import { getWeeklyReportData, getMonthlyReportData } from "@/services/waste-data
 import { useEffect, useState } from "react";
 import type { ReportData } from "@/lib/types";
 
-export default function ReportsPage() {
+export default function FinancialReportsPage() {
   const dictionary = useDictionaries()?.reportsPage;
   const [weeklyDataAll, setWeeklyDataAll] = useState<Record<string, ReportData>>({});
   const [monthlyDataAll, setMonthlyDataAll] = useState<Record<string, ReportData>>({});
@@ -37,3 +37,5 @@ export default function ReportsPage() {
     />
   );
 }
+
+    

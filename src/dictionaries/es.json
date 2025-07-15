@@ -8,6 +8,8 @@
       "log": "Registro de Residuos",
       "schedule": "Calendario",
       "reports": "Reportes",
+      "financialReports": "Reportes Financieros",
+      "finalDisposal": "Disposición Final",
       "materials": "Materiales",
       "compliance": "Cumplimiento Legal"
     },
@@ -109,7 +111,8 @@
       "wasteBreakdown": {
         "barChartTitle": "Desglose de Residuos por Cantidad",
         "pieChartTitle": "Composición de Residuos"
-      }
+      },
+      "generatedOn": "Generado el:"
     },
     "carbonFootprintCard": {
       "title": "Reducción Estimada de Huella de Carbono",
@@ -370,3 +373,5 @@
     }
   }
 }
+
+    
