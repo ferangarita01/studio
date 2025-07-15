@@ -133,7 +133,9 @@ export async function getDisposalEvents(companyId?: string): Promise<DisposalEve
   if (companyId) {
       q = query(eventsRef, orderByChild("companyId"), equalTo(companyId));
   } else {
-      q = query(eventsRef, orderByChild("date"));
+      // Fetch all events without ordering by date to avoid needing a Firebase index.
+      // We will sort them in the application code.
+      q = eventsRef;
   }
   
   const snapshot = await get(q);
