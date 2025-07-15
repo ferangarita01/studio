@@ -31,17 +31,14 @@ const snapshotToArray = (snapshot: any) => {
 
 export async function getCompanies(userId?: string): Promise<Company[]> {
     const dbRef = ref(db, 'companies');
-    let q;
-    if (userId) {
-        // Query companies by the user who created them
-        q = query(dbRef, orderByChild("createdBy"), equalTo(userId));
-    } else {
-        q = dbRef;
-    }
-    
-    const snapshot = await get(q);
+    // We will fetch all companies and filter on the client-side to avoid needing a Firebase index.
+    const snapshot = await get(dbRef);
     if (snapshot.exists()) {
-        return snapshotToArray(snapshot).sort((a,b) => a.name.localeCompare(b.name));
+        const allCompanies = snapshotToArray(snapshot).sort((a,b) => a.name.localeCompare(b.name));
+        if (userId) {
+            return allCompanies.filter(company => company.createdBy === userId);
+        }
+        return allCompanies;
     }
     return [];
 }
