@@ -11,7 +11,8 @@
       "financialReports": "Financial Reports",
       "finalDisposal": "Final Disposal",
       "materials": "Materials",
-      "compliance": "Legal Compliance"
+      "compliance": "Legal Compliance",
+      "companies": "Companies"
     },
     "themeToggle": {
       "toggle": "Toggle theme",
@@ -374,6 +375,35 @@
       "addRegulation": "Add New Regulation",
       "editContent": "Edit Content",
       "manage": "Manage"
+    }
+  },
+  "companiesPage": {
+    "title": "Company Management",
+    "cardTitle": "All Companies",
+    "cardDescription": "Assign client users to each company.",
+    "noCompanies": "No companies created yet. Add one from the sidebar dropdown.",
+    "table": {
+      "companyName": "Company Name",
+      "assignedClient": "Assigned Client",
+      "actions": "Actions",
+      "assign": "Assign Client",
+      "reassign": "Re-assign",
+      "unassigned": "Unassigned"
+    },
+    "assignDialog": {
+      "title": "Assign Client",
+      "description": "Select a client to assign to",
+      "selectLabel": "Client User",
+      "selectPlaceholder": "Select a client",
+      "cancel": "Cancel",
+      "assign": "Assign Client",
+      "unassign": "None (Unassign)"
+    },
+    "toast": {
+      "assign": {
+        "title": "Client Assigned",
+        "description": "The client has been successfully assigned to the company."
+      }
     }
   }
 }

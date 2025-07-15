@@ -134,10 +134,10 @@ export function LogClient({ dictionary, initialWasteLog }: LogClientProps) {
                             {entry.quantity.toFixed(2)} kg
                           </TableCell>
                            <TableCell className="text-right">
-                            {isClient ? <span>{formatCurrency(entry.price)}</span> : <Skeleton className="h-4 w-16 float-right" />}
+                            {isClient ? formatCurrency(entry.price) : <Skeleton className="h-4 w-16 float-right" />}
                           </TableCell>
                            <TableCell className="text-right">
-                            {isClient ? <span>{formatCurrency(entry.serviceCost)}</span> : <Skeleton className="h-4 w-16 float-right" />}
+                            {isClient ? formatCurrency(entry.serviceCost) : <Skeleton className="h-4 w-16 float-right" />}
                           </TableCell>
                           <TableCell className="text-right">
                              {isClient ? (

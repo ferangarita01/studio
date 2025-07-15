@@ -15,7 +15,7 @@ import {
 } from "firebase/database";
 import { db } from "@/lib/firebase";
 import { wasteData, weeklyReportData, monthlyReportData } from "@/lib/data";
-import type { WasteEntry, Material, DisposalEvent, ReportData, Company, UserRole } from "@/lib/types";
+import type { WasteEntry, Material, DisposalEvent, ReportData, Company, UserRole, UserProfile } from "@/lib/types";
 
 // Helper to convert snapshot to array
 const snapshotToArray = (snapshot: any) => {
@@ -28,33 +28,52 @@ const snapshotToArray = (snapshot: any) => {
     return array;
 };
 
+// --- User Profile Service Functions ---
+
+export async function createUserProfile(uid: string, data: Omit<UserProfile, 'id'>): Promise<void> {
+  const userRef = ref(db, `users/${uid}`);
+  await set(userRef, data);
+}
+
+export async function getUserProfile(uid: string): Promise<UserProfile | null> {
+  const userRef = ref(db, `users/${uid}`);
+  const snapshot = await get(userRef);
+  if (snapshot.exists()) {
+    return { id: uid, ...snapshot.val() };
+  }
+  return null;
+}
+
+export async function getUsers(role?: UserRole): Promise<UserProfile[]> {
+  const usersRef = ref(db, 'users');
+  const snapshot = await get(usersRef);
+  if (!snapshot.exists()) {
+    return [];
+  }
+  const allUsers = snapshotToArray(snapshot);
+  if (role) {
+    return allUsers.filter(user => user.role === role);
+  }
+  return allUsers;
+}
+
+
 // --- Company Service Functions ---
 
-export async function getCompanies(userId?: string, role?: UserRole | null): Promise<Company[]> {
+export async function getCompanies(userId?: string): Promise<Company[]> {
     const dbRef = ref(db, 'companies');
+    let q = dbRef;
+    if (userId) {
+        q = query(dbRef, orderByChild('createdBy'), equalTo(userId));
+    }
     
-    // Fetch all companies first, then filter on the client side.
-    // This avoids the need for composite indexes in Firebase for this query.
-    const snapshot = await get(dbRef);
+    const snapshot = await get(q);
 
     if (!snapshot.exists()) {
         return [];
     }
-
     const allCompanies = snapshotToArray(snapshot);
-
-    if (!userId || !role) {
-        return allCompanies.sort((a,b) => a.name.localeCompare(b.name));
-    }
-
-    let userCompanies: Company[] = [];
-    if (role === 'admin') {
-        userCompanies = allCompanies.filter(company => company.createdBy === userId);
-    } else if (role === 'client') {
-        userCompanies = allCompanies.filter(company => company.assignedUserUid === userId);
-    }
-
-    return userCompanies.sort((a,b) => a.name.localeCompare(b.name));
+    return allCompanies.sort((a,b) => a.name.localeCompare(b.name));
 }
 
 
@@ -65,6 +84,33 @@ export async function addCompany(name: string, userId: string): Promise<Company>
   await set(newCompanyRef, companyData);
   return { id: newCompanyRef.key!, ...companyData };
 }
+
+export async function assignUserToCompany(companyId: string, userId: string | null): Promise<void> {
+    const companyRef = ref(db, `companies/${companyId}`);
+    const userRef = ref(db, `users/${userId}`);
+
+    // Fetch the current company and user data
+    const companySnap = await get(companyRef);
+    if (!companySnap.exists()) {
+        throw new Error("Company not found");
+    }
+    const companyData = companySnap.val();
+
+    // 1. Un-assign from the old user if there was one
+    if (companyData.assignedUserUid) {
+        const oldUserRef = ref(db, `users/${companyData.assignedUserUid}`);
+        await update(oldUserRef, { assignedCompanyId: null });
+    }
+
+    // 2. Assign the new user to the company
+    await update(companyRef, { assignedUserUid: userId });
+
+    // 3. Update the new user's profile with the company ID
+    if (userId) {
+        await update(userRef, { assignedCompanyId: companyId });
+    }
+}
+
 
 // --- Material Service Functions ---
 

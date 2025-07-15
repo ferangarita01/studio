@@ -11,7 +11,8 @@
       "financialReports": "Reportes Financieros",
       "finalDisposal": "Disposición Final",
       "materials": "Materiales",
-      "compliance": "Cumplimiento Legal"
+      "compliance": "Cumplimiento Legal",
+      "companies": "Empresas"
     },
     "themeToggle": {
       "toggle": "Cambiar tema",
@@ -374,6 +375,35 @@
       "addRegulation": "Añadir Nueva Regulación",
       "editContent": "Editar Contenido",
       "manage": "Gestionar"
+    }
+  },
+  "companiesPage": {
+    "title": "Gestión de Empresas",
+    "cardTitle": "Todas las Empresas",
+    "cardDescription": "Asigne usuarios clientes a cada empresa.",
+    "noCompanies": "Aún no se han creado empresas. Añada una desde el menú desplegable de la barra lateral.",
+    "table": {
+      "companyName": "Nombre de la Empresa",
+      "assignedClient": "Cliente Asignado",
+      "actions": "Acciones",
+      "assign": "Asignar Cliente",
+      "reassign": "Re-asignar",
+      "unassigned": "Sin asignar"
+    },
+    "assignDialog": {
+      "title": "Asignar Cliente",
+      "description": "Seleccione un cliente para asignar a",
+      "selectLabel": "Usuario Cliente",
+      "selectPlaceholder": "Seleccione un cliente",
+      "cancel": "Cancelar",
+      "assign": "Asignar Cliente",
+      "unassign": "Ninguno (Desasignar)"
+    },
+    "toast": {
+      "assign": {
+        "title": "Cliente Asignado",
+        "description": "El cliente ha sido asignado exitosamente a la empresa."
+      }
     }
   }
 }

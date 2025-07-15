@@ -22,6 +22,7 @@ import {
   LogOut,
   Gavel,
   ChevronDown,
+  Users,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -41,7 +42,7 @@ import {
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import type { Company } from "@/lib/types";
+import type { Company, UserProfile } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { CreateCompanyDialog } from "@/components/create-company-dialog";
 import { useAuth, AuthProvider } from "@/context/auth-context";
@@ -80,6 +81,7 @@ const allNavItems = [
       ]
     },
     { href: '/materials', icon: Package, labelKey: 'materials', roles: ['admin'] },
+    { href: '/companies', icon: Users, labelKey: 'companies', roles: ['admin'] },
     { href: '/compliance', icon: Gavel, labelKey: 'compliance', roles: ['admin', 'client'] },
 ] as const;
 
@@ -284,26 +286,29 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { user, role, companyId: clientCompanyId } = useAuth();
+  const { user, role, userProfile } = useAuth();
 
   useEffect(() => {
     const manageCompanies = async () => {
         if (user) {
             setIsLoading(true);
-            const userCompanies = await getCompanies(user.uid);
             
             if (role === 'admin') {
+                const userCompanies = await getCompanies(user.uid);
                 setCompanies(userCompanies);
                 if (userCompanies.length > 0 && !userCompanies.find(c => c.id === selectedCompany?.id)) {
                     setSelectedCompany(userCompanies[0]);
                 } else if (userCompanies.length === 0) {
                     setSelectedCompany(null);
                 }
-            } else if (role === 'client') {
+            } else if (role === 'client' && userProfile?.assignedCompanyId) {
                 const allCompanies = await getCompanies(); // Fetch all to find the assigned one
-                const clientCompany = allCompanies.find(c => c.id === clientCompanyId);
+                const clientCompany = allCompanies.find(c => c.id === userProfile.assignedCompanyId);
                 setCompanies(clientCompany ? [clientCompany] : []);
                 setSelectedCompany(clientCompany || null);
+            } else {
+                setCompanies([]);
+                setSelectedCompany(null);
             }
             setIsLoading(false);
         } else {
@@ -313,7 +318,7 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
         }
     }
     manageCompanies();
-}, [user, role, clientCompanyId, selectedCompany?.id]);
+}, [user, role, userProfile, selectedCompany?.id]);
   
   const addCompany = (company: Company) => {
     setCompanies(prev => [...prev, company].sort((a,b) => a.name.localeCompare(b.name)));

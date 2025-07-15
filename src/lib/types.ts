@@ -2,11 +2,19 @@
 export type WasteType = "Recycling" | "Organic" | "General" | "Hazardous";
 export type UserRole = "admin" | "client";
 
+export type UserProfile = {
+  id: string; // Firebase UID
+  email: string;
+  role: UserRole;
+  assignedCompanyId?: string;
+}
+
 export type Company = {
   id: string;
   name: string;
-  createdBy?: string; // UID of the user who created it
+  createdBy: string; // UID of the admin user who created it
   assignedUserUid?: string; // UID of the client user assigned to this company
+  assignedUserName?: string; // email of the assigned user, for display
 };
 
 export type Material = {
