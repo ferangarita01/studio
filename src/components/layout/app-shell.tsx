@@ -161,15 +161,15 @@ export const useCompany = () => {
 
 function CompanySwitcher({ isClient }: { isClient: boolean }) {
   const dictionary = useDictionaries()?.navigation;
-  const { role } = useAuth();
+  const { user, role } = useAuth();
   const { companies, selectedCompany, setSelectedCompany, addCompany, isLoading } = useCompany();
   const [search, setSearch] = useState("");
   const [isCreateOpen, setCreateOpen] = useState(false);
   
-  if (!dictionary) return null;
+  if (!dictionary || !user) return null;
 
   const handleCreateCompany = async (name: string) => {
-    const newCompany = await addCompanyService(name);
+    const newCompany = await addCompanyService(name, user.uid);
     addCompany(newCompany);
     setSelectedCompany(newCompany);
     setCreateOpen(false);
@@ -192,7 +192,7 @@ function CompanySwitcher({ isClient }: { isClient: boolean }) {
   }
 
   // Admin view
-  if (!selectedCompany && !isLoading) {
+  if (!selectedCompany && companies.length === 0) {
     return (
       <div className="text-sm text-muted-foreground p-2 text-center">
         {dictionary.companySwitcher.noCompanies}
@@ -284,33 +284,51 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { role, companyId: clientCompanyId } = useAuth();
+  const { user, role, companyId: clientCompanyId } = useAuth();
 
   useEffect(() => {
-    // This effect now primarily manages selection based on auth role
-    // The initial full list of companies comes from page props on dashboard
-    if (role === 'client' && companies.length > 0) {
-      const clientCompany = companies.find(c => c.id === clientCompanyId);
-      setSelectedCompany(clientCompany || null);
+    const manageCompanies = async () => {
+        if (user) {
+            setIsLoading(true);
+            const userCompanies = await getCompanies(user.uid);
+            
+            if (role === 'admin') {
+                setCompanies(userCompanies);
+                if (userCompanies.length > 0 && !userCompanies.find(c => c.id === selectedCompany?.id)) {
+                    setSelectedCompany(userCompanies[0]);
+                } else if (userCompanies.length === 0) {
+                    setSelectedCompany(null);
+                }
+            } else if (role === 'client') {
+                const allCompanies = await getCompanies(); // Fetch all to find the assigned one
+                const clientCompany = allCompanies.find(c => c.id === clientCompanyId);
+                setCompanies(clientCompany ? [clientCompany] : []);
+                setSelectedCompany(clientCompany || null);
+            }
+            setIsLoading(false);
+        } else {
+            setCompanies([]);
+            setSelectedCompany(null);
+            setIsLoading(false);
+        }
     }
-  }, [role, clientCompanyId, companies]);
+    manageCompanies();
+}, [user, role, clientCompanyId, selectedCompany?.id]);
   
   const addCompany = (company: Company) => {
-    setCompanies(prev => [...prev, company]);
+    setCompanies(prev => [...prev, company].sort((a,b) => a.name.localeCompare(b.name)));
   };
   
   const companyContextValue = useMemo(() => ({
     selectedCompany,
     setSelectedCompany: (company: Company | null) => {
-      if (role !== 'client') {
         setSelectedCompany(company);
-      }
     },
     companies,
-    setCompanies, // Expose setCompanies
+    setCompanies,
     addCompany,
-    isLoading: false, // Loading is handled by page-level suspense
-  }), [selectedCompany, companies, addCompany, role]);
+    isLoading,
+  }), [selectedCompany, companies, addCompany, isLoading]);
 
   return (
       <CompanyContext.Provider value={companyContextValue}>
@@ -348,15 +366,17 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   const currentPath = `/${pathname.split('/').slice(2).join('/')}`;
   const isAuthorized = useMemo(() => {
     if (!role) return false;
-    return navItems.some(item => 'href' in item && (item.href === '/' ? currentPath === item.href : currentPath.startsWith(item.href))) ||
-      navItems.some(item => 'subItems' in item && item.subItems.some(sub => sub.href === '/' ? currentPath === sub.href : currentPath.startsWith(sub.href)));
+    // Special case for root
+    if (currentPath === '/') return true;
+    return navItems.some(item => 'href' in item && item.href !== '/' && currentPath.startsWith(item.href)) ||
+           navItems.some(item => 'subItems' in item && item.subItems.some(sub => sub.href !== '/' && currentPath.startsWith(sub.href)));
   }, [role, navItems, currentPath]);
 
   useEffect(() => {
-    if (role && navItems.length > 0 && !isAuthorized) {
+    if (isAuthenticated && role && navItems.length > 0 && !isAuthorized) {
        router.push(`/${lang}`);
     }
-  }, [isAuthorized, role, router, lang, navItems.length]);
+  }, [isAuthenticated, isAuthorized, role, router, lang, navItems.length]);
   
   if (isAuthLoading) {
     return <div className="flex h-screen w-full items-center justify-center">Loading...</div>;
@@ -367,7 +387,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   }
 
   if (!dictionary) return null;
-   if (role && navItems.length > 0 && !isAuthorized) {
+   if (role && navItems.length > 0 && !isAuthorized && currentPath !== '/') {
     return (
        <div className="flex h-screen w-full items-center justify-center">
         <div>Loading...</div>

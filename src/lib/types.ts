@@ -3,6 +3,7 @@ export type WasteType = "Recycling" | "Organic" | "General" | "Hazardous";
 export type Company = {
   id: string;
   name: string;
+  createdBy?: string; // UID of the user who created it
 };
 
 export type Material = {

@@ -26,7 +26,7 @@ import type { DisposalEvent, WasteEntry, Company } from "@/lib/types";
 import type { Dictionary } from "@/lib/get-dictionary";
 import { useCompany } from "./layout/app-shell";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getDisposalEvents } from "@/services/waste-data-service";
+import { getDisposalEvents, getCompanies } from "@/services/waste-data-service";
 import { useAuth } from "@/context/auth-context";
 
 const chartConfig = {
@@ -58,9 +58,8 @@ export function DashboardClient({
   dictionary,
   wasteDataAll,
   wasteLogAll,
-  companies,
 }: DashboardClientProps) {
-  const { role, companyId: clientCompanyId } = useAuth();
+  const { user, role, companyId: clientCompanyId } = useAuth();
   const { selectedCompany, setCompanies, setSelectedCompany, isLoading: isCompanyContextLoading } = useCompany();
   const [isClient, setIsClient] = React.useState(false);
   const [disposalEvents, setDisposalEvents] = React.useState<DisposalEvent[]>([]);
@@ -68,16 +67,25 @@ export function DashboardClient({
   React.useEffect(() => {
     setIsClient(true);
   }, []);
-
+  
   React.useEffect(() => {
-    const relevantCompanies = role === 'client' 
-      ? companies.filter(c => c.id === clientCompanyId)
-      : companies;
-    setCompanies(relevantCompanies);
-    if (relevantCompanies.length > 0 && !selectedCompany) {
-      setSelectedCompany(relevantCompanies[0]);
-    }
-  }, [companies, role, clientCompanyId, setCompanies, setSelectedCompany, selectedCompany]);
+    const fetchAndSetCompanies = async () => {
+      if (user) {
+        // For admin, fetch companies created by them. For client, fetch all and filter.
+        const userCompanies = await getCompanies(user.uid);
+        
+        const relevantCompanies = role === 'client' 
+          ? userCompanies.filter(c => c.id === clientCompanyId)
+          : userCompanies;
+
+        setCompanies(relevantCompanies);
+        if (relevantCompanies.length > 0 && !selectedCompany) {
+          setSelectedCompany(relevantCompanies[0]);
+        }
+      }
+    };
+    fetchAndSetCompanies();
+  }, [user, role, clientCompanyId, setCompanies, setSelectedCompany]);
 
 
   React.useEffect(() => {
@@ -318,6 +326,3 @@ export function DashboardClient({
     </div>
   );
 }
-
-    
-    

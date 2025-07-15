@@ -29,26 +29,25 @@ const snapshotToArray = (snapshot: any) => {
 
 // --- Company Service Functions ---
 
-export async function getCompanies(companyId?: string): Promise<Company[]> {
+export async function getCompanies(userId?: string): Promise<Company[]> {
     const dbRef = ref(db, 'companies');
-    if (companyId) {
-        const companyRef = ref(db, `companies/${companyId}`);
-        const snapshot = await get(companyRef);
-        if (snapshot.exists()) {
-             return [{ id: snapshot.key, ...snapshot.val() }];
-        }
-        return [];
+    let q;
+    if (userId) {
+        // Query companies by the user who created them
+        q = query(dbRef, orderByChild("createdBy"), equalTo(userId));
     } else {
-        const snapshot = await get(dbRef);
-        if (snapshot.exists()) {
-            return snapshotToArray(snapshot).sort((a,b) => a.name.localeCompare(b.name));
-        }
-        return [];
+        q = dbRef;
     }
+    
+    const snapshot = await get(q);
+    if (snapshot.exists()) {
+        return snapshotToArray(snapshot).sort((a,b) => a.name.localeCompare(b.name));
+    }
+    return [];
 }
 
-export async function addCompany(name: string): Promise<Company> {
-  const companyData = { name };
+export async function addCompany(name: string, userId: string): Promise<Company> {
+  const companyData = { name, createdBy: userId };
   const companiesRef = ref(db, 'companies');
   const newCompanyRef = push(companiesRef);
   await set(newCompanyRef, companyData);
@@ -133,8 +132,6 @@ export async function getDisposalEvents(companyId?: string): Promise<DisposalEve
   if (companyId) {
       q = query(eventsRef, orderByChild("companyId"), equalTo(companyId));
   } else {
-      // Fetch all events without ordering by date to avoid needing a Firebase index.
-      // We will sort them in the application code.
       q = eventsRef;
   }
   

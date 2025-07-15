@@ -50,7 +50,9 @@
     "loginAsClient": "Iniciar Sesión como Cliente",
     "loginWithGoogle": "Iniciar sesión con Google",
     "noAccount": "¿No tienes una cuenta?",
-    "signUp": "Regístrate"
+    "hasAccount": "¿Ya tienes una cuenta?",
+    "signUp": "Regístrate",
+    "signUpDescription": "Crea una nueva cuenta de cliente."
   },
   "dashboard": {
     "title": "Tablero",

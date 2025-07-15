@@ -18,115 +18,110 @@ import { useAuth } from "@/context/auth-context";
 import { useDictionaries } from "@/context/dictionary-context";
 import type { Locale } from "@/i18n-config";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
-
+import { AlertCircle, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, signUp } = useAuth();
   const router = useRouter();
   const params = useParams();
   const lang = params.lang as Locale;
   const dictionary = useDictionaries()?.loginPage;
-  
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
 
-  const handleLogin = (e: React.FormEvent, role: "admin" | "client") => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setIsSubmitting(true);
 
-    if (role === "admin") {
-      if (email === "admin@demo.com" && password === "admin123") {
-        login(role);
-        router.push(`/${lang}`);
+    try {
+      if (isSignUp) {
+        await signUp(email, password);
       } else {
-        setError("Invalid admin credentials.");
+        await login(email, password);
       }
-    } else if (role === "client") {
-      if (email === "client@demo.com" && password === "client123") {
-        login(role);
-        router.push(`/${lang}`);
-      } else {
-        setError("Invalid client credentials.");
-      }
+      router.push(`/${lang}`);
+    } catch (err: any) {
+      console.error(err);
+      // Firebase error messages can be user-friendly.
+      const message = err.message || "An unexpected error occurred.";
+      setError(message.replace('Firebase: ',''));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   if (!dictionary) {
-    return <div>Loading translations...</div>
+    return <div>Loading translations...</div>;
   }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="mx-auto w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl">{dictionary.title}</CardTitle>
+          <CardTitle className="text-2xl">{isSignUp ? dictionary.signUp : dictionary.title}</CardTitle>
           <CardDescription>
-            {dictionary.description}
-            <span className="block text-xs text-muted-foreground mt-2">
-                <span>Admin: admin@demo.com / admin123</span>
-                <br />
-                <span>Client: client@demo.com / client123</span>
-            </span>
+            {isSignUp ? dictionary.signUpDescription : dictionary.description}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="email">{dictionary.email}</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="nombre@ejemplo.com"
+                  placeholder="name@example.com"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={isSubmitting}
                 />
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">{dictionary.password}</Label>
-                  <Link
-                    href="#"
-                    className="ml-auto inline-block text-sm underline"
-                  >
-                    {dictionary.forgotPassword}
-                  </Link>
+                  {!isSignUp && (
+                    <Link
+                      href="#"
+                      className="ml-auto inline-block text-sm underline"
+                    >
+                      {dictionary.forgotPassword}
+                    </Link>
+                  )}
                 </div>
-                <Input 
-                    id="password" 
-                    type="password" 
-                    required 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={isSubmitting}
                 />
               </div>
               {error && (
-                 <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>Login Failed</AlertTitle>
-                    <AlertDescription>
-                        {error}
-                    </AlertDescription>
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Action Failed</AlertTitle>
+                  <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-              <div className="flex flex-col gap-2">
-                <Button onClick={(e) => handleLogin(e, 'admin')} className="w-full">
-                  {dictionary.loginAsAdmin}
-                </Button>
-                <Button onClick={(e) => handleLogin(e, 'client')} variant="secondary" className="w-full">
-                 {dictionary.loginAsClient}
-                </Button>
-              </div>
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isSignUp ? dictionary.signUp : dictionary.loginButton}
+              </Button>
             </div>
           </form>
           <div className="mt-4 text-center text-sm">
-            {dictionary.noAccount}{" "}
-            <Link href="#" className="underline">
-              {dictionary.signUp}
-            </Link>
+            {isSignUp ? dictionary.hasAccount : dictionary.noAccount}{" "}
+            <Button variant="link" className="p-0 h-auto" onClick={() => { setIsSignUp(!isSignUp); setError(''); }}>
+                {isSignUp ? dictionary.loginButton : dictionary.signUp}
+            </Button>
           </div>
         </CardContent>
       </Card>

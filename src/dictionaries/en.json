@@ -50,7 +50,9 @@
     "loginAsClient": "Login as Client",
     "loginWithGoogle": "Login with Google",
     "noAccount": "Don't have an account?",
-    "signUp": "Sign up"
+    "hasAccount": "Already have an account?",
+    "signUp": "Sign up",
+    "signUpDescription": "Create a new client account."
   },
   "dashboard": {
     "title": "Dashboard",
