@@ -60,20 +60,30 @@ export async function getUsers(role?: UserRole): Promise<UserProfile[]> {
 
 // --- Company Service Functions ---
 
-export async function getCompanies(userId?: string): Promise<Company[]> {
+export async function getCompanies(userId?: string, role?: UserRole): Promise<Company[]> {
     const dbRef = ref(db, 'companies');
-    let q = dbRef;
-    if (userId) {
-        q = query(dbRef, orderByChild('createdBy'), equalTo(userId));
-    }
-    
-    const snapshot = await get(q);
+    // Fetch all companies first, then filter in the application code.
+    // This avoids the Firebase ".indexOn" error if the database isn't indexed.
+    const snapshot = await get(dbRef);
 
     if (!snapshot.exists()) {
         return [];
     }
+
     const allCompanies = snapshotToArray(snapshot);
-    return allCompanies.sort((a,b) => a.name.localeCompare(b.name));
+
+    let userCompanies: Company[] = [];
+
+    if (role === 'admin' && userId) {
+        userCompanies = allCompanies.filter(company => company.createdBy === userId);
+    } else if (role === 'client' && userId) {
+        userCompanies = allCompanies.filter(company => company.assignedUserUid === userId);
+    } else if (!userId) {
+        // If no user/role specified, return all companies
+        userCompanies = allCompanies;
+    }
+
+    return userCompanies.sort((a,b) => a.name.localeCompare(b.name));
 }
 
 
@@ -87,28 +97,32 @@ export async function addCompany(name: string, userId: string): Promise<Company>
 
 export async function assignUserToCompany(companyId: string, userId: string | null): Promise<void> {
     const companyRef = ref(db, `companies/${companyId}`);
-    const userRef = ref(db, `users/${userId}`);
 
-    // Fetch the current company and user data
+    // Fetch the current company data to find the previously assigned user
     const companySnap = await get(companyRef);
     if (!companySnap.exists()) {
         throw new Error("Company not found");
     }
     const companyData = companySnap.val();
+    const oldUserId = companyData.assignedUserUid;
+
+    const updates: { [key: string]: any } = {};
 
     // 1. Un-assign from the old user if there was one
-    if (companyData.assignedUserUid) {
-        const oldUserRef = ref(db, `users/${companyData.assignedUserUid}`);
-        await update(oldUserRef, { assignedCompanyId: null });
+    if (oldUserId && oldUserId !== userId) {
+        updates[`/users/${oldUserId}/assignedCompanyId`] = null;
     }
-
-    // 2. Assign the new user to the company
-    await update(companyRef, { assignedUserUid: userId });
+    
+    // 2. Update the company with the new user ID
+    updates[`/companies/${companyId}/assignedUserUid`] = userId;
 
     // 3. Update the new user's profile with the company ID
     if (userId) {
-        await update(userRef, { assignedCompanyId: companyId });
+        updates[`/users/${userId}/assignedCompanyId`] = companyId;
     }
+
+    // Perform all updates atomically
+    await update(ref(db), updates);
 }
 
 
