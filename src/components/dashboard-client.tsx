@@ -98,29 +98,28 @@ export function DashboardClient({
           <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
             <div className="text-center max-w-4xl mx-auto">
               <h3 className="mt-4 text-2xl font-bold">Bienvenido a EcoCircle: Tu Socio Estratégico en Gestión Ambiental Inteligente</h3>
-              <p className="text-muted-foreground mt-4">
+              <div className="text-muted-foreground mt-4">
                 En EcoCircle, fusionamos la experiencia en servicios y asesorías ambientales con la vanguardia de la automatización de procesos y la inteligencia artificial (IA). Nuestra plataforma está diseñada para transformar la gestión de residuos y el cumplimiento ambiental en tu empresa, ofreciéndote herramientas intuitivas y eficientes para optimizar tus operaciones.
-              </p>
               
-              <div className="mt-8 text-left">
-                <h4 className="font-semibold text-lg mb-4 text-center">¿Qué puedes esperar de EcoCircle?</h4>
-                <div className="grid md:grid-cols-2 gap-6">
-                    <p><strong>Tablero Centralizado:</strong> Un espacio intuitivo donde podrás visualizar y gestionar todas tus actividades ambientales de un vistazo.</p>
-                    <p><strong>Analizador IA:</strong> Próximamente, nuestra potente inteligencia artificial te brindará insights profundos para la optimización de tus procesos de residuos.</p>
-                    <p><strong>Registro de Residuos:</strong> Simplifica el seguimiento y la documentación de tus residuos, asegurando la trazabilidad y el cumplimiento normativo.</p>
-                    <p><strong>Calendario:</strong> Organiza y programa tus actividades ambientales, desde recolecciones hasta auditorías.</p>
-                    <p><strong>Reportes Detallados:</strong> Genera informes completos para evaluar tu desempeño ambiental, identificar áreas de mejora y cumplir con las regulaciones.</p>
-                    <p><strong>Materiales:</strong> Accede a recursos y documentación relevante para una gestión ambiental efectiva.</p>
+                <div className="mt-8 text-left">
+                  <h4 className="font-semibold text-lg mb-4 text-center">¿Qué puedes esperar de EcoCircle?</h4>
+                  <div className="grid md:grid-cols-2 gap-6">
+                      <p><strong>Tablero Centralizado:</strong> Un espacio intuitivo donde podrás visualizar y gestionar todas tus actividades ambientales de un vistazo.</p>
+                      <p><strong>Analizador IA:</strong> Próximamente, nuestra potente inteligencia artificial te brindará insights profundos para la optimización de tus procesos de residuos.</p>
+                      <p><strong>Registro de Residuos:</strong> Simplifica el seguimiento y la documentación de tus residuos, asegurando la trazabilidad y el cumplimiento normativo.</p>
+                      <p><strong>Calendario:</strong> Organiza y programa tus actividades ambientales, desde recolecciones hasta auditorías.</p>
+                      <p><strong>Reportes Detallados:</strong> Genera informes completos para evaluar tu desempeño ambiental, identificar áreas de mejora y cumplir con las regulaciones.</p>
+                      <p><strong>Materiales:</strong> Accede a recursos y documentación relevante para una gestión ambiental efectiva.</p>
+                  </div>
+                </div>
+
+                <div className="mt-8">
+                  <h4 className="font-semibold text-lg">Comienza tu camino hacia la sostenibilidad:</h4>
+                  <div className="text-muted-foreground mt-2">
+                    Para aprovechar al máximo las capacidades de EcoCircle, por favor selecciona o crea una empresa para empezar. Estamos aquí para ayudarte a automatizar tus procesos ambientales, optimizar tus recursos y avanzar hacia un futuro más sostenible con la ayuda de la inteligencia artificial.
+                  </div>
                 </div>
               </div>
-
-              <div className="mt-8">
-                <h4 className="font-semibold text-lg">Comienza tu camino hacia la sostenibilidad:</h4>
-                <p className="text-muted-foreground mt-2">
-                  Para aprovechar al máximo las capacidades de EcoCircle, por favor selecciona o crea una empresa para empezar. Estamos aquí para ayudarte a automatizar tus procesos ambientales, optimizar tus recursos y avanzar hacia un futuro más sostenible con la ayuda de la inteligencia artificial.
-                </p>
-              </div>
-
             </div>
           </div>
        </div>
@@ -297,7 +296,7 @@ export function DashboardClient({
                     wasteLog.slice(0, 5).map((entry: WasteEntry) => (
                       <TableRow key={entry.id}>
                         <TableCell>
-                         {isClient ? <span>{formatShortDate(entry.date)}</span> : <Skeleton className="h-4 w-20" />}
+                         {isClient ? formatShortDate(entry.date) : <Skeleton className="h-4 w-20" />}
                         </TableCell>
                         <TableCell>{entry.type}</TableCell>
                         <TableCell className="text-right">{entry.quantity.toFixed(2)} kg</TableCell>
@@ -319,3 +318,6 @@ export function DashboardClient({
     </div>
   );
 }
+
+    
+    
