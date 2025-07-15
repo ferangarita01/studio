@@ -44,33 +44,42 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   
   const lang = pathname.split('/')[1] || 'en';
 
+  const manageUserRole = useCallback(async (user: User) => {
+    // Check if the user is an admin by seeing if they have created any companies.
+    const userCompanies = await getCompanies(user.uid);
+    if (userCompanies.length > 0) {
+      setRole('admin');
+      sessionStorage.setItem(ROLE_STORAGE_KEY, 'admin');
+      sessionStorage.removeItem(COMPANY_ID_STORAGE_KEY);
+      setCompanyId(null);
+    } else {
+      // If the user has not created companies, they are a client.
+      // A client might be associated with a company created by an admin.
+      // This part of the logic would need to be expanded in a real-world scenario.
+      // For this demo, we assume non-admins are clients.
+      setRole('client');
+      sessionStorage.setItem(ROLE_STORAGE_KEY, 'client');
+      // For a client, find their associated company.
+      // This demo assumes one company per client user for simplicity.
+      const allCompanies = await getCompanies(); // We get all companies to find the one associated
+      const clientCompany = allCompanies.find(c => c.createdBy === user.uid); // This is a simplification
+      if(clientCompany) {
+        const clientCompanyId = clientCompany.id;
+        setCompanyId(clientCompanyId);
+        sessionStorage.setItem(COMPANY_ID_STORAGE_KEY, clientCompanyId);
+      } else {
+        setCompanyId(null);
+        sessionStorage.removeItem(COMPANY_ID_STORAGE_KEY);
+      }
+    }
+  }, []);
+
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       if (user) {
-        // This is a simplified role management. 
-        // In a real app, you'd get this from a database (e.g., Firestore) using the user.uid
-        const storedRole = sessionStorage.getItem(ROLE_STORAGE_KEY) as UserRole;
-        if (storedRole === 'admin') {
-            setRole('admin');
-            sessionStorage.removeItem(COMPANY_ID_STORAGE_KEY);
-            setCompanyId(null);
-        } else {
-            setRole('client');
-            // For a client, find their associated company.
-            // This demo assumes one company per client user for simplicity.
-            const userCompanies = await getCompanies(user.uid);
-            if(userCompanies.length > 0) {
-              const clientCompanyId = userCompanies[0].id;
-              setCompanyId(clientCompanyId);
-              sessionStorage.setItem(COMPANY_ID_STORAGE_KEY, clientCompanyId);
-            } else {
-              // If client has no company yet, one can be created for them.
-              // For now, clear companyId.
-               setCompanyId(null);
-               sessionStorage.removeItem(COMPANY_ID_STORAGE_KEY);
-            }
-        }
+        await manageUserRole(user);
       } else {
         setRole(null);
         setCompanyId(null);
@@ -81,15 +90,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [manageUserRole]);
 
 
   const login = async (email: string, password: string):Promise<any> => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    // Simplified role detection for demo.
-    const roleToSet = email.includes('admin') ? 'admin' : 'client';
-    sessionStorage.setItem(ROLE_STORAGE_KEY, roleToSet);
-    setRole(roleToSet);
+    // After login, the onAuthStateChanged listener will fire and manageUserRole will be called.
     return userCredential;
   };
 
@@ -100,7 +106,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setRole('client');
     
     // Create a default company for the new client user.
-    await addCompany(`Company of ${email.split('@')[0]}`, userCredential.user.uid);
+    // In a real app, you might not do this, or handle it differently.
+    const newCompany = await addCompany(`Company of ${email.split('@')[0]}`, userCredential.user.uid);
+    setCompanyId(newCompany.id);
+    sessionStorage.setItem(COMPANY_ID_STORAGE_KEY, newCompany.id);
 
     return userCredential;
   };
