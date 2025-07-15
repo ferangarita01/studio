@@ -122,14 +122,14 @@ export function DashboardClient({
       month: 'long',
       day: 'numeric',
       year: 'numeric'
-    }).format(date);
+    }).format(new Date(date));
   }
   
   const formatShortDate = (date: Date) => {
      return new Intl.DateTimeFormat(undefined, {
       month: 'long',
       day: 'numeric'
-    }).format(date);
+    }).format(new Date(date));
   }
 
   return (
@@ -283,7 +283,7 @@ export function DashboardClient({
                     wasteLog.slice(0, 5).map((entry: WasteEntry) => (
                       <TableRow key={entry.id}>
                         <TableCell>
-                          {isClient ? formatShortDate(entry.date) : <Skeleton className="h-4 w-20" />}
+                          {isClient ? <span>{formatShortDate(entry.date)}</span> : <Skeleton className="h-4 w-20" />}
                         </TableCell>
                         <TableCell>{entry.type}</TableCell>
                         <TableCell className="text-right">{entry.quantity.toFixed(2)} kg</TableCell>

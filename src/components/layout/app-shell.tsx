@@ -332,11 +332,27 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   const isAuthorized = navItems.some(item => 'href' in item && (item.href === '/' ? currentPath === item.href : currentPath.startsWith(item.href))) ||
     navItems.some(item => 'subItems' in item && item.subItems.some(sub => sub.href === '/' ? currentPath === sub.href : currentPath.startsWith(sub.href)));
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (role && navItems.length > 0 && !isAuthorized) {
        router.push(`/${lang}`);
     }
   }, [isAuthorized, role, router, lang, navItems.length]);
+  
+  const addCompany = (company: Company) => {
+    setCompanies(prev => [...prev, company]);
+  };
+
+  const companyContextValue = useMemo(() => ({
+    selectedCompany,
+    setSelectedCompany: (company: Company | null) => {
+      if (role === 'admin') {
+        setSelectedCompany(company);
+      }
+    },
+    companies,
+    addCompany,
+    isLoading: isLoadingCompanies,
+  }), [selectedCompany, companies, addCompany, isLoadingCompanies, role]);
   
   if (isAuthLoading) {
     return <div className="flex h-screen w-full items-center justify-center">Loading...</div>;
@@ -355,21 +371,6 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     );
   }
 
-  const addCompany = (company: Company) => {
-    setCompanies(prev => [...prev, company]);
-  };
-
-  const companyContextValue = useMemo(() => ({
-    selectedCompany,
-    setSelectedCompany: (company: Company | null) => {
-      if (role === 'admin') {
-        setSelectedCompany(company);
-      }
-    },
-    companies,
-    addCompany,
-    isLoading: isLoadingCompanies,
-  }), [selectedCompany, companies, addCompany, isLoadingCompanies, role]);
 
   const getHref = (href: string) => {
     if (href === '/') return `/${lang}`;
