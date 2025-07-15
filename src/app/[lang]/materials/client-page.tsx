@@ -43,6 +43,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useAuth } from "@/context/auth-context";
 
 
 interface MaterialsClientProps {
@@ -56,6 +57,7 @@ export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClien
   const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(null);
   const [isClient, setIsClient] = useState(false);
   const { toast } = useToast();
+  const { role } = useAuth();
   
   useEffect(() => {
     setIsClient(true);
@@ -127,12 +129,14 @@ export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClien
         <div className="flex items-center">
           <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
            <div className="ml-auto flex items-center gap-2">
-            <Button size="sm" className="h-8 gap-1" onClick={handleAdd}>
-              <PlusCircle className="h-3.5 w-3.5" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {dictionary.addMaterial}
-              </span>
-            </Button>
+             {isClient && role === 'admin' && (
+                <Button size="sm" className="h-8 gap-1" onClick={handleAdd}>
+                  <PlusCircle className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    {dictionary.addMaterial}
+                  </span>
+                </Button>
+              )}
           </div>
         </div>
         <Card>
@@ -148,7 +152,9 @@ export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClien
                     <TableHead>{dictionary.table.name}</TableHead>
                     <TableHead>{dictionary.table.type}</TableHead>
                     <TableHead className="text-right">{dictionary.table.pricePerKg}</TableHead>
-                    <TableHead className="w-[50px]"><span className="sr-only">{dictionary.table.actions}</span></TableHead>
+                    {isClient && role === 'admin' && (
+                      <TableHead className="w-[50px]"><span className="sr-only">{dictionary.table.actions}</span></TableHead>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -160,45 +166,47 @@ export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClien
                           <Badge variant="outline">{dictionary.types[material.type]}</Badge>
                         </TableCell>
                         <TableCell className="text-right">
-                           {!isClient ? <Skeleton className="h-4 w-16 float-right" /> : <span>{formatCurrency(material.pricePerKg)}</span>}
+                           {formatCurrency(material.pricePerKg)}
                         </TableCell>
-                        <TableCell>
-                          <AlertDialog>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                  <span className="sr-only">{dictionary.table.openMenu}</span>
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => handleEdit(material)}>{dictionary.table.edit}</DropdownMenuItem>
-                                <AlertDialogTrigger asChild>
-                                  <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()}>
-                                    {dictionary.table.delete}
-                                  </DropdownMenuItem>
-                                </AlertDialogTrigger>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                             <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>{dictionary.deleteDialog.title}</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    {dictionary.deleteDialog.description}
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>{dictionary.deleteDialog.cancel}</AlertDialogCancel>
-                                  <AlertDialogAction onClick={() => handleDelete(material.id)}>{dictionary.deleteDialog.confirm}</AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                          </AlertDialog>
-                        </TableCell>
+                        {isClient && role === 'admin' && (
+                          <TableCell>
+                            <AlertDialog>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" className="h-8 w-8 p-0">
+                                    <span className="sr-only">{dictionary.table.openMenu}</span>
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem onClick={() => handleEdit(material)}>{dictionary.table.edit}</DropdownMenuItem>
+                                  <AlertDialogTrigger asChild>
+                                    <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()}>
+                                      {dictionary.table.delete}
+                                    </DropdownMenuItem>
+                                  </AlertDialogTrigger>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                               <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>{dictionary.deleteDialog.title}</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      {dictionary.deleteDialog.description}
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>{dictionary.deleteDialog.cancel}</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDelete(material.id)}>{dictionary.deleteDialog.confirm}</AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                          </TableCell>
+                        )}
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={4} className="h-24 text-center">
+                      <TableCell colSpan={role === 'admin' ? 4 : 3} className="h-24 text-center">
                         {dictionary.noMaterials}
                       </TableCell>
                     </TableRow>
