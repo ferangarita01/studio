@@ -32,15 +32,19 @@ const snapshotToArray = (snapshot: any) => {
 
 export async function getCompanies(userId?: string, role?: UserRole | null): Promise<Company[]> {
     const dbRef = ref(db, 'companies');
-    const snapshot = await get(dbRef);
+    let q;
+
+    if (userId && role === 'admin') {
+        q = query(dbRef, orderByChild('createdBy'), equalTo(userId));
+    } else if (userId && role === 'client') {
+        q = query(dbRef, orderByChild('assignedUserUid'), equalTo(userId));
+    } else {
+        q = dbRef;
+    }
+    
+    const snapshot = await get(q);
     if (snapshot.exists()) {
         const allCompanies = snapshotToArray(snapshot).sort((a,b) => a.name.localeCompare(b.name));
-        if (userId && role === 'admin') {
-            return allCompanies.filter(company => company.createdBy === userId);
-        }
-        if (userId && role === 'client') {
-             return allCompanies.filter(company => company.assignedUserUid === userId);
-        }
         return allCompanies;
     }
     return [];

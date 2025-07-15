@@ -160,7 +160,7 @@ export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClien
                         </TableCell>
                         <TableCell className="text-right">
                           {isClient ? (
-                            formatCurrency(material.pricePerKg)
+                            <span>{formatCurrency(material.pricePerKg)}</span>
                           ) : (
                             <Skeleton className="h-4 w-16 float-right" />
                           )}

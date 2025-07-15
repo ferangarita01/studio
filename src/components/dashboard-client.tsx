@@ -59,7 +59,7 @@ export function DashboardClient({
   wasteDataAll,
   wasteLogAll,
 }: DashboardClientProps) {
-  const { user, role, companyId: clientCompanyId } = useAuth();
+  const { user, role } = useAuth();
   const { selectedCompany, setCompanies, setSelectedCompany, isLoading: isCompanyContextLoading } = useCompany();
   const [isClient, setIsClient] = React.useState(false);
   const [disposalEvents, setDisposalEvents] = React.useState<DisposalEvent[]>([]);
@@ -318,5 +318,3 @@ export function DashboardClient({
     </div>
   );
 }
-
-    
