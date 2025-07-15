@@ -9,7 +9,6 @@ export const metadata: Metadata = {
   description: "A business waste management platform to track and manage waste generation and disposal for companies.",
 };
 
-// This remains a Server Component to fetch data and render the main HTML structure.
 export default async function RootLayout({
   children,
   params,
@@ -21,17 +20,8 @@ export default async function RootLayout({
   const { lang } = params;
 
   return (
-    <html lang={lang} suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      </head>
-      <body className="font-body antialiased">
-         <ClientLayout dictionary={dictionary} lang={lang}>
-            {children}
-         </ClientLayout>
-      </body>
-    </html>
+    <ClientLayout dictionary={dictionary} lang={lang}>
+      {children}
+    </ClientLayout>
   );
 }

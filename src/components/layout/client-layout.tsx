@@ -1,7 +1,7 @@
 
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { AppShell } from '@/components/layout/app-shell';
@@ -17,13 +17,13 @@ function AuthGuard({ children, lang }: { children: React.ReactNode, lang: Locale
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const [isClient, setIsClient] = React.useState(false);
+  const [isClient, setIsClient] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setIsClient(true);
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isLoading && isClient) {
       const isLoginPage = pathname.endsWith('/login');
       if (!isAuthenticated && !isLoginPage) {
@@ -51,7 +51,8 @@ function AuthGuard({ children, lang }: { children: React.ReactNode, lang: Locale
   return <>{children}</>;
 }
 
-export function ClientLayout({ children, dictionary, lang }: { children: React.ReactNode, dictionary: Dictionary, lang: Locale }) {
+
+const ClientLayoutProviders = ({ children, dictionary, lang }: { children: React.ReactNode, dictionary: Dictionary, lang: Locale }) => {
     const pathname = usePathname();
     const isLoginPage = pathname.endsWith('/login');
 
@@ -71,5 +72,22 @@ export function ClientLayout({ children, dictionary, lang }: { children: React.R
             </AuthProvider>
             <Toaster />
         </ThemeProvider>
+    )
+}
+
+export function ClientLayout({ children, dictionary, lang }: { children: React.ReactNode, dictionary: Dictionary, lang: Locale }) {
+    return (
+      <html lang={lang} suppressHydrationWarning>
+        <head>
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        </head>
+        <body className="font-body antialiased">
+          <ClientLayoutProviders dictionary={dictionary} lang={lang}>
+              {children}
+          </ClientLayoutProviders>
+        </body>
+      </html>
     )
 }
