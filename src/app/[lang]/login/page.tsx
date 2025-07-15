@@ -19,6 +19,7 @@ import { useDictionaries } from "@/context/dictionary-context";
 import type { Locale } from "@/i18n-config";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Loader2 } from "lucide-react";
+import { FirebaseError } from "firebase/app";
 
 export default function LoginPage() {
   const { login, signUp } = useAuth();
@@ -47,9 +48,12 @@ export default function LoginPage() {
       router.push(`/${lang}`);
     } catch (err: any) {
       console.error(err);
-      // Firebase error messages can be user-friendly.
-      const message = err.message || "An unexpected error occurred.";
-      setError(message.replace('Firebase: ',''));
+      if (err instanceof FirebaseError && err.code === 'auth/email-already-in-use') {
+         setError("This email address is already in use. Try logging in instead.");
+      } else {
+        const message = err.message || "An unexpected error occurred.";
+        setError(message.replace('Firebase: ','').replace('Error', ''));
+      }
     } finally {
       setIsSubmitting(false);
     }

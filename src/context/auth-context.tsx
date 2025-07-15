@@ -46,7 +46,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const manageUserRole = useCallback(async (user: User) => {
     // Check if the user is an admin by seeing if they have created any companies.
-    const userCompanies = await getCompanies(user.uid);
+    const userCompanies = await getCompanies(user.uid, 'admin');
+    
     if (userCompanies.length > 0) {
       setRole('admin');
       sessionStorage.setItem(ROLE_STORAGE_KEY, 'admin');
@@ -54,16 +55,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setCompanyId(null);
     } else {
       // If the user has not created companies, they are a client.
-      // A client is associated with a company created by an admin.
       setRole('client');
       sessionStorage.setItem(ROLE_STORAGE_KEY, 'client');
       // For a client, find their associated company.
-      // In a real app, an admin would assign a user to a company.
-      // This is a simplified lookup for the demo.
-      const allCompanies = await getCompanies(); 
-      const clientCompany = allCompanies.find(c => c.assignedUserUid === user.uid); 
-      if(clientCompany) {
-        const clientCompanyId = clientCompany.id;
+      const clientCompany = await getCompanies(user.uid, 'client');
+      if(clientCompany.length > 0) {
+        const clientCompanyId = clientCompany[0].id;
         setCompanyId(clientCompanyId);
         sessionStorage.setItem(COMPANY_ID_STORAGE_KEY, clientCompanyId);
       } else {
@@ -76,6 +73,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setIsLoading(true);
       setUser(user);
       if (user) {
         await manageUserRole(user);
@@ -100,13 +98,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signUp = async (email: string, password: string):Promise<any> => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    // All sign-ups are clients in this demo. Admins are created manually or by other means.
     // A new client user does not get a company by default; an admin must assign them one.
     sessionStorage.setItem(ROLE_STORAGE_KEY, 'client');
     setRole('client');
     setCompanyId(null);
     sessionStorage.removeItem(COMPANY_ID_STORAGE_KEY);
-
     return userCredential;
   };
 

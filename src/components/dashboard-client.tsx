@@ -157,10 +157,6 @@ export function DashboardClient({
     }).format(new Date(date));
   }
 
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat().format(num);
-  }
-
   return (
     <div className="flex w-full flex-col">
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -322,3 +318,5 @@ export function DashboardClient({
     </div>
   );
 }
+
+    
