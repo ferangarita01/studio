@@ -20,6 +20,7 @@ import {
   PlusCircle,
   Package,
   LogOut,
+  Gavel,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -66,6 +67,7 @@ const allNavItems = [
     { href: '/schedule', icon: Calendar, labelKey: 'schedule', roles: ['admin', 'client'] },
     { href: '/reports', icon: FileText, labelKey: 'reports', roles: ['admin', 'client'] },
     { href: '/materials', icon: Package, labelKey: 'materials', roles: ['admin'] },
+    { href: '/compliance', icon: Gavel, labelKey: 'compliance', roles: ['admin', 'client'] },
 ] as const;
 
 
@@ -402,7 +404,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <ThemeToggle />
             </div>
           </header>
-          <main className="flex-1 overflow-auto">{children}</main>
+          <main className="flex-1 overflow-auto bg-background/50">{children}</main>
         </div>
       </div>
     </CompanyContext.Provider>

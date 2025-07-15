@@ -8,7 +8,8 @@
       "log": "Registro de Residuos",
       "schedule": "Calendario",
       "reports": "Reportes",
-      "materials": "Materiales"
+      "materials": "Materiales",
+      "compliance": "Cumplimiento Legal"
     },
     "themeToggle": {
       "toggle": "Cambiar tema",
@@ -94,19 +95,13 @@
     }
   },
   "analyzerPage": {
-    "title": "Herramienta de Reducción de Residuos con IA",
-    "description": "Pegue sus datos de residuos en formato CSV para obtener información sobre reducción impulsada por IA.",
-    "inputCard": {
-      "title": "Entrada de Datos de Residuos",
-      "description": "Proporcione el tipo y la cantidad de residuos.",
-      "placeholder": "Pegue sus datos CSV aquí",
-      "button": "Analizar Datos"
-    },
-    "loading": "Analizando sus datos...",
-    "downloadPdf": "Descargar PDF",
+    "title": "Asistente IA de Reducción de Residuos",
+    "description": "Chatea con nuestra IA para obtener ideas sobre tus datos de residuos.",
+    "initialMessage": "¡Hola! Soy el Asistente de IA de WasteWise. Pega tus datos de residuos en formato CSV, o simplemente pídeme que analice los datos de ejemplo para ver cómo puedo ayudarte a reducir residuos.",
+    "inputPlaceholder": "Haz una pregunta o pega tus datos CSV aquí...",
+    "loading": "Analizando...",
     "report": {
       "title": "Reporte de Análisis de Residuos con IA",
-      "generatedOn": "Generado el",
       "totalWaste": {
         "title": "Total de Residuos Analizados",
         "description": "Suma de todos los tipos de residuos."
@@ -344,6 +339,29 @@
         "title": "Material Eliminado",
         "description": "El material se ha eliminado correctamente."
       }
+    }
+  },
+  "compliancePage": {
+    "title": "Centro de Cumplimiento Legal",
+    "description": "Supervise y gestione su estado de cumplimiento ambiental.",
+    "main": {
+        "title": "Resumen de Cumplimiento",
+        "description": "Manténgase al día con todos los requisitos legales y la documentación.",
+        "content": "Esta sección proporciona herramientas e información para ayudar a su empresa a cumplir con las regulaciones ambientales locales y nacionales. Realice un seguimiento de los plazos, acceda a los documentos necesarios y prepárese para las auditorías para garantizar el cumplimiento total."
+    },
+    "cards": {
+        "regulations": {
+            "title": "Base de Datos de Regulaciones",
+            "description": "Acceda a un repositorio de leyes y regulaciones ambientales relevantes."
+        },
+        "reports": {
+            "title": "Informes de Cumplimiento",
+            "description": "Genere y presente los informes de cumplimiento necesarios directamente desde la plataforma."
+        },
+        "audits": {
+            "title": "Preparación para Auditorías",
+            "description": "Utilice nuestras listas de verificación y herramientas para prepararse para las próximas auditorías ambientales."
+        }
     }
   }
 }

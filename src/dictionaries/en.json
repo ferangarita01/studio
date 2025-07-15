@@ -8,7 +8,8 @@
       "log": "Waste Log",
       "schedule": "Schedule",
       "reports": "Reports",
-      "materials": "Materials"
+      "materials": "Materials",
+      "compliance": "Legal Compliance"
     },
     "themeToggle": {
       "toggle": "Toggle theme",
@@ -94,19 +95,13 @@
     }
   },
   "analyzerPage": {
-    "title": "AI Waste Reduction Tool",
-    "description": "Paste your waste data in CSV format to get AI-powered reduction insights.",
-    "inputCard": {
-      "title": "Waste Data Input",
-      "description": "Provide waste type and quantity.",
-      "placeholder": "Paste your CSV data here",
-      "button": "Analyze Data"
-    },
-    "loading": "Analyzing your data...",
-    "downloadPdf": "Download PDF",
+    "title": "AI Waste Reduction Assistant",
+    "description": "Chat with our AI to get insights on your waste data.",
+    "initialMessage": "Hello! I'm the WasteWise AI Assistant. Paste your waste data in CSV format, or just ask me to analyze the sample data to see how I can help you with waste reduction insights.",
+    "inputPlaceholder": "Ask a question or paste your CSV data here...",
+    "loading": "Analyzing...",
     "report": {
       "title": "AI Waste Analysis Report",
-      "generatedOn": "Generated on",
       "totalWaste": {
         "title": "Total Waste Analyzed",
         "description": "Sum of all waste types from input."
@@ -344,6 +339,29 @@
         "title": "Material Deleted",
         "description": "The material has been successfully deleted."
       }
+    }
+  },
+  "compliancePage": {
+    "title": "Legal Compliance Center",
+    "description": "Monitor and manage your environmental compliance status.",
+    "main": {
+        "title": "Compliance Overview",
+        "description": "Stay up-to-date with all legal requirements and documentation.",
+        "content": "This section provides tools and information to help your company adhere to local and national environmental regulations. Track deadlines, access necessary documents, and prepare for audits to ensure full compliance."
+    },
+    "cards": {
+        "regulations": {
+            "title": "Regulations Database",
+            "description": "Access a repository of relevant environmental laws and regulations."
+        },
+        "reports": {
+            "title": "Compliance Reporting",
+            "description": "Generate and file necessary compliance reports directly from the platform."
+        },
+        "audits": {
+            "title": "Audit Preparation",
+            "description": "Use our checklists and tools to prepare for upcoming environmental audits."
+        }
     }
   }
 }
