@@ -54,15 +54,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setCompanyId(null);
     } else {
       // If the user has not created companies, they are a client.
-      // A client might be associated with a company created by an admin.
-      // This part of the logic would need to be expanded in a real-world scenario.
-      // For this demo, we assume non-admins are clients.
+      // A client is associated with a company created by an admin.
       setRole('client');
       sessionStorage.setItem(ROLE_STORAGE_KEY, 'client');
       // For a client, find their associated company.
-      // This demo assumes one company per client user for simplicity.
-      const allCompanies = await getCompanies(); // We get all companies to find the one associated
-      const clientCompany = allCompanies.find(c => c.createdBy === user.uid); // This is a simplification
+      // In a real app, an admin would assign a user to a company.
+      // This is a simplified lookup for the demo.
+      const allCompanies = await getCompanies(); 
+      const clientCompany = allCompanies.find(c => c.assignedUserUid === user.uid); 
       if(clientCompany) {
         const clientCompanyId = clientCompany.id;
         setCompanyId(clientCompanyId);
@@ -101,15 +100,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signUp = async (email: string, password: string):Promise<any> => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    // All sign-ups are clients in this demo.
+    // All sign-ups are clients in this demo. Admins are created manually or by other means.
+    // A new client user does not get a company by default; an admin must assign them one.
     sessionStorage.setItem(ROLE_STORAGE_KEY, 'client');
     setRole('client');
-    
-    // Create a default company for the new client user.
-    // In a real app, you might not do this, or handle it differently.
-    const newCompany = await addCompany(`Company of ${email.split('@')[0]}`, userCredential.user.uid);
-    setCompanyId(newCompany.id);
-    sessionStorage.setItem(COMPANY_ID_STORAGE_KEY, newCompany.id);
+    setCompanyId(null);
+    sessionStorage.removeItem(COMPANY_ID_STORAGE_KEY);
 
     return userCredential;
   };

@@ -1,3 +1,4 @@
+
 // IMPORTANT: This service now uses Firebase Realtime Database.
 // You will need to set up Realtime Database in your Firebase project.
 import {
@@ -14,7 +15,7 @@ import {
 } from "firebase/database";
 import { db } from "@/lib/firebase";
 import { wasteData, weeklyReportData, monthlyReportData } from "@/lib/data";
-import type { WasteEntry, Material, DisposalEvent, ReportData, Company } from "@/lib/types";
+import type { WasteEntry, Material, DisposalEvent, ReportData, Company, UserRole } from "@/lib/types";
 
 // Helper to convert snapshot to array
 const snapshotToArray = (snapshot: any) => {
@@ -29,14 +30,16 @@ const snapshotToArray = (snapshot: any) => {
 
 // --- Company Service Functions ---
 
-export async function getCompanies(userId?: string): Promise<Company[]> {
+export async function getCompanies(userId?: string, role?: UserRole | null): Promise<Company[]> {
     const dbRef = ref(db, 'companies');
-    // We will fetch all companies and filter on the client-side to avoid needing a Firebase index.
     const snapshot = await get(dbRef);
     if (snapshot.exists()) {
         const allCompanies = snapshotToArray(snapshot).sort((a,b) => a.name.localeCompare(b.name));
-        if (userId) {
+        if (userId && role === 'admin') {
             return allCompanies.filter(company => company.createdBy === userId);
+        }
+        if (userId && role === 'client') {
+             return allCompanies.filter(company => company.assignedUserUid === userId);
         }
         return allCompanies;
     }

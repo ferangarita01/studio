@@ -1,9 +1,12 @@
+
 export type WasteType = "Recycling" | "Organic" | "General" | "Hazardous";
+export type UserRole = "admin" | "client";
 
 export type Company = {
   id: string;
   name: string;
   createdBy?: string; // UID of the user who created it
+  assignedUserUid?: string; // UID of the client user assigned to this company
 };
 
 export type Material = {
