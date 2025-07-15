@@ -147,7 +147,11 @@ export function DashboardClient({
               <Trash2 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">1,254 kg</div>
+              {isClient ? (
+                <div className="text-2xl font-bold">1,254 kg</div>
+              ) : (
+                <Skeleton className="h-8 w-24" />
+              )}
               <p className="text-xs text-muted-foreground">
                 {dictionary.cards.totalWaste.change}
               </p>
@@ -159,7 +163,11 @@ export function DashboardClient({
               <Recycle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">68%</div>
+              {isClient ? (
+                <div className="text-2xl font-bold">68%</div>
+              ) : (
+                <Skeleton className="h-8 w-16" />
+              )}
               <p className="text-xs text-muted-foreground">
                 {dictionary.cards.recyclingRate.change}
               </p>
