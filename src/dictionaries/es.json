@@ -362,6 +362,11 @@
             "title": "Preparación para Auditorías",
             "description": "Utilice nuestras listas de verificación y herramientas para prepararse para las próximas auditorías ambientales."
         }
+    },
+    "admin": {
+      "addRegulation": "Añadir Nueva Regulación",
+      "editContent": "Editar Contenido",
+      "manage": "Gestionar"
     }
   }
 }

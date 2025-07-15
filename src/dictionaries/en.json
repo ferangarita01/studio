@@ -362,6 +362,11 @@
             "title": "Audit Preparation",
             "description": "Use our checklists and tools to prepare for upcoming environmental audits."
         }
+    },
+    "admin": {
+      "addRegulation": "Add New Regulation",
+      "editContent": "Edit Content",
+      "manage": "Manage"
     }
   }
 }
