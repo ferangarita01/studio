@@ -108,11 +108,13 @@ function ReportView({
               <ArrowDownCircle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              {isClient ? (
-                <div className="text-2xl font-bold">{formatCurrency(data.totalCosts)}</div>
-              ) : (
-                <Skeleton className="h-8 w-24" />
-              )}
+              <div className="text-2xl font-bold">
+                {isClient ? (
+                  <span>{formatCurrency(data.totalCosts)}</span>
+                ) : (
+                  <Skeleton className="h-8 w-24" />
+                )}
+              </div>
               <p className="text-xs text-muted-foreground">{dictionary.cards.collectionCosts.description}</p>
             </CardContent>
           </Card>
@@ -122,11 +124,13 @@ function ReportView({
               <ArrowUpCircle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              {isClient ? (
-                <div className="text-2xl font-bold">{formatCurrency(data.totalIncome)}</div>
-              ) : (
-                 <Skeleton className="h-8 w-24" />
-              )}
+               <div className="text-2xl font-bold">
+                  {isClient ? (
+                    <span>{formatCurrency(data.totalIncome)}</span>
+                  ) : (
+                    <Skeleton className="h-8 w-24" />
+                  )}
+                </div>
               <p className="text-xs text-muted-foreground">{dictionary.cards.recyclingIncome.description}</p>
             </CardContent>
           </Card>
@@ -136,13 +140,13 @@ function ReportView({
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              {isClient ? (
-                <div className={`text-2xl font-bold ${data.netResult >= 0 ? 'text-primary' : 'text-destructive'}`}>
-                  {formatCurrency(data.netResult)}
-                </div>
-              ): (
-                 <Skeleton className="h-8 w-24" />
-              )}
+              <div className={`text-2xl font-bold ${data.netResult >= 0 ? 'text-primary' : 'text-destructive'}`}>
+                {isClient ? (
+                  <span>{formatCurrency(data.netResult)}</span>
+                ): (
+                  <Skeleton className="h-8 w-24" />
+                )}
+              </div>
               <p className="text-xs text-muted-foreground">{dictionary.cards.netResult.description}</p>
             </CardContent>
           </Card>

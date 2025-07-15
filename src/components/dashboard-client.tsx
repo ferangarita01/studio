@@ -107,7 +107,7 @@ export function DashboardClient({
             <div className="text-center max-w-4xl mx-auto">
               <h3 className="mt-4 text-2xl font-bold">Bienvenido a EcoCircle: Tu Socio Estratégico en Gestión Ambiental Inteligente</h3>
               <div className="text-muted-foreground mt-4">
-                En EcoCircle, fusionamos la experiencia en servicios y asesorías ambientales con la vanguardia de la automatización de procesos y la inteligencia artificial (IA). Nuestra plataforma está diseñada para transformar la gestión de residuos y el cumplimiento ambiental en tu empresa, ofreciéndote herramientas intuitivas y eficientes para optimizar tus operaciones.
+                <p>En EcoCircle, fusionamos la experiencia en servicios y asesorías ambientales con la vanguardia de la automatización de procesos y la inteligencia artificial (IA). Nuestra plataforma está diseñada para transformar la gestión de residuos y el cumplimiento ambiental en tu empresa, ofreciéndote herramientas intuitivas y eficientes para optimizar tus operaciones.</p>
               
                 <div className="mt-8 text-left">
                   <h4 className="font-semibold text-lg mb-4 text-center">¿Qué puedes esperar de EcoCircle?</h4>
@@ -124,7 +124,7 @@ export function DashboardClient({
                 <div className="mt-8">
                   <h4 className="font-semibold text-lg">Comienza tu camino hacia la sostenibilidad:</h4>
                   <div className="text-muted-foreground mt-2">
-                    Para aprovechar al máximo las capacidades de EcoCircle, por favor selecciona o crea una empresa para empezar. Estamos aquí para ayudarte a automatizar tus procesos ambientales, optimizar tus recursos y avanzar hacia un futuro más sostenible con la ayuda de la inteligencia artificial.
+                    <p>Para aprovechar al máximo las capacidades de EcoCircle, por favor selecciona o crea una empresa para empezar. Estamos aquí para ayudarte a automatizar tus procesos ambientales, optimizar tus recursos y avanzar hacia un futuro más sostenible con la ayuda de la inteligencia artificial.</p>
                   </div>
                 </div>
               </div>
@@ -175,7 +175,7 @@ export function DashboardClient({
               {isClient ? (
                 <div className="text-2xl font-bold">{formatNumber(1254)} kg</div>
               ) : (
-                <Skeleton className="h-8 w-24" />
+                <div className="text-2xl font-bold">1,254 kg</div>
               )}
               <p className="text-xs text-muted-foreground">
                 {dictionary.cards.totalWaste.change}
@@ -191,7 +191,7 @@ export function DashboardClient({
               {isClient ? (
                 <div className="text-2xl font-bold">{formatNumber(68)}%</div>
               ) : (
-                <Skeleton className="h-8 w-16" />
+                <div className="text-2xl font-bold">68%</div>
               )}
               <p className="text-xs text-muted-foreground">
                 {dictionary.cards.recyclingRate.change}
@@ -204,11 +204,7 @@ export function DashboardClient({
               <CalendarIcon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              {isClient ? (
-                 <div className="text-2xl font-bold">{upcomingDisposals.length}</div>
-              ) : (
-                <Skeleton className="h-8 w-8" />
-              )}
+              <div className="text-2xl font-bold">{upcomingDisposals.length}</div>
               <p className="text-xs text-muted-foreground">
                 {dictionary.cards.upcomingDisposals.next}
               </p>
