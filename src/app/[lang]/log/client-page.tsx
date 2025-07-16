@@ -144,11 +144,13 @@ export function LogClient({ dictionary, initialWasteLog }: LogClientProps) {
                             {isClient ? <span>{formatCurrency(entry.serviceCost)}</span> : <Skeleton className="h-4 w-16 float-right" />}
                           </TableCell>
                           <TableCell className="text-right">
-                             {isClient ? (
-                               <span className={totalValue >= 0 ? 'text-primary' : 'text-destructive'}>
-                                  {formatCurrency(totalValue)}
-                               </span>
-                             ) : <Skeleton className="h-4 w-20 float-right" />}
+                            {isClient ? (
+                              <span className={totalValue >= 0 ? 'text-primary' : 'text-destructive'}>
+                                {formatCurrency(totalValue)}
+                              </span>
+                            ) : (
+                              <Skeleton className="h-4 w-20 float-right" />
+                            )}
                           </TableCell>
                         </TableRow>
                       );

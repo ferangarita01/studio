@@ -40,6 +40,62 @@
     },
     "logout": "Cerrar Sesión"
   },
+  "landingPage": {
+    "header": {
+      "title": "WasteWise",
+      "login": "Iniciar Sesión",
+      "getStarted": "Empezar"
+    },
+    "hero": {
+      "title": "Gestión Inteligente de Residuos para Empresas Modernas",
+      "subtitle": "WasteWise combina IA avanzada con herramientas intuitivas para ayudarte a optimizar el reciclaje, asegurar el cumplimiento y convertir residuos en ingresos.",
+      "cta": "Comienza Gratis"
+    },
+    "features": {
+      "title": "Todo lo que Necesitas para un Cumplimiento Inteligente",
+      "subtitle": "Desde el registro automatizado hasta análisis con IA, nuestra plataforma simplifica cada aspecto de la gestión de residuos.",
+      "one": {
+        "title": "Análisis con IA",
+        "description": "Aprovecha la inteligencia artificial para identificar oportunidades de reducción y optimizar tus flujos de residuos."
+      },
+      "two": {
+        "title": "Reportes Detallados",
+        "description": "Genera informes financieros y ambientales completos para seguir tu progreso y mantener el cumplimiento."
+      },
+      "three": {
+        "title": "Registro Automatizado",
+        "description": "Registra fácilmente entradas de residuos, sigue materiales y programa recogidas con nuestra interfaz simplificada."
+      }
+    },
+    "testimonials": {
+      "title": "Con la Confianza de Líderes Sostenibles",
+      "subtitle": "Descubre cómo las empresas están transformando su impacto ambiental con WasteWise.",
+      "one": {
+        "name": "Carlos Rodríguez",
+        "role": "Gerente de Operaciones, EcoBuild Corp",
+        "quote": "WasteWise ha revolucionado cómo vemos nuestros subproductos. El analizador de IA nos dio ideas prácticas que redujeron nuestros residuos generales en un 30% en un solo trimestre."
+      },
+      "two": {
+        "name": "Sofía Chen",
+        "role": "Coordinadora de Sostenibilidad, Hoteles GreenLeaf",
+        "quote": "Las herramientas de informes son un cambio radical para nuestras declaraciones anuales. Lo que antes tomaba semanas, ahora se hace con unos pocos clics. ¡Muy recomendado!"
+      },
+      "three": {
+        "name": "David Miller",
+        "role": "CEO, Manufacturas Miller",
+        "quote": "Poder rastrear nuestros ingresos por reciclaje frente a los costos de servicio de manera tan clara ha sido increíblemente valioso. Hemos convertido un centro de costos en un centro de ganancias."
+      }
+    },
+    "cta": {
+      "title": "¿Listo para Transformar tu Gestión de Residuos?",
+      "subtitle": "Únete a WasteWise hoy y da el primer paso hacia un futuro más sostenible y rentable.",
+      "button": "Regístrate Ahora"
+    },
+    "footer": {
+      "rights": "Todos los derechos reservados.",
+      "madeWith": "Hecho con pasión por un planeta más verde."
+    }
+  },
   "loginPage": {
     "title": "Iniciar Sesión",
     "description": "Ingrese su correo electrónico a continuación para iniciar sesión en su cuenta.",

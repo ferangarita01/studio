@@ -39,10 +39,10 @@ export function middleware(request: NextRequest) {
   if (pathnameIsMissingLocale) {
     const locale = getLocale(request);
 
-    // If the root is accessed, redirect to the login page of the detected locale.
+    // If the root is accessed, redirect to the landing page of the detected locale.
     if (pathname === '/') {
        return NextResponse.redirect(
-        new URL(`/${locale}/login`, request.url)
+        new URL(`/${locale}/landing`, request.url)
       );
     }
 
