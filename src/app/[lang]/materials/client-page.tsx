@@ -57,7 +57,7 @@ export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClien
   const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(null);
   const [isClient, setIsClient] = useState(false);
   const { toast } = useToast();
-  const { role } = useAuth();
+  const { user, role } = useAuth();
   
   useEffect(() => {
     setIsClient(true);
@@ -75,29 +75,31 @@ export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClien
   };
 
   const handleDelete = async (materialId: string) => {
+    if (!user) return;
     try {
-      await deleteMaterial(materialId);
+      await deleteMaterial(materialId, user.uid);
       setMaterials(materials.filter(m => m.id !== materialId));
       toast({
         title: dictionary.toast.delete.title,
         description: dictionary.toast.delete.description,
       });
-    } catch (error) {
+    } catch (error: any) {
        toast({
         title: "Error",
-        description: "Failed to delete material.",
+        description: error.message || "Failed to delete material.",
         variant: "destructive"
       });
     }
   };
   
   const handleSave = useCallback(async (materialData: Material) => {
+    if (!user) return;
     try {
       if (materialData.id) { // Editing existing material
-        await updateMaterial(materialData);
+        await updateMaterial(materialData, user.uid);
         setMaterials(materials.map(m => m.id === materialData.id ? materialData : m));
       } else { // Adding new material
-        const newMaterial = await addMaterial(materialData);
+        const newMaterial = await addMaterial(materialData, user.uid);
         setMaterials(currentMaterials => [...currentMaterials, newMaterial]);
       }
       toast({
@@ -105,14 +107,14 @@ export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClien
         description: dictionary.toast.save.description,
       });
       setDialogOpen(false);
-    } catch (error) {
+    } catch (error: any) {
        toast({
         title: "Error",
-        description: "Failed to save material.",
+        description: error.message || "Failed to save material.",
         variant: "destructive"
       });
     }
-  }, [materials, toast, dictionary]);
+  }, [materials, toast, dictionary, user]);
 
   const formatCurrency = (amount: number) => {
     if (typeof amount !== 'number') return '';
@@ -166,7 +168,7 @@ export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClien
                           <Badge variant="outline">{dictionary.types[material.type]}</Badge>
                         </TableCell>
                         <TableCell className="text-right">
-                           {formatCurrency(material.pricePerKg)}
+                           {isClient ? <span>{formatCurrency(material.pricePerKg)}</span> : <Skeleton className="h-4 w-16 float-right" />}
                         </TableCell>
                         {isClient && role === 'admin' && (
                           <TableCell>

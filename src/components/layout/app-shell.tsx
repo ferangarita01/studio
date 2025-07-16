@@ -54,6 +54,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/colla
 import type { Dictionary } from "@/lib/get-dictionary";
 import { ThemeProvider } from "../theme-provider";
 import { Toaster } from "../ui/toaster";
+import { WhatsAppButton } from "../whatsapp-button";
 
 const Logo = () => {
   const dictionary = useDictionaries()?.navigation;
@@ -543,6 +544,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
           </header>
           <main className="flex-1 overflow-auto bg-background/50">{children}</main>
         </div>
+        <WhatsAppButton />
       </div>
   );
 }
