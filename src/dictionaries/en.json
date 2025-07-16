@@ -67,6 +67,9 @@
         "description": "Easily log waste entries, track materials, and schedule pickups with our streamlined interface."
       }
     },
+    "trustedBy": {
+      "title": "Trusted by leading companies"
+    },
     "testimonials": {
       "title": "Trusted by Sustainable Leaders",
       "subtitle": "See how companies are transforming their environmental impact with WasteWise.",
@@ -477,3 +480,5 @@
     }
   }
 }
+
+    

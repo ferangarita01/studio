@@ -114,7 +114,7 @@ function ReportView({
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {!isClient ? <Skeleton className="h-8 w-24" /> : <span>{formatCurrency(data.totalCosts)}</span>}
+                {!isClient ? <Skeleton className="h-8 w-24" /> : formatCurrency(data.totalCosts)}
               </div>
               <p className="text-xs text-muted-foreground">{dictionary.cards.collectionCosts.description}</p>
             </CardContent>
@@ -126,7 +126,7 @@ function ReportView({
             </CardHeader>
             <CardContent>
                <div className="text-2xl font-bold">
-                  {!isClient ? <Skeleton className="h-8 w-24" /> : <span>{formatCurrency(data.totalIncome)}</span>}
+                  {!isClient ? <Skeleton className="h-8 w-24" /> : formatCurrency(data.totalIncome)}
                 </div>
               <p className="text-xs text-muted-foreground">{dictionary.cards.recyclingIncome.description}</p>
             </CardContent>
@@ -138,7 +138,7 @@ function ReportView({
             </CardHeader>
             <CardContent>
               <div className={`text-2xl font-bold ${data.netResult >= 0 ? 'text-primary' : 'text-destructive'}`}>
-                 {!isClient ? <Skeleton className="h-8 w-24" /> : <span>{formatCurrency(data.netResult)}</span>}
+                 {!isClient ? <Skeleton className="h-8 w-24" /> : formatCurrency(data.netResult)}
               </div>
               <p className="text-xs text-muted-foreground">{dictionary.cards.netResult.description}</p>
             </CardContent>

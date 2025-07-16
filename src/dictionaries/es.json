@@ -67,6 +67,9 @@
         "description": "Registra fácilmente entradas de residuos, sigue materiales y programa recogidas con nuestra interfaz simplificada."
       }
     },
+    "trustedBy": {
+      "title": "Con la confianza de empresas líderes"
+    },
     "testimonials": {
       "title": "Con la Confianza de Líderes Sostenibles",
       "subtitle": "Descubre cómo las empresas están transformando su impacto ambiental con WasteWise.",
@@ -477,3 +480,5 @@
     }
   }
 }
+
+    

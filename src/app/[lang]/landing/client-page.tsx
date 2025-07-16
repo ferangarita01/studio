@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BrainCircuit, AreaChart, Leaf, FileText, Bot } from "lucide-react";
 import type { Dictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
     <div className="flex flex-col items-center p-6 text-center">
@@ -115,9 +116,45 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         </div>
                     </div>
                 </section>
+                
+                {/* Trusted By Section */}
+                <section className="py-20">
+                    <div className="container">
+                         <div className="text-center mb-12">
+                            <h2 className="text-3xl font-bold">{d.trustedBy.title}</h2>
+                        </div>
+                        <Carousel
+                            opts={{
+                                align: "start",
+                                loop: true,
+                            }}
+                            className="w-full"
+                        >
+                            <CarouselContent>
+                                {[...Array(6)].map((_, index) => (
+                                <CarouselItem key={index} className="md:basis-1/3 lg:basis-1/5">
+                                    <div className="p-1">
+                                         <div className="flex aspect-video items-center justify-center p-6 grayscale hover:grayscale-0 transition-all">
+                                            <Image
+                                                src={`https://placehold.co/200x100.png`}
+                                                alt={`Client logo ${index + 1}`}
+                                                width={200}
+                                                height={100}
+                                                data-ai-hint="logo"
+                                            />
+                                        </div>
+                                    </div>
+                                </CarouselItem>
+                                ))}
+                            </CarouselContent>
+                            <CarouselPrevious />
+                            <CarouselNext />
+                        </Carousel>
+                    </div>
+                </section>
 
                 {/* Testimonials Section */}
-                <section className="py-20">
+                <section className="py-20 bg-muted/50">
                     <div className="container">
                         <div className="text-center mb-12">
                             <h2 className="text-3xl font-bold">{d.testimonials.title}</h2>
@@ -147,7 +184,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                 </section>
 
                 {/* CTA Section */}
-                <section className="py-20 bg-muted/50">
+                <section className="py-20">
                     <div className="container text-center">
                         <h2 className="text-3xl font-bold">{d.cta.title}</h2>
                         <p className="mt-4 text-lg text-muted-foreground">{d.cta.subtitle}</p>
@@ -171,3 +208,4 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
     );
 }
 
+    
