@@ -80,7 +80,7 @@ const allNavItems = [
         { href: '/reports/disposal', labelKey: 'finalDisposal', roles: ['admin', 'client'] }
       ]
     },
-    { href: '/materials', icon: Package, labelKey: 'materials', roles: ['admin'] },
+    { href: '/materials', icon: Package, labelKey: 'materials', roles: ['admin', 'client'] },
     { href: '/companies', icon: Users, labelKey: 'companies', roles: ['admin'] },
     { href: '/compliance', icon: Gavel, labelKey: 'compliance', roles: ['admin', 'client'] },
 ] as const;
@@ -171,6 +171,7 @@ function CompanySwitcher({ isClient }: { isClient: boolean }) {
   if (!dictionary || !user) return null;
 
   const handleCreateCompany = async (name: string) => {
+    if(!user?.uid) return;
     const newCompany = await addCompanyService(name, user.uid);
     addCompany(newCompany);
     setSelectedCompany(newCompany);
@@ -489,14 +490,14 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   return (
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
         <div className="hidden border-r bg-muted/40 md:block">
-          <div className="flex h-full max-h-screen flex-col gap-2">
+          <div className="flex h-full max-h-screen flex-col">
             <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
               <Logo />
             </div>
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto py-2">
               {isClient ? <NavContent /> : <NavSkeleton />}
             </div>
-             <div className="mt-auto p-4">
+             <div className="mt-auto p-4 border-t">
                  <Button size="sm" variant="ghost" onClick={logout} className="w-full justify-start gap-2">
                     <LogOut className="h-4 w-4"/>
                     <span>{dictionary.logout}</span>
@@ -521,7 +522,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                  <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
                     <Logo />
                  </div>
-                 <div className="flex-1 overflow-y-auto">
+                 <div className="flex-1 overflow-y-auto py-2">
                     {isClient ? <NavContent /> : <NavSkeleton />}
                  </div>
                  <div className="mt-auto p-4 border-t">
