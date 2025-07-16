@@ -26,7 +26,7 @@ import type { DisposalEvent, WasteEntry, Company } from "@/lib/types";
 import type { Dictionary } from "@/lib/get-dictionary";
 import { useCompany } from "./layout/app-shell";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getDisposalEvents, getCompanies } from "@/services/waste-data-service";
+import { getCompanies } from "@/services/waste-data-service";
 import { useAuth } from "@/context/auth-context";
 
 const chartConfig = {
@@ -52,17 +52,19 @@ interface DashboardClientProps {
   wasteDataAll: Record<string, any[]>;
   wasteLogAll: WasteEntry[];
   companies: Company[];
+  initialDisposalEvents: DisposalEvent[];
 }
 
 export function DashboardClient({
   dictionary,
   wasteDataAll,
   wasteLogAll,
+  initialDisposalEvents,
 }: DashboardClientProps) {
   const { user, role } = useAuth();
   const { selectedCompany, setCompanies, setSelectedCompany, isLoading: isCompanyContextLoading } = useCompany();
   const [isClient, setIsClient] = React.useState(false);
-  const [disposalEvents, setDisposalEvents] = React.useState<DisposalEvent[]>([]);
+  const [disposalEvents, setDisposalEvents] = React.useState<DisposalEvent[]>(initialDisposalEvents);
 
   React.useEffect(() => {
     setIsClient(true);
@@ -85,13 +87,8 @@ export function DashboardClient({
 
 
   React.useEffect(() => {
-    const fetchEvents = async () => {
-      // Fetch all events initially, then filter on client
-      const events = await getDisposalEvents();
-      setDisposalEvents(events);
-    };
-    fetchEvents();
-  }, []);
+    setDisposalEvents(initialDisposalEvents);
+  }, [initialDisposalEvents]);
   
   if (isCompanyContextLoading || !selectedCompany) {
     const WelcomeMessage = () => (

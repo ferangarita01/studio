@@ -1,5 +1,5 @@
 
-import { getWasteChartData, getWasteLog } from "@/services/waste-data-service";
+import { getWasteChartData, getWasteLog, getDisposalEvents } from "@/services/waste-data-service";
 import { getCompanies } from "@/services/waste-data-service";
 import { DashboardClient } from "@/components/dashboard-client";
 import { getDictionary } from "@/lib/get-dictionary";
@@ -13,10 +13,11 @@ export default async function DashboardPage({
   const dictionary = await getDictionary(lang);
   
   // Fetch all data on the server
-  const [wasteDataAll, wasteLogAll, companies] = await Promise.all([
+  const [wasteDataAll, wasteLogAll, companies, disposalEvents] = await Promise.all([
     getWasteChartData(),
     getWasteLog(),
     getCompanies(),
+    getDisposalEvents(),
   ]);
 
   return (
@@ -25,6 +26,7 @@ export default async function DashboardPage({
       wasteDataAll={wasteDataAll}
       wasteLogAll={wasteLogAll}
       companies={companies}
+      initialDisposalEvents={disposalEvents}
     />
   );
 }
