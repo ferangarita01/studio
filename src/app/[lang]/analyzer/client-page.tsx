@@ -43,6 +43,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import type { Locale } from "@/i18n-config";
 
 const placeholderData = `Waste Type,Quantity (kg)
 Recycling,186
@@ -71,8 +72,10 @@ interface Message {
 
 export function AIAnalyzerClient({
   dictionary,
+  lang,
 }: {
   dictionary: Dictionary["analyzerPage"];
+  lang: Locale;
 }) {
   const [messages, setMessages] = useState<Message[]>([
     { id: 'initial', role: 'assistant', content: dictionary.initialMessage }
@@ -105,7 +108,7 @@ export function AIAnalyzerClient({
             // If the user just says "hi" or something, use the placeholder data
             const dataToAnalyze = input.toLowerCase().includes('csv') || input.includes(',') ? input : placeholderData;
             
-            const result = await analyzeWasteData({ wasteData: dataToAnalyze });
+            const result = await analyzeWasteData({ wasteData: dataToAnalyze, lang: lang });
             
             if (result) {
                 const assistantResponse: Message = {

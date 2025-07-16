@@ -231,7 +231,7 @@ export function ScheduleClient({ dictionary, allEvents: initialEvents }: Schedul
               <SheetTitle>
                 {dictionary.details.title}:{" "}
                 {isClient && selectedDate ? (
-                  formatDate(selectedDate, { month: 'long', day: 'numeric', year: 'numeric' })
+                  <span>{formatDate(selectedDate, { month: 'long', day: 'numeric', year: 'numeric' })}</span>
                 ) : (
                   <Skeleton className="h-6 w-32 inline-block" />
                 )}

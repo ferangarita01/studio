@@ -31,6 +31,7 @@ const AnalyzeWasteDataInputSchema = z.object({
     .describe(
       'A CSV file containing waste data. Columns should include waste type and quantity.'
     ),
+  lang: z.enum(['en', 'es']).describe('The language for the response.'),
 });
 export type AnalyzeWasteDataInput = z.infer<typeof AnalyzeWasteDataInputSchema>;
 
@@ -58,7 +59,9 @@ const prompt = ai.definePrompt({
   input: {schema: AnalyzeWasteDataInputSchema},
   output: {schema: AnalyzeWasteDataOutputSchema},
   tools: [getWasteLog],
-  prompt: `You are an AI-powered waste management assistant. Analyze the provided waste data and provide actionable recommendations for waste reduction.
+  prompt: `You are an AI-powered waste management assistant. You must respond in the following language: {{{lang}}}.
+  
+Analyze the provided waste data and provide actionable recommendations for waste reduction.
 If you need more context, you can use the getWasteLog tool to get the full history of waste entries.
 
 Waste Data: {{{wasteData}}}
