@@ -103,7 +103,7 @@ export function DashboardClient({
             <h4 className="font-semibold text-lg mb-4 text-center">{welcomeDictionary?.whatToExpect.title}</h4>
             <div className="grid md:grid-cols-2 gap-6">
                 <div><strong>{welcomeDictionary?.whatToExpect.items.centralDashboard.title}</strong> {welcomeDictionary?.whatToExpect.items.centralDashboard.description}</div>
-                <div><strong>{welcomeDictionary?.whatToExecute.items.aiAnalyzer.title}</strong> {welcomeDictionary?.whatToExpect.items.aiAnalyzer.description}</div>
+                <div><strong>{welcomeDictionary?.whatToExpect.items.aiAnalyzer.title}</strong> {welcomeDictionary?.whatToExpect.items.aiAnalyzer.description}</div>
                 <div><strong>{welcomeDictionary?.whatToExpect.items.wasteLog.title}</strong> {welcomeDictionary?.whatToExpect.items.wasteLog.description}</div>
                 <div><strong>{welcomeDictionary?.whatToExpect.items.calendar.title}</strong> {welcomeDictionary?.whatToExpect.items.calendar.description}</div>
                 <div><strong>{welcomeDictionary?.whatToExpect.items.detailedReports.title}</strong> {welcomeDictionary?.whatToExpect.items.detailedReports.description}</div>

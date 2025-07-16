@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Loader2 } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -26,31 +26,35 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { AddWasteDialog } from "@/components/add-waste-dialog";
 import { useAuth } from "@/context/auth-context";
+import { getWasteLog } from "@/services/waste-data-service";
 
 interface LogClientProps {
   dictionary: Dictionary["logPage"];
-  initialWasteLog: WasteEntry[];
 }
 
-export function LogClient({ dictionary, initialWasteLog }: LogClientProps) {
+export function LogClient({ dictionary }: LogClientProps) {
   const { selectedCompany } = useCompany();
   const [isClient, setIsClient] = useState(false);
   const [isAddWasteDialogOpen, setAddWasteDialogOpen] = useState(false);
-  const [allWasteLog, setAllWasteLog] = useState(initialWasteLog);
+  const [allWasteLog, setAllWasteLog] = useState<WasteEntry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { role } = useAuth();
 
   useEffect(() => {
     setIsClient(true);
+    const fetchLog = async () => {
+      setIsLoading(true);
+      const log = await getWasteLog();
+      setAllWasteLog(log);
+      setIsLoading(false);
+    };
+    fetchLog();
   }, []);
   
-  useEffect(() => {
-    setAllWasteLog(initialWasteLog);
-  }, [initialWasteLog]);
-
 
   const handleEntryAdded = useCallback((newEntry: WasteEntry) => {
     // Add new entry to the top of the list
-    setAllWasteLog(currentLog => [newEntry, ...currentLog]);
+    setAllWasteLog(currentLog => [newEntry, ...currentLog].sort((a,b) => b.date.getTime() - a.date.getTime()));
   }, []);
 
   if (!selectedCompany) {
@@ -123,7 +127,13 @@ export function LogClient({ dictionary, initialWasteLog }: LogClientProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {wasteLog.length > 0 ? (
+                  {isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="h-24 text-center">
+                        <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                      </TableCell>
+                    </TableRow>
+                  ) : wasteLog.length > 0 ? (
                     wasteLog.map((entry) => {
                       const totalValue = (entry.price || 0) * entry.quantity - (entry.serviceCost || 0);
                       return (
