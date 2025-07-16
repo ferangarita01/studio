@@ -259,7 +259,7 @@ export function DashboardClient({
                         {disposal.wasteTypes.join(', ')} {dictionary.disposals.pickup}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                          {isClient ? formatDate(disposal.date) : <Skeleton className="h-4 w-28" /> }
+                          {isClient ? <span>{formatDate(disposal.date)}</span> : <Skeleton className="h-4 w-28" /> }
                       </p>
                       <Badge variant="secondary">{dictionary.disposals.status[disposal.status as keyof typeof dictionary.disposals.status]}</Badge>
                     </div>
@@ -315,5 +315,3 @@ export function DashboardClient({
     </div>
   );
 }
-
-    
