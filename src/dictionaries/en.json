@@ -116,6 +116,44 @@
   },
   "dashboard": {
     "title": "Dashboard",
+    "welcome": {
+      "title": "Welcome to WasteWise: Your Strategic Partner in Smart Environmental Management",
+      "description": "At WasteWise, we merge expertise in environmental services and consulting with the forefront of process automation and artificial intelligence (AI). Our platform is designed to transform waste management and environmental compliance in your company, offering you intuitive and efficient tools to optimize your operations.",
+      "whatToExpect": {
+        "title": "What can you expect from WasteWise?",
+        "items": {
+          "centralDashboard": {
+            "title": "Centralized Dashboard:",
+            "description": "An intuitive space where you can view and manage all your environmental activities at a glance."
+          },
+          "aiAnalyzer": {
+            "title": "AI Analyzer:",
+            "description": "Our powerful artificial intelligence will soon provide you with deep insights to optimize your waste processes."
+          },
+          "wasteLog": {
+            "title": "Waste Log:",
+            "description": "Simplify the tracking and documentation of your waste, ensuring traceability and regulatory compliance."
+          },
+          "calendar": {
+            "title": "Calendar:",
+            "description": "Organize and schedule your environmental activities, from collections to audits."
+          },
+          "detailedReports": {
+            "title": "Detailed Reports:",
+            "description": "Generate complete reports to assess your environmental performance, identify areas for improvement, and comply with regulations."
+          },
+          "materials": {
+            "title": "Materials:",
+            "description": "Access relevant resources and documentation for effective environmental management."
+          }
+        }
+      },
+      "gettingStarted": {
+        "title": "Start your journey towards sustainability:",
+        "adminText": "To make the most of WasteWise's capabilities, please select or create a company to begin. We are here to help you automate your environmental processes, optimize your resources, and move towards a more sustainable future with the help of artificial intelligence.",
+        "clientText": "You are logged in as a client. Please wait for an administrator to assign you to a company to view the dashboard data. If you believe this is an error, please contact your account administrator."
+      }
+    },
     "cards": {
       "totalWaste": {
         "title": "Total Waste This Month",

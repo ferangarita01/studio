@@ -68,10 +68,10 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         </div>
                          <div className="mt-16">
                             <Image 
-                                src="https://placehold.co/1200x600.png"
+                                src="https://storage.googleapis.com/project-deft-backend-resources/wastewise-dashboard.png"
                                 alt="Dashboard preview"
                                 width={1200}
-                                height={600}
+                                height={675}
                                 data-ai-hint="dashboard sustainability"
                                 className="rounded-lg shadow-2xl"
                             />
