@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { BrainCircuit, AreaChart, Leaf, FileText, Bot } from "lucide-react";
+import { BrainCircuit, AreaChart, Leaf, FileText, Bot, Recycle } from "lucide-react";
 import type { Dictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
@@ -37,7 +37,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
             <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                 <div className="container flex h-14 items-center justify-between">
                     <Link href={`/${lang}/landing`} className="flex items-center gap-2 font-bold text-lg text-primary">
-                        <Leaf className="h-6 w-6" />
+                        <Recycle className="h-6 w-6" />
                         <span>{d.header.title}</span>
                     </Link>
                     <nav className="flex items-center gap-2">
@@ -65,16 +65,6 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                             <Button size="lg" asChild>
                                 <Link href={`/${lang}/login`}>{d.hero.cta}</Link>
                             </Button>
-                        </div>
-                         <div className="mt-16">
-                            <Image 
-                                src="https://storage.googleapis.com/project-deft-backend-resources/wastewise-dashboard.png"
-                                alt="Dashboard preview"
-                                width={1200}
-                                height={675}
-                                data-ai-hint="dashboard sustainability"
-                                className="rounded-lg shadow-2xl"
-                            />
                         </div>
                     </div>
                 </section>
