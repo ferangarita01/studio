@@ -358,12 +358,17 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     setIsClient(true);
   }, []);
   
+  const isPublicPage = pathname.endsWith('/login') || pathname.endsWith('/landing');
+
   useEffect(() => {
     if (isAuthLoading) return;
-    if (!isAuthenticated && !pathname.endsWith('/login')) {
-      router.push(`/${lang}/login`);
+    if (!isAuthenticated && !isPublicPage) {
+      router.push(`/${lang}/landing`);
     }
-  }, [isAuthenticated, isAuthLoading, pathname, router, lang]);
+    if (isAuthenticated && isPublicPage) {
+        router.push(`/${lang}`);
+    }
+  }, [isAuthenticated, isAuthLoading, pathname, router, lang, isPublicPage]);
   
   const navItems = useMemo(() => {
     if (!role) return [];
@@ -389,10 +394,14 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     return <div className="flex h-screen w-full items-center justify-center">Loading...</div>;
   }
   
-  if (!isAuthenticated || pathname.endsWith('/login')) {
+  if (isPublicPage) {
     return <>{children}</>;
   }
 
+  if (!isAuthenticated) {
+     return <div className="flex h-screen w-full items-center justify-center">Loading...</div>;
+  }
+  
   if (!dictionary) return null;
    if (role && navItems.length > 0 && !isAuthorized && currentPath !== '/') {
     return (
@@ -570,5 +579,3 @@ export function AppShell({ children, lang, dictionary }: { children: React.React
     </ThemeProvider>
    )
 }
-
-    
