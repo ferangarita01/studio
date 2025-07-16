@@ -256,11 +256,9 @@ export function DashboardClient({
                       <p className="font-medium">
                         {disposal.wasteTypes.join(', ')} {dictionary.disposals.pickup}
                       </p>
-                      {isClient ? (
-                        <p className="text-sm text-muted-foreground">
-                            {formatDate(disposal.date)}
-                        </p>
-                      ) : <Skeleton className="h-4 w-28" /> }
+                      <p className="text-sm text-muted-foreground">
+                          {isClient ? formatDate(disposal.date) : <Skeleton className="h-4 w-28" /> }
+                      </p>
                       <Badge variant="secondary">{dictionary.disposals.status[disposal.status as keyof typeof dictionary.disposals.status]}</Badge>
                     </div>
                   </div>
@@ -293,7 +291,7 @@ export function DashboardClient({
                     wasteLog.slice(0, 5).map((entry: WasteEntry) => (
                       <TableRow key={entry.id}>
                         <TableCell>
-                          {isClient ? <span>{formatShortDate(entry.date)}</span> : <Skeleton className="h-4 w-20" />}
+                          {isClient ? formatShortDate(entry.date) : <Skeleton className="h-4 w-20" />}
                         </TableCell>
                         <TableCell>{entry.type}</TableCell>
                         <TableCell className="text-right">{entry.quantity.toFixed(2)} kg</TableCell>
