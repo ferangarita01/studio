@@ -127,10 +127,6 @@ export function ScheduleClient({ dictionary, allEvents: initialEvents }: Schedul
     audio: <Mic className="h-5 w-5 flex-shrink-0" />,
   };
   
-  const formatDate = (date: Date, options: Intl.DateTimeFormatOptions) => {
-    return new Intl.DateTimeFormat(undefined, options).format(new Date(date));
-  }
-
 
   return (
     <>
@@ -231,7 +227,7 @@ export function ScheduleClient({ dictionary, allEvents: initialEvents }: Schedul
               <SheetTitle>
                 {dictionary.details.title}:{" "}
                 {isClient && selectedDate ? (
-                  <span>{formatDate(selectedDate, { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                  <span>{format(selectedDate, "PPP")}</span>
                 ) : (
                   <Skeleton className="h-6 w-32 inline-block" />
                 )}
