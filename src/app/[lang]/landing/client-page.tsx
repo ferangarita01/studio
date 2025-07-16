@@ -105,42 +105,6 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         </div>
                     </div>
                 </section>
-                
-                {/* Trusted By Section */}
-                <section className="py-20">
-                    <div className="container">
-                         <div className="text-center mb-12">
-                            <h2 className="text-3xl font-bold">{d.trustedBy.title}</h2>
-                        </div>
-                        <Carousel
-                            opts={{
-                                align: "start",
-                                loop: true,
-                            }}
-                            className="w-full"
-                        >
-                            <CarouselContent>
-                                {[...Array(6)].map((_, index) => (
-                                <CarouselItem key={index} className="md:basis-1/3 lg:basis-1/5">
-                                    <div className="p-1">
-                                         <div className="flex aspect-video items-center justify-center p-6 grayscale hover:grayscale-0 transition-all">
-                                            <Image
-                                                src={`https://placehold.co/200x100.png`}
-                                                alt={`Client logo ${index + 1}`}
-                                                width={200}
-                                                height={100}
-                                                data-ai-hint="logo"
-                                            />
-                                        </div>
-                                    </div>
-                                </CarouselItem>
-                                ))}
-                            </CarouselContent>
-                            <CarouselPrevious />
-                            <CarouselNext />
-                        </Carousel>
-                    </div>
-                </section>
 
                 {/* CTA Section */}
                 <section className="py-20">

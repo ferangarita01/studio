@@ -67,28 +67,6 @@
         "description": "Easily log waste entries, track materials, and schedule pickups with our streamlined interface."
       }
     },
-    "trustedBy": {
-      "title": "Trusted by leading companies"
-    },
-    "testimonials": {
-      "title": "Trusted by Sustainable Leaders",
-      "subtitle": "See how companies are transforming their environmental impact with WasteWise.",
-      "one": {
-        "name": "Carlos Rodriguez",
-        "role": "Operations Manager, EcoBuild Corp",
-        "quote": "WasteWise has revolutionized how we see our byproducts. The AI analyzer gave us actionable insights that cut our general waste by 30% in just one quarter."
-      },
-      "two": {
-        "name": "Sofia Chen",
-        "role": "Sustainability Coordinator, GreenLeaf Hotels",
-        "quote": "The reporting tools are a game-changer for our annual compliance filings. What used to take weeks now takes a few clicks. Highly recommended!"
-      },
-      "three": {
-        "name": "David Miller",
-        "role": "CEO, Miller Manufacturing",
-        "quote": "Being able to track our recycling income against service costs so clearly has been incredibly valuable. We've turned a cost center into a profit center."
-      }
-    },
     "cta": {
       "title": "Ready to Transform Your Waste Management?",
       "subtitle": "Join WasteWise today and take the first step towards a more sustainable and profitable future.",
@@ -518,5 +496,3 @@
     }
   }
 }
-
-    
