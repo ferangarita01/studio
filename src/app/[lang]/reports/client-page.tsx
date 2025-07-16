@@ -160,8 +160,8 @@ function ReportView({
                     tickMargin={10}
                     axisLine={false}
                   />
-                  <YAxis tickFormatter={(value) => `$${value}`} />
-                  <ChartTooltip content={<ChartTooltipContent formatter={(value) => formatCurrency(value as number)} />} />
+                  <YAxis tickFormatter={(value) => isClient ? `$${value}`: ''} />
+                  <ChartTooltip content={<ChartTooltipContent formatter={(value) => isClient ? formatCurrency(value as number) : ''} />} />
                   <Bar dataKey="costs" fill="var(--color-costs)" radius={4} />
                   <Bar dataKey="income" fill="var(--color-income)" radius={4} />
                 </BarChart>

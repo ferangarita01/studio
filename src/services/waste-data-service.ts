@@ -71,6 +71,7 @@ export async function getCompanies(userId?: string): Promise<Company[]> {
     let allCompanies = snapshotToArray(snapshot);
 
     if (userId) {
+        // Filter in code instead of a Firebase query to avoid needing a DB index.
         allCompanies = allCompanies.filter(company => company.createdBy === userId);
     }
     
