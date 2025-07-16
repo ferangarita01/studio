@@ -10,6 +10,7 @@ import { BrainCircuit, AreaChart, Leaf, FileText, Bot } from "lucide-react";
 import type { Dictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import React from "react";
 
 const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
     <div className="flex flex-col items-center p-6 text-center">
@@ -21,26 +22,14 @@ const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, titl
     </div>
 );
 
-const TestimonialCard = ({ name, role, quote, avatar }: { name: string, role: string, quote: string, avatar: string }) => (
-    <Card className="border-0 shadow-lg">
-        <CardContent className="p-6">
-            <p className="text-muted-foreground mb-4">"{quote}"</p>
-            <div className="flex items-center">
-                <Avatar className="h-10 w-10 mr-4">
-                    <AvatarImage src={avatar} alt={name} />
-                    <AvatarFallback>{name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div>
-                    <p className="font-semibold">{name}</p>
-                    <p className="text-sm text-muted-foreground">{role}</p>
-                </div>
-            </div>
-        </CardContent>
-    </Card>
-);
-
 export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, lang: Locale }) {
     const d = dictionary.landingPage;
+    const [isClient, setIsClient] = React.useState(false);
+
+    React.useEffect(() => {
+        setIsClient(true);
+    }, []);
+
 
     return (
         <div className="flex flex-col min-h-screen bg-background">
@@ -153,41 +142,12 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                     </div>
                 </section>
 
-                {/* Testimonials Section */}
-                <section className="py-20 bg-muted/50">
-                    <div className="container">
-                        <div className="text-center mb-12">
-                            <h2 className="text-3xl font-bold">{d.testimonials.title}</h2>
-                            <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">{d.testimonials.subtitle}</p>
-                        </div>
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                           <TestimonialCard
-                                name={d.testimonials.one.name}
-                                role={d.testimonials.one.role}
-                                quote={d.testimonials.one.quote}
-                                avatar="https://placehold.co/100x100.png"
-                           />
-                           <TestimonialCard
-                                name={d.testimonials.two.name}
-                                role={d.testimonials.two.role}
-                                quote={d.testimonials.two.quote}
-                                avatar="https://placehold.co/100x100.png"
-                           />
-                           <TestimonialCard
-                                name={d.testimonials.three.name}
-                                role={d.testimonials.three.role}
-                                quote={d.testimonials.three.quote}
-                                avatar="https://placehold.co/100x100.png"
-                           />
-                        </div>
-                    </div>
-                </section>
-
                 {/* CTA Section */}
                 <section className="py-20">
                     <div className="container text-center">
                         <h2 className="text-3xl font-bold">{d.cta.title}</h2>
                         <p className="mt-4 text-lg text-muted-foreground">{d.cta.subtitle}</p>
+
                         <div className="mt-8">
                              <Button size="lg" asChild>
                                 <Link href={`/${lang}/login`}>{d.cta.button}</Link>
@@ -207,5 +167,3 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
-
-    
