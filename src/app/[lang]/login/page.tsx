@@ -60,7 +60,7 @@ export default function LoginPage() {
   };
 
   if (!dictionary) {
-    return <div>Loading translations...</div>;
+    return <div className="flex min-h-screen items-center justify-center bg-background p-4">Loading translations...</div>;
   }
 
   return (
