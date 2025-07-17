@@ -116,10 +116,15 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         <span>{d.header.title}</span>
                     </Link>
                     <nav className="flex items-center gap-2">
-                       {isClient && (
+                       {isClient ? (
                         <>
                            <LanguageToggle dictionary={dictionary.navigation.languageToggle} />
                            <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
+                        </>
+                       ) : (
+                        <>
+                            <div className="w-9 h-9" />
+                            <div className="w-9 h-9" />
                         </>
                        )}
                        <Button variant="ghost" asChild>
@@ -153,10 +158,10 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                     <div className="container">
                         <div className="text-center mb-12">
                             <h2 className="text-3xl font-bold">{d.valueProposition.title}</h2>
-                             <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-8 text-muted-foreground justify-center">
-                                <p className="flex items-center justify-center gap-2 text-center"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat1}</p>
-                                <p className="flex items-center justify-center gap-2 text-center"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat2}</p>
-                                <p className="flex items-center justify-center gap-2 text-center"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat3}</p>
+                             <div className="mt-6 flex flex-col md:flex-row items-center justify-center gap-y-4 gap-x-8 text-muted-foreground text-center">
+                                <p className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat1}</p>
+                                <p className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat2}</p>
+                                <p className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat3}</p>
                             </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -265,4 +270,3 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
-
