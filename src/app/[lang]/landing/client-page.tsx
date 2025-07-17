@@ -127,10 +127,10 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
             <main className="flex-1">
                 <section className="py-20 sm:py-32">
                     <div className="container px-4 md:px-6 text-center">
-                        <h1 className="text-4xl font-bold tracking-tight sm:text-6xl max-w-5xl mx-auto">
+                        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl max-w-5xl mx-auto">
                            {d.hero.title}
                         </h1>
-                        <p className="mt-6 text-lg text-muted-foreground max-w-4xl mx-auto">
+                        <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
                            {d.hero.subtitle}
                         </p>
                         <div className="mt-10">
@@ -141,10 +141,10 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                     </div>
                 </section>
 
-                <section className="py-20 bg-muted/50">
+                <section className="py-16 sm:py-24 bg-muted/50">
                     <div className="container">
                         <div className="text-center mb-12">
-                            <h2 className="text-3xl font-bold">{d.valueProposition.title}</h2>
+                            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{d.valueProposition.title}</h2>
                              <div className="mt-6 flex flex-col md:flex-row items-center justify-center gap-y-4 gap-x-8 text-muted-foreground text-center">
                                 <p className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat1}</p>
                                 <p className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat2}</p>
@@ -158,10 +158,10 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                                 </CardHeader>
                                 <CardContent className="p-0">
                                     <ul className="space-y-2 text-muted-foreground">
-                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5" />{d.valueProposition.from.item1}</li>
-                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5" />{d.valueProposition.from.item2}</li>
-                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5" />{d.valueProposition.from.item3}</li>
-                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5" />{d.valueProposition.from.item4}</li>
+                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" /><span>{d.valueProposition.from.item1}</span></li>
+                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" /><span>{d.valueProposition.from.item2}</span></li>
+                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" /><span>{d.valueProposition.from.item3}</span></li>
+                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" /><span>{d.valueProposition.from.item4}</span></li>
                                     </ul>
                                 </CardContent>
                             </Card>
@@ -171,10 +171,10 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                                 </CardHeader>
                                 <CardContent className="p-0">
                                     <ul className="space-y-2 text-muted-foreground">
-                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />{d.valueProposition.to.item1}</li>
-                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />{d.valueProposition.to.item2}</li>
-                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />{d.valueProposition.to.item3}</li>
-                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />{d.valueProposition.to.item4}</li>
+                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" /><span>{d.valueProposition.to.item1}</span></li>
+                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" /><span>{d.valueProposition.to.item2}</span></li>
+                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" /><span>{d.valueProposition.to.item3}</span></li>
+                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" /><span>{d.valueProposition.to.item4}</span></li>
                                     </ul>
                                 </CardContent>
                             </Card>
@@ -182,13 +182,13 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                     </div>
                 </section>
 
-                <section id="use-cases" className="py-20">
+                <section id="use-cases" className="py-16 sm:py-24">
                     <div className="container">
                         <div className="text-center mb-12">
-                            <h2 className="text-3xl font-bold">{d.useCases.title}</h2>
-                            <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">{d.useCases.subtitle}</p>
+                            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{d.useCases.title}</h2>
+                            <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">{d.useCases.subtitle}</p>
                         </div>
-                        <div className="grid md:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                              <UseCaseCard 
                                 icon={<Building className="w-8 h-8" />}
                                 title={d.useCases.companies.title}
@@ -208,13 +208,13 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                     </div>
                 </section>
 
-                <section id="features" className="py-20 bg-muted/50">
+                <section id="features" className="py-16 sm:py-24 bg-muted/50">
                     <div className="container">
                         <div className="text-center mb-12">
-                            <h2 className="text-3xl font-bold">{d.features.title}</h2>
-                            <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">{d.features.subtitle}</p>
+                            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{d.features.title}</h2>
+                            <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">{d.features.subtitle}</p>
                         </div>
-                        <div className="grid md:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                             <FeatureCard 
                                 icon={<Bot className="w-6 h-6" />}
                                 title={d.features.one.title}
@@ -234,11 +234,10 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                     </div>
                 </section>
 
-                <section className="py-20">
+                <section className="py-20 sm:py-32">
                     <div className="container text-center">
-                        <h2 className="text-3xl font-bold">{d.cta.title}</h2>
-                        <p className="mt-4 text-lg text-muted-foreground">{d.cta.subtitle}</p>
-
+                        <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{d.cta.title}</h2>
+                        <p className="mt-4 text-lg md:text-xl text-muted-foreground">{d.cta.subtitle}</p>
                         <div className="mt-8">
                              <Button size="lg" asChild>
                                 <Link href={`/${lang}/login`}>{d.cta.button}</Link>
@@ -250,8 +249,8 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
             
             <footer className="border-t">
                 <div className="container flex flex-col items-center justify-between gap-4 py-10 md:h-24 md:flex-row md:py-0">
-                    <p className="text-sm text-muted-foreground">© 2024 EcoCircle. {d.footer.rights}</p>
-                     <p className="text-sm text-muted-foreground">{d.footer.madeWith}</p>
+                    <p className="text-sm text-center md:text-left text-muted-foreground">© 2024 WasteWise. {d.footer.rights}</p>
+                    <p className="text-sm text-center md:text-right text-muted-foreground">{d.footer.madeWith}</p>
                 </div>
             </footer>
         </div>

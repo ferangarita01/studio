@@ -1,20 +1,20 @@
 
-'use client';
-
+import { getDictionary } from "@/lib/get-dictionary";
 import { DashboardClient } from "@/components/dashboard-client";
-import { useDictionaries } from "@/context/dictionary-context";
+import type { Locale } from "@/i18n-config";
 
-export default function DashboardPage() {
-  const dictionary = useDictionaries()?.dashboard;
+export default async function DashboardPage({
+  params: { lang },
+}: {
+  params: { lang: Locale };
+}) {
+  const dictionary = await getDictionary(lang);
   
-  // Data fetching is now handled client-side in DashboardClient
-  // to prevent hydration errors.
+  // Data fetching is handled client-side in DashboardClient to prevent hydration errors.
   
-  if (!dictionary) return <div>Loading...</div>;
-
   return (
     <DashboardClient
-      dictionary={dictionary}
+      dictionary={dictionary.dashboard}
     />
   );
 }
