@@ -52,10 +52,26 @@
       "cta": "Calculate Your Income Potential"
     },
     "valueProposition": {
-      "loss": "$15,000 lost",
-      "lossDescription": "on average annually due to poor waste management.",
-      "gain": "$50,000 gained",
-      "gainDescription": "in additional revenue with WasteWise."
+      "title": "Breakdown of the Opportunity",
+      "stats": {
+        "stat1": "$2.1 billion lost annually in Colombia",
+        "stat2": "Only 13% of waste is currently utilized",
+        "stat3": "Your company can be part of the 13% that earns money"
+      },
+      "from": {
+        "title": "FROM THIS:",
+        "item1": "Collection costs",
+        "item2": "Fines for non-compliance",
+        "item3": "Manual processes",
+        "item4": "Total waste"
+      },
+      "to": {
+        "title": "TO THIS:",
+        "item1": "Income from sales",
+        "item2": "Green certifications",
+        "item3": "AI automation",
+        "item4": "85% utilization"
+      }
     },
     "useCases": {
       "title": "A Solution for Every Need",

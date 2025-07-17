@@ -24,6 +24,7 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns";
+import { es, enUS } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,6 +42,8 @@ import { cn } from "@/lib/utils";
 import { useCompany } from "@/components/layout/app-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RequestCollectionDialog } from "@/components/request-collection-dialog";
+import { useParams } from "next/navigation";
+import type { Locale } from "@/i18n-config";
 
 const statusColors: Record<DisposalEvent["status"], string> = {
   Scheduled: "bg-blue-500",
@@ -62,6 +65,10 @@ export function ScheduleClient({ dictionary, allEvents: initialEvents }: Schedul
   const [isClient, setIsClient] = React.useState(false);
   const { selectedCompany } = useCompany();
   const [allEvents, setAllEvents] = React.useState(initialEvents);
+  const params = useParams();
+  const lang = params.lang as Locale;
+  const dateLocale = lang === 'es' ? es : enUS;
+
 
   React.useEffect(() => {
     setIsClient(true);
@@ -149,9 +156,9 @@ export function ScheduleClient({ dictionary, allEvents: initialEvents }: Schedul
             <Button variant="outline" size="icon" onClick={goToPreviousMonth}>
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <span className="text-lg font-semibold w-36 text-center">
+            <span className="text-lg font-semibold w-36 text-center capitalize">
               {isClient ? (
-                format(currentMonth, "MMMM yyyy")
+                format(currentMonth, "MMMM yyyy", { locale: dateLocale })
               ) : (
                 <Skeleton className="h-6 w-full" />
               )}
@@ -163,7 +170,7 @@ export function ScheduleClient({ dictionary, allEvents: initialEvents }: Schedul
         <div className="rounded-lg border">
           <div className="grid grid-cols-7 text-center text-xs font-medium text-muted-foreground">
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-              <div key={day} className="py-2">{day.substring(0,3)}</div>
+              <div key={day} className="py-2 capitalize">{lang === 'es' ? dictionary.days[day as keyof typeof dictionary.days] : day.substring(0,3)}</div>
             ))}
           </div>
           <div className="grid grid-cols-7 text-sm">
@@ -227,7 +234,7 @@ export function ScheduleClient({ dictionary, allEvents: initialEvents }: Schedul
               <SheetTitle>
                 {dictionary.details.title}:{" "}
                 {isClient && selectedDate ? (
-                  <span>{format(selectedDate, "PPP")}</span>
+                  <span>{format(selectedDate, "PPP", { locale: dateLocale })}</span>
                 ) : (
                   <Skeleton className="h-6 w-32 inline-block" />
                 )}

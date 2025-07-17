@@ -44,18 +44,34 @@
     "header": {
       "title": "WasteWise",
       "login": "Iniciar Sesión",
-      "getStarted": "Solicitar Demo"
+      "getStarted": "Solicitar Demo Personalizada"
     },
     "hero": {
       "title": "Convierte tus Residuos en Ingresos Automáticamente",
-      "subtitle": "Optimiza el reciclaje con IA, asegura el cumplimiento normativo y genera ingresos adicionales para tu empresa o evento.",
+      "subtitle": "Optimiza el reciclaje con IA, asegura el cumplimiento normativo y genera hasta Ingresos adicionales para tu empresa, festival o concierto.",
       "cta": "Calcula tu Potencial de Ingresos"
     },
     "valueProposition": {
-      "loss": "$15,000 perdidos",
-      "lossDescription": "en promedio anual por mala gestión de residuos.",
-      "gain": "$50,000 ganados",
-      "gainDescription": "en ingresos adicionales con WasteWise."
+      "title": "Breakdown de la Oportunidad",
+      "stats": {
+        "stat1": "$2.1 billones perdidos anualmente en Colombia",
+        "stat2": "Solo 13% de residuos se aprovechan actualmente",
+        "stat3": "Tu empresa puede ser parte del 13% que gana dinero"
+      },
+      "from": {
+        "title": "DE ESTO:",
+        "item1": "Costos de recolección",
+        "item2": "Multas por incumplir",
+        "item3": "Procesos manuales",
+        "item4": "Desperdicio total"
+      },
+      "to": {
+        "title": "A ESTO:",
+        "item1": "Ingresos por venta",
+        "item2": "Certificaciones verdes",
+        "item3": "Automatización IA",
+        "item4": "Aprovechamiento 85%"
+      }
     },
     "useCases": {
       "title": "Una Solución para Cada Necesidad",
@@ -284,6 +300,15 @@
     "title": "Calendario de Eliminación",
     "description": "Vea y gestione las próximas recolecciones de residuos.",
     "requestCollection": "Solicitar Recolección",
+    "days": {
+      "Sun": "Dom",
+      "Mon": "Lun",
+      "Tue": "Mar",
+      "Wed": "Mié",
+      "Thu": "Jue",
+      "Fri": "Vie",
+      "Sat": "Sáb"
+    },
     "details": {
       "title": "Detalles de la Recolección",
       "description": "Mostrando todos los eventos de recolección para la fecha seleccionada.",

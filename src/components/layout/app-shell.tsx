@@ -553,7 +553,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
           </header>
           <main className="flex-1 overflow-auto bg-background/50">{children}</main>
         </div>
-        <WhatsAppButton />
+        {isClient && <WhatsAppButton />}
       </div>
   );
 }

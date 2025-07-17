@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BrainCircuit, AreaChart, Leaf, FileText, Bot, Recycle, Building, School, PartyPopper } from "lucide-react";
+import { BrainCircuit, AreaChart, Leaf, FileText, Bot, Recycle, Building, School, PartyPopper, CheckCircle2, XCircle } from "lucide-react";
 import type { Dictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import React, { useEffect, useState } from "react";
@@ -85,17 +85,41 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                 {isClient && (
                     <section className="py-20 bg-muted/50">
                         <div className="container">
-                            <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 text-center">
-                                <div className="flex-1">
-                                    <p className="text-2xl md:text-3xl font-bold text-destructive">{d.valueProposition.loss}</p>
-                                    <p className="text-muted-foreground mt-2">{d.valueProposition.lossDescription}</p>
+                            <div className="text-center mb-12">
+                                <h2 className="text-3xl font-bold">{d.valueProposition.title}</h2>
+                                <div className="mt-6 flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 text-muted-foreground">
+                                    <p className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary" /> {d.valueProposition.stats.stat1}</p>
+                                    <p className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary" /> {d.valueProposition.stats.stat2}</p>
+                                    <p className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary" /> {d.valueProposition.stats.stat3}</p>
                                 </div>
-                                <Separator orientation="vertical" className="h-24 hidden md:block" />
-                                <Separator orientation="horizontal" className="w-24 md:hidden" />
-                                <div className="flex-1">
-                                    <p className="text-2xl md:text-3xl font-bold text-primary">{d.valueProposition.gain}</p>
-                                    <p className="text-muted-foreground mt-2">{d.valueProposition.gainDescription}</p>
-                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                                <Card className="p-6 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
+                                    <CardHeader className="p-0 mb-4">
+                                        <CardTitle className="text-xl text-red-800 dark:text-red-300">{d.valueProposition.from.title}</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-0">
+                                        <ul className="space-y-2 text-muted-foreground">
+                                            <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5" />{d.valueProposition.from.item1}</li>
+                                            <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5" />{d.valueProposition.from.item2}</li>
+                                            <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5" />{d.valueProposition.from.item3}</li>
+                                            <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5" />{d.valueProposition.from.item4}</li>
+                                        </ul>
+                                    </CardContent>
+                                </Card>
+                                <Card className="p-6 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+                                    <CardHeader className="p-0 mb-4">
+                                        <CardTitle className="text-xl text-green-800 dark:text-green-300">{d.valueProposition.to.title}</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-0">
+                                        <ul className="space-y-2 text-muted-foreground">
+                                            <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />{d.valueProposition.to.item1}</li>
+                                            <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />{d.valueProposition.to.item2}</li>
+                                            <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />{d.valueProposition.to.item3}</li>
+                                            <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />{d.valueProposition.to.item4}</li>
+                                        </ul>
+                                    </CardContent>
+                                </Card>
                             </div>
                         </div>
                     </section>
