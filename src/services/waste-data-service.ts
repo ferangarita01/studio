@@ -36,18 +36,15 @@ export async function createUserProfile(uid: string, data: Omit<UserProfile, 'id
   await set(userRef, data);
 }
 
-export const getUserProfile = unstable_cache(
-  async (uid: string): Promise<UserProfile | null> => {
+// This function is called on the client, so we can't use unstable_cache here.
+export async function getUserProfile(uid: string): Promise<UserProfile | null> {
     const userRef = ref(db, `users/${uid}`);
     const snapshot = await get(userRef);
     if (snapshot.exists()) {
       return { id: uid, ...snapshot.val() };
     }
     return null;
-  },
-  ['user-profile'],
-  { revalidate: 10 } // Cache for 10 seconds
-);
+}
 
 
 export const getUsers = unstable_cache(
@@ -139,18 +136,14 @@ export async function assignUserToCompany(companyId: string, userId: string | nu
 
 // --- Material Service Functions ---
 
-export const getMaterials = unstable_cache(
-  async (): Promise<Material[]> => {
+export async function getMaterials(): Promise<Material[]> {
     const materialsRef = ref(db, 'materials');
     const snapshot = await get(materialsRef);
     if (snapshot.exists()) {
         return snapshotToArray(snapshot).sort((a,b) => a.name.localeCompare(b.name));
     }
     return [];
-  },
-  ['materials'],
-  { revalidate: 10 } // Cache for 10 seconds
-);
+}
 
 export async function addMaterial(material: Omit<Material, 'id'>): Promise<Material> {
   const materialsRef = ref(db, 'materials');
@@ -173,8 +166,7 @@ export async function deleteMaterial(materialId: string): Promise<void> {
 
 // --- Waste Log Service Functions ---
 
-export const getWasteLog = unstable_cache(
-  async (companyId?: string): Promise<WasteEntry[]> => {
+export async function getWasteLog(companyId?: string): Promise<WasteEntry[]> {
     const wasteLogRef = ref(db, "wasteLog");
     let q;
     if (companyId) {
@@ -190,10 +182,7 @@ export const getWasteLog = unstable_cache(
         return logList.map(entry => ({...entry, date: new Date(entry.date)})).sort((a, b) => b.date.getTime() - a.date.getTime());
     }
     return [];
-  },
-  ['waste-log'],
-  { revalidate: 10 } // Cache for 10 seconds
-);
+}
 
 export async function addWasteEntry(entry: Omit<WasteEntry, 'id' | 'date'> & { date: Date }): Promise<WasteEntry> {
     const wasteLogRef = ref(db, 'wasteLog');
@@ -215,8 +204,7 @@ export async function addWasteEntry(entry: Omit<WasteEntry, 'id' | 'date'> & { d
 
 // --- Disposal Event Service Functions ---
 
-export const getDisposalEvents = unstable_cache(
-  async (companyId?: string): Promise<DisposalEvent[]> => {
+export async function getDisposalEvents(companyId?: string): Promise<DisposalEvent[]> {
     const eventsRef = ref(db, 'disposalEvents');
     let q;
     if (companyId) {
@@ -232,10 +220,7 @@ export const getDisposalEvents = unstable_cache(
       return eventList.map(event => ({ ...event, date: new Date(event.date) })).sort((a,b) => b.date.getTime() - a.date.getTime());
     }
     return [];
-  },
-  ['disposal-events'],
-  { revalidate: 10 } // Cache for 10 seconds
-);
+}
 
 export async function addDisposalEvent(event: Omit<DisposalEvent, 'id'>): Promise<DisposalEvent> {
     const eventsRef = ref(db, 'disposalEvents');
@@ -255,38 +240,26 @@ export async function addDisposalEvent(event: Omit<DisposalEvent, 'id'>): Promis
 
 // --- Mocked Data for Reports and Chart (can be migrated to Cloud Functions later) ---
 
-export async function getWeeklyReportData(companyId?: string): Promise<Record<string, ReportData>> {
+export async function getWeeklyReportData(): Promise<Record<string, ReportData>> {
      return new Promise((resolve) => {
         setTimeout(() => {
-            if (companyId) {
-                resolve({ [companyId]: weeklyReportData[companyId] });
-            } else {
-                resolve(weeklyReportData);
-            }
+            resolve(weeklyReportData);
         }, 300);
     });
 }
 
-export async function getMonthlyReportData(companyId?: string): Promise<Record<string, ReportData>> {
+export async function getMonthlyReportData(): Promise<Record<string, ReportData>> {
     return new Promise((resolve) => {
         setTimeout(() => {
-             if (companyId) {
-                resolve({ [companyId]: monthlyReportData[companyId] });
-            } else {
-                resolve(monthlyReportData);
-            }
+            resolve(monthlyReportData);
         }, 300);
     });
 }
 
-export async function getWasteChartData(companyId?: string): Promise<Record<string, any[]>> {
+export async function getWasteChartData(): Promise<Record<string, any[]>> {
     return new Promise((resolve) => {
         setTimeout(() => {
-            if (companyId) {
-                resolve({ [companyId]: wasteData[companyId] });
-            } else {
-                resolve(wasteData);
-            }
+            resolve(wasteData);
         }, 300);
     });
 }
