@@ -6,7 +6,7 @@ import { AppShell } from '@/components/layout/app-shell';
 
 export const metadata: Metadata = {
   title: 'WasteWise',
-  description: "A business waste management platform by EcoCircle to track and manage waste generation and disposal for companies.",
+  description: "A business and event waste management platform by EcoCircle to track and manage waste generation for companies, festivals, and concerts.",
 };
 
 export default async function RootLayout({
