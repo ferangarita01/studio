@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { AreaChart, FileText, Bot, Recycle, Building, School, PartyPopper, CheckCircle2, XCircle, Moon, Sun, Languages } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import type { Dictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import { useTheme } from "next-themes";
@@ -20,7 +20,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { usePathname } from "next/navigation";
 
 
 function ThemeToggle({ dictionary }: { dictionary: Dictionary["navigation"]["themeToggle"]}) {
@@ -50,28 +49,30 @@ function ThemeToggle({ dictionary }: { dictionary: Dictionary["navigation"]["the
   );
 }
 
-function LanguageToggle({ dictionary } : { dictionary: Dictionary["navigation"]["languageToggle"]}) {
-    const pathname = usePathname()
-    const pathWithoutLocale = pathname.split('/').slice(2).join('/');
+function LanguageToggle({ dictionary, lang }: { dictionary: Dictionary["navigation"]["languageToggle"], lang: Locale }) {
+    // This approach avoids using usePathname() on the client, which can cause hydration issues.
+    // It assumes that the toggle is only used on the landing page. For a site-wide implementation,
+    // a more robust solution with context or a different hook might be needed.
+    const getPathForLocale = (locale: Locale) => `/${locale}/landing`;
 
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Languages className="h-[1.2rem] w-[1.2rem]" />
-          <span className="sr-only">{dictionary.toggle}</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem asChild>
-            <Link href={`/en/${pathWithoutLocale}`}>English</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-            <Link href={`/es/${pathWithoutLocale}`}>Español</Link>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                    <Languages className="h-[1.2rem] w-[1.2rem]" />
+                    <span className="sr-only">{dictionary.toggle}</span>
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                    <Link href={getPathForLocale('en')}>English</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link href={getPathForLocale('es')}>Español</Link>
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
 }
 
 
@@ -101,11 +102,6 @@ const UseCaseCard = ({ icon, title, description }: { icon: React.ReactNode, titl
 
 export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, lang: Locale }) {
     const d = dictionary.landingPage;
-    const [isClient, setIsClient] = useState(false);
-
-    useEffect(() => {
-      setIsClient(true);
-    }, []);
 
     return (
         <div className="flex flex-col min-h-screen bg-background">
@@ -116,17 +112,8 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         <span>{d.header.title}</span>
                     </Link>
                     <nav className="flex items-center gap-2">
-                       {isClient ? (
-                        <>
-                           <LanguageToggle dictionary={dictionary.navigation.languageToggle} />
-                           <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
-                        </>
-                       ) : (
-                        <>
-                            <div className="w-9 h-9" />
-                            <div className="w-9 h-9" />
-                        </>
-                       )}
+                       <LanguageToggle dictionary={dictionary.navigation.languageToggle} lang={lang} />
+                       <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
                        <Button variant="ghost" asChild>
                            <Link href={`/${lang}/login`}>{d.header.login}</Link>
                        </Button>
@@ -140,10 +127,10 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
             <main className="flex-1">
                 <section className="py-20 sm:py-32">
                     <div className="container px-4 md:px-6 text-center">
-                        <h1 className="text-4xl font-bold tracking-tight sm:text-6xl max-w-4xl mx-auto">
+                        <h1 className="text-4xl font-bold tracking-tight sm:text-6xl max-w-5xl mx-auto">
                            {d.hero.title}
                         </h1>
-                        <p className="mt-6 text-lg text-muted-foreground max-w-3xl mx-auto">
+                        <p className="mt-6 text-lg text-muted-foreground max-w-4xl mx-auto">
                            {d.hero.subtitle}
                         </p>
                         <div className="mt-10">
