@@ -110,10 +110,10 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                     </Link>
                     <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
                         <Link href="#use-cases" className="text-muted-foreground transition-colors hover:text-foreground">
-                            {dictionary.useCases.title}
+                            {d.useCases.title}
                         </Link>
                         <Link href="#features" className="text-muted-foreground transition-colors hover:text-foreground">
-                            {dictionary.features.title}
+                            {d.features.title}
                         </Link>
                     </nav>
                     <div className="flex items-center gap-2 ml-auto">
