@@ -67,24 +67,28 @@ export const getUsers = unstable_cache(
 
 // --- Company Service Functions ---
 
-export const getCompanies = unstable_cache(
-  async (userId?: string): Promise<Company[]> => {
-    const dbRef = ref(db, 'companies');
-    const snapshot = await get(dbRef);
+// Non-cached version for client-side use
+export async function getCompanies(userId?: string): Promise<Company[]> {
+  const dbRef = ref(db, 'companies');
+  const snapshot = await get(dbRef);
 
-    if (!snapshot.exists()) {
-        return [];
-    }
+  if (!snapshot.exists()) {
+      return [];
+  }
 
-    let allCompanies = snapshotToArray(snapshot);
+  let allCompanies = snapshotToArray(snapshot);
 
-    if (userId) {
-        // Filter in code instead of a Firebase query to avoid needing a DB index.
-        allCompanies = allCompanies.filter(company => company.createdBy === userId);
-    }
-    
-    return allCompanies.sort((a, b) => a.name.localeCompare(b.name));
-  },
+  if (userId) {
+      // Filter in code instead of a Firebase query to avoid needing a DB index.
+      allCompanies = allCompanies.filter(company => company.createdBy === userId);
+  }
+  
+  return allCompanies.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+// Cached version for server-side use
+export const getCachedCompanies = unstable_cache(
+  getCompanies, // Wrap the non-cached function
   ['companies'],
   { revalidate: 10 } // Cache for 10 seconds
 );

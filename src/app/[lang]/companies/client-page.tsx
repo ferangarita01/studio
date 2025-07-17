@@ -21,31 +21,44 @@ import type { Dictionary } from "@/lib/get-dictionary";
 import type { Company, UserProfile } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { getUsers, assignUserToCompany, updateCompany } from "@/services/waste-data-service";
+import { getUsers, assignUserToCompany, updateCompany, getCompanies } from "@/services/waste-data-service";
 import { AssignUserDialog } from "@/components/assign-user-dialog";
 import { EditCompanyDialog } from "@/components/edit-company-dialog";
+import { Loader2 } from "lucide-react";
 
 interface CompaniesClientProps {
   dictionary: Dictionary["companiesPage"];
-  initialCompanies: Company[];
 }
 
-export function CompaniesClient({ dictionary, initialCompanies }: CompaniesClientProps) {
-  const [companies, setCompanies] = useState<Company[]>(initialCompanies);
+export function CompaniesClient({ dictionary }: CompaniesClientProps) {
+  const [companies, setCompanies] = useState<Company[]>([]);
   const [clients, setClients] = useState<UserProfile[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isAssignDialogOpen, setAssignDialogOpen] = useState(false);
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
-  const [isClient, setIsClient] = useState(false);
   const { toast } = useToast();
   
   useEffect(() => {
-    setIsClient(true);
-    const fetchClients = async () => {
-        const clientUsers = await getUsers('client');
-        setClients(clientUsers);
+    const fetchData = async () => {
+      setIsLoading(true);
+      const [fetchedCompanies, fetchedClients] = await Promise.all([
+        getCompanies(),
+        getUsers('client')
+      ]);
+
+      const clientMap = new Map(fetchedClients.map(client => [client.id, client.email]));
+      
+      const companiesWithClientNames = fetchedCompanies.map(company => ({
+          ...company,
+          assignedUserName: company.assignedUserUid ? clientMap.get(company.assignedUserUid) : undefined
+      }));
+
+      setCompanies(companiesWithClientNames);
+      setClients(fetchedClients);
+      setIsLoading(false);
     };
-    fetchClients();
+    fetchData();
   }, []);
 
   const handleOpenAssignDialog = (company: Company) => {
@@ -127,7 +140,13 @@ export function CompaniesClient({ dictionary, initialCompanies }: CompaniesClien
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {companies.length > 0 ? (
+                  {isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={3} className="h-24 text-center">
+                        <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                      </TableCell>
+                    </TableRow>
+                  ) : companies.length > 0 ? (
                     companies.map((company) => (
                       <TableRow key={company.id}>
                         <TableCell className="font-medium">{company.name}</TableCell>
