@@ -1,7 +1,6 @@
 
 import { getDictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
-import { getMaterials } from "@/services/waste-data-service";
 import { MaterialsClient } from "./client-page";
 
 export default async function MaterialsPage({
@@ -10,7 +9,7 @@ export default async function MaterialsPage({
   params: { lang: Locale };
 }) {
   const dictionary = await getDictionary(lang);
-  const allMaterials = await getMaterials();
   
-  return <MaterialsClient dictionary={dictionary.materialsPage} initialMaterials={allMaterials} />;
+  // Data will be fetched on the client side to prevent hydration errors.
+  return <MaterialsClient dictionary={dictionary.materialsPage} />;
 }

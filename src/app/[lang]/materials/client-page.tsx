@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { MoreHorizontal, PlusCircle } from "lucide-react";
+import { MoreHorizontal, PlusCircle, Loader2 } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -31,7 +31,7 @@ import { Button } from "@/components/ui/button";
 import { MaterialDialog } from "@/components/material-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-import { addMaterial, updateMaterial, deleteMaterial } from "@/services/waste-data-service";
+import { getMaterials, addMaterial, updateMaterial, deleteMaterial } from "@/services/waste-data-service";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -48,11 +48,11 @@ import { useAuth } from "@/context/auth-context";
 
 interface MaterialsClientProps {
   dictionary: Dictionary["materialsPage"];
-  initialMaterials: Material[];
 }
 
-export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClientProps) {
-  const [materials, setMaterials] = useState<Material[]>(initialMaterials);
+export function MaterialsClient({ dictionary }: MaterialsClientProps) {
+  const [materials, setMaterials] = useState<Material[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(null);
   const [isClient, setIsClient] = useState(false);
@@ -61,8 +61,14 @@ export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClien
   
   useEffect(() => {
     setIsClient(true);
-    setMaterials(initialMaterials);
-  }, [initialMaterials]);
+    const fetchMaterials = async () => {
+        setIsLoading(true);
+        const fetchedMaterials = await getMaterials();
+        setMaterials(fetchedMaterials);
+        setIsLoading(false);
+    };
+    fetchMaterials();
+  }, []);
 
   const handleAdd = () => {
     setSelectedMaterial(null);
@@ -100,7 +106,7 @@ export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClien
         setMaterials(materials.map(m => m.id === materialData.id ? materialData : m));
       } else { // Adding new material
         const newMaterial = await addMaterial(materialData, user.uid);
-        setMaterials(currentMaterials => [...currentMaterials, newMaterial]);
+        setMaterials(currentMaterials => [...currentMaterials, newMaterial].sort((a,b) => a.name.localeCompare(b.name)));
       }
       toast({
         title: dictionary.toast.save.title,
@@ -160,7 +166,13 @@ export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClien
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {materials.length > 0 ? (
+                  {isLoading ? (
+                     <TableRow>
+                      <TableCell colSpan={role === 'admin' ? 4 : 3} className="h-24 text-center">
+                         <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                      </TableCell>
+                    </TableRow>
+                  ) : materials.length > 0 ? (
                     materials.map((material) => (
                       <TableRow key={material.id}>
                         <TableCell className="font-medium">{material.name}</TableCell>
