@@ -6,8 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AreaChart, FileText, Bot, Recycle, Building, School, PartyPopper, CheckCircle2, XCircle } from "lucide-react";
 import React from "react";
-import { useDictionaries } from "@/context/dictionary-context";
-import { useParams } from "next/navigation";
+import type { Dictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
 
 const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
@@ -34,15 +33,7 @@ const UseCaseCard = ({ icon, title, description }: { icon: React.ReactNode, titl
     </Card>
 );
 
-export function LandingClient() {
-    const dictionary = useDictionaries();
-    const params = useParams();
-    const lang = params.lang as Locale;
-    const [isClient, setIsClient] = React.useState(false);
-
-    React.useEffect(() => {
-        setIsClient(true);
-    }, []);
+export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, lang: Locale }) {
 
     if (!dictionary) return <div>Loading...</div>;
 
@@ -84,48 +75,46 @@ export function LandingClient() {
                     </div>
                 </section>
 
-                {isClient && (
-                    <section className="py-20 bg-muted/50">
-                        <div className="container">
-                            <div className="text-center mb-12">
-                                <h2 className="text-3xl font-bold">{d.valueProposition.title}</h2>
-                                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-8 text-muted-foreground justify-center">
-                                    <p className="flex items-center justify-center gap-2 text-center"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat1}</p>
-                                    <p className="flex items-center justify-center gap-2 text-center"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat2}</p>
-                                    <p className="flex items-center justify-center gap-2 text-center"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat3}</p>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                                <Card className="p-6 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
-                                    <CardHeader className="p-0 mb-4">
-                                        <CardTitle className="text-xl text-red-800 dark:text-red-300">{d.valueProposition.from.title}</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="p-0">
-                                        <ul className="space-y-2 text-muted-foreground">
-                                            <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5" />{d.valueProposition.from.item1}</li>
-                                            <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5" />{d.valueProposition.from.item2}</li>
-                                            <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5" />{d.valueProposition.from.item3}</li>
-                                            <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5" />{d.valueProposition.from.item4}</li>
-                                        </ul>
-                                    </CardContent>
-                                </Card>
-                                <Card className="p-6 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
-                                    <CardHeader className="p-0 mb-4">
-                                        <CardTitle className="text-xl text-green-800 dark:text-green-300">{d.valueProposition.to.title}</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="p-0">
-                                        <ul className="space-y-2 text-muted-foreground">
-                                            <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />{d.valueProposition.to.item1}</li>
-                                            <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />{d.valueProposition.to.item2}</li>
-                                            <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />{d.valueProposition.to.item3}</li>
-                                            <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />{d.valueProposition.to.item4}</li>
-                                        </ul>
-                                    </CardContent>
-                                </Card>
+                <section className="py-20 bg-muted/50">
+                    <div className="container">
+                        <div className="text-center mb-12">
+                            <h2 className="text-3xl font-bold">{d.valueProposition.title}</h2>
+                            <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-8 text-muted-foreground justify-center">
+                                <p className="flex items-center justify-center gap-2 text-center"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat1}</p>
+                                <p className="flex items-center justify-center gap-2 text-center"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat2}</p>
+                                <p className="flex items-center justify-center gap-2 text-center"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat3}</p>
                             </div>
                         </div>
-                    </section>
-                )}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                            <Card className="p-6 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
+                                <CardHeader className="p-0 mb-4">
+                                    <CardTitle className="text-xl text-red-800 dark:text-red-300">{d.valueProposition.from.title}</CardTitle>
+                                </CardHeader>
+                                <CardContent className="p-0">
+                                    <ul className="space-y-2 text-muted-foreground">
+                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5" />{d.valueProposition.from.item1}</li>
+                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5" />{d.valueProposition.from.item2}</li>
+                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5" />{d.valueProposition.from.item3}</li>
+                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5" />{d.valueProposition.from.item4}</li>
+                                    </ul>
+                                </CardContent>
+                            </Card>
+                            <Card className="p-6 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+                                <CardHeader className="p-0 mb-4">
+                                    <CardTitle className="text-xl text-green-800 dark:text-green-300">{d.valueProposition.to.title}</CardTitle>
+                                </CardHeader>
+                                <CardContent className="p-0">
+                                    <ul className="space-y-2 text-muted-foreground">
+                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />{d.valueProposition.to.item1}</li>
+                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />{d.valueProposition.to.item2}</li>
+                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />{d.valueProposition.to.item3}</li>
+                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />{d.valueProposition.to.item4}</li>
+                                    </ul>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </div>
+                </section>
 
                 <section id="use-cases" className="py-20">
                     <div className="container">
