@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { AreaChart, FileText, Bot, Recycle, Building, School, PartyPopper, CheckCircle2, XCircle, Moon, Sun, Languages } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import type { Dictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import { useTheme } from "next-themes";
@@ -49,9 +49,7 @@ function ThemeToggle({ dictionary }: { dictionary: Dictionary["navigation"]["the
   );
 }
 
-function LanguageToggle({ dictionary, lang }: { dictionary: Dictionary["navigation"]["languageToggle"], lang: Locale }) {
-    const getPathForLocale = (locale: Locale) => `/${locale}/landing`;
-
+function LanguageToggle({ dictionary }: { dictionary: Dictionary["navigation"]["languageToggle"] }) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -62,10 +60,10 @@ function LanguageToggle({ dictionary, lang }: { dictionary: Dictionary["navigati
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
-                    <Link href={getPathForLocale('en')}>English</Link>
+                    <Link href={'/en/landing'}>English</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                    <Link href={getPathForLocale('es')}>Español</Link>
+                    <Link href={'/es/landing'}>Español</Link>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
@@ -99,6 +97,11 @@ const UseCaseCard = ({ icon, title, description }: { icon: React.ReactNode, titl
 
 export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, lang: Locale }) {
     const d = dictionary.landingPage;
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     return (
         <div className="flex flex-col min-h-screen bg-background">
@@ -117,8 +120,17 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         </Link>
                     </nav>
                     <div className="flex items-center gap-2 ml-auto">
-                       <LanguageToggle dictionary={dictionary.navigation.languageToggle} lang={lang} />
-                       <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
+                        {isClient ? (
+                            <>
+                                <LanguageToggle dictionary={dictionary.navigation.languageToggle} />
+                                <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
+                            </>
+                        ) : (
+                            <>
+                                <div className="w-9 h-9" />
+                                <div className="w-9 h-9" />
+                            </>
+                        )}
                        <Button variant="ghost" asChild>
                            <Link href={`/${lang}/login`}>{d.header.login}</Link>
                        </Button>
@@ -130,18 +142,20 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
             </header>
 
             <main className="flex-1">
-                <section className="py-20 text-center sm:py-32">
+                <section className="py-20 md:py-32">
                     <div className="container px-4 md:px-6">
-                        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl max-w-4xl mx-auto">
-                           {d.hero.title}
-                        </h1>
-                        <p className="mt-6 text-lg text-muted-foreground sm:text-xl max-w-3xl mx-auto">
-                           {d.hero.subtitle}
-                        </p>
-                        <div className="mt-10">
-                            <Button size="lg" asChild>
-                                <Link href={`/${lang}/login`}>{d.hero.cta}</Link>
-                            </Button>
+                        <div className="mx-auto max-w-5xl text-center">
+                            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+                               {d.hero.title}
+                            </h1>
+                            <p className="mt-6 text-lg text-muted-foreground sm:text-xl">
+                               {d.hero.subtitle}
+                            </p>
+                            <div className="mt-10">
+                                <Button size="lg" asChild>
+                                    <Link href={`/${lang}/login`}>{d.hero.cta}</Link>
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -261,6 +275,3 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
-
-    
-    
