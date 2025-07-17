@@ -44,7 +44,11 @@
     "header": {
       "title": "WasteWise",
       "login": "Iniciar Sesión",
-      "getStarted": "Solicitar Demo Personalizada"
+      "getStarted": "Solicitar Demo Personalizada",
+      "nav": {
+        "useCases": "Casos de Uso",
+        "features": "Características"
+      }
     },
     "hero": {
       "title": "Convierte tus Residuos en Ingresos Automáticamente",

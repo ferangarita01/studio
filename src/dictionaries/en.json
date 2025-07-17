@@ -44,7 +44,11 @@
     "header": {
       "title": "WasteWise",
       "login": "Log In",
-      "getStarted": "Request a Demo"
+      "getStarted": "Request a Demo",
+      "nav": {
+        "useCases": "Use Cases",
+        "features": "Features"
+      }
     },
     "hero": {
       "title": "Turn Your Waste into Revenue Automatically",
@@ -300,6 +304,15 @@
     "title": "Disposal Schedule",
     "description": "View and manage upcoming waste collections.",
     "requestCollection": "Request Collection",
+    "days": {
+      "Sun": "Sun",
+      "Mon": "Mon",
+      "Tue": "Tue",
+      "Wed": "Wed",
+      "Thu": "Thu",
+      "Fri": "Fri",
+      "Sat": "Sat"
+    },
     "details": {
       "title": "Collection Details",
       "description": "Showing all collection events for the selected date.",

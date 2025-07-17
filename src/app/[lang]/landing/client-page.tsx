@@ -110,10 +110,10 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                     </Link>
                     <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
                         <Link href="#use-cases" className="text-muted-foreground transition-colors hover:text-foreground">
-                            {d.useCases.title}
+                            {d.header.nav.useCases}
                         </Link>
                         <Link href="#features" className="text-muted-foreground transition-colors hover:text-foreground">
-                            {d.features.title}
+                            {d.header.nav.features}
                         </Link>
                     </nav>
                     <div className="flex items-center gap-2 ml-auto">
@@ -130,12 +130,12 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
             </header>
 
             <main className="flex-1">
-                <section className="py-20 sm:py-32">
-                    <div className="container px-4 md:px-6 text-center">
-                        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl max-w-5xl mx-auto">
+                <section className="py-20 text-center sm:py-32">
+                    <div className="container px-4 md:px-6">
+                        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl max-w-4xl mx-auto">
                            {d.hero.title}
                         </h1>
-                        <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+                        <p className="mt-6 text-lg text-muted-foreground sm:text-xl max-w-3xl mx-auto">
                            {d.hero.subtitle}
                         </p>
                         <div className="mt-10">
@@ -262,4 +262,5 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
     );
 }
 
+    
     
