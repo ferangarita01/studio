@@ -50,9 +50,6 @@ function ThemeToggle({ dictionary }: { dictionary: Dictionary["navigation"]["the
 }
 
 function LanguageToggle({ dictionary, lang }: { dictionary: Dictionary["navigation"]["languageToggle"], lang: Locale }) {
-    // This approach avoids using usePathname() on the client, which can cause hydration issues.
-    // It assumes that the toggle is only used on the landing page. For a site-wide implementation,
-    // a more robust solution with context or a different hook might be needed.
     const getPathForLocale = (locale: Locale) => `/${locale}/landing`;
 
     return (
@@ -78,7 +75,7 @@ function LanguageToggle({ dictionary, lang }: { dictionary: Dictionary["navigati
 
 const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
     <div className="flex flex-col items-center p-6 text-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary mb-4" aria-hidden="true">
             {icon}
         </div>
         <h3 className="text-xl font-semibold mb-2">{title}</h3>
@@ -89,7 +86,7 @@ const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, titl
 const UseCaseCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
     <Card className="text-center">
         <CardHeader className="items-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary mb-2">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary mb-2" aria-hidden="true">
                 {icon}
             </div>
             <CardTitle>{title}</CardTitle>
@@ -108,7 +105,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
             <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                 <div className="container flex h-14 items-center">
                     <Link href={`/${lang}/landing`} className="flex items-center gap-2 font-bold text-lg text-primary mr-auto">
-                        <Recycle className="h-6 w-6" />
+                        <Recycle className="h-6 w-6" aria-hidden="true" />
                         <span>{d.header.title}</span>
                     </Link>
                     <nav className="flex items-center gap-2">
@@ -127,7 +124,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
             <main className="flex-1">
                 <section className="py-20 sm:py-32">
                     <div className="container px-4 md:px-6 text-center">
-                        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl max-w-5xl mx-auto">
+                        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl max-w-5xl mx-auto">
                            {d.hero.title}
                         </h1>
                         <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -146,9 +143,9 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         <div className="text-center mb-12">
                             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{d.valueProposition.title}</h2>
                              <div className="mt-6 flex flex-col md:flex-row items-center justify-center gap-y-4 gap-x-8 text-muted-foreground text-center">
-                                <p className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat1}</p>
-                                <p className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat2}</p>
-                                <p className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat3}</p>
+                                <p className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" aria-hidden="true" /> {d.valueProposition.stats.stat1}</p>
+                                <p className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" aria-hidden="true" /> {d.valueProposition.stats.stat2}</p>
+                                <p className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" aria-hidden="true" /> {d.valueProposition.stats.stat3}</p>
                             </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -158,10 +155,10 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                                 </CardHeader>
                                 <CardContent className="p-0">
                                     <ul className="space-y-2 text-muted-foreground">
-                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" /><span>{d.valueProposition.from.item1}</span></li>
-                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" /><span>{d.valueProposition.from.item2}</span></li>
-                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" /><span>{d.valueProposition.from.item3}</span></li>
-                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" /><span>{d.valueProposition.from.item4}</span></li>
+                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" aria-hidden="true" /><span>{d.valueProposition.from.item1}</span></li>
+                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" aria-hidden="true" /><span>{d.valueProposition.from.item2}</span></li>
+                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" aria-hidden="true" /><span>{d.valueProposition.from.item3}</span></li>
+                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" aria-hidden="true" /><span>{d.valueProposition.from.item4}</span></li>
                                     </ul>
                                 </CardContent>
                             </Card>
@@ -171,10 +168,10 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                                 </CardHeader>
                                 <CardContent className="p-0">
                                     <ul className="space-y-2 text-muted-foreground">
-                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" /><span>{d.valueProposition.to.item1}</span></li>
-                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" /><span>{d.valueProposition.to.item2}</span></li>
-                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" /><span>{d.valueProposition.to.item3}</span></li>
-                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" /><span>{d.valueProposition.to.item4}</span></li>
+                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" aria-hidden="true" /><span>{d.valueProposition.to.item1}</span></li>
+                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" aria-hidden="true" /><span>{d.valueProposition.to.item2}</span></li>
+                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" aria-hidden="true" /><span>{d.valueProposition.to.item3}</span></li>
+                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" aria-hidden="true" /><span>{d.valueProposition.to.item4}</span></li>
                                     </ul>
                                 </CardContent>
                             </Card>
