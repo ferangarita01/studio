@@ -26,9 +26,8 @@ import type { DisposalEvent, WasteEntry } from "@/lib/types";
 import type { Dictionary } from "@/lib/get-dictionary";
 import { useCompany } from "./layout/app-shell";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getCompanies, getWasteChartData, getWasteLog, getDisposalEvents } from "@/services/waste-data-service";
+import { getWasteChartData, getWasteLog, getDisposalEvents } from "@/services/waste-data-service";
 import { useAuth } from "@/context/auth-context";
-import { useDictionaries } from "@/context/dictionary-context";
 
 const chartConfig = {
   quantity: {
@@ -55,8 +54,8 @@ interface DashboardClientProps {
 export function DashboardClient({
   dictionary,
 }: DashboardClientProps) {
-  const { user, role } = useAuth();
-  const { selectedCompany, setCompanies, setSelectedCompany, isLoading: isCompanyContextLoading } = useCompany();
+  const { role } = useAuth();
+  const { selectedCompany, isLoading: isCompanyContextLoading } = useCompany();
   const [isClient, setIsClient] = React.useState(false);
   
   const [wasteDataAll, setWasteDataAll] = React.useState<Record<string, any[]>>({});
@@ -67,23 +66,17 @@ export function DashboardClient({
   React.useEffect(() => {
     setIsClient(true);
   }, []);
-  
-  React.useEffect(() => {
-    const fetchAndSetCompanies = async () => {
-      if (user) {
-        const userCompanies = await getCompanies(user.uid, role);
-        setCompanies(userCompanies);
-        if (userCompanies.length > 0 && !selectedCompany) {
-          setSelectedCompany(userCompanies[0]);
-        }
-      }
-    };
-    fetchAndSetCompanies();
-  }, [user, role, setCompanies, setSelectedCompany, selectedCompany]);
-
 
   React.useEffect(() => {
     const fetchDashboardData = async () => {
+      if (!selectedCompany) {
+        // If there's no selected company, we don't need to fetch data yet.
+        // This might happen for an admin who hasn't selected a company.
+        if (!isCompanyContextLoading) {
+           setIsDataLoading(false);
+        }
+        return;
+      }
       setIsDataLoading(true);
       const [wasteData, wasteLog, events] = await Promise.all([
         getWasteChartData(),
@@ -95,8 +88,10 @@ export function DashboardClient({
       setDisposalEvents(events);
       setIsDataLoading(false);
     };
+
+    // Trigger fetch when the selected company changes or on initial load
     fetchDashboardData();
-  }, []);
+  }, [selectedCompany, isCompanyContextLoading]);
   
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat(undefined, {
@@ -145,14 +140,14 @@ export function DashboardClient({
     </div>
   );
 
-  if (isCompanyContextLoading || !selectedCompany) {
+  if (isCompanyContextLoading || (isClient && !selectedCompany)) {
     return (
        <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="flex items-center">
             <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
           </div>
           <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
-            { (isCompanyContextLoading || !dictionary) ? <Skeleton className="h-32 w-full" /> : <WelcomeMessage />}
+            { isCompanyContextLoading ? <Skeleton className="h-32 w-full" /> : <WelcomeMessage />}
           </div>
        </div>
     );
@@ -166,9 +161,9 @@ export function DashboardClient({
      )
   }
 
-  const wasteData = wasteDataAll[selectedCompany.id] || [];
-  const wasteLog = wasteLogAll.filter(entry => entry.companyId === selectedCompany.id);
-  const upcomingDisposals = disposalEvents.filter(d => (d.status === 'Scheduled' || d.status === 'Ongoing') && d.companyId === selectedCompany.id);
+  const wasteData = selectedCompany ? wasteDataAll[selectedCompany.id] || [] : [];
+  const wasteLog = selectedCompany ? wasteLogAll.filter(entry => entry.companyId === selectedCompany.id) : [];
+  const upcomingDisposals = selectedCompany ? disposalEvents.filter(d => (d.status === 'Scheduled' || d.status === 'Ongoing') && d.companyId === selectedCompany.id) : [];
 
 
   return (
@@ -266,7 +261,7 @@ export function DashboardClient({
             </CardHeader>
             <CardContent className="grid gap-4">
               {upcomingDisposals.length > 0 ? (
-                upcomingDisposals.map((disposal) => (
+                upcomingDisposals.slice(0, 4).map((disposal) => (
                   <div key={disposal.id} className="grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
                     <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
                     <div className="grid gap-1">

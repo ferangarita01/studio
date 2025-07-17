@@ -10,7 +10,7 @@ export default async function DashboardPage({
 }) {
   const dictionary = await getDictionary(lang);
   
-  // Data fetching is handled client-side in DashboardClient to prevent hydration errors.
+  // Data fetching is now handled client-side in DashboardClient to prevent hydration errors.
   
   return (
     <DashboardClient

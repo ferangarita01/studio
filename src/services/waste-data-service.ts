@@ -13,6 +13,7 @@ import {
   equalTo,
   update
 } from "firebase/database";
+import { unstable_cache } from "next/cache";
 import { db } from "@/lib/firebase";
 import { wasteData, weeklyReportData, monthlyReportData } from "@/lib/data";
 import type { WasteEntry, Material, DisposalEvent, ReportData, Company, UserRole, UserProfile } from "@/lib/types";
@@ -35,32 +36,42 @@ export async function createUserProfile(uid: string, data: Omit<UserProfile, 'id
   await set(userRef, data);
 }
 
-export async function getUserProfile(uid: string): Promise<UserProfile | null> {
-  const userRef = ref(db, `users/${uid}`);
-  const snapshot = await get(userRef);
-  if (snapshot.exists()) {
-    return { id: uid, ...snapshot.val() };
-  }
-  return null;
-}
+export const getUserProfile = unstable_cache(
+  async (uid: string): Promise<UserProfile | null> => {
+    const userRef = ref(db, `users/${uid}`);
+    const snapshot = await get(userRef);
+    if (snapshot.exists()) {
+      return { id: uid, ...snapshot.val() };
+    }
+    return null;
+  },
+  ['user-profile'],
+  { revalidate: 10 } // Cache for 10 seconds
+);
 
-export async function getUsers(role?: UserRole): Promise<UserProfile[]> {
-  const usersRef = ref(db, 'users');
-  const snapshot = await get(usersRef);
-  if (!snapshot.exists()) {
-    return [];
-  }
-  const allUsers = snapshotToArray(snapshot);
-  if (role) {
-    return allUsers.filter(user => user.role === role);
-  }
-  return allUsers;
-}
+
+export const getUsers = unstable_cache(
+  async (role?: UserRole): Promise<UserProfile[]> => {
+    const usersRef = ref(db, 'users');
+    const snapshot = await get(usersRef);
+    if (!snapshot.exists()) {
+      return [];
+    }
+    const allUsers = snapshotToArray(snapshot);
+    if (role) {
+      return allUsers.filter(user => user.role === role);
+    }
+    return allUsers;
+  },
+  ['all-users'],
+  { revalidate: 10 } // Cache for 10 seconds
+);
 
 
 // --- Company Service Functions ---
 
-export async function getCompanies(userId?: string): Promise<Company[]> {
+export const getCompanies = unstable_cache(
+  async (userId?: string): Promise<Company[]> => {
     const dbRef = ref(db, 'companies');
     const snapshot = await get(dbRef);
 
@@ -76,7 +87,10 @@ export async function getCompanies(userId?: string): Promise<Company[]> {
     }
     
     return allCompanies.sort((a, b) => a.name.localeCompare(b.name));
-}
+  },
+  ['companies'],
+  { revalidate: 10 } // Cache for 10 seconds
+);
 
 
 export async function addCompany(name: string, userId: string): Promise<Company> {
@@ -125,14 +139,18 @@ export async function assignUserToCompany(companyId: string, userId: string | nu
 
 // --- Material Service Functions ---
 
-export async function getMaterials(): Promise<Material[]> {
-  const materialsRef = ref(db, 'materials');
-  const snapshot = await get(materialsRef);
-  if (snapshot.exists()) {
-      return snapshotToArray(snapshot).sort((a,b) => a.name.localeCompare(b.name));
-  }
-  return [];
-}
+export const getMaterials = unstable_cache(
+  async (): Promise<Material[]> => {
+    const materialsRef = ref(db, 'materials');
+    const snapshot = await get(materialsRef);
+    if (snapshot.exists()) {
+        return snapshotToArray(snapshot).sort((a,b) => a.name.localeCompare(b.name));
+    }
+    return [];
+  },
+  ['materials'],
+  { revalidate: 10 } // Cache for 10 seconds
+);
 
 export async function addMaterial(material: Omit<Material, 'id'>): Promise<Material> {
   const materialsRef = ref(db, 'materials');
@@ -155,23 +173,27 @@ export async function deleteMaterial(materialId: string): Promise<void> {
 
 // --- Waste Log Service Functions ---
 
-export async function getWasteLog(companyId?: string): Promise<WasteEntry[]> {
-  const wasteLogRef = ref(db, "wasteLog");
-  let q;
-  if (companyId) {
-    q = query(wasteLogRef, orderByChild("companyId"), equalTo(companyId));
-  } else {
-    q = wasteLogRef;
-  }
-  
-  const snapshot = await get(q);
-  if(snapshot.exists()) {
-      const logList = snapshotToArray(snapshot);
-      // Dates are stored as ISO strings, convert them back to Date objects
-      return logList.map(entry => ({...entry, date: new Date(entry.date)})).sort((a, b) => b.date.getTime() - a.date.getTime());
-  }
-  return [];
-}
+export const getWasteLog = unstable_cache(
+  async (companyId?: string): Promise<WasteEntry[]> => {
+    const wasteLogRef = ref(db, "wasteLog");
+    let q;
+    if (companyId) {
+      q = query(wasteLogRef, orderByChild("companyId"), equalTo(companyId));
+    } else {
+      q = wasteLogRef;
+    }
+    
+    const snapshot = await get(q);
+    if(snapshot.exists()) {
+        const logList = snapshotToArray(snapshot);
+        // Dates are stored as ISO strings, convert them back to Date objects
+        return logList.map(entry => ({...entry, date: new Date(entry.date)})).sort((a, b) => b.date.getTime() - a.date.getTime());
+    }
+    return [];
+  },
+  ['waste-log'],
+  { revalidate: 10 } // Cache for 10 seconds
+);
 
 export async function addWasteEntry(entry: Omit<WasteEntry, 'id' | 'date'> & { date: Date }): Promise<WasteEntry> {
     const wasteLogRef = ref(db, 'wasteLog');
@@ -193,23 +215,27 @@ export async function addWasteEntry(entry: Omit<WasteEntry, 'id' | 'date'> & { d
 
 // --- Disposal Event Service Functions ---
 
-export async function getDisposalEvents(companyId?: string): Promise<DisposalEvent[]> {
-  const eventsRef = ref(db, 'disposalEvents');
-  let q;
-  if (companyId) {
-      q = query(eventsRef, orderByChild("companyId"), equalTo(companyId));
-  } else {
-      q = eventsRef;
-  }
-  
-  const snapshot = await get(q);
-  if (snapshot.exists()) {
-    const eventList = snapshotToArray(snapshot);
-    // Dates are stored as ISO strings, convert them back to Date objects
-    return eventList.map(event => ({ ...event, date: new Date(event.date) })).sort((a,b) => b.date.getTime() - a.date.getTime());
-  }
-  return [];
-}
+export const getDisposalEvents = unstable_cache(
+  async (companyId?: string): Promise<DisposalEvent[]> => {
+    const eventsRef = ref(db, 'disposalEvents');
+    let q;
+    if (companyId) {
+        q = query(eventsRef, orderByChild("companyId"), equalTo(companyId));
+    } else {
+        q = eventsRef;
+    }
+    
+    const snapshot = await get(q);
+    if (snapshot.exists()) {
+      const eventList = snapshotToArray(snapshot);
+      // Dates are stored as ISO strings, convert them back to Date objects
+      return eventList.map(event => ({ ...event, date: new Date(event.date) })).sort((a,b) => b.date.getTime() - a.date.getTime());
+    }
+    return [];
+  },
+  ['disposal-events'],
+  { revalidate: 10 } // Cache for 10 seconds
+);
 
 export async function addDisposalEvent(event: Omit<DisposalEvent, 'id'>): Promise<DisposalEvent> {
     const eventsRef = ref(db, 'disposalEvents');
