@@ -3,7 +3,7 @@
 
 import * as React from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { Activity, CalendarIcon, Trash2, Recycle } from "lucide-react";
+import { Activity, CalendarIcon, Trash2, Recycle, Loader2 } from "lucide-react";
 
 import {
   Card,
@@ -22,11 +22,11 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import type { DisposalEvent, WasteEntry, Company } from "@/lib/types";
+import type { DisposalEvent, WasteEntry } from "@/lib/types";
 import type { Dictionary } from "@/lib/get-dictionary";
 import { useCompany } from "./layout/app-shell";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getCompanies } from "@/services/waste-data-service";
+import { getCompanies, getWasteChartData, getWasteLog, getDisposalEvents } from "@/services/waste-data-service";
 import { useAuth } from "@/context/auth-context";
 import { useDictionaries } from "@/context/dictionary-context";
 
@@ -50,22 +50,20 @@ const chartConfig = {
 
 interface DashboardClientProps {
   dictionary: Dictionary["dashboard"];
-  wasteDataAll: Record<string, any[]>;
-  wasteLogAll: WasteEntry[];
-  companies: Company[];
-  initialDisposalEvents: DisposalEvent[];
 }
 
 export function DashboardClient({
   dictionary,
-  wasteDataAll,
-  wasteLogAll,
-  initialDisposalEvents,
 }: DashboardClientProps) {
   const { user, role } = useAuth();
   const { selectedCompany, setCompanies, setSelectedCompany, isLoading: isCompanyContextLoading } = useCompany();
   const [isClient, setIsClient] = React.useState(false);
-  const [disposalEvents, setDisposalEvents] = React.useState<DisposalEvent[]>(initialDisposalEvents);
+  
+  const [wasteDataAll, setWasteDataAll] = React.useState<Record<string, any[]>>({});
+  const [wasteLogAll, setWasteLogAll] = React.useState<WasteEntry[]>([]);
+  const [disposalEvents, setDisposalEvents] = React.useState<DisposalEvent[]>([]);
+  const [isDataLoading, setIsDataLoading] = React.useState(true);
+
   const welcomeDictionary = useDictionaries()?.dashboard.welcome;
 
   React.useEffect(() => {
@@ -75,9 +73,7 @@ export function DashboardClient({
   React.useEffect(() => {
     const fetchAndSetCompanies = async () => {
       if (user) {
-        // For admin, fetch companies created by them. For client, fetch all and filter.
         const userCompanies = await getCompanies(user.uid, role);
-        
         setCompanies(userCompanies);
         if (userCompanies.length > 0 && !selectedCompany) {
           setSelectedCompany(userCompanies[0]);
@@ -89,58 +85,21 @@ export function DashboardClient({
 
 
   React.useEffect(() => {
-    setDisposalEvents(initialDisposalEvents);
-  }, [initialDisposalEvents]);
+    const fetchDashboardData = async () => {
+      setIsDataLoading(true);
+      const [wasteData, wasteLog, events] = await Promise.all([
+        getWasteChartData(),
+        getWasteLog(),
+        getDisposalEvents(),
+      ]);
+      setWasteDataAll(wasteData);
+      setWasteLogAll(wasteLog);
+      setDisposalEvents(events);
+      setIsDataLoading(false);
+    };
+    fetchDashboardData();
+  }, []);
   
-  if (isCompanyContextLoading || !selectedCompany) {
-    const WelcomeMessage = () => (
-       <div className="text-center max-w-4xl mx-auto">
-        <h3 className="mt-4 text-2xl font-bold">{welcomeDictionary?.title}</h3>
-        <div className="text-muted-foreground mt-4">
-          <p>{welcomeDictionary?.description}</p>
-        
-          <div className="mt-8 text-left">
-            <h4 className="font-semibold text-lg mb-4 text-center">{welcomeDictionary?.whatToExpect.title}</h4>
-            <div className="grid md:grid-cols-2 gap-6">
-                <div><strong>{welcomeDictionary?.whatToExpect.items.centralDashboard.title}</strong> {welcomeDictionary?.whatToExpect.items.centralDashboard.description}</div>
-                <div><strong>{welcomeDictionary?.whatToExpect.items.aiAnalyzer.title}</strong> {welcomeDictionary?.whatToExpect.items.aiAnalyzer.description}</div>
-                <div><strong>{welcomeDictionary?.whatToExpect.items.wasteLog.title}</strong> {welcomeDictionary?.whatToExpect.items.wasteLog.description}</div>
-                <div><strong>{welcomeDictionary?.whatToExpect.items.calendar.title}</strong> {welcomeDictionary?.whatToExpect.items.calendar.description}</div>
-                <div><strong>{welcomeDictionary?.whatToExpect.items.detailedReports.title}</strong> {welcomeDictionary?.whatToExpect.items.detailedReports.description}</div>
-                <div><strong>{welcomeDictionary?.whatToExpect.items.materials.title}</strong> {welcomeDictionary?.whatToExpect.items.materials.description}</div>
-            </div>
-          </div>
-
-          <div className="mt-8">
-            <h4 className="font-semibold text-lg">{welcomeDictionary?.gettingStarted.title}</h4>
-            <div className="text-muted-foreground mt-2">
-              {role === 'admin' ? (
-                 <p>{welcomeDictionary?.gettingStarted.adminText}</p>
-              ) : (
-                <p>{welcomeDictionary?.gettingStarted.clientText}</p>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-
-    return (
-       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-          <div className="flex items-center">
-            <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
-          </div>
-          <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
-            { (isCompanyContextLoading || !welcomeDictionary) ? <Skeleton className="h-32 w-full" /> : <WelcomeMessage />}
-          </div>
-       </div>
-    );
-  }
-
-  const wasteData = wasteDataAll[selectedCompany.id] || [];
-  const wasteLog = wasteLogAll.filter(entry => entry.companyId === selectedCompany.id);
-  const upcomingDisposals = disposalEvents.filter(d => (d.status === 'Scheduled' || d.status === 'Ongoing') && d.companyId === selectedCompany.id);
-
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat(undefined, {
       month: 'long',
@@ -155,6 +114,64 @@ export function DashboardClient({
       day: 'numeric'
     }).format(new Date(date));
   }
+
+  const WelcomeMessage = () => (
+     <div className="text-center max-w-4xl mx-auto">
+      <h3 className="mt-4 text-2xl font-bold">{welcomeDictionary?.title}</h3>
+      <div className="text-muted-foreground mt-4">
+        <p>{welcomeDictionary?.description}</p>
+      
+        <div className="mt-8 text-left">
+          <h4 className="font-semibold text-lg mb-4 text-center">{welcomeDictionary?.whatToExpect.title}</h4>
+          <div className="grid md:grid-cols-2 gap-6">
+              <div><strong>{welcomeDictionary?.whatToExpect.items.centralDashboard.title}</strong> {welcomeDictionary?.whatToExpect.items.centralDashboard.description}</div>
+              <div><strong>{welcomeDictionary?.whatToExpect.items.aiAnalyzer.title}</strong> {welcomeDictionary?.whatToExpect.items.aiAnalyzer.description}</div>
+              <div><strong>{welcomeDictionary?.whatToExpect.items.wasteLog.title}</strong> {welcomeDictionary?.whatToExpect.items.wasteLog.description}</div>
+              <div><strong>{welcomeDictionary?.whatToExpect.items.calendar.title}</strong> {welcomeDictionary?.whatToExpect.items.calendar.description}</div>
+              <div><strong>{welcomeDictionary?.whatToExpect.items.detailedReports.title}</strong> {welcomeDictionary?.whatToExpect.items.detailedReports.description}</div>
+              <div><strong>{welcomeDictionary?.whatToExpect.items.materials.title}</strong> {welcomeDictionary?.whatToExpect.items.materials.description}</div>
+          </div>
+        </div>
+
+        <div className="mt-8">
+          <h4 className="font-semibold text-lg">{welcomeDictionary?.gettingStarted.title}</h4>
+          <div className="text-muted-foreground mt-2">
+            {role === 'admin' ? (
+               <p>{welcomeDictionary?.gettingStarted.adminText}</p>
+            ) : (
+              <p>{welcomeDictionary?.gettingStarted.clientText}</p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (isCompanyContextLoading || !selectedCompany) {
+    return (
+       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+          <div className="flex items-center">
+            <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
+          </div>
+          <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
+            { (isCompanyContextLoading || !welcomeDictionary) ? <Skeleton className="h-32 w-full" /> : <WelcomeMessage />}
+          </div>
+       </div>
+    );
+  }
+  
+  if (isDataLoading) {
+     return (
+        <div className="flex flex-1 items-center justify-center p-8">
+           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+     )
+  }
+
+  const wasteData = wasteDataAll[selectedCompany.id] || [];
+  const wasteLog = wasteLogAll.filter(entry => entry.companyId === selectedCompany.id);
+  const upcomingDisposals = disposalEvents.filter(d => (d.status === 'Scheduled' || d.status === 'Ongoing') && d.companyId === selectedCompany.id);
+
 
   return (
     <div className="flex w-full flex-col">
@@ -293,7 +310,7 @@ export function DashboardClient({
                     wasteLog.slice(0, 5).map((entry: WasteEntry) => (
                       <TableRow key={entry.id}>
                         <TableCell>
-                          {isClient ? formatShortDate(entry.date) : <Skeleton className="h-4 w-20" />}
+                          {isClient ? <span>{formatShortDate(entry.date)}</span> : <Skeleton className="h-4 w-20" />}
                         </TableCell>
                         <TableCell>{entry.type}</TableCell>
                         <TableCell className="text-right">{entry.quantity.toFixed(2)} kg</TableCell>

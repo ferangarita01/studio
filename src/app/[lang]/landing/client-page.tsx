@@ -5,11 +5,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { BrainCircuit, AreaChart, Leaf, FileText, Bot, Recycle } from "lucide-react";
+import { BrainCircuit, AreaChart, Leaf, FileText, Bot, Recycle, Building, School, PartyPopper } from "lucide-react";
 import type { Dictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import React from "react";
 
 const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
@@ -22,14 +20,22 @@ const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, titl
     </div>
 );
 
+const UseCaseCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
+    <Card className="text-center">
+        <CardHeader className="items-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary mb-2">
+                {icon}
+            </div>
+            <CardTitle>{title}</CardTitle>
+        </CardHeader>
+        <CardContent>
+            <p className="text-muted-foreground">{description}</p>
+        </CardContent>
+    </Card>
+);
+
 export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, lang: Locale }) {
     const d = dictionary.landingPage;
-    const [isClient, setIsClient] = React.useState(false);
-
-    React.useEffect(() => {
-        setIsClient(true);
-    }, []);
-
 
     return (
         <div className="flex flex-col min-h-screen bg-background">
@@ -65,6 +71,41 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                             <Button size="lg" asChild>
                                 <Link href={`/${lang}/login`}>{d.hero.cta}</Link>
                             </Button>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Value Proposition Section */}
+                <section className="py-20 bg-muted/50">
+                    <div className="container text-center">
+                        <h2 className="text-3xl font-bold max-w-4xl mx-auto">{d.valueProposition.line1} <span className="text-destructive">{d.valueProposition.loss}</span></h2>
+                        <p className="mt-4 text-3xl font-bold max-w-4xl mx-auto">{d.valueProposition.line2} <span className="text-primary">{d.valueProposition.gain}</span></p>
+                    </div>
+                </section>
+
+                {/* Use Cases Section */}
+                <section id="use-cases" className="py-20">
+                    <div className="container">
+                        <div className="text-center mb-12">
+                            <h2 className="text-3xl font-bold">{d.useCases.title}</h2>
+                            <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">{d.useCases.subtitle}</p>
+                        </div>
+                        <div className="grid md:grid-cols-3 gap-8">
+                             <UseCaseCard 
+                                icon={<Building className="w-8 h-8" />}
+                                title={d.useCases.companies.title}
+                                description={d.useCases.companies.description}
+                            />
+                             <UseCaseCard 
+                                icon={<School className="w-8 h-8" />}
+                                title={d.useCases.schools.title}
+                                description={d.useCases.schools.description}
+                            />
+                             <UseCaseCard 
+                                icon={<PartyPopper className="w-8 h-8" />}
+                                title={d.useCases.events.title}
+                                description={d.useCases.events.description}
+                            />
                         </div>
                     </div>
                 </section>

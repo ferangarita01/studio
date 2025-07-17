@@ -44,12 +44,34 @@
     "header": {
       "title": "WasteWise",
       "login": "Log In",
-      "getStarted": "Get Started"
+      "getStarted": "Request a Demo"
     },
     "hero": {
       "title": "Turn Your Waste into Revenue Automatically",
-      "subtitle": "Optimize recycling with AI, ensure regulatory compliance, and generate additional income for your company.",
-      "cta": "Get Started for Free"
+      "subtitle": "Optimize recycling with AI, ensure regulatory compliance, and generate additional income for your business or event.",
+      "cta": "Calculate Your Income Potential"
+    },
+    "valueProposition": {
+        "line1": "Companies lose an average of $15,000 annually due to poor waste management.",
+        "loss": "lose",
+        "line2": "With WasteWise, turn that into $50,000 in additional revenue.",
+        "gain": "turn that into"
+    },
+    "useCases": {
+      "title": "A Solution for Every Need",
+      "subtitle": "Discover how WasteWise adapts to your specific industry to maximize your results.",
+      "companies": {
+        "title": "For Companies",
+        "description": "Reduce operating costs by 40% and generate $30K-100K in annual revenue."
+      },
+      "schools": {
+        "title": "For Schools",
+        "description": "Automatically meet regulations and generate funds for educational programs."
+      },
+      "events": {
+        "title": "For Events",
+        "description": "Optimize cleanup by 60% and enhance your sustainability image."
+      }
     },
     "features": {
       "title": "Everything You Need for Smart Compliance",
@@ -70,7 +92,7 @@
     "cta": {
       "title": "Ready to Transform Your Waste Management?",
       "subtitle": "Join WasteWise today and take the first step towards a more sustainable and profitable future.",
-      "button": "Sign Up Now"
+      "button": "Request a Custom Demo"
     },
     "footer": {
       "rights": "All rights reserved.",
@@ -96,7 +118,7 @@
     "title": "Dashboard",
     "welcome": {
       "title": "Welcome to WasteWise: Your Strategic Partner in Smart Environmental Management",
-      "description": "At EcoCircle, we developed WasteWise to merge expertise in environmental services and consulting with the forefront of process automation and artificial intelligence (AI). Our platform is designed to transform waste management for your company or large-scale event, offering you intuitive and efficient tools to optimize your operations.",
+      "description": "WasteWise by EcoCircle merges expertise in environmental services with cutting-edge process automation and AI. Our platform is designed to transform waste management for your company, large-scale event, festival, or concert, offering intuitive tools to optimize your operations.",
       "whatToExpect": {
         "title": "What can you expect from WasteWise?",
         "items": {

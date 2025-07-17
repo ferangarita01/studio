@@ -44,12 +44,34 @@
     "header": {
       "title": "WasteWise",
       "login": "Iniciar Sesión",
-      "getStarted": "Empezar"
+      "getStarted": "Solicitar Demo"
     },
     "hero": {
       "title": "Convierte tus Residuos en Ingresos Automáticamente",
-      "subtitle": "Optimiza el reciclaje con IA, asegura el cumplimiento normativo y genera hasta Ingresos adicionales para tu empresa.",
-      "cta": "Comienza Gratis"
+      "subtitle": "Optimiza el reciclaje con IA, asegura el cumplimiento normativo y genera ingresos adicionales para tu empresa o evento.",
+      "cta": "Calcula tu Potencial de Ingresos"
+    },
+    "valueProposition": {
+        "line1": "Las empresas pierden un promedio de $15,000 anuales por mala gestión de residuos.",
+        "loss": "pierden",
+        "line2": "Con WasteWise, conviértelos en $50,000 de ingresos adicionales.",
+        "gain": "conviértelos en"
+    },
+    "useCases": {
+      "title": "Una Solución para Cada Necesidad",
+      "subtitle": "Descubre cómo WasteWise se adapta a tu sector específico para maximizar tus resultados.",
+      "companies": {
+        "title": "Para Empresas",
+        "description": "Reduce costos operativos en 40% y genera ingresos de $30K-100K anuales."
+      },
+      "schools": {
+        "title": "Para Colegios",
+        "description": "Cumple normativas automáticamente y genera fondos para programas educativos."
+      },
+      "events": {
+        "title": "Para Eventos",
+        "description": "Optimiza la limpieza en un 60% y mejora tu imagen de sostenibilidad."
+      }
     },
     "features": {
       "title": "Todo lo que Necesitas para un Cumplimiento Inteligente",
@@ -70,7 +92,7 @@
     "cta": {
       "title": "¿Listo para Transformar tu Gestión de Residuos?",
       "subtitle": "Únete a WasteWise hoy y da el primer paso hacia un futuro más sostenible y rentable.",
-      "button": "Regístrate Ahora"
+      "button": "Solicitar Demo Personalizada"
     },
     "footer": {
       "rights": "Todos los derechos reservados.",
@@ -96,7 +118,7 @@
     "title": "Tablero",
     "welcome": {
       "title": "Bienvenido a WasteWise: Tu Socio Estratégico en Gestión Ambiental Inteligente",
-      "description": "En EcoCircle, desarrollamos WasteWise para transformar la gestión de residuos de tu empresa o evento masivo, ofreciéndote herramientas intuitivas y eficientes para optimizar tus operaciones con la vanguardia de la inteligencia artificial (IA).",
+      "description": "WasteWise de EcoCircle fusiona la experiencia en servicios ambientales con la vanguardia en automatización de procesos e IA. Nuestra plataforma está diseñada para transformar la gestión de residuos de tu empresa, evento masivo, festival o concierto, ofreciéndote herramientas intuitivas para optimizar tus operaciones.",
       "whatToExpect": {
         "title": "¿Qué puedes esperar de WasteWise?",
         "items": {

@@ -1,32 +1,20 @@
 
-import { getWasteChartData, getWasteLog, getDisposalEvents } from "@/services/waste-data-service";
-import { getCompanies } from "@/services/waste-data-service";
-import { DashboardClient } from "@/components/dashboard-client";
-import { getDictionary } from "@/lib/get-dictionary";
-import type { Locale } from "@/i18n-config";
+'use client';
 
-export default async function DashboardPage({
-  params: { lang },
-}: {
-  params: { lang: Locale };
-}) {
-  const dictionary = await getDictionary(lang);
+import { DashboardClient } from "@/components/dashboard-client";
+import { useDictionaries } from "@/context/dictionary-context";
+
+export default function DashboardPage() {
+  const dictionary = useDictionaries()?.dashboard;
   
-  // Fetch all data on the server
-  const [wasteDataAll, wasteLogAll, companies, disposalEvents] = await Promise.all([
-    getWasteChartData(),
-    getWasteLog(),
-    getCompanies(),
-    getDisposalEvents(),
-  ]);
+  // Data fetching is now handled client-side in DashboardClient
+  // to prevent hydration errors.
+  
+  if (!dictionary) return <div>Loading...</div>;
 
   return (
     <DashboardClient
-      dictionary={dictionary.dashboard}
-      wasteDataAll={wasteDataAll}
-      wasteLogAll={wasteLogAll}
-      companies={companies}
-      initialDisposalEvents={disposalEvents}
+      dictionary={dictionary}
     />
   );
 }
