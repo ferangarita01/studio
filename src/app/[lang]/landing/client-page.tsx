@@ -3,11 +3,77 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AreaChart, FileText, Bot, Recycle, Building, School, PartyPopper, CheckCircle2, XCircle } from "lucide-react";
-import React from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { AreaChart, FileText, Bot, Recycle, Building, School, PartyPopper, CheckCircle2, XCircle, Moon, Sun, Languages } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import type { Dictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
+import { useTheme } from "next-themes";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { usePathname } from "next/navigation";
+
+
+function ThemeToggle({ dictionary }: { dictionary: Dictionary["navigation"]["themeToggle"]}) {
+  const { setTheme } = useTheme();
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <span className="sr-only">{dictionary.toggle}</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => setTheme("light")}>
+          {dictionary.light}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("dark")}>
+          {dictionary.dark}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("system")}>
+          {dictionary.system}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+function LanguageToggle({ dictionary } : { dictionary: Dictionary["navigation"]["languageToggle"]}) {
+    const pathname = usePathname()
+    const pathWithoutLocale = pathname.split('/').slice(2).join('/');
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <Languages className="h-[1.2rem] w-[1.2rem]" />
+          <span className="sr-only">{dictionary.toggle}</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem asChild>
+            <Link href={`/en/${pathWithoutLocale}`}>English</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+            <Link href={`/es/${pathWithoutLocale}`}>Español</Link>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 
 const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
     <div className="flex flex-col items-center p-6 text-center">
@@ -35,16 +101,27 @@ const UseCaseCard = ({ icon, title, description }: { icon: React.ReactNode, titl
 
 export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, lang: Locale }) {
     const d = dictionary.landingPage;
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+      setIsClient(true);
+    }, []);
 
     return (
         <div className="flex flex-col min-h-screen bg-background">
             <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                <div className="container flex h-14 items-center justify-between">
-                    <Link href={`/${lang}/landing`} className="flex items-center gap-2 font-bold text-lg text-primary">
+                <div className="container flex h-14 items-center">
+                    <Link href={`/${lang}/landing`} className="flex items-center gap-2 font-bold text-lg text-primary mr-auto">
                         <Recycle className="h-6 w-6" />
                         <span>{d.header.title}</span>
                     </Link>
                     <nav className="flex items-center gap-2">
+                       {isClient && (
+                        <>
+                           <LanguageToggle dictionary={dictionary.navigation.languageToggle} />
+                           <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
+                        </>
+                       )}
                        <Button variant="ghost" asChild>
                            <Link href={`/${lang}/login`}>{d.header.login}</Link>
                        </Button>
@@ -76,7 +153,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                     <div className="container">
                         <div className="text-center mb-12">
                             <h2 className="text-3xl font-bold">{d.valueProposition.title}</h2>
-                            <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-8 text-muted-foreground justify-center">
+                             <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-8 text-muted-foreground justify-center">
                                 <p className="flex items-center justify-center gap-2 text-center"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat1}</p>
                                 <p className="flex items-center justify-center gap-2 text-center"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat2}</p>
                                 <p className="flex items-center justify-center gap-2 text-center"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" /> {d.valueProposition.stats.stat3}</p>
@@ -188,3 +265,5 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
+
+    
