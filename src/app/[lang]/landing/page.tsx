@@ -12,3 +12,4 @@ export default async function LandingPage({
 
   return <LandingClient dictionary={dictionary} lang={lang} />;
 }
+
