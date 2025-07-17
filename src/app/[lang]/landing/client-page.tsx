@@ -8,7 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BrainCircuit, AreaChart, Leaf, FileText, Bot, Recycle, Building, School, PartyPopper } from "lucide-react";
 import type { Dictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Separator } from "@/components/ui/separator";
 
 const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
     <div className="flex flex-col items-center p-6 text-center">
@@ -36,6 +37,11 @@ const UseCaseCard = ({ icon, title, description }: { icon: React.ReactNode, titl
 
 export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, lang: Locale }) {
     const d = dictionary.landingPage;
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     return (
         <div className="flex flex-col min-h-screen bg-background">
@@ -76,12 +82,24 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                 </section>
 
                 {/* Value Proposition Section */}
-                <section className="py-20 bg-muted/50">
-                    <div className="container text-center">
-                        <h2 className="text-3xl font-bold max-w-4xl mx-auto">{d.valueProposition.line1} <span className="text-destructive">{d.valueProposition.loss}</span></h2>
-                        <p className="mt-4 text-3xl font-bold max-w-4xl mx-auto">{d.valueProposition.line2} <span className="text-primary">{d.valueProposition.gain}</span></p>
-                    </div>
-                </section>
+                {isClient && (
+                    <section className="py-20 bg-muted/50">
+                        <div className="container">
+                            <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 text-center">
+                                <div className="flex-1">
+                                    <p className="text-2xl md:text-3xl font-bold text-destructive">{d.valueProposition.loss}</p>
+                                    <p className="text-muted-foreground mt-2">{d.valueProposition.lossDescription}</p>
+                                </div>
+                                <Separator orientation="vertical" className="h-24 hidden md:block" />
+                                <Separator orientation="horizontal" className="w-24 md:hidden" />
+                                <div className="flex-1">
+                                    <p className="text-2xl md:text-3xl font-bold text-primary">{d.valueProposition.gain}</p>
+                                    <p className="text-muted-foreground mt-2">{d.valueProposition.gainDescription}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                )}
 
                 {/* Use Cases Section */}
                 <section id="use-cases" className="py-20">

@@ -52,10 +52,10 @@
       "cta": "Calculate Your Income Potential"
     },
     "valueProposition": {
-        "line1": "Companies lose an average of $15,000 annually due to poor waste management.",
-        "loss": "lose",
-        "line2": "With WasteWise, turn that into $50,000 in additional revenue.",
-        "gain": "turn that into"
+      "loss": "$15,000 lost",
+      "lossDescription": "on average annually due to poor waste management.",
+      "gain": "$50,000 gained",
+      "gainDescription": "in additional revenue with WasteWise."
     },
     "useCases": {
       "title": "A Solution for Every Need",

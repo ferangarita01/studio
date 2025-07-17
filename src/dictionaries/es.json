@@ -52,10 +52,10 @@
       "cta": "Calcula tu Potencial de Ingresos"
     },
     "valueProposition": {
-        "line1": "Las empresas pierden un promedio de $15,000 anuales por mala gestión de residuos.",
-        "loss": "pierden",
-        "line2": "Con WasteWise, conviértelos en $50,000 de ingresos adicionales.",
-        "gain": "conviértelos en"
+      "loss": "$15,000 perdidos",
+      "lossDescription": "en promedio anual por mala gestión de residuos.",
+      "gain": "$50,000 ganados",
+      "gainDescription": "en ingresos adicionales con WasteWise."
     },
     "useCases": {
       "title": "Una Solución para Cada Necesidad",
