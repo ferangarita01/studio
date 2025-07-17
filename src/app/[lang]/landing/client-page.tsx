@@ -34,9 +34,6 @@ const UseCaseCard = ({ icon, title, description }: { icon: React.ReactNode, titl
 );
 
 export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, lang: Locale }) {
-
-    if (!dictionary) return <div>Loading...</div>;
-
     const d = dictionary.landingPage;
 
     return (
@@ -60,11 +57,11 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
 
             <main className="flex-1">
                 <section className="py-20 sm:py-32">
-                    <div className="container text-center">
-                        <h1 className="text-4xl font-bold tracking-tight sm:text-6xl max-w-3xl mx-auto">
+                    <div className="container px-4 md:px-6 text-center">
+                        <h1 className="text-4xl font-bold tracking-tight sm:text-6xl max-w-4xl mx-auto">
                            {d.hero.title}
                         </h1>
-                        <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
+                        <p className="mt-6 text-lg text-muted-foreground max-w-3xl mx-auto">
                            {d.hero.subtitle}
                         </p>
                         <div className="mt-10">
