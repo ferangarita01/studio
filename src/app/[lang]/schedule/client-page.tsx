@@ -8,6 +8,7 @@ import {
   ChevronRight,
   FileText,
   ImageIcon,
+  Loader2,
   Mic,
   PlusCircle,
 } from "lucide-react";
@@ -44,6 +45,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RequestCollectionDialog } from "@/components/request-collection-dialog";
 import { useParams } from "next/navigation";
 import type { Locale } from "@/i18n-config";
+import { getDisposalEvents } from "@/services/waste-data-service";
 
 const statusColors: Record<DisposalEvent["status"], string> = {
   Scheduled: "bg-blue-500",
@@ -54,17 +56,17 @@ const statusColors: Record<DisposalEvent["status"], string> = {
 
 interface ScheduleClientProps {
   dictionary: Dictionary["schedulePage"];
-  allEvents: DisposalEvent[];
 }
 
-export function ScheduleClient({ dictionary, allEvents: initialEvents }: ScheduleClientProps) {
+export function ScheduleClient({ dictionary }: ScheduleClientProps) {
   const [currentMonth, setCurrentMonth] = React.useState(new Date());
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
   const [isSheetOpen, setSheetOpen] = React.useState(false);
   const [isRequestDialogOpen, setRequestDialogOpen] = React.useState(false);
   const [isClient, setIsClient] = React.useState(false);
   const { selectedCompany } = useCompany();
-  const [allEvents, setAllEvents] = React.useState(initialEvents);
+  const [allEvents, setAllEvents] = React.useState<DisposalEvent[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
   const params = useParams();
   const lang = params.lang as Locale;
   const dateLocale = lang === 'es' ? es : enUS;
@@ -72,8 +74,15 @@ export function ScheduleClient({ dictionary, allEvents: initialEvents }: Schedul
 
   React.useEffect(() => {
     setIsClient(true);
-    setAllEvents(initialEvents);
-  }, [initialEvents]);
+    const fetchEvents = async () => {
+      setIsLoading(true);
+      const events = await getDisposalEvents();
+      setAllEvents(events);
+      setIsLoading(false);
+    };
+    fetchEvents();
+  }, []);
+
 
   if (!selectedCompany) {
     return (
@@ -134,40 +143,16 @@ export function ScheduleClient({ dictionary, allEvents: initialEvents }: Schedul
     audio: <Mic className="h-5 w-5 flex-shrink-0" />,
   };
   
-
-  return (
-    <>
-      <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-        <div className="flex flex-col sm:flex-row sm:items-center">
-          <div>
-            <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
-            <p className="text-sm text-muted-foreground">{dictionary.description}</p>
-          </div>
-          <div className="ml-auto flex items-center gap-2 mt-4 sm:mt-0">
-            <Button size="sm" className="h-8 gap-1" onClick={() => setRequestDialogOpen(true)}>
-              <PlusCircle className="h-3.5 w-3.5" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {dictionary.requestCollection}
-              </span>
-            </Button>
-          </div>
-        </div>
-        <div className="flex items-center justify-center gap-2">
-            <Button variant="outline" size="icon" onClick={goToPreviousMonth}>
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <span className="text-lg font-semibold w-36 text-center capitalize">
-              {isClient ? (
-                format(currentMonth, "MMMM yyyy", { locale: dateLocale })
-              ) : (
-                <Skeleton className="h-6 w-full" />
-              )}
-            </span>
-            <Button variant="outline" size="icon" onClick={goToNextMonth}>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-        </div>
-        <div className="rounded-lg border">
+  const renderCalendarGrid = () => {
+    if (isLoading) {
+      return (
+         <div className="flex items-center justify-center h-96 border rounded-lg">
+           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+         </div>
+      );
+    }
+    return (
+       <div className="rounded-lg border">
           <div className="grid grid-cols-7 text-center text-xs font-medium text-muted-foreground">
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
               <div key={day} className="py-2 capitalize">{lang === 'es' ? dictionary.days[day as keyof typeof dictionary.days] : day.substring(0,3)}</div>
@@ -227,6 +212,43 @@ export function ScheduleClient({ dictionary, allEvents: initialEvents }: Schedul
             ))}
           </div>
         </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center">
+          <div>
+            <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
+            <p className="text-sm text-muted-foreground">{dictionary.description}</p>
+          </div>
+          <div className="ml-auto flex items-center gap-2 mt-4 sm:mt-0">
+            <Button size="sm" className="h-8 gap-1" onClick={() => setRequestDialogOpen(true)}>
+              <PlusCircle className="h-3.5 w-3.5" />
+              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                {dictionary.requestCollection}
+              </span>
+            </Button>
+          </div>
+        </div>
+        <div className="flex items-center justify-center gap-2">
+            <Button variant="outline" size="icon" onClick={goToPreviousMonth}>
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="text-lg font-semibold w-36 text-center capitalize">
+              {isClient ? (
+                format(currentMonth, "MMMM yyyy", { locale: dateLocale })
+              ) : (
+                <Skeleton className="h-6 w-full" />
+              )}
+            </span>
+            <Button variant="outline" size="icon" onClick={goToNextMonth}>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+        </div>
+        
+        {renderCalendarGrid()}
 
         <Sheet open={isSheetOpen} onOpenChange={setSheetOpen}>
           <SheetContent className="w-full sm:max-w-md">

@@ -2,7 +2,6 @@
 import { getDictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import { ReportsClient } from "./client-page";
-import { getWeeklyReportData, getMonthlyReportData } from "@/services/waste-data-service";
 
 export default async function FinancialReportsPage({
   params: { lang },
@@ -11,16 +10,10 @@ export default async function FinancialReportsPage({
 }) {
   const dictionary = await getDictionary(lang);
 
-  const [weeklyData, monthlyData] = await Promise.all([
-    getWeeklyReportData(),
-    getMonthlyReportData(),
-  ]);
-
+  // Data is now fetched on the client side to avoid hydration mismatches
   return (
     <ReportsClient
       dictionary={dictionary.reportsPage}
-      weeklyDataAll={weeklyData}
-      monthlyDataAll={monthlyData}
     />
   );
 }

@@ -24,6 +24,15 @@ import {
 
 function ThemeToggle({ dictionary }: { dictionary: Dictionary["navigation"]["themeToggle"]}) {
   const { setTheme } = useTheme();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return <div className="h-9 w-9" />;
+  }
 
   return (
     <DropdownMenu>
@@ -49,7 +58,17 @@ function ThemeToggle({ dictionary }: { dictionary: Dictionary["navigation"]["the
   );
 }
 
-function LanguageToggle({ dictionary }: { dictionary: Dictionary["navigation"]["languageToggle"] }) {
+function LanguageToggle({ dictionary, lang }: { dictionary: Dictionary["navigation"]["languageToggle"], lang: Locale }) {
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+      setIsClient(true);
+    }, []);
+
+    if (!isClient) {
+      return <div className="h-9 w-9" />;
+    }
+    
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -97,12 +116,7 @@ const UseCaseCard = ({ icon, title, description }: { icon: React.ReactNode, titl
 
 export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, lang: Locale }) {
     const d = dictionary.landingPage;
-    const [isClient, setIsClient] = useState(false);
-
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
-
+    
     return (
         <div className="flex flex-col min-h-screen bg-background">
             <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -112,25 +126,16 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         <span>{d.header.title}</span>
                     </Link>
                     <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
-                        <Link href="#use-cases" className="text-muted-foreground transition-colors hover:text-foreground">
+                        <Link href={`/${lang}/landing`} className="text-muted-foreground transition-colors hover:text-foreground">
                             {d.header.nav.useCases}
                         </Link>
-                        <Link href="#features" className="text-muted-foreground transition-colors hover:text-foreground">
+                        <Link href={`/${lang}/landing`} className="text-muted-foreground transition-colors hover:text-foreground">
                             {d.header.nav.features}
                         </Link>
                     </nav>
                     <div className="flex items-center gap-2 ml-auto">
-                        {isClient ? (
-                            <>
-                                <LanguageToggle dictionary={dictionary.navigation.languageToggle} />
-                                <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
-                            </>
-                        ) : (
-                            <>
-                                <div className="w-9 h-9" />
-                                <div className="w-9 h-9" />
-                            </>
-                        )}
+                        <LanguageToggle dictionary={dictionary.navigation.languageToggle} lang={lang} />
+                        <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
                        <Button variant="ghost" asChild>
                            <Link href={`/${lang}/login`}>{d.header.login}</Link>
                        </Button>
@@ -144,7 +149,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
             <main className="flex-1">
                 <section className="py-20 md:py-32">
                     <div className="container px-4 md:px-6">
-                        <div className="mx-auto max-w-5xl text-center">
+                        <div className="mx-auto max-w-4xl text-center">
                             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
                                {d.hero.title}
                             </h1>

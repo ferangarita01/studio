@@ -2,7 +2,7 @@
 "use client";
 
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { ArrowDownCircle, ArrowUpCircle, DollarSign, Download } from "lucide-react";
+import { ArrowDownCircle, ArrowUpCircle, DollarSign, Download, Loader2 } from "lucide-react";
 import React, { useEffect, useState, useRef } from "react";
 
 import {
@@ -30,6 +30,7 @@ import { useCompany } from "@/components/layout/app-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/context/auth-context";
 import { useDictionaries } from "@/context/dictionary-context";
+import { getWeeklyReportData, getMonthlyReportData } from "@/services/waste-data-service";
 
 const chartConfig = {
   costs: {
@@ -44,8 +45,6 @@ const chartConfig = {
 
 interface ReportsClientProps {
   dictionary: Dictionary["reportsPage"];
-  weeklyDataAll: Record<string, ReportData>;
-  monthlyDataAll: Record<string, ReportData>;
 }
 
 function ReportView({
@@ -217,15 +216,27 @@ function ReportView({
 
 export function ReportsClient({
   dictionary,
-  weeklyDataAll,
-  monthlyDataAll,
 }: ReportsClientProps) {
   const { selectedCompany } = useCompany();
   const { role } = useAuth();
   const [isClient, setIsClient] = useState(false);
+  const [weeklyDataAll, setWeeklyDataAll] = useState<Record<string, ReportData>>({});
+  const [monthlyDataAll, setMonthlyDataAll] = useState<Record<string, ReportData>>({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsClient(true);
+    const fetchReports = async () => {
+      setIsLoading(true);
+      const [weekly, monthly] = await Promise.all([
+        getWeeklyReportData(),
+        getMonthlyReportData(),
+      ]);
+      setWeeklyDataAll(weekly);
+      setMonthlyDataAll(monthly);
+      setIsLoading(false);
+    };
+    fetchReports();
   }, []);
 
   if (!selectedCompany) {
@@ -240,6 +251,14 @@ export function ReportsClient({
             </div>
           </div>
        </div>
+    );
+  }
+  
+  if (isLoading) {
+    return (
+      <div className="flex flex-1 items-center justify-center p-8">
+         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
     );
   }
 
