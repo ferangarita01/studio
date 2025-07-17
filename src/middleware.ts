@@ -1,3 +1,4 @@
+
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { i18n } from '@/i18n-config';
@@ -18,6 +19,14 @@ function getLocale(request: NextRequest): string | undefined {
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  const hostname = request.headers.get('host') || '';
+
+  // Canonical redirect for www
+  const wwwRegex = /^www\./;
+  if (wwwRegex.test(hostname)) {
+    const newHost = hostname.replace(wwwRegex, '');
+    return NextResponse.redirect(`https://${newHost}${pathname}`, 301);
+  }
 
   // Ignore specific paths that should not be localized
   const publicFile = /\.(.*)$/;
@@ -59,3 +68,5 @@ export const config = {
   // Matcher ignoring `/_next/` and `/api/`
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };
+
+    

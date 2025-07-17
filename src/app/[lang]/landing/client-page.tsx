@@ -108,7 +108,15 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         <Recycle className="h-6 w-6" aria-hidden="true" />
                         <span>{d.header.title}</span>
                     </Link>
-                    <nav className="flex items-center gap-2">
+                    <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
+                        <Link href="#use-cases" className="text-muted-foreground transition-colors hover:text-foreground">
+                            {dictionary.useCases.title}
+                        </Link>
+                        <Link href="#features" className="text-muted-foreground transition-colors hover:text-foreground">
+                            {dictionary.features.title}
+                        </Link>
+                    </nav>
+                    <div className="flex items-center gap-2 ml-auto">
                        <LanguageToggle dictionary={dictionary.navigation.languageToggle} lang={lang} />
                        <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
                        <Button variant="ghost" asChild>
@@ -117,7 +125,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                        <Button asChild>
                            <Link href={`/${lang}/login`}>{d.header.getStarted}</Link>
                        </Button>
-                    </nav>
+                    </div>
                 </div>
             </header>
 
@@ -253,3 +261,5 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
+
+    
