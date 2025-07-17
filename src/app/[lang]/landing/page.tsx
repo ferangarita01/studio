@@ -1,14 +1,8 @@
 
-import { getDictionary } from "@/lib/get-dictionary";
-import type { Locale } from "@/i18n-config";
+'use client';
+
 import { LandingClient } from "./client-page";
 
-export default async function LandingPage({
-  params: { lang },
-}: {
-  params: { lang: Locale };
-}) {
-  const dictionary = await getDictionary(lang);
-  
-  return <LandingClient dictionary={dictionary} lang={lang} />;
+export default function LandingPage() {
+  return <LandingClient />;
 }
