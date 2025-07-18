@@ -36,7 +36,7 @@ export async function createUserProfile(uid: string, data: Omit<UserProfile, 'id
   await set(userRef, data);
 }
 
-// This function is called on the client, so we can't use unstable_cache here.
+// This function is called on the client, so we don't use unstable_cache here.
 export async function getUserProfile(uid: string): Promise<UserProfile | null> {
     const userRef = ref(db, `users/${uid}`);
     const snapshot = await get(userRef);
@@ -46,23 +46,19 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
     return null;
 }
 
-
-export const getUsers = unstable_cache(
-  async (role?: UserRole): Promise<UserProfile[]> => {
-    const usersRef = ref(db, 'users');
-    const snapshot = await get(usersRef);
-    if (!snapshot.exists()) {
-      return [];
-    }
-    const allUsers = snapshotToArray(snapshot);
-    if (role) {
-      return allUsers.filter(user => user.role === role);
-    }
-    return allUsers;
-  },
-  ['all-users'],
-  { revalidate: 10 } // Cache for 10 seconds
-);
+// This function is called from client components, so it should not be cached with unstable_cache.
+export async function getUsers(role?: UserRole): Promise<UserProfile[]> {
+  const usersRef = ref(db, 'users');
+  const snapshot = await get(usersRef);
+  if (!snapshot.exists()) {
+    return [];
+  }
+  const allUsers = snapshotToArray(snapshot);
+  if (role) {
+    return allUsers.filter(user => user.role === role);
+  }
+  return allUsers;
+}
 
 
 // --- Company Service Functions ---
