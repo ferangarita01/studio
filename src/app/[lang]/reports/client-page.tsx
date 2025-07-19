@@ -54,14 +54,8 @@ function ReportView({
   dictionary: Dictionary["reportsPage"]["reportView"];
   data: ReportData;
 }) {
-  const [isClient, setIsClient] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
   const reportPageDictionary = useDictionaries()?.reportsPage;
-
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   const formatCurrency = (amount: number) => {
     if (typeof amount !== 'number') return '';
@@ -113,7 +107,7 @@ function ReportView({
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {!isClient ? <Skeleton className="h-8 w-24" /> : formatCurrency(data.totalCosts)}
+                {formatCurrency(data.totalCosts)}
               </div>
               <p className="text-xs text-muted-foreground">{dictionary.cards.collectionCosts.description}</p>
             </CardContent>
@@ -125,7 +119,7 @@ function ReportView({
             </CardHeader>
             <CardContent>
                <div className="text-2xl font-bold">
-                  {!isClient ? <Skeleton className="h-8 w-24" /> : formatCurrency(data.totalIncome)}
+                  {formatCurrency(data.totalIncome)}
                 </div>
               <p className="text-xs text-muted-foreground">{dictionary.cards.recyclingIncome.description}</p>
             </CardContent>
@@ -137,7 +131,7 @@ function ReportView({
             </CardHeader>
             <CardContent>
               <div className={`text-2xl font-bold ${data.netResult >= 0 ? 'text-primary' : 'text-destructive'}`}>
-                 {!isClient ? <Skeleton className="h-8 w-24" /> : formatCurrency(data.netResult)}
+                 {formatCurrency(data.netResult)}
               </div>
               <p className="text-xs text-muted-foreground">{dictionary.cards.netResult.description}</p>
             </CardContent>
@@ -159,8 +153,8 @@ function ReportView({
                     tickMargin={10}
                     axisLine={false}
                   />
-                  <YAxis tickFormatter={(value) => isClient ? `$${value}`: ''} />
-                  <ChartTooltip content={<ChartTooltipContent formatter={(value) => isClient ? formatCurrency(value as number) : ''} />} />
+                  <YAxis tickFormatter={(value) => `$${value}`} />
+                  <ChartTooltip content={<ChartTooltipContent formatter={(value) => formatCurrency(value as number)} />} />
                   <Bar dataKey="costs" fill="var(--color-costs)" radius={4} />
                   <Bar dataKey="income" fill="var(--color-income)" radius={4} />
                 </BarChart>
@@ -187,18 +181,14 @@ function ReportView({
                       <TableRow key={tx.id}>
                         <TableCell>
                           <div className="font-medium">{tx.description}</div>
-                           {!isClient ? <Skeleton className="h-4 w-28 mt-1" /> : (
-                              <div className="text-sm text-muted-foreground">
-                                {formatDate(tx.date)}
-                              </div>
-                           )}
+                           <div className="text-sm text-muted-foreground">
+                            {formatDate(tx.date)}
+                          </div>
                         </TableCell>
                         <TableCell className="text-right">
-                           {!isClient ? <Skeleton className="h-6 w-20 float-right" /> : (
-                              <Badge variant={tx.type === 'income' ? 'default' : 'destructive'} className="font-semibold">
-                                {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
-                              </Badge>
-                           )}
+                           <Badge variant={tx.type === 'income' ? 'default' : 'destructive'} className="font-semibold">
+                            {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
+                          </Badge>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -219,13 +209,11 @@ export function ReportsClient({
 }: ReportsClientProps) {
   const { selectedCompany } = useCompany();
   const { role } = useAuth();
-  const [isClient, setIsClient] = useState(false);
   const [weeklyDataAll, setWeeklyDataAll] = useState<Record<string, ReportData>>({});
   const [monthlyDataAll, setMonthlyDataAll] = useState<Record<string, ReportData>>({});
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsClient(true);
     const fetchReports = async () => {
       setIsLoading(true);
       const [weekly, monthly] = await Promise.all([
@@ -278,14 +266,14 @@ export function ReportsClient({
         <Tabs defaultValue="weekly" className="space-y-4">
           <TabsList>
             <TabsTrigger value="weekly">{dictionary.tabs.weekly}</TabsTrigger>
-            {isClient && role === 'admin' && (
+            {role === 'admin' && (
               <TabsTrigger value="monthly">{dictionary.tabs.monthly}</TabsTrigger>
             )}
           </TabsList>
           <TabsContent value="weekly" className="space-y-4">
             <ReportView dictionary={dictionary.reportView} data={weeklyData} />
           </TabsContent>
-          {isClient && role === 'admin' && (
+          {role === 'admin' && (
             <TabsContent value="monthly" className="space-y-4">
               <ReportView dictionary={dictionary.reportView} data={monthlyData} />
             </TabsContent>

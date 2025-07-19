@@ -63,7 +63,6 @@ export function ScheduleClient({ dictionary }: ScheduleClientProps) {
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
   const [isSheetOpen, setSheetOpen] = React.useState(false);
   const [isRequestDialogOpen, setRequestDialogOpen] = React.useState(false);
-  const [isClient, setIsClient] = React.useState(false);
   const { selectedCompany } = useCompany();
   const [allEvents, setAllEvents] = React.useState<DisposalEvent[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -73,7 +72,6 @@ export function ScheduleClient({ dictionary }: ScheduleClientProps) {
 
 
   React.useEffect(() => {
-    setIsClient(true);
     const fetchEvents = async () => {
       setIsLoading(true);
       const events = await getDisposalEvents();
@@ -237,11 +235,7 @@ export function ScheduleClient({ dictionary }: ScheduleClientProps) {
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <span className="text-lg font-semibold w-36 text-center capitalize">
-              {isClient ? (
-                format(currentMonth, "MMMM yyyy", { locale: dateLocale })
-              ) : (
-                <Skeleton className="h-6 w-full" />
-              )}
+              {format(currentMonth, "MMMM yyyy", { locale: dateLocale })}
             </span>
             <Button variant="outline" size="icon" onClick={goToNextMonth}>
               <ChevronRight className="h-4 w-4" />
@@ -255,7 +249,7 @@ export function ScheduleClient({ dictionary }: ScheduleClientProps) {
             <SheetHeader>
               <SheetTitle>
                 {dictionary.details.title}:{" "}
-                {isClient && selectedDate ? (
+                {selectedDate ? (
                   <span>{format(selectedDate, "PPP", { locale: dateLocale })}</span>
                 ) : (
                   <Skeleton className="h-6 w-32 inline-block" />

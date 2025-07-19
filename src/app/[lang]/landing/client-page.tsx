@@ -137,8 +137,8 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                        <Button asChild>
                            <Link href={`/${lang}/login`}>{d.header.login}</Link>
                        </Button>
-                       <Button asChild>
-                           <Link href={`/${lang}/login`}>{d.header.getStarted}</Link>
+                       <Button asChild variant="outline">
+                           <a href="#contact" onClick={(e) => handleScroll(e, 'contact')}>{d.header.getStarted}</a>
                        </Button>
                     </div>
                 </div>
@@ -267,7 +267,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                     </div>
                 </section>
 
-                <section className="py-20 sm:py-32">
+                <section id="contact" className="py-20 sm:py-32">
                     <div className="container text-center">
                         <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{d.cta.title}</h2>
                         <p className="mt-4 text-lg md:text-xl text-muted-foreground">{d.cta.subtitle}</p>
