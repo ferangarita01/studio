@@ -70,8 +70,6 @@ export function DashboardClient({
   React.useEffect(() => {
     const fetchDashboardData = async () => {
       if (!selectedCompany) {
-        // If there's no selected company, we don't need to fetch data yet.
-        // This might happen for an admin who hasn't selected a company.
         if (!isCompanyContextLoading) {
            setIsDataLoading(false);
         }
@@ -89,8 +87,9 @@ export function DashboardClient({
       setIsDataLoading(false);
     };
 
-    // Trigger fetch when the selected company changes or on initial load
-    fetchDashboardData();
+    if (!isCompanyContextLoading) {
+      fetchDashboardData();
+    }
   }, [selectedCompany, isCompanyContextLoading]);
   
   const formatDate = (date: Date) => {
@@ -140,25 +139,36 @@ export function DashboardClient({
     </div>
   );
 
-  if (isCompanyContextLoading || (isClient && !selectedCompany)) {
-    return (
+  const renderLoadingState = () => (
+      <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+          <div className="flex items-center">
+            <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
+          </div>
+          <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
+             <Skeleton className="h-32 w-full" />
+          </div>
+       </div>
+  )
+
+  if (isCompanyContextLoading) {
+      return renderLoadingState();
+  }
+  
+  if (!selectedCompany) {
+     return (
        <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="flex items-center">
             <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
           </div>
           <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
-            { isCompanyContextLoading ? <Skeleton className="h-32 w-full" /> : <WelcomeMessage />}
+            <WelcomeMessage />
           </div>
        </div>
     );
   }
-  
+
   if (isDataLoading) {
-     return (
-        <div className="flex flex-1 items-center justify-center p-8">
-           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </div>
-     )
+      return renderLoadingState();
   }
 
   const wasteData = selectedCompany ? wasteDataAll[selectedCompany.id] || [] : [];

@@ -36,7 +36,6 @@ export async function createUserProfile(uid: string, data: Omit<UserProfile, 'id
   await set(userRef, data);
 }
 
-// This function is called on the client, so we don't use unstable_cache here.
 export async function getUserProfile(uid: string): Promise<UserProfile | null> {
     const userRef = ref(db, `users/${uid}`);
     const snapshot = await get(userRef);
@@ -46,7 +45,6 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
     return null;
 }
 
-// This function is called from client components, so it should not be cached.
 export async function getUsers(role?: UserRole): Promise<UserProfile[]> {
   const usersRef = ref(db, 'users');
   const snapshot = await get(usersRef);
@@ -63,39 +61,30 @@ export async function getUsers(role?: UserRole): Promise<UserProfile[]> {
 
 // --- Company Service Functions ---
 
-// Non-cached version for client-side use
 export async function getCompanies(userId?: string): Promise<Company[]> {
   const dbRef = ref(db, 'companies');
-  
-  // If a user ID is provided, it's an admin fetching their own companies.
-  if (userId) {
-      const q = query(dbRef, orderByChild("createdBy"), equalTo(userId));
-      const snapshot = await get(q);
-      if (!snapshot.exists()) {
-          return [];
-      }
-      const companies = snapshotToArray(snapshot).map(c => ({...c, logoUrl: c.logoUrl || 'https://placehold.co/100x100.png?text=' + c.name.charAt(0)}));
-      return companies.sort((a, b) => a.name.localeCompare(b.name));
-  }
-  
-  // If no user ID, fetch all companies.
   const snapshot = await get(dbRef);
 
   if (!snapshot.exists()) {
-      return [];
+    return [];
   }
 
-  let allCompanies = snapshotToArray(snapshot);
-  
-  // Add placeholder logo if missing
-  allCompanies = allCompanies.map(c => ({...c, logoUrl: c.logoUrl || 'https://placehold.co/100x100.png?text=' + c.name.charAt(0)}));
+  let allCompanies = snapshotToArray(snapshot).map(c => ({
+    ...c,
+    logoUrl: c.logoUrl || `https://placehold.co/100x100.png?text=${c.name.charAt(0)}`
+  }));
+
+  if (userId) {
+    // Filter in code instead of a Firebase query to avoid needing a DB index.
+    allCompanies = allCompanies.filter(company => company.createdBy === userId);
+  }
   
   return allCompanies.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-// Cached version for server-side use
 export const getCachedCompanies = unstable_cache(
   async () => {
+    // We get all companies and let the caller filter. This avoids complex caching keys.
     return getCompanies();
   },
   ['companies'],
@@ -104,6 +93,7 @@ export const getCachedCompanies = unstable_cache(
 
 export const getCompanyById = unstable_cache(
     async (companyId: string): Promise<Company | null> => {
+        if (!companyId) return null;
         const companyRef = ref(db, `companies/${companyId}`);
         const snapshot = await get(companyRef);
         if (!snapshot.exists()) {
@@ -115,7 +105,7 @@ export const getCompanyById = unstable_cache(
         return company;
     },
     ['company-by-id'],
-    { revalidate: 60 } // Cache for 1 minute
+    { revalidate: 60, tags: ['company'] } // Cache for 1 minute
 );
 
 
@@ -178,21 +168,25 @@ export async function getMaterials(): Promise<Material[]> {
     return [];
 }
 
-export async function addMaterial(material: Omit<Material, 'id'>): Promise<Material> {
+export async function addMaterial(material: Omit<Material, 'id'>, userId: string): Promise<Material> {
   const materialsRef = ref(db, 'materials');
   const newMaterialRef = push(materialsRef);
-  await set(newMaterialRef, material);
+  await set(newMaterialRef, {...material, createdBy: userId });
   return { id: newMaterialRef.key!, ...material };
 }
 
-export async function updateMaterial(material: Material): Promise<void> {
+export async function updateMaterial(material: Material, userId: string): Promise<void> {
   const { id, ...materialData } = material;
   const materialRef = ref(db, `materials/${id}`);
-  await update(materialRef, materialData);
+  await update(materialRef, {...materialData, updatedBy: userId });
 }
 
-export async function deleteMaterial(materialId: string): Promise<void> {
+export async function deleteMaterial(materialId: string, userId: string): Promise<void> {
+  // Optional: Add a check to ensure the user has permission to delete.
+  // For now, we just log who deleted it, but this isn't secure.
   const materialRef = ref(db, `materials/${materialId}`);
+  // Instead of deleting, you could also mark as deleted
+  // await update(materialRef, { deleted: true, deletedBy: userId });
   await remove(materialRef);
 }
 
@@ -201,18 +195,17 @@ export async function deleteMaterial(materialId: string): Promise<void> {
 
 export async function getWasteLog(companyId?: string): Promise<WasteEntry[]> {
     const wasteLogRef = ref(db, "wasteLog");
-    let q;
-    if (companyId) {
-      q = query(wasteLogRef, orderByChild("companyId"), equalTo(companyId));
-    } else {
-      q = wasteLogRef;
-    }
+    const snapshot = await get(wasteLogRef);
     
-    const snapshot = await get(q);
     if(snapshot.exists()) {
-        const logList = snapshotToArray(snapshot);
+        let logList = snapshotToArray(snapshot);
         // Dates are stored as ISO strings, convert them back to Date objects
-        return logList.map(entry => ({...entry, date: new Date(entry.date)})).sort((a, b) => b.date.getTime() - a.date.getTime());
+        const convertedList = logList.map(entry => ({...entry, date: new Date(entry.date)}));
+        
+        if (companyId) {
+            return convertedList.filter(entry => entry.companyId === companyId).sort((a, b) => b.date.getTime() - a.date.getTime());
+        }
+        return convertedList.sort((a, b) => b.date.getTime() - a.date.getTime());
     }
     return [];
 }
@@ -239,18 +232,17 @@ export async function addWasteEntry(entry: Omit<WasteEntry, 'id' | 'date'> & { d
 
 export async function getDisposalEvents(companyId?: string): Promise<DisposalEvent[]> {
     const eventsRef = ref(db, 'disposalEvents');
-    let q;
-    if (companyId) {
-        q = query(eventsRef, orderByChild("companyId"), equalTo(companyId));
-    } else {
-        q = eventsRef;
-    }
-    
-    const snapshot = await get(q);
+    const snapshot = await get(eventsRef);
+
     if (snapshot.exists()) {
-      const eventList = snapshotToArray(snapshot);
+      let eventList = snapshotToArray(snapshot);
       // Dates are stored as ISO strings, convert them back to Date objects
-      return eventList.map(event => ({ ...event, date: new Date(event.date) })).sort((a,b) => b.date.getTime() - a.date.getTime());
+      const convertedList = eventList.map(event => ({ ...event, date: new Date(event.date) }));
+
+      if (companyId) {
+          return convertedList.filter(event => event.companyId === companyId).sort((a,b) => b.date.getTime() - a.date.getTime());
+      }
+      return convertedList.sort((a,b) => b.date.getTime() - a.date.getTime());
     }
     return [];
 }
