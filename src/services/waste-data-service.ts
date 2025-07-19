@@ -278,14 +278,10 @@ export const getMonthlyReportData = unstable_cache(
 );
 
 
-export const getWasteChartData = unstable_cache(
-  async () => {
+export async function getWasteChartData() {
     return new Promise<Record<string, any[]>>((resolve) => {
       setTimeout(() => {
         resolve(wasteData);
       }, 300);
     });
-  },
-  ['waste-chart-data'],
-  { revalidate: 10 }
-);
+}

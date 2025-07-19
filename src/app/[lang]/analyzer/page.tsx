@@ -1,17 +1,16 @@
 
-'use client';
-
-import { useDictionaries } from "@/context/dictionary-context";
+import { getDictionary } from "@/lib/get-dictionary";
 import { AIAnalyzerClient } from "./client-page";
 import type { Locale } from "@/i18n-config";
-import { useParams } from "next/navigation";
 
-export default function AIAnalyzerPage() {
-  const dictionary = useDictionaries()?.analyzerPage;
-  const params = useParams();
-  const lang = params.lang as Locale;
+export default async function AIAnalyzerPage({
+  params: { lang },
+}: {
+  params: { lang: Locale };
+}) {
+  const dictionary = await getDictionary(lang);
   
   if (!dictionary) return <div>Loading...</div>;
 
-  return <AIAnalyzerClient dictionary={dictionary} lang={lang} />;
+  return <AIAnalyzerClient dictionary={dictionary.analyzerPage} lang={lang} />;
 }
