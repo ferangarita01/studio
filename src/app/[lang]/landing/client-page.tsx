@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { AreaChart, FileText, Bot, Recycle, Building, School, PartyPopper, CheckCircle2, XCircle, Moon, Sun, Languages } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import type { Dictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import { useTheme } from "next-themes";
@@ -61,10 +61,10 @@ function LanguageToggle({ dictionary }: { dictionary: Dictionary["navigation"]["
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
-                    <Link href={'/en/landing'}>English</Link>
+                    <Link href="/en/landing">English</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                    <Link href={'/es/landing'}>Español</Link>
+                    <Link href="/es/landing">Español</Link>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
@@ -151,10 +151,11 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                             src="https://placehold.co/1200x800.png"
                             alt="Background image of recycling for money"
                             fill
-                            className="object-cover opacity-20"
+                            priority
+                            className="object-cover"
                             data-ai-hint="recycling money"
                         />
-                        <div className="absolute inset-0 bg-black/50"></div>
+                        <div className="absolute inset-0 bg-black/60"></div>
                     </div>
                     <div className="container px-4 md:px-6 relative z-10">
                         <div className="mx-auto max-w-4xl text-center">
@@ -288,5 +289,3 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
-
-    
