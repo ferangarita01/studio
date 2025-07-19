@@ -25,15 +25,6 @@ import Image from "next/image";
 
 function ThemeToggle({ dictionary }: { dictionary: Dictionary["navigation"]["themeToggle"]}) {
   const { setTheme } = useTheme();
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) {
-    return <div className="h-9 w-9" />;
-  }
 
   return (
     <DropdownMenu>
@@ -59,17 +50,7 @@ function ThemeToggle({ dictionary }: { dictionary: Dictionary["navigation"]["the
   );
 }
 
-function LanguageToggle({ dictionary, lang }: { dictionary: Dictionary["navigation"]["languageToggle"], lang: Locale }) {
-    const [isClient, setIsClient] = useState(false);
-
-    useEffect(() => {
-      setIsClient(true);
-    }, []);
-
-    if (!isClient) {
-      return <div className="h-9 w-9" />;
-    }
-    
+function LanguageToggle({ dictionary }: { dictionary: Dictionary["navigation"]["languageToggle"] }) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -151,7 +132,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         </a>
                     </nav>
                     <div className="flex items-center gap-2 ml-auto">
-                        <LanguageToggle dictionary={dictionary.navigation.languageToggle} lang={lang} />
+                        <LanguageToggle dictionary={dictionary.navigation.languageToggle} />
                         <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
                        <Button variant="ghost" asChild>
                            <Link href={`/${lang}/login`}>{d.header.login}</Link>
@@ -167,7 +148,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                 <section className="relative py-20 md:py-32">
                     <div className="absolute inset-0 z-0">
                         <Image 
-                            src="https://storage.googleapis.com/devo-st-production-0f94/team_exchange_recycling_for_money_or_goods_or_cashback/generations/1722370783_0.png"
+                            src="https://placehold.co/1200x800.png"
                             alt="Background image of recycling for money"
                             layout="fill"
                             objectFit="cover"
@@ -312,3 +293,4 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
     
 
     
+
