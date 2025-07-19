@@ -117,6 +117,14 @@ const UseCaseCard = ({ icon, title, description }: { icon: React.ReactNode, titl
 export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, lang: Locale }) {
     const d = dictionary.landingPage;
     
+    const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+        e.preventDefault();
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+    
     return (
         <div className="flex flex-col min-h-screen bg-background">
             <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -126,10 +134,18 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         <span>{d.header.title}</span>
                     </Link>
                     <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
-                        <Link href={`/${lang}/landing`} className="text-muted-foreground transition-colors hover:text-foreground">
+                        <Link 
+                            href={`/${lang}/landing#use-cases`} 
+                            onClick={(e) => handleScroll(e, 'use-cases')}
+                            className="text-muted-foreground transition-colors hover:text-foreground"
+                        >
                             {d.header.nav.useCases}
                         </Link>
-                        <Link href={`/${lang}/landing`} className="text-muted-foreground transition-colors hover:text-foreground">
+                        <Link 
+                            href={`/${lang}/landing#features`} 
+                            onClick={(e) => handleScroll(e, 'features')}
+                            className="text-muted-foreground transition-colors hover:text-foreground"
+                        >
                             {d.header.nav.features}
                         </Link>
                     </nav>
@@ -280,3 +296,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
+
+    
+
+    
