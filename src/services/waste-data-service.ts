@@ -66,6 +66,19 @@ export async function getUsers(role?: UserRole): Promise<UserProfile[]> {
 // Non-cached version for client-side use
 export async function getCompanies(userId?: string): Promise<Company[]> {
   const dbRef = ref(db, 'companies');
+  
+  // If a user ID is provided, it's an admin fetching their own companies.
+  if (userId) {
+      const q = query(dbRef, orderByChild("createdBy"), equalTo(userId));
+      const snapshot = await get(q);
+      if (!snapshot.exists()) {
+          return [];
+      }
+      const companies = snapshotToArray(snapshot).map(c => ({...c, logoUrl: c.logoUrl || 'https://placehold.co/100x100.png?text=' + c.name.charAt(0)}));
+      return companies.sort((a, b) => a.name.localeCompare(b.name));
+  }
+  
+  // If no user ID, fetch all companies.
   const snapshot = await get(dbRef);
 
   if (!snapshot.exists()) {
@@ -76,27 +89,35 @@ export async function getCompanies(userId?: string): Promise<Company[]> {
   
   // Add placeholder logo if missing
   allCompanies = allCompanies.map(c => ({...c, logoUrl: c.logoUrl || 'https://placehold.co/100x100.png?text=' + c.name.charAt(0)}));
-
-  if (userId) {
-      // Filter in code instead of a Firebase query to avoid needing a DB index.
-      allCompanies = allCompanies.filter(company => company.createdBy === userId);
-  }
   
   return allCompanies.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-export async function getCompanyById(companyId: string): Promise<Company | null> {
-    const companyRef = ref(db, `companies/${companyId}`);
-    const snapshot = await get(companyRef);
-    if (!snapshot.exists()) {
-        return null;
-    }
-    const company = snapshot.val();
-    company.id = companyId;
-    // Add placeholder logo if missing
-    company.logoUrl = company.logoUrl || `https://placehold.co/100x100.png?text=${company.name.charAt(0)}`;
-    return company;
-}
+// Cached version for server-side use
+export const getCachedCompanies = unstable_cache(
+  async () => {
+    return getCompanies();
+  },
+  ['companies'],
+  { revalidate: 3600 } // Cache for 1 hour
+);
+
+export const getCompanyById = unstable_cache(
+    async (companyId: string): Promise<Company | null> => {
+        const companyRef = ref(db, `companies/${companyId}`);
+        const snapshot = await get(companyRef);
+        if (!snapshot.exists()) {
+            return null;
+        }
+        const company = snapshot.val();
+        company.id = companyId;
+        company.logoUrl = company.logoUrl || `https://placehold.co/100x100.png?text=${company.name.charAt(0)}`;
+        return company;
+    },
+    ['company-by-id'],
+    { revalidate: 60 } // Cache for 1 minute
+);
+
 
 export async function addCompany(name: string, userId: string): Promise<Company> {
   const companyData = { 

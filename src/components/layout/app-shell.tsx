@@ -47,7 +47,7 @@ import { Input } from "@/components/ui/input";
 import { CreateCompanyDialog } from "@/components/create-company-dialog";
 import { useAuth, AuthProvider } from "@/context/auth-context";
 import { useDictionaries, DictionariesProvider } from "@/context/dictionary-context";
-import { addCompany as addCompanyService, getCompanies } from "@/services/waste-data-service";
+import { addCompany as addCompanyService, getCompanies, getCompanyById } from "@/services/waste-data-service";
 import { Skeleton } from "../ui/skeleton";
 import { Badge } from "../ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
@@ -212,10 +212,6 @@ function CompanySwitcher({ isClient }: { isClient: boolean }) {
       </div>
     );
   }
-
-  if (!selectedCompany) {
-    return <Skeleton className="h-9 w-full" />;
-  }
   
   const filteredCompanies = companies.filter(company => 
     company.name.toLowerCase().includes(search.toLowerCase())
@@ -232,7 +228,7 @@ function CompanySwitcher({ isClient }: { isClient: boolean }) {
           >
             <div className="flex items-center gap-2 truncate">
               <Building className="h-4 w-4 flex-shrink-0" />
-              <span className="truncate">{selectedCompany.name}</span>
+              <span className="truncate">{selectedCompany ? selectedCompany.name : dictionary.companySwitcher.label}</span>
             </div>
             <ChevronsUpDown className="h-4 w-4 opacity-50 flex-shrink-0" />
           </Button>
@@ -248,7 +244,7 @@ function CompanySwitcher({ isClient }: { isClient: boolean }) {
           </div>
           <DropdownMenuSeparator />
           <DropdownMenuRadioGroup
-            value={selectedCompany.id}
+            value={selectedCompany?.id || ""}
             onValueChange={(id) => {
               const company = companies.find((c) => c.id === id);
               if (company) {
@@ -298,14 +294,14 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
             if (role === 'admin') {
                 const userCompanies = await getCompanies(user.uid);
                 setCompanies(userCompanies);
-                if (userCompanies.length > 0 && !userCompanies.find(c => c.id === selectedCompany?.id)) {
-                    setSelectedCompany(userCompanies[0]);
-                } else if (userCompanies.length === 0) {
+                // No longer auto-select the first company to prevent hydration issues.
+                // The admin will have to select one from the dropdown.
+                // We only set it if it was already selected previously.
+                if (selectedCompany && !userCompanies.some(c => c.id === selectedCompany.id)) {
                     setSelectedCompany(null);
                 }
             } else if (role === 'client' && userProfile?.assignedCompanyId) {
-                const allCompanies = await getCompanies(); // Fetch all to find the assigned one
-                const clientCompany = allCompanies.find(c => c.id === userProfile.assignedCompanyId);
+                const clientCompany = await getCompanyById(userProfile.assignedCompanyId);
                 setCompanies(clientCompany ? [clientCompany] : []);
                 setSelectedCompany(clientCompany || null);
             } else {
@@ -320,7 +316,7 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
         }
     }
     manageCompanies();
-}, [user, role, userProfile, selectedCompany?.id]);
+}, [user, role, userProfile]);
   
   const addCompany = (company: Company) => {
     setCompanies(prev => [...prev, company].sort((a,b) => a.name.localeCompare(b.name)));
@@ -579,3 +575,5 @@ export function AppShell({ children, lang, dictionary }: { children: React.React
     </ThemeProvider>
    )
 }
+
+    
