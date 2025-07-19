@@ -134,7 +134,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                     <div className="flex items-center gap-2 ml-auto">
                         <LanguageToggle dictionary={dictionary.navigation.languageToggle} />
                         <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
-                       <Button variant="ghost" asChild>
+                       <Button asChild>
                            <Link href={`/${lang}/login`}>{d.header.login}</Link>
                        </Button>
                        <Button asChild>
