@@ -117,14 +117,14 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                     </Link>
                     <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
                         <a 
-                            href={`/${lang}/landing#use-cases`} 
+                            href="#use-cases"
                             onClick={(e) => handleScroll(e, 'use-cases')}
                             className="text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
                         >
                             {d.header.nav.useCases}
                         </a>
                         <a 
-                            href={`/${lang}/landing#features`} 
+                            href="#features"
                             onClick={(e) => handleScroll(e, 'features')}
                             className="text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
                         >
@@ -150,9 +150,8 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         <Image 
                             src="https://placehold.co/1200x800.png"
                             alt="Background image of recycling for money"
-                            layout="fill"
-                            objectFit="cover"
-                            className="opacity-50"
+                            fill
+                            className="object-cover opacity-20"
                             data-ai-hint="recycling money"
                         />
                         <div className="absolute inset-0 bg-black/50"></div>
@@ -291,6 +290,3 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
 }
 
     
-
-    
-
