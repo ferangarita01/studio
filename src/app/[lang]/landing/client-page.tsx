@@ -20,6 +20,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Image from "next/image";
 
 
 function ThemeToggle({ dictionary }: { dictionary: Dictionary["navigation"]["themeToggle"]}) {
@@ -134,20 +135,20 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         <span>{d.header.title}</span>
                     </Link>
                     <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
-                        <Link 
+                        <a 
                             href={`/${lang}/landing#use-cases`} 
                             onClick={(e) => handleScroll(e, 'use-cases')}
-                            className="text-muted-foreground transition-colors hover:text-foreground"
+                            className="text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
                         >
                             {d.header.nav.useCases}
-                        </Link>
-                        <Link 
+                        </a>
+                        <a 
                             href={`/${lang}/landing#features`} 
                             onClick={(e) => handleScroll(e, 'features')}
-                            className="text-muted-foreground transition-colors hover:text-foreground"
+                            className="text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
                         >
                             {d.header.nav.features}
-                        </Link>
+                        </a>
                     </nav>
                     <div className="flex items-center gap-2 ml-auto">
                         <LanguageToggle dictionary={dictionary.navigation.languageToggle} lang={lang} />
@@ -163,13 +164,24 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
             </header>
 
             <main className="flex-1">
-                <section className="py-20 md:py-32">
-                    <div className="container px-4 md:px-6">
+                <section className="relative py-20 md:py-32">
+                    <div className="absolute inset-0 z-0">
+                        <Image 
+                            src="https://storage.googleapis.com/devo-st-production-0f94/team_exchange_recycling_for_money_or_goods_or_cashback/generations/1722370783_0.png"
+                            alt="Background image of recycling for money"
+                            layout="fill"
+                            objectFit="cover"
+                            className="opacity-50"
+                            data-ai-hint="recycling money"
+                        />
+                        <div className="absolute inset-0 bg-black/50"></div>
+                    </div>
+                    <div className="container px-4 md:px-6 relative z-10">
                         <div className="mx-auto max-w-4xl text-center">
-                            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+                            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">
                                {d.hero.title}
                             </h1>
-                            <p className="mt-6 text-lg text-muted-foreground sm:text-xl">
+                            <p className="mt-6 text-lg text-gray-200 sm:text-xl">
                                {d.hero.subtitle}
                             </p>
                             <div className="mt-10">
