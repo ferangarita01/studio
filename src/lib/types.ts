@@ -15,6 +15,7 @@ export type Company = {
   createdBy: string; // UID of the admin user who created it
   assignedUserUid?: string; // UID of the client user assigned to this company
   assignedUserName?: string; // email of the assigned user, for display
+  logoUrl?: string; // URL for the company's logo, for embeddable modules
 };
 
 export type Material = {
@@ -74,5 +75,3 @@ export type ReportData = {
   }[];
   transactions: FinancialTransaction[];
 };
-
-    

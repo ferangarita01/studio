@@ -46,7 +46,7 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
     return null;
 }
 
-// This function is called from client components, so it should not be cached with unstable_cache.
+// This function is called from client components, so it should not be cached.
 export async function getUsers(role?: UserRole): Promise<UserProfile[]> {
   const usersRef = ref(db, 'users');
   const snapshot = await get(usersRef);
@@ -73,6 +73,9 @@ export async function getCompanies(userId?: string): Promise<Company[]> {
   }
 
   let allCompanies = snapshotToArray(snapshot);
+  
+  // Add placeholder logo if missing
+  allCompanies = allCompanies.map(c => ({...c, logoUrl: c.logoUrl || 'https://placehold.co/100x100.png?text=' + c.name.charAt(0)}));
 
   if (userId) {
       // Filter in code instead of a Firebase query to avoid needing a DB index.
@@ -82,16 +85,25 @@ export async function getCompanies(userId?: string): Promise<Company[]> {
   return allCompanies.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-// Cached version for server-side use
-export const getCachedCompanies = unstable_cache(
-  getCompanies, // Wrap the non-cached function
-  ['companies'],
-  { revalidate: 10 } // Cache for 10 seconds
-);
-
+export async function getCompanyById(companyId: string): Promise<Company | null> {
+    const companyRef = ref(db, `companies/${companyId}`);
+    const snapshot = await get(companyRef);
+    if (!snapshot.exists()) {
+        return null;
+    }
+    const company = snapshot.val();
+    company.id = companyId;
+    // Add placeholder logo if missing
+    company.logoUrl = company.logoUrl || `https://placehold.co/100x100.png?text=${company.name.charAt(0)}`;
+    return company;
+}
 
 export async function addCompany(name: string, userId: string): Promise<Company> {
-  const companyData = { name, createdBy: userId };
+  const companyData = { 
+    name, 
+    createdBy: userId,
+    logoUrl: `https://placehold.co/100x100.png?text=${name.charAt(0)}`
+  };
   const companiesRef = ref(db, 'companies');
   const newCompanyRef = push(companiesRef);
   await set(newCompanyRef, companyData);
@@ -240,26 +252,40 @@ export async function addDisposalEvent(event: Omit<DisposalEvent, 'id'>): Promis
 
 // --- Mocked Data for Reports and Chart (can be migrated to Cloud Functions later) ---
 
-export async function getWeeklyReportData(): Promise<Record<string, ReportData>> {
-     return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(weeklyReportData);
-        }, 300);
+export const getWeeklyReportData = unstable_cache(
+  async () => {
+    return new Promise<Record<string, ReportData>>((resolve) => {
+      setTimeout(() => {
+        resolve(weeklyReportData);
+      }, 300);
     });
-}
+  },
+  ['weekly-reports'],
+  { revalidate: 10 }
+);
 
-export async function getMonthlyReportData(): Promise<Record<string, ReportData>> {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(monthlyReportData);
-        }, 300);
-    });
-}
 
-export async function getWasteChartData(): Promise<Record<string, any[]>> {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(wasteData);
-        }, 300);
+export const getMonthlyReportData = unstable_cache(
+  async () => {
+    return new Promise<Record<string, ReportData>>((resolve) => {
+      setTimeout(() => {
+        resolve(monthlyReportData);
+      }, 300);
     });
-}
+  },
+  ['monthly-reports'],
+  { revalidate: 10 }
+);
+
+
+export const getWasteChartData = unstable_cache(
+  async () => {
+    return new Promise<Record<string, any[]>>((resolve) => {
+      setTimeout(() => {
+        resolve(wasteData);
+      }, 300);
+    });
+  },
+  ['waste-chart-data'],
+  { revalidate: 10 }
+);
