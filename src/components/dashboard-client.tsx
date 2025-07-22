@@ -25,7 +25,6 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import type { DisposalEvent, WasteEntry } from "@/lib/types";
 import type { Dictionary } from "@/lib/get-dictionary";
 import { useCompany } from "./layout/app-shell";
-import { Skeleton } from "@/components/ui/skeleton";
 import { getWasteChartData, getWasteLog, getDisposalEvents } from "@/services/waste-data-service";
 import { useAuth } from "@/context/auth-context";
 
@@ -65,9 +64,7 @@ export function DashboardClient({
   React.useEffect(() => {
     const fetchDashboardData = async () => {
       if (!selectedCompany) {
-        if (!isCompanyContextLoading) {
-           setIsDataLoading(false);
-        }
+        setIsDataLoading(false);
         return;
       }
       setIsDataLoading(true);

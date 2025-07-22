@@ -6,7 +6,7 @@ import type { Locale } from '@/i18n-config';
 import { AppShell } from '@/components/layout/app-shell';
 
 const APP_NAME = "WasteWise";
-const APP_DESCRIPTION = "A business and event waste management platform by EcoCircle to track and manage waste generation for companies, festivals, and concerts.";
+const APP_DESCRIPTION = "WasteWise is a business and event waste management platform by EcoCircle, designed to track and manage waste generation for companies, festivals, and concerts.";
 
 export async function generateMetadata({ params: { lang } }: { params: { lang: Locale } }): Promise<Metadata> {
   const dictionary = await getDictionary(lang);
