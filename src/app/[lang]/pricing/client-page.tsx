@@ -10,67 +10,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Check, Moon, Sun, Languages, Recycle } from "lucide-react";
+import { Check } from "lucide-react";
 import React from "react";
 import type { Dictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
-import { useTheme } from "next-themes";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-
-function ThemeToggle({ dictionary }: { dictionary: Dictionary["navigation"]["themeToggle"]}) {
-  const { setTheme } = useTheme();
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">{dictionary.toggle}</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
-          {dictionary.light}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          {dictionary.dark}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          {dictionary.system}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
-function LanguageToggle({ dictionary }: { dictionary: Dictionary["navigation"]["languageToggle"] }) {
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                    <Languages className="h-[1.2rem] w-[1.2rem]" />
-                    <span className="sr-only">{dictionary.toggle}</span>
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
-                    <Link href="/en/pricing">English</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                    <Link href="/es/pricing">Español</Link>
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
-    );
-}
+import { PublicHeader } from "@/components/public-header";
 
 interface PricingCardProps {
   plan: {
@@ -95,7 +41,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, isPopular }) => {
             {plan.popular}
           </Badge>
         )}
-        <CardTitle className="text-2xl text-center">{plan.name}</CardTitle>
+        <CardTitle className="text-2xl text-center pt-4">{plan.name}</CardTitle>
         <CardDescription className="text-center">{plan.description}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col flex-grow gap-6">
@@ -126,44 +72,7 @@ export function PricingClient({ dictionary, lang }: { dictionary: Dictionary, la
     
     return (
         <div className="flex flex-col min-h-screen bg-background">
-            <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                <div className="container flex h-14 items-center">
-                    <Link href={`/${lang}/landing`} className="flex items-center gap-2 font-bold text-lg text-primary mr-auto">
-                        <Recycle className="h-6 w-6" aria-hidden="true" />
-                        <span>{l.header.title}</span>
-                    </Link>
-                    <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
-                        <Link 
-                            href={`/${lang}/landing`}
-                            className="text-muted-foreground transition-colors hover:text-foreground"
-                        >
-                            {l.header.nav.useCases}
-                        </Link>
-                        <Link
-                            href={`/${lang}/landing`}
-                            className="text-muted-foreground transition-colors hover:text-foreground"
-                        >
-                            {l.header.nav.features}
-                        </Link>
-                         <Link
-                            href={`/${lang}/pricing`}
-                            className="font-semibold text-primary"
-                        >
-                            {l.header.nav.pricing}
-                        </Link>
-                    </nav>
-                    <div className="flex items-center gap-2 ml-auto">
-                        <LanguageToggle dictionary={dictionary.navigation.languageToggle} />
-                        <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
-                       <Button asChild>
-                           <Link href={`/${lang}/login`}>{l.header.login}</Link>
-                       </Button>
-                       <Button asChild variant="outline">
-                           <Link href={`/${lang}/landing#contact`}>{l.header.getStarted}</Link>
-                       </Button>
-                    </div>
-                </div>
-            </header>
+            <PublicHeader dictionary={dictionary} lang={lang} />
 
             <main className="flex-1">
                 <section className="py-16 sm:py-24">
@@ -194,5 +103,3 @@ export function PricingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
-
-    

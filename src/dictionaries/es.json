@@ -125,27 +125,27 @@
     "subtitle": "Elige el plan adecuado para tu negocio. Sin comisiones ocultas, nunca.",
     "plans": {
       "basic": {
-        "name": "Básico",
-        "price": "$49",
+        "name": "Gratis",
+        "price": "$0",
         "period": "por mes",
-        "description": "Perfecto para pequeñas empresas y eventos que se inician en la gestión de residuos.",
-        "cta": "Empezar",
+        "description": "Perfecto para individuos y pequeños equipos que empiezan a gestionar sus residuos.",
+        "cta": "Empezar Gratis",
         "features": [
           "1 Perfil de Empresa",
           "Registro y Seguimiento de Residuos",
           "Informes Básicos",
-          "Soporte por Correo Electrónico"
+          "Soporte Comunitario"
         ]
       },
       "professional": {
-        "name": "Profesional",
+        "name": "Premium",
         "price": "$99",
         "period": "por mes",
         "description": "Para empresas en crecimiento que necesitan más control y análisis detallados.",
         "popular": "Más Popular",
-        "cta": "Actualizar a Pro",
+        "cta": "Empezar con Premium",
         "features": [
-          "Todo en Básico, más:",
+          "Todo en el plan Gratis, más:",
           "Hasta 5 Perfiles de Empresa",
           "Analizador de Residuos con IA",
           "Informes Financieros Avanzados",
@@ -153,13 +153,13 @@
         ]
       },
       "enterprise": {
-        "name": "Empresarial",
-        "price": "Personalizado",
+        "name": "Personalizado",
+        "price": "Contacto",
         "period": "anual",
         "description": "Soluciones a medida para operaciones a gran escala y necesidades complejas de cumplimiento.",
-        "cta": "Contactar con Ventas",
+        "cta": "Contactar a Ventas",
         "features": [
-          "Todo en Profesional, más:",
+          "Todo en el plan Premium, más:",
           "Perfiles de Empresa Ilimitados",
           "Módulo de Cumplimiento Legal",
           "Gestor de Cuenta Dedicado",
@@ -596,5 +596,3 @@
     }
   }
 }
-
-    

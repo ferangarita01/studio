@@ -125,27 +125,27 @@
     "subtitle": "Choose the plan that's right for your business. No hidden fees, ever.",
     "plans": {
       "basic": {
-        "name": "Basic",
-        "price": "$49",
+        "name": "Free",
+        "price": "$0",
         "period": "per month",
-        "description": "Perfect for small businesses and events getting started with waste management.",
-        "cta": "Get Started",
+        "description": "Perfect for individuals and small teams getting started with waste management.",
+        "cta": "Get Started Free",
         "features": [
           "1 Company Profile",
           "Waste Log & Tracking",
           "Basic Reporting",
-          "Email Support"
+          "Community Support"
         ]
       },
       "professional": {
-        "name": "Professional",
+        "name": "Premium",
         "price": "$99",
         "period": "per month",
         "description": "For growing businesses that need more control and deeper insights.",
         "popular": "Most Popular",
-        "cta": "Upgrade to Pro",
+        "cta": "Start with Premium",
         "features": [
-          "Everything in Basic, plus:",
+          "Everything in Free, plus:",
           "Up to 5 Company Profiles",
           "AI Waste Analyzer",
           "Advanced Financial Reports",
@@ -153,13 +153,13 @@
         ]
       },
       "enterprise": {
-        "name": "Enterprise",
-        "price": "Custom",
+        "name": "Custom",
+        "price": "Contact",
         "period": "annually",
         "description": "Tailored solutions for large-scale operations and complex compliance needs.",
         "cta": "Contact Sales",
         "features": [
-          "Everything in Professional, plus:",
+          "Everything in Premium, plus:",
           "Unlimited Company Profiles",
           "Legal Compliance Module",
           "Dedicated Account Manager",
@@ -596,5 +596,3 @@
     }
   }
 }
-
-    
