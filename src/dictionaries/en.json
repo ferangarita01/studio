@@ -47,7 +47,8 @@
       "getStarted": "Request a Demo",
       "nav": {
         "useCases": "Use Cases",
-        "features": "Features"
+        "features": "Features",
+        "pricing": "Pricing"
       }
     },
     "hero": {
@@ -117,6 +118,54 @@
     "footer": {
       "rights": "All rights reserved.",
       "madeWith": "Made with passion for a greener planet."
+    }
+  },
+  "pricingPage": {
+    "title": "Simple, Transparent Pricing",
+    "subtitle": "Choose the plan that's right for your business. No hidden fees, ever.",
+    "plans": {
+      "basic": {
+        "name": "Basic",
+        "price": "$49",
+        "period": "per month",
+        "description": "Perfect for small businesses and events getting started with waste management.",
+        "cta": "Get Started",
+        "features": [
+          "1 Company Profile",
+          "Waste Log & Tracking",
+          "Basic Reporting",
+          "Email Support"
+        ]
+      },
+      "professional": {
+        "name": "Professional",
+        "price": "$99",
+        "period": "per month",
+        "description": "For growing businesses that need more control and deeper insights.",
+        "popular": "Most Popular",
+        "cta": "Upgrade to Pro",
+        "features": [
+          "Everything in Basic, plus:",
+          "Up to 5 Company Profiles",
+          "AI Waste Analyzer",
+          "Advanced Financial Reports",
+          "Priority Support"
+        ]
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "price": "Custom",
+        "period": "annually",
+        "description": "Tailored solutions for large-scale operations and complex compliance needs.",
+        "cta": "Contact Sales",
+        "features": [
+          "Everything in Professional, plus:",
+          "Unlimited Company Profiles",
+          "Legal Compliance Module",
+          "Dedicated Account Manager",
+          "Custom Integrations"
+        ]
+      }
     }
   },
   "loginPage": {
@@ -547,3 +596,5 @@
     }
   }
 }
+
+    

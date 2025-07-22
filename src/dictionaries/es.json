@@ -47,7 +47,8 @@
       "getStarted": "Solicitar Demo Personalizada",
       "nav": {
         "useCases": "Casos de Uso",
-        "features": "Características"
+        "features": "Características",
+        "pricing": "Precios"
       }
     },
     "hero": {
@@ -117,6 +118,54 @@
     "footer": {
       "rights": "Todos los derechos reservados.",
       "madeWith": "Hecho con pasión por un planeta más verde."
+    }
+  },
+   "pricingPage": {
+    "title": "Precios Simples y Transparentes",
+    "subtitle": "Elige el plan adecuado para tu negocio. Sin comisiones ocultas, nunca.",
+    "plans": {
+      "basic": {
+        "name": "Básico",
+        "price": "$49",
+        "period": "por mes",
+        "description": "Perfecto para pequeñas empresas y eventos que se inician en la gestión de residuos.",
+        "cta": "Empezar",
+        "features": [
+          "1 Perfil de Empresa",
+          "Registro y Seguimiento de Residuos",
+          "Informes Básicos",
+          "Soporte por Correo Electrónico"
+        ]
+      },
+      "professional": {
+        "name": "Profesional",
+        "price": "$99",
+        "period": "por mes",
+        "description": "Para empresas en crecimiento que necesitan más control y análisis detallados.",
+        "popular": "Más Popular",
+        "cta": "Actualizar a Pro",
+        "features": [
+          "Todo en Básico, más:",
+          "Hasta 5 Perfiles de Empresa",
+          "Analizador de Residuos con IA",
+          "Informes Financieros Avanzados",
+          "Soporte Prioritario"
+        ]
+      },
+      "enterprise": {
+        "name": "Empresarial",
+        "price": "Personalizado",
+        "period": "anual",
+        "description": "Soluciones a medida para operaciones a gran escala y necesidades complejas de cumplimiento.",
+        "cta": "Contactar con Ventas",
+        "features": [
+          "Todo en Profesional, más:",
+          "Perfiles de Empresa Ilimitados",
+          "Módulo de Cumplimiento Legal",
+          "Gestor de Cuenta Dedicado",
+          "Integraciones Personalizadas"
+        ]
+      }
     }
   },
   "loginPage": {
@@ -547,3 +596,5 @@
     }
   }
 }
+
+    

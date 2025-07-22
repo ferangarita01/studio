@@ -130,6 +130,12 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         >
                             {d.header.nav.features}
                         </a>
+                         <Link
+                            href={`/${lang}/pricing`}
+                            className="text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                            {d.header.nav.pricing}
+                        </Link>
                     </nav>
                     <div className="flex items-center gap-2 ml-auto">
                         <LanguageToggle dictionary={dictionary.navigation.languageToggle} />
@@ -289,3 +295,5 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
+
+    
