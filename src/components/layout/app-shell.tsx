@@ -162,7 +162,7 @@ export const useCompany = () => {
   return context;
 };
 
-function CompanySwitcher({ isClient }: { isClient: boolean }) {
+function CompanySwitcher() {
   const dictionary = useDictionaries()?.navigation;
   const { user, role } = useAuth();
   const { companies, selectedCompany, setSelectedCompany, addCompany, isLoading } = useCompany();
@@ -200,7 +200,7 @@ function CompanySwitcher({ isClient }: { isClient: boolean }) {
     return (
       <div className="text-sm text-muted-foreground p-2 text-center">
         {dictionary.companySwitcher.noCompanies}
-        {isClient && role === 'admin' && (
+        {role === 'admin' && (
            <Button variant="link" size="sm" onClick={() => setCreateOpen(true)} className="p-1">{dictionary.companySwitcher.createOne}</Button>
         )}
          <CreateCompanyDialog
@@ -259,7 +259,7 @@ function CompanySwitcher({ isClient }: { isClient: boolean }) {
               </DropdownMenuRadioItem>
             ))}
           </DropdownMenuRadioGroup>
-          {isClient && role === 'admin' && (
+          {role === 'admin' && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem onSelect={() => setCreateOpen(true)}>
@@ -344,17 +344,11 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   const pathname = usePathname();
   const router = useRouter();
   
-  const [isClient, setIsClient] = useState(false);
-
   const { isAuthenticated, isLoading: isAuthLoading, logout, role } = useAuth();
   const dictionary = useDictionaries()?.navigation;
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-  
-  const isPublicPage = pathname.endsWith('/login') || pathname.endsWith('/landing');
+  const isPublicPage = pathname.endsWith('/login') || pathname.endsWith('/landing') || pathname.endsWith('/pricing');
 
   useEffect(() => {
     if (isAuthLoading) return;
@@ -416,7 +410,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   const NavContent = () => (
     <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
       <div className="p-2">
-        <CompanySwitcher isClient={isClient} />
+        <CompanySwitcher />
       </div>
       {navItems.map((item) => {
         const label = dictionary.links[item.labelKey as keyof typeof dictionary.links];
@@ -473,7 +467,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
               <item.icon className="h-4 w-4" />
               {label}
             </div>
-            {isClient && role === 'admin' && item.labelKey === 'analyzer' && (
+            {role === 'admin' && item.labelKey === 'analyzer' && (
               <Badge variant="outline" className="text-xs">Beta</Badge>
             )}
           </Link>
@@ -501,7 +495,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
               <Logo />
             </div>
             <div className="flex-1 overflow-y-auto py-2">
-              {isClient ? <NavContent /> : <NavSkeleton />}
+              <NavContent />
             </div>
              <div className="mt-auto p-4 border-t">
                  <Button size="sm" variant="ghost" onClick={logout} className="w-full justify-start gap-2">
@@ -529,7 +523,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                     <Logo />
                  </div>
                  <div className="flex-1 overflow-y-auto py-2">
-                    {isClient ? <NavContent /> : <NavSkeleton />}
+                    <NavContent />
                  </div>
                  <div className="mt-auto p-4 border-t">
                    <Button size="sm" variant="ghost" onClick={logout} className="w-full justify-start gap-2">
@@ -549,7 +543,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
           </header>
           <main className="flex-1 overflow-auto bg-background/50">{children}</main>
         </div>
-        {isClient && <WhatsAppButton />}
+        <WhatsAppButton />
       </div>
   );
 }

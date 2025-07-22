@@ -34,7 +34,7 @@ interface PricingCardProps {
 
 const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, isPopular }) => {
   return (
-    <Card className={cn("flex flex-col", isPopular ? "border-primary shadow-lg" : "")}>
+    <Card className={cn("flex flex-col", isPopular ? "border-2 border-primary shadow-lg" : "")}>
       <CardHeader className="relative">
         {isPopular && (
           <Badge variant="default" className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2 px-3 py-1">

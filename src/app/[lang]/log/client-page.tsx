@@ -22,7 +22,6 @@ import type { Dictionary } from "@/lib/get-dictionary";
 import type { WasteEntry } from "@/lib/types";
 import { useCompany } from "@/components/layout/app-shell";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { AddWasteDialog } from "@/components/add-waste-dialog";
 import { useAuth } from "@/context/auth-context";
@@ -34,14 +33,12 @@ interface LogClientProps {
 
 export function LogClient({ dictionary }: LogClientProps) {
   const { selectedCompany } = useCompany();
-  const [isClient, setIsClient] = useState(false);
   const [isAddWasteDialogOpen, setAddWasteDialogOpen] = useState(false);
   const [allWasteLog, setAllWasteLog] = useState<WasteEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { role } = useAuth();
 
   useEffect(() => {
-    setIsClient(true);
     const fetchLog = async () => {
       setIsLoading(true);
       const log = await getWasteLog();
@@ -97,7 +94,7 @@ export function LogClient({ dictionary }: LogClientProps) {
       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <div className="flex items-center">
           <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
-           {isClient && role === 'admin' && (
+           {role === 'admin' && (
              <div className="ml-auto flex items-center gap-2">
               <Button size="sm" className="h-8 gap-1" onClick={() => setAddWasteDialogOpen(true)}>
                 <PlusCircle className="h-3.5 w-3.5" />
@@ -139,7 +136,7 @@ export function LogClient({ dictionary }: LogClientProps) {
                       return (
                         <TableRow key={entry.id}>
                           <TableCell>
-                            {isClient ? <span>{formatDate(entry.date)}</span> : <Skeleton className="h-4 w-32" />}
+                            {formatDate(entry.date)}
                           </TableCell>
                           <TableCell>
                             <Badge variant="outline">{dictionary.types[entry.type]}</Badge>
@@ -148,19 +145,15 @@ export function LogClient({ dictionary }: LogClientProps) {
                             {entry.quantity.toFixed(2)} kg
                           </TableCell>
                            <TableCell className="text-right">
-                            {isClient ? <span>{formatCurrency(entry.price)}</span> : <Skeleton className="h-4 w-16 float-right" />}
+                            {formatCurrency(entry.price)}
                           </TableCell>
                            <TableCell className="text-right">
-                            {isClient ? <span>{formatCurrency(entry.serviceCost)}</span> : <Skeleton className="h-4 w-16 float-right" />}
+                            {formatCurrency(entry.serviceCost)}
                           </TableCell>
                           <TableCell className="text-right">
-                            {isClient ? (
                               <span className={totalValue >= 0 ? 'text-primary' : 'text-destructive'}>
                                 {formatCurrency(totalValue)}
                               </span>
-                            ) : (
-                              <Skeleton className="h-4 w-20 float-right" />
-                            )}
                           </TableCell>
                         </TableRow>
                       );
@@ -187,3 +180,5 @@ export function LogClient({ dictionary }: LogClientProps) {
     </>
   );
 }
+
+    

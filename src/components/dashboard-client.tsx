@@ -56,16 +56,11 @@ export function DashboardClient({
 }: DashboardClientProps) {
   const { role } = useAuth();
   const { selectedCompany, isLoading: isCompanyContextLoading } = useCompany();
-  const [isClient, setIsClient] = React.useState(false);
   
   const [wasteDataAll, setWasteDataAll] = React.useState<Record<string, any[]>>({});
   const [wasteLogAll, setWasteLogAll] = React.useState<WasteEntry[]>([]);
   const [disposalEvents, setDisposalEvents] = React.useState<DisposalEvent[]>([]);
   const [isDataLoading, setIsDataLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   React.useEffect(() => {
     const fetchDashboardData = async () => {
@@ -145,7 +140,7 @@ export function DashboardClient({
             <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
           </div>
           <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
-             <Skeleton className="h-32 w-full" />
+             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
        </div>
   )
@@ -279,7 +274,7 @@ export function DashboardClient({
                         {disposal.wasteTypes.join(', ')} {dictionary.disposals.pickup}
                       </p>
                        <p className="text-sm text-muted-foreground">
-                          {isClient ? <span>{formatDate(disposal.date)}</span> : <Skeleton className="h-4 w-28" /> }
+                          {formatDate(disposal.date)}
                       </p>
                       <Badge variant="secondary">{dictionary.disposals.status[disposal.status as keyof typeof dictionary.disposals.status]}</Badge>
                     </div>
@@ -313,7 +308,7 @@ export function DashboardClient({
                     wasteLog.slice(0, 5).map((entry: WasteEntry) => (
                       <TableRow key={entry.id}>
                         <TableCell>
-                          {isClient ? <span>{formatShortDate(entry.date)}</span> : <Skeleton className="h-4 w-20" />}
+                          {formatShortDate(entry.date)}
                         </TableCell>
                         <TableCell>{entry.type}</TableCell>
                         <TableCell className="text-right">{entry.quantity.toFixed(2)} kg</TableCell>
@@ -335,3 +330,5 @@ export function DashboardClient({
     </div>
   );
 }
+
+    
