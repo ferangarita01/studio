@@ -76,7 +76,7 @@ export function PricingClient({ dictionary, lang }: { dictionary: Dictionary, la
 
             <main className="flex-1">
                 <section className="py-16 sm:py-24">
-                    <div className="container px-4 md:px-6">
+                    <div className="container-responsive">
                         <div className="mx-auto max-w-2xl text-center mb-12">
                             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
                                 {d.title}
@@ -95,7 +95,7 @@ export function PricingClient({ dictionary, lang }: { dictionary: Dictionary, la
             </main>
             
             <footer className="border-t">
-                <div className="container flex flex-col items-center justify-between gap-4 py-10 md:h-24 md:flex-row md:py-0">
+                <div className="container-responsive flex flex-col items-center justify-between gap-4 py-10 md:h-24 md:flex-row md:py-0">
                     <p className="text-sm text-center md:text-left text-muted-foreground">© 2024 WasteWise. {l.footer.rights}</p>
                     <p className="text-sm text-center md:text-right text-muted-foreground">{l.footer.madeWith}</p>
                 </div>

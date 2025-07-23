@@ -60,7 +60,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         />
                         <div className="absolute inset-0 bg-black/60"></div>
                     </div>
-                    <div className="container px-4 md:px-6 relative z-10">
+                    <div className="container-responsive relative z-10">
                         <div className="mx-auto max-w-4xl text-center">
                             <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">
                                {d.hero.title}
@@ -78,7 +78,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                 </section>
 
                 <section className="py-16 sm:py-24 bg-muted/50">
-                    <div className="container">
+                    <div className="container-responsive">
                         <div className="text-center mb-12">
                             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{d.valueProposition.title}</h2>
                              <div className="mt-6 flex flex-col md:flex-row items-center justify-center gap-y-4 gap-x-8 text-muted-foreground text-center">
@@ -119,7 +119,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                 </section>
 
                 <section id="use-cases" className="py-16 sm:py-24">
-                    <div className="container">
+                    <div className="container-responsive">
                         <div className="text-center mb-12">
                             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{d.useCases.title}</h2>
                             <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">{d.useCases.subtitle}</p>
@@ -145,7 +145,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                 </section>
 
                 <section id="features" className="py-16 sm:py-24 bg-muted/50">
-                    <div className="container">
+                    <div className="container-responsive">
                         <div className="text-center mb-12">
                             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{d.features.title}</h2>
                             <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">{d.features.subtitle}</p>
@@ -171,7 +171,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                 </section>
 
                 <section id="contact" className="py-20 sm:py-32">
-                    <div className="container text-center">
+                    <div className="container-responsive text-center">
                         <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{d.cta.title}</h2>
                         <p className="mt-4 text-lg md:text-xl text-muted-foreground">{d.cta.subtitle}</p>
                         <div className="mt-8">
@@ -184,7 +184,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
             </main>
             
             <footer className="border-t">
-                <div className="container flex flex-col items-center justify-between gap-4 py-10 md:h-24 md:flex-row md:py-0">
+                <div className="container-responsive flex flex-col items-center justify-between gap-4 py-10 md:h-24 md:flex-row md:py-0">
                     <p className="text-sm text-center md:text-left text-muted-foreground">© 2024 WasteWise. {d.footer.rights}</p>
                     <p className="text-sm text-center md:text-right text-muted-foreground">{d.footer.madeWith}</p>
                 </div>

@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -86,7 +87,7 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container flex h-14 items-center">
+            <div className="container-responsive flex h-14 items-center">
                 <Link href={`/${lang}/landing`} className="flex items-center gap-2 font-bold text-lg text-primary mr-auto">
                     <Recycle className="h-6 w-6" aria-hidden="true" />
                     <span>{d.header.title}</span>
