@@ -2,6 +2,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
@@ -11,6 +12,7 @@ import {
   Loader2,
   Mic,
   PlusCircle,
+  ExternalLink,
 } from "lucide-react";
 import {
   addMonths,
@@ -24,6 +26,7 @@ import {
   isToday,
   startOfMonth,
   startOfWeek,
+  addHours,
 } from "date-fns";
 import { es, enUS } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
@@ -43,7 +46,6 @@ import { cn } from "@/lib/utils";
 import { useCompany } from "@/components/layout/app-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RequestCollectionDialog } from "@/components/request-collection-dialog";
-import { useParams } from "next/navigation";
 import type { Locale } from "@/i18n-config";
 import { getDisposalEvents } from "@/services/waste-data-service";
 
@@ -56,9 +58,10 @@ const statusColors: Record<DisposalEvent["status"], string> = {
 
 interface ScheduleClientProps {
   dictionary: Dictionary["schedulePage"];
+  lang: Locale;
 }
 
-export function ScheduleClient({ dictionary }: ScheduleClientProps) {
+export function ScheduleClient({ dictionary, lang }: ScheduleClientProps) {
   const [currentMonth, setCurrentMonth] = React.useState(new Date());
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
   const [isSheetOpen, setSheetOpen] = React.useState(false);
@@ -66,8 +69,7 @@ export function ScheduleClient({ dictionary }: ScheduleClientProps) {
   const { selectedCompany } = useCompany();
   const [allEvents, setAllEvents] = React.useState<DisposalEvent[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
-  const params = useParams();
-  const lang = params.lang as Locale;
+  
   const dateLocale = lang === 'es' ? es : enUS;
 
 
@@ -116,6 +118,23 @@ export function ScheduleClient({ dictionary }: ScheduleClientProps) {
       setSelectedDate(day);
       setSheetOpen(true);
     }
+  };
+  
+  const generateGoogleCalendarUrl = (event: DisposalEvent) => {
+    const startTime = event.date;
+    const endTime = addHours(startTime, 1); // Assume 1 hour duration
+
+    const formatForGoogle = (date: Date) => {
+        return format(date, "yyyyMMdd'T'HHmmss'Z'", { locale: enUS });
+    }
+
+    const url = new URL("https://www.google.com/calendar/render");
+    url.searchParams.append("action", "TEMPLATE");
+    url.searchParams.append("text", `Waste Collection: ${event.wasteTypes.join(', ')}`);
+    url.searchParams.append("dates", `${formatForGoogle(startTime)}/${formatForGoogle(endTime)}`);
+    url.searchParams.append("details", event.instructions || `Scheduled waste collection for ${selectedCompany.name}.`);
+    
+    return url.toString();
   };
 
   const selectedDayEvents = selectedDate
@@ -274,6 +293,13 @@ export function ScheduleClient({ dictionary }: ScheduleClientProps) {
                         {dictionary.details.status[event.status]}
                       </Badge>
                     </div>
+                    
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href={generateGoogleCalendarUrl(event)} target="_blank">
+                          <ExternalLink className="mr-2 h-4 w-4" />
+                          {dictionary.details.addToGoogleCalendar}
+                        </Link>
+                    </Button>
 
                     {event.instructions && (
                       <div>

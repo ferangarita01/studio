@@ -116,8 +116,8 @@
       "button": "Solicitar Demo Personalizada"
     },
     "footer": {
-      "rights": "© 2024 EcoCircle S.A.S. E.S.P. Todos los derechos reservados.",
-      "madeWith": "WasteWise es una marca registrada de EcoCircle."
+      "rights": "Todos los derechos son de EcoCircle S.A.S. E.S.P.",
+      "madeWith": "WasteWise es una marca registrada de Ecocircle"
     }
   },
    "pricingPage": {
@@ -372,7 +372,8 @@
         "Ongoing": "En Curso",
         "Completed": "Completado",
         "Cancelled": "Cancelado"
-      }
+      },
+      "addToGoogleCalendar": "Añadir a Google Calendar"
     },
     "requestCollectionDialog": {
       "title": "Solicitar Nueva Recolección",
@@ -596,3 +597,5 @@
     }
   }
 }
+
+    

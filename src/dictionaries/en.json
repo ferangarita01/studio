@@ -116,8 +116,8 @@
       "button": "Request a Custom Demo"
     },
     "footer": {
-      "rights": "© 2024 EcoCircle S.A.S. E.S.P. All rights reserved.",
-      "madeWith": "WasteWise is a registered trademark of EcoCircle."
+      "rights": "All rights reserved by EcoCircle S.A.S. E.S.P.",
+      "madeWith": "WasteWise is a registered trademark of Ecocircle"
     }
   },
   "pricingPage": {
@@ -372,7 +372,8 @@
         "Ongoing": "Ongoing",
         "Completed": "Completed",
         "Cancelled": "Cancelled"
-      }
+      },
+      "addToGoogleCalendar": "Add to Google Calendar"
     },
     "requestCollectionDialog": {
       "title": "Request a New Collection",
@@ -596,3 +597,5 @@
     }
   }
 }
+
+    

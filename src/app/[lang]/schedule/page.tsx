@@ -11,5 +11,5 @@ export default async function SchedulePage({
   const dictionary = await getDictionary(lang);
   
   // Data is fetched on the client side to avoid hydration issues.
-  return <ScheduleClient dictionary={dictionary.schedulePage} />;
+  return <ScheduleClient dictionary={dictionary.schedulePage} lang={lang} />;
 }
