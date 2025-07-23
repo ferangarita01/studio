@@ -25,7 +25,7 @@ import { DictionariesProvider } from "@/context/dictionary-context";
 
 
 function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] }) {
-  const { login, signUp } = useAuth();
+  const { login, signUp, isLoading: isAuthLoading, isAuthenticated } = useAuth();
   const router = useRouter();
   const params = useParams();
   const lang = params.lang;
@@ -35,6 +35,13 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+
+  useEffect(() => {
+    if (!isAuthLoading && isAuthenticated) {
+      router.push(`/${lang}`);
+    }
+  }, [isAuthLoading, isAuthenticated, router, lang]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +54,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
       } else {
         await login(email, password);
       }
-      router.push(`/${lang}`);
+      // Successful login/signup will trigger the useEffect above to redirect
     } catch (err: any) {
       console.error(err);
       if (err instanceof FirebaseError && err.code === 'auth/email-already-in-use') {
@@ -60,6 +67,14 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
       setIsSubmitting(false);
     }
   };
+  
+  if (isAuthLoading || isAuthenticated) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background p-4">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    )
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
@@ -150,5 +165,3 @@ export function LoginClient({ dictionary }: { dictionary: Dictionary }) {
     </ThemeProvider>
   )
 }
-
-    

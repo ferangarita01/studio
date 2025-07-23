@@ -72,7 +72,6 @@ export function ScheduleClient({ dictionary, lang }: ScheduleClientProps) {
   
   const dateLocale = lang === 'es' ? es : enUS;
 
-
   React.useEffect(() => {
     const fetchEvents = async () => {
       setIsLoading(true);
@@ -83,6 +82,9 @@ export function ScheduleClient({ dictionary, lang }: ScheduleClientProps) {
     fetchEvents();
   }, []);
 
+  const handleEventAdded = React.useCallback((newEvent: DisposalEvent) => {
+    setAllEvents(currentEvents => [...currentEvents, newEvent].sort((a, b) => b.date.getTime() - a.date.getTime()));
+  }, []);
 
   if (!selectedCompany) {
     return (
@@ -99,10 +101,6 @@ export function ScheduleClient({ dictionary, lang }: ScheduleClientProps) {
     );
   }
   
-  const handleEventAdded = React.useCallback((newEvent: DisposalEvent) => {
-    setAllEvents(currentEvents => [...currentEvents, newEvent].sort((a, b) => b.date.getTime() - a.date.getTime()));
-  }, []);
-
   const events = allEvents.filter(event => event.companyId === selectedCompany.id);
 
   const firstDayOfMonth = startOfMonth(currentMonth);
