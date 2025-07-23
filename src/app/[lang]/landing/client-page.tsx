@@ -51,7 +51,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                 <section className="relative py-20 md:py-32">
                      <div className="absolute inset-0 z-0">
                         <Image 
-                            src="https://placehold.co/1200x800.png"
+                            src="https://storage.googleapis.com/project-spark-341015.appspot.com/generated/8348a478-de39-4171-a75d-16a76c836979.png"
                             alt="Background image of recycling for money"
                             fill
                             priority

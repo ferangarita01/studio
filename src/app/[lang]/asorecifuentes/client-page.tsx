@@ -6,7 +6,7 @@ import type { Locale } from "@/i18n-config";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { PublicHeader } from "@/components/public-header";
+import { Recycle } from "lucide-react";
 
 export function AsorecifuentesClient({
   dictionary,
@@ -19,13 +19,25 @@ export function AsorecifuentesClient({
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <PublicHeader dictionary={dictionary} lang={lang} />
+       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="container-responsive flex h-14 items-center">
+                <Link href={`/${lang}/landing`} className="flex items-center gap-2 font-bold text-lg text-primary mr-auto">
+                    <Recycle className="h-6 w-6" aria-hidden="true" />
+                    <span>{d.header.title}</span>
+                </Link>
+                <div className="flex items-center gap-2 ml-auto">
+                   <Button asChild>
+                       <Link href={`/${lang}/login`}>{d.header.login}</Link>
+                   </Button>
+                </div>
+            </div>
+        </header>
 
       <main className="flex-1">
         <section className="relative py-20 md:py-32">
           <div className="absolute inset-0 z-0">
             <Image
-              src="https://placehold.co/1200x800.png"
+              src="https://storage.googleapis.com/project-spark-341015.appspot.com/generated/8348a478-de39-4171-a75d-16a76c836979.png"
               alt="Background image of recycling for money"
               fill
               priority
