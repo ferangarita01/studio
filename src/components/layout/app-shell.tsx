@@ -348,7 +348,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   const dictionary = useDictionaries()?.navigation;
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   
-  const isPublicPage = pathname.endsWith('/login') || pathname.endsWith('/landing') || pathname.endsWith('/pricing');
+  const isPublicPage = pathname.endsWith('/login') || pathname.endsWith('/landing') || pathname.endsWith('/pricing') || pathname.endsWith('/asorecifuentes');
 
   useEffect(() => {
     if (isAuthLoading) return;

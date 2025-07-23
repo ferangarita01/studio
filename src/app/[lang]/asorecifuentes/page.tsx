@@ -1,35 +1,41 @@
 
+"use client";
+
 import { getDictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { Recycle } from "lucide-react";
+import { useEffect, useState } from "react";
+import type { Dictionary } from "@/lib/get-dictionary";
+import { PublicHeader } from "@/components/public-header";
+import { Loader2 } from "lucide-react";
 
-export default async function AsorecifuentesLandingPage({
+
+export default function AsorecifuentesPage({
   params: { lang },
 }: {
   params: { lang: Locale };
 }) {
-  const dictionary = await getDictionary(lang);
+  const [dictionary, setDictionary] = useState<Dictionary | null>(null);
+
+  useEffect(() => {
+    getDictionary(lang).then(setDictionary);
+  }, [lang]);
+
+  if (!dictionary) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
   const d = dictionary.landingPage;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      {/* Simplified static header to prevent hydration errors */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container-responsive flex h-14 items-center">
-            <Link href={`/${lang}/landing`} className="flex items-center gap-2 font-bold text-lg text-primary mr-auto">
-                <Recycle className="h-6 w-6" aria-hidden="true" />
-                <span>{d.header.title}</span>
-            </Link>
-            <div className="flex items-center gap-2 ml-auto">
-               <Button asChild>
-                   <Link href={`/${lang}/login`}>{d.header.login}</Link>
-               </Button>
-            </div>
-        </div>
-      </header>
+      <PublicHeader dictionary={dictionary} lang={lang} />
 
       <main className="flex-1">
         <section className="relative py-20 md:py-32">
@@ -85,3 +91,4 @@ export default async function AsorecifuentesLandingPage({
     </div>
   );
 }
+
