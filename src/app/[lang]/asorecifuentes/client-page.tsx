@@ -41,7 +41,7 @@ export function AsorecifuentesClient({
               alt="Background image of recycling for money"
               fill
               priority
-              className="object-cover"
+              className="object-cover text-transparent"
               data-ai-hint="recycling money"
             />
             <div className="absolute inset-0 bg-black/60"></div>
