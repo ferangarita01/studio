@@ -1,6 +1,7 @@
 
 import { getCompanyById, getWasteChartData } from "@/services/waste-data-service";
 import { EmbeddableImpactPanelClient } from "./client-page";
+import type { Locale } from "@/i18n-config";
 
 export const revalidate = 60; // Revalidate the data every 60 seconds
 
@@ -25,7 +26,7 @@ async function getImpactData(companyId: string) {
 }
 
 
-export default async function EmbeddableImpactPanel({ params }: { params: { companyId: string } }) {
+export default async function EmbeddableImpactPanel({ params }: { params: { companyId: string, lang: Locale } }) {
     const data = await getImpactData(params.companyId);
 
     if (!data) {
@@ -36,5 +37,5 @@ export default async function EmbeddableImpactPanel({ params }: { params: { comp
         );
     }
 
-    return <EmbeddableImpactPanelClient data={data} />;
+    return <EmbeddableImpactPanelClient data={data} lang={params.lang} />;
 }

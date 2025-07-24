@@ -8,7 +8,6 @@ import { Separator } from "@/components/ui/separator";
 import { Recycle, Leaf } from "lucide-react";
 import Image from 'next/image';
 import type { Company } from "@/lib/types";
-import { useParams } from "next/navigation";
 import type { Locale } from "@/i18n-config";
 
 interface ImpactData {
@@ -19,12 +18,11 @@ interface ImpactData {
 
 interface EmbeddableImpactPanelClientProps {
     data: ImpactData;
+    lang: Locale;
 }
 
-export function EmbeddableImpactPanelClient({ data }: EmbeddableImpactPanelClientProps) {
+export function EmbeddableImpactPanelClient({ data, lang }: EmbeddableImpactPanelClientProps) {
     const [lastUpdated, setLastUpdated] = useState<string | null>(null);
-    const params = useParams();
-    const lang = params.lang as Locale;
     
     useEffect(() => {
         // Set the date only on the client-side to avoid hydration mismatch
