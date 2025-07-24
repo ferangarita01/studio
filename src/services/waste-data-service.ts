@@ -91,22 +91,18 @@ export const getCachedCompanies = unstable_cache(
   { revalidate: 3600 } // Cache for 1 hour
 );
 
-export const getCompanyById = unstable_cache(
-    async (companyId: string): Promise<Company | null> => {
-        if (!companyId) return null;
-        const companyRef = ref(db, `companies/${companyId}`);
-        const snapshot = await get(companyRef);
-        if (!snapshot.exists()) {
-            return null;
-        }
-        const company = snapshot.val();
-        company.id = companyId;
-        company.logoUrl = company.logoUrl || `https://placehold.co/100x100.png?text=${company.name.charAt(0)}`;
-        return company;
-    },
-    ['company-by-id'],
-    { revalidate: 60, tags: ['company'] } // Cache for 1 minute
-);
+export async function getCompanyById(companyId: string): Promise<Company | null> {
+    if (!companyId) return null;
+    const companyRef = ref(db, `companies/${companyId}`);
+    const snapshot = await get(companyRef);
+    if (!snapshot.exists()) {
+        return null;
+    }
+    const company = snapshot.val();
+    company.id = companyId;
+    company.logoUrl = company.logoUrl || `https://placehold.co/100x100.png?text=${company.name.charAt(0)}`;
+    return company;
+}
 
 
 export async function addCompany(name: string, userId: string): Promise<Company> {

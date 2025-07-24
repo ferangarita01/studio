@@ -36,7 +36,7 @@ export function LogClient({ dictionary }: LogClientProps) {
   const [isAddWasteDialogOpen, setAddWasteDialogOpen] = useState(false);
   const [allWasteLog, setAllWasteLog] = useState<WasteEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { role } = useAuth();
+  const { role, isLoading: isAuthLoading } = useAuth(); // Use auth loading state
 
   useEffect(() => {
     const fetchLog = async () => {
@@ -88,13 +88,15 @@ export function LogClient({ dictionary }: LogClientProps) {
       year: "numeric"
     });
   }
+  
+  const showAdminFeatures = !isAuthLoading && role === 'admin';
 
   return (
     <>
       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <div className="flex items-center">
           <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
-           {role === 'admin' && (
+           {showAdminFeatures && (
              <div className="ml-auto flex items-center gap-2">
               <Button size="sm" className="h-8 gap-1" onClick={() => setAddWasteDialogOpen(true)}>
                 <PlusCircle className="h-3.5 w-3.5" />

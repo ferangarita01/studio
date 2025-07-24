@@ -56,7 +56,7 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(null);
   const { toast } = useToast();
-  const { user, role } = useAuth();
+  const { user, role, isLoading: isAuthLoading } = useAuth(); // Use auth loading state
   
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -128,6 +128,7 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
     }).format(amount);
   };
 
+  const showAdminFeatures = !isAuthLoading && role === 'admin';
 
   return (
     <>
@@ -135,7 +136,7 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
         <div className="flex items-center">
           <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
            <div className="ml-auto flex items-center gap-2">
-             {role === 'admin' && (
+             {showAdminFeatures && (
                 <Button size="sm" className="h-8 gap-1" onClick={handleAdd}>
                   <PlusCircle className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -158,7 +159,7 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
                     <TableHead>{dictionary.table.name}</TableHead>
                     <TableHead>{dictionary.table.type}</TableHead>
                     <TableHead className="text-right">{dictionary.table.pricePerKg}</TableHead>
-                    {role === 'admin' && (
+                    {showAdminFeatures && (
                       <TableHead className="w-[50px]"><span className="sr-only">{dictionary.table.actions}</span></TableHead>
                     )}
                   </TableRow>
@@ -166,7 +167,7 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
                 <TableBody>
                   {isLoading ? (
                      <TableRow>
-                      <TableCell colSpan={role === 'admin' ? 4 : 3} className="h-24 text-center">
+                      <TableCell colSpan={showAdminFeatures ? 4 : 3} className="h-24 text-center">
                          <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                       </TableCell>
                     </TableRow>
@@ -180,7 +181,7 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
                         <TableCell className="text-right">
                            {formatCurrency(material.pricePerKg)}
                         </TableCell>
-                        {role === 'admin' && (
+                        {showAdminFeatures && (
                           <TableCell>
                             <AlertDialog>
                               <DropdownMenu>
@@ -218,7 +219,7 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={role === 'admin' ? 4 : 3} className="h-24 text-center">
+                      <TableCell colSpan={showAdminFeatures ? 4 : 3} className="h-24 text-center">
                         {dictionary.noMaterials}
                       </TableCell>
                     </TableRow>

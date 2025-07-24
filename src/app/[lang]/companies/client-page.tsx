@@ -25,6 +25,7 @@ import { getUsers, assignUserToCompany, updateCompany, getCompanies } from "@/se
 import { AssignUserDialog } from "@/components/assign-user-dialog";
 import { EditCompanyDialog } from "@/components/edit-company-dialog";
 import { Loader2 } from "lucide-react";
+import { useAuth } from "@/context/auth-context";
 
 interface CompaniesClientProps {
   dictionary: Dictionary["companiesPage"];
@@ -38,6 +39,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const { toast } = useToast();
+  const { role, isLoading: isAuthLoading } = useAuth();
   
   useEffect(() => {
     const fetchData = async () => {
@@ -118,6 +120,8 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
     }
   }, [toast, dictionary]);
 
+  const showAdminFeatures = !isAuthLoading && role === 'admin';
+
   return (
     <>
       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -136,13 +140,15 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
                   <TableRow>
                     <TableHead>{dictionary.table.companyName}</TableHead>
                     <TableHead>{dictionary.table.assignedClient}</TableHead>
-                    <TableHead className="w-[250px] text-right"><span className="sr-only">{dictionary.table.actions}</span></TableHead>
+                    {showAdminFeatures && (
+                      <TableHead className="w-[250px] text-right"><span className="sr-only">{dictionary.table.actions}</span></TableHead>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={3} className="h-24 text-center">
+                      <TableCell colSpan={showAdminFeatures ? 3 : 2} className="h-24 text-center">
                         <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                       </TableCell>
                     </TableRow>
@@ -153,19 +159,21 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
                         <TableCell>
                           {company.assignedUserName || <span className="text-muted-foreground">{dictionary.table.unassigned}</span>}
                         </TableCell>
-                        <TableCell className="text-right space-x-2">
-                            <Button variant="outline" size="sm" onClick={() => handleOpenEditDialog(company)}>
-                                {dictionary.table.edit}
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={() => handleOpenAssignDialog(company)}>
-                                {company.assignedUserUid ? dictionary.table.reassign : dictionary.table.assign}
-                            </Button>
-                        </TableCell>
+                        {showAdminFeatures && (
+                          <TableCell className="text-right space-x-2">
+                              <Button variant="outline" size="sm" onClick={() => handleOpenEditDialog(company)}>
+                                  {dictionary.table.edit}
+                              </Button>
+                              <Button variant="outline" size="sm" onClick={() => handleOpenAssignDialog(company)}>
+                                  {company.assignedUserUid ? dictionary.table.reassign : dictionary.table.assign}
+                              </Button>
+                          </TableCell>
+                        )}
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={3} className="h-24 text-center">
+                      <TableCell colSpan={showAdminFeatures ? 3 : 2} className="h-24 text-center">
                         {dictionary.noCompanies}
                       </TableCell>
                     </TableRow>
@@ -176,21 +184,25 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
           </CardContent>
         </Card>
       </div>
-      <AssignUserDialog
-        open={isAssignDialogOpen}
-        onOpenChange={setAssignDialogOpen}
-        dictionary={dictionary.assignDialog}
-        clients={clients}
-        company={selectedCompany}
-        onAssign={handleAssignUser}
-      />
-      <EditCompanyDialog
-        open={isEditDialogOpen}
-        onOpenChange={setEditDialogOpen}
-        dictionary={dictionary.editDialog}
-        company={selectedCompany}
-        onUpdate={handleUpdateCompany}
-      />
+      {showAdminFeatures && (
+        <>
+          <AssignUserDialog
+            open={isAssignDialogOpen}
+            onOpenChange={setAssignDialogOpen}
+            dictionary={dictionary.assignDialog}
+            clients={clients}
+            company={selectedCompany}
+            onAssign={handleAssignUser}
+          />
+          <EditCompanyDialog
+            open={isEditDialogOpen}
+            onOpenChange={setEditDialogOpen}
+            dictionary={dictionary.editDialog}
+            company={selectedCompany}
+            onUpdate={handleUpdateCompany}
+          />
+        </>
+      )}
     </>
   );
 }

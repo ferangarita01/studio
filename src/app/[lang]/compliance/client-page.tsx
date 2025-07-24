@@ -13,7 +13,9 @@ export function ComplianceClient({
 }: {
   dictionary: Dictionary["compliancePage"];
 }) {
-  const { role } = useAuth();
+  const { role, isLoading } = useAuth();
+  
+  const showAdminFeatures = !isLoading && role === 'admin';
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -23,7 +25,7 @@ export function ComplianceClient({
                 <h1 className="text-3xl font-semibold">{dictionary.title}</h1>
                 <p className="text-muted-foreground">{dictionary.description}</p>
             </div>
-            {role === 'admin' && (
+            {showAdminFeatures && (
                 <Button size="sm" className="h-8 gap-1 mt-4 sm:mt-0">
                     <PlusCircle className="h-3.5 w-3.5" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -43,7 +45,7 @@ export function ComplianceClient({
             <CardContent>
                  <p>{dictionary.main.content}</p>
             </CardContent>
-            {role === 'admin' && (
+            {showAdminFeatures && (
                  <CardFooter className="border-t px-6 py-4">
                     <Button variant="outline" size="sm">
                         <Pencil className="mr-2 h-4 w-4" />
@@ -62,7 +64,7 @@ export function ComplianceClient({
             <CardContent className="flex-grow">
                 <p className="text-sm text-muted-foreground">{dictionary.cards.regulations.description}</p>
             </CardContent>
-             {role === 'admin' && (
+             {showAdminFeatures && (
                 <CardFooter>
                     <Button className="w-full">{dictionary.admin.manage}</Button>
                 </CardFooter>
@@ -76,7 +78,7 @@ export function ComplianceClient({
             <CardContent className="flex-grow">
                  <p className="text-sm text-muted-foreground">{dictionary.cards.reports.description}</p>
             </CardContent>
-             {role === 'admin' && (
+             {showAdminFeatures && (
                 <CardFooter>
                     <Button className="w-full">{dictionary.admin.manage}</Button>
                 </CardFooter>
@@ -90,7 +92,7 @@ export function ComplianceClient({
             <CardContent className="flex-grow">
                  <p className="text-sm text-muted-foreground">{dictionary.cards.audits.description}</p>
             </CardContent>
-            {role === 'admin' && (
+            {showAdminFeatures && (
                 <CardFooter>
                     <Button className="w-full">{dictionary.admin.manage}</Button>
                 </CardFooter>

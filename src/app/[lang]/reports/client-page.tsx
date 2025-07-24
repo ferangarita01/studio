@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import type { Dictionary } from "@/lib/get-dictionary";
@@ -208,7 +208,7 @@ export function ReportsClient({
   dictionary,
 }: ReportsClientProps) {
   const { selectedCompany } = useCompany();
-  const { role } = useAuth();
+  const { role, isLoading: isAuthLoading } = useAuth();
   const [weeklyDataAll, setWeeklyDataAll] = useState<Record<string, ReportData>>({});
   const [monthlyDataAll, setMonthlyDataAll] = useState<Record<string, ReportData>>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -226,6 +226,8 @@ export function ReportsClient({
     };
     fetchReports();
   }, []);
+  
+  const showAdminFeatures = !isAuthLoading && role === 'admin';
 
   if (!selectedCompany) {
     return (
@@ -266,14 +268,14 @@ export function ReportsClient({
         <Tabs defaultValue="weekly" className="space-y-4">
           <TabsList>
             <TabsTrigger value="weekly">{dictionary.tabs.weekly}</TabsTrigger>
-            {role === 'admin' && (
+            {showAdminFeatures && (
               <TabsTrigger value="monthly">{dictionary.tabs.monthly}</TabsTrigger>
             )}
           </TabsList>
           <TabsContent value="weekly" className="space-y-4">
             <ReportView dictionary={dictionary.reportView} data={weeklyData} />
           </TabsContent>
-          {role === 'admin' && (
+          {showAdminFeatures && (
             <TabsContent value="monthly" className="space-y-4">
               <ReportView dictionary={dictionary.reportView} data={monthlyData} />
             </TabsContent>
