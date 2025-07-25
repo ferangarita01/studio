@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, Languages, Recycle } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import type { Dictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import { useTheme } from "next-themes";
@@ -84,6 +84,11 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
     const d = dictionary.landingPage;
     const pathname = usePathname();
     const isPricingPage = pathname.includes('/pricing');
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -115,8 +120,12 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
                     </Link>
                 </nav>
                 <div className="flex items-center gap-2 ml-auto">
-                    <LanguageToggle dictionary={dictionary.navigation.languageToggle} />
-                    <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
+                    {isClient && (
+                        <>
+                            <LanguageToggle dictionary={dictionary.navigation.languageToggle} />
+                            <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
+                        </>
+                    )}
                    <Button asChild>
                        <Link href={`/${lang}/login`}>{d.header.login}</Link>
                    </Button>

@@ -37,7 +37,7 @@ export function AsorecifuentesClient({
         <section className="relative py-20 md:py-32">
           <div className="absolute inset-0 z-0">
             <Image
-              src="https://storage.googleapis.com/project-spark-341015.appspot.com/generated/8348a478-de39-4171-a75d-16a76c836979.png"
+              src="https://storage.googleapis.com/project-spark-341015.appspot.com/generated/a95267a8-3868-450f-9357-195b6c310b1a.png"
               alt="Background image of recycling for money"
               fill
               priority
