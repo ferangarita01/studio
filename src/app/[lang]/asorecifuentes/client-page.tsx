@@ -6,7 +6,7 @@ import type { Locale } from "@/i18n-config";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { Recycle } from "lucide-react";
+import { Recycle, ExternalLink } from "lucide-react";
 
 export function AsorecifuentesClient({
   dictionary,
@@ -37,12 +37,12 @@ export function AsorecifuentesClient({
         <section className="relative py-20 md:py-32">
           <div className="absolute inset-0 z-0">
             <Image
-              src="https://space.gov.ae/app_themes/lg21016/images/Sustainability%20Development%20Goals.png"
+              src="https://www.rmcad.edu/wp-content/uploads/2025/03/shutterstock_1798767082-scaled.jpg"
               alt="Background image of recycling for money"
               fill
               priority
               className="object-cover text-transparent"
-              data-ai-hint="sustainability goals"
+              data-ai-hint="sustainability demonstration"
             />
             <div className="absolute inset-0 bg-black/60"></div>
           </div>
@@ -67,6 +67,23 @@ export function AsorecifuentesClient({
               <div className="mt-10">
                 <Button size="lg" asChild>
                   <Link href={`/${lang}/login`}>{d.hero.cta}</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="partnership" className="py-16 sm:py-24 bg-muted/50">
+          <div className="container-responsive">
+            <div className="text-center max-w-3xl mx-auto">
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{d.partnership.title}</h2>
+              <p className="text-muted-foreground mt-4">{d.partnership.description}</p>
+              <div className="mt-8">
+                <Button asChild>
+                  <Link href="https://asorecifuente.com/" target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    {d.partnership.cta}
+                  </Link>
                 </Button>
               </div>
             </div>
