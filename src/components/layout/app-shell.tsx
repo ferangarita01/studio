@@ -62,7 +62,7 @@ const Logo = () => {
   if (!dictionary) return null;
   return (
     <Link href="/" className="flex items-center gap-2 font-semibold text-primary">
-      <Recycle className="h-6 w-6" />
+      <Image src="https://placehold.co/40x40.png" alt="WasteWise Logo" width={32} height={32} data-ai-hint="logo" />
       <span className="text-lg">{dictionary.title}</span>
     </Link>
   );
@@ -545,7 +545,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
           <main className="flex-1 overflow-auto bg-background/50 relative">
             <div className="absolute inset-0 z-[-1]">
               <Image
-                src="https://storage.googleapis.com/project-spark-341015.appspot.com/generated/a95267a8-3868-450f-9357-195b6c310b1a.png"
+                src="https://storage.googleapis.com/project-spark-341015.appspot.com/generated/3de55a69-a642-4ec4-9426-ba10d32e96b3.png"
                 alt="Background image of recycling for money"
                 fill
                 priority

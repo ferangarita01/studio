@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 function ThemeToggle({ dictionary }: { dictionary: Dictionary["navigation"]["themeToggle"] }) {
   const { setTheme } = useTheme();
@@ -94,7 +95,7 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container-responsive flex h-14 items-center">
                 <Link href={`/${lang}/landing`} className="flex items-center gap-2 font-bold text-lg text-primary mr-auto">
-                    <Recycle className="h-6 w-6" aria-hidden="true" />
+                    <Image src="https://placehold.co/40x40.png" alt="WasteWise Logo" width={32} height={32} data-ai-hint="logo" />
                     <span>{d.header.title}</span>
                 </Link>
                 <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
