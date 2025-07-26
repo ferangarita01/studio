@@ -53,7 +53,7 @@ interface DashboardClientProps {
 export function DashboardClient({
   dictionary,
 }: DashboardClientProps) {
-  const { role } = useAuth();
+  const { role, isLoading: isAuthLoading } = useAuth();
   const { selectedCompany, isLoading: isCompanyContextLoading } = useCompany();
   
   const [wasteDataAll, setWasteDataAll] = React.useState<Record<string, any[]>>({});
@@ -64,6 +64,9 @@ export function DashboardClient({
 
   React.useEffect(() => {
     setIsClient(true);
+  }, []);
+
+  React.useEffect(() => {
     const fetchDashboardData = async () => {
       if (!selectedCompany) {
         setIsDataLoading(false);
@@ -146,7 +149,7 @@ export function DashboardClient({
        </div>
   )
 
-  if (isCompanyContextLoading) {
+  if (isCompanyContextLoading || isAuthLoading) {
       return renderLoadingState();
   }
   
