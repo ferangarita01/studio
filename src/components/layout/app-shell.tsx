@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useState, createContext, useContext, useMemo, useEffect } from "react";
+import Image from "next/image";
 import {
   BrainCircuit,
   Calendar,
@@ -541,7 +542,20 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
               <ThemeToggle />
             </div>
           </header>
-          <main className="flex-1 overflow-auto bg-background/50">{children}</main>
+          <main className="flex-1 overflow-auto bg-background/50 relative">
+            <div className="absolute inset-0 z-[-1]">
+              <Image
+                src="https://storage.googleapis.com/project-spark-341015.appspot.com/generated/a95267a8-3868-450f-9357-195b6c310b1a.png"
+                alt="Background image of recycling for money"
+                fill
+                priority
+                className="object-cover opacity-5 blur-sm"
+              />
+            </div>
+            <div className="relative z-0">
+              {children}
+            </div>
+          </main>
         </div>
         <WhatsAppButton />
       </div>
