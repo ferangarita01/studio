@@ -50,10 +50,52 @@ interface DashboardClientProps {
   dictionary: Dictionary["dashboard"];
 }
 
+function WelcomeMessage({ dictionary }: { dictionary: Dictionary["dashboard"]["welcome"] }) {
+  const { role } = useAuth();
+  const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  return (
+    <div className="text-center max-w-4xl mx-auto">
+      <h3 className="mt-4 text-2xl font-bold">{dictionary.title}</h3>
+      <div className="text-muted-foreground mt-4">
+        <p>{dictionary.description}</p>
+        <div className="mt-8 text-left">
+          <h4 className="font-semibold text-lg mb-4 text-center">{dictionary.whatToExpect.title}</h4>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div><strong>{dictionary.whatToExpect.items.centralDashboard.title}</strong> {dictionary.whatToExpect.items.centralDashboard.description}</div>
+            <div><strong>{dictionary.whatToExpect.items.aiAnalyzer.title}</strong> {dictionary.whatToExpect.items.aiAnalyzer.description}</div>
+            <div><strong>{dictionary.whatToExpect.items.wasteLog.title}</strong> {dictionary.whatToExpect.items.wasteLog.description}</div>
+            <div><strong>{dictionary.whatToExpect.items.calendar.title}</strong> {dictionary.whatToExpect.items.calendar.description}</div>
+            <div><strong>{dictionary.whatToExpect.items.detailedReports.title}</strong> {dictionary.whatToExpect.items.detailedReports.description}</div>
+            <div><strong>{dictionary.whatToExpect.items.materials.title}</strong> {dictionary.whatToExpect.items.materials.description}</div>
+          </div>
+        </div>
+        <div className="mt-8">
+          <h4 className="font-semibold text-lg">{dictionary.gettingStarted.title}</h4>
+          {isClient && (
+            <div className="text-muted-foreground mt-2">
+              {role === 'admin' ? (
+                <p>{dictionary.gettingStarted.adminText}</p>
+              ) : (
+                <p>{dictionary.gettingStarted.clientText}</p>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 export function DashboardClient({
   dictionary,
 }: DashboardClientProps) {
-  const { role, isLoading: isAuthLoading } = useAuth();
+  const { isAuthLoading } = useAuth();
   const { selectedCompany, isLoading: isCompanyContextLoading } = useCompany();
   
   const [wasteDataAll, setWasteDataAll] = React.useState<Record<string, any[]>>({});
@@ -104,40 +146,6 @@ export function DashboardClient({
     }).format(new Date(date));
   }
 
-  const WelcomeMessage = () => (
-     <div className="text-center max-w-4xl mx-auto">
-      <h3 className="mt-4 text-2xl font-bold">{dictionary.welcome.title}</h3>
-      <div className="text-muted-foreground mt-4">
-        <p>{dictionary.welcome.description}</p>
-      
-        <div className="mt-8 text-left">
-          <h4 className="font-semibold text-lg mb-4 text-center">{dictionary.welcome.whatToExpect.title}</h4>
-          <div className="grid md:grid-cols-2 gap-6">
-              <div><strong>{dictionary.welcome.whatToExpect.items.centralDashboard.title}</strong> {dictionary.welcome.whatToExpect.items.centralDashboard.description}</div>
-              <div><strong>{dictionary.welcome.whatToExpect.items.aiAnalyzer.title}</strong> {dictionary.welcome.whatToExpect.items.aiAnalyzer.description}</div>
-              <div><strong>{dictionary.welcome.whatToExpect.items.wasteLog.title}</strong> {dictionary.welcome.whatToExpect.items.wasteLog.description}</div>
-              <div><strong>{dictionary.welcome.whatToExpect.items.calendar.title}</strong> {dictionary.welcome.whatToExpect.items.calendar.description}</div>
-              <div><strong>{dictionary.welcome.whatToExpect.items.detailedReports.title}</strong> {dictionary.welcome.whatToExpect.items.detailedReports.description}</div>
-              <div><strong>{dictionary.welcome.whatToExpect.items.materials.title}</strong> {dictionary.welcome.whatToExpect.items.materials.description}</div>
-          </div>
-        </div>
-
-        <div className="mt-8">
-          <h4 className="font-semibold text-lg">{dictionary.welcome.gettingStarted.title}</h4>
-          {isClient && (
-             <div className="text-muted-foreground mt-2">
-              {role === 'admin' ? (
-                 <p>{dictionary.welcome.gettingStarted.adminText}</p>
-              ) : (
-                <p>{dictionary.welcome.gettingStarted.clientText}</p>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-
   const renderLoadingState = () => (
       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="flex items-center">
@@ -160,7 +168,7 @@ export function DashboardClient({
             <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
           </div>
           <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
-            <WelcomeMessage />
+            <WelcomeMessage dictionary={dictionary.welcome} />
           </div>
        </div>
     );

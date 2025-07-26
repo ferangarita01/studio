@@ -12,10 +12,10 @@ export function AsorecifuentesClient({
   dictionary,
   lang,
 }: {
-  dictionary: Dictionary;
+  dictionary: Dictionary["asorecifuentesPage"];
   lang: Locale;
 }) {
-  const d = dictionary.asorecifuentesPage;
+  const d = dictionary;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">

@@ -10,5 +10,5 @@ export default async function AsorecifuentesPage({
 }) {
   const dictionary = await getDictionary(lang);
 
-  return <AsorecifuentesClient dictionary={dictionary} lang={lang} />;
+  return <AsorecifuentesClient dictionary={dictionary.asorecifuentesPage} lang={lang} />;
 }
