@@ -15,7 +15,8 @@ export function AsorecifuentesClient({
   dictionary: Dictionary;
   lang: Locale;
 }) {
-  const d = dictionary.landingPage;
+  const d = dictionary.asorecifuentesPage;
+  const footerDict = dictionary.landingPage.footer;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -94,10 +95,10 @@ export function AsorecifuentesClient({
       <footer className="border-t">
         <div className="container-responsive flex flex-col items-center justify-between gap-4 py-10 md:h-24 md:flex-row md:py-0">
           <p className="text-sm text-center md:text-left text-muted-foreground">
-            © 2024 EcoCircle S.A.S. E.S.P. {d.footer.rights}
+            © 2024 EcoCircle S.A.S. E.S.P. {footerDict.rights}
           </p>
           <p className="text-sm text-center md:text-right text-muted-foreground">
-            {d.footer.madeWith}
+            {footerDict.madeWith}
           </p>
         </div>
       </footer>

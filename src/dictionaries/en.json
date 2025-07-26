@@ -131,6 +131,21 @@
       "subtitle": "Join WasteWise today and take the first step towards a more sustainable and profitable future.",
       "button": "Request a Custom Demo"
     },
+    "footer": {
+      "rights": "All rights reserved by EcoCircle S.A.S. E.S.P.",
+      "madeWith": "WasteWise is a registered trademark of Ecocircle"
+    }
+  },
+   "asorecifuentesPage": {
+    "header": {
+      "title": "Asorecifuentes",
+      "login": "Log In"
+    },
+    "hero": {
+      "title": "Asorecifuentes",
+      "subtitle": "Strengthening the recycling chain from the ground up.",
+      "cta": "Learn More"
+    },
     "partnership": {
       "title": "Ecocircle Supports its Associates",
       "description": "In our commitment to strengthening the recycling chain, Ecocircle has proudly partnered with Asorecifuentes, a key association of recyclers. This alliance allows us to directly support grassroots recyclers, providing them with tools and technology to formalize their work, improve their income, and enhance their quality of life. Together, we are building a more inclusive and sustainable future for all.",
