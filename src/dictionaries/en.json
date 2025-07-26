@@ -92,6 +92,22 @@
       "events": {
         "title": "For Events",
         "description": "Optimize cleanup by 60% and enhance your sustainability image."
+      },
+      "universities": {
+        "title": "For Universities",
+        "description": "Foster a culture of sustainability and generate resources for research and scholarships."
+      },
+      "recyclers": {
+        "title": "For Recycling Companies",
+        "description": "Optimize collection logistics and increase the material recovery rate."
+      },
+      "construction": {
+        "title": "For Construction",
+        "description": "Efficiently manage construction waste, complying with environmental regulations."
+      },
+      "factories": {
+        "title": "For Factories",
+        "description": "Reduce waste, identify reuse opportunities, and lower disposal costs."
       }
     },
     "features": {
@@ -597,5 +613,3 @@
     }
   }
 }
-
-    

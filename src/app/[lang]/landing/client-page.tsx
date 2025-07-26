@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { AreaChart, FileText, Bot, Recycle, Building, School, PartyPopper, CheckCircle2, XCircle } from "lucide-react";
+import { AreaChart, FileText, Bot, Recycle, Building, School, PartyPopper, CheckCircle2, XCircle, GraduationCap, HardHat, Factory } from "lucide-react";
 import React from "react";
 import type { Dictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
@@ -124,7 +124,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{d.useCases.title}</h2>
                             <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">{d.useCases.subtitle}</p>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                              <UseCaseCard 
                                 icon={<Building className="w-8 h-8" />}
                                 title={d.useCases.companies.title}
@@ -139,6 +139,26 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                                 icon={<PartyPopper className="w-8 h-8" />}
                                 title={d.useCases.events.title}
                                 description={d.useCases.events.description}
+                            />
+                             <UseCaseCard 
+                                icon={<GraduationCap className="w-8 h-8" />}
+                                title={d.useCases.universities.title}
+                                description={d.useCases.universities.description}
+                            />
+                             <UseCaseCard 
+                                icon={<Recycle className="w-8 h-8" />}
+                                title={d.useCases.recyclers.title}
+                                description={d.useCases.recyclers.description}
+                            />
+                             <UseCaseCard 
+                                icon={<HardHat className="w-8 h-8" />}
+                                title={d.useCases.construction.title}
+                                description={d.useCases.construction.description}
+                            />
+                             <UseCaseCard 
+                                icon={<Factory className="w-8 h-8" />}
+                                title={d.useCases.factories.title}
+                                description={d.useCases.factories.description}
                             />
                         </div>
                     </div>

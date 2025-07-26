@@ -92,6 +92,22 @@
       "events": {
         "title": "Para Eventos",
         "description": "Optimiza la limpieza en un 60% y mejora tu imagen de sostenibilidad."
+      },
+      "universities": {
+        "title": "Para Universidades",
+        "description": "Fomenta una cultura de sostenibilidad y genera recursos para investigación y becas."
+      },
+      "recyclers": {
+        "title": "Para Recicladoras",
+        "description": "Optimiza la logística de recolección y aumenta la tasa de recuperación de materiales."
+      },
+      "construction": {
+        "title": "Para Constructoras",
+        "description": "Gestiona los residuos de obra de forma eficiente, cumpliendo con la normativa ambiental."
+      },
+      "factories": {
+        "title": "Para Fábricas",
+        "description": "Reduce mermas, identifica oportunidades de reutilización y disminuye costos de disposición."
       }
     },
     "features": {
@@ -597,5 +613,3 @@
     }
   }
 }
-
-    
