@@ -36,7 +36,12 @@ export function LogClient({ dictionary }: LogClientProps) {
   const [isAddWasteDialogOpen, setAddWasteDialogOpen] = useState(false);
   const [allWasteLog, setAllWasteLog] = useState<WasteEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { role, isLoading: isAuthLoading } = useAuth(); // Use auth loading state
+  const { role, isLoading: isAuthLoading } = useAuth();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     const fetchLog = async () => {
@@ -89,7 +94,7 @@ export function LogClient({ dictionary }: LogClientProps) {
     });
   }
   
-  const showAdminFeatures = !isAuthLoading && role === 'admin';
+  const showAdminFeatures = isClient && !isAuthLoading && role === 'admin';
 
   return (
     <>
