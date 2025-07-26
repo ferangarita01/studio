@@ -51,12 +51,12 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                 <section className="relative py-20 md:py-32">
                      <div className="absolute inset-0 z-0">
                         <Image 
-                            src="https://storage.googleapis.com/project-spark-341015.appspot.com/generated/a95267a8-3868-450f-9357-195b6c310b1a.png"
+                            src="https://cdn.pixabay.com/photo/2019/05/10/09/55/demonstration-4193109_1280.jpg"
                             alt="Background image of recycling for money"
                             fill
                             priority
                             className="object-cover text-transparent"
-                            data-ai-hint="recycling money"
+                            data-ai-hint="environment protest"
                         />
                         <div className="absolute inset-0 bg-black/60"></div>
                     </div>

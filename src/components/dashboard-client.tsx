@@ -60,8 +60,10 @@ export function DashboardClient({
   const [wasteLogAll, setWasteLogAll] = React.useState<WasteEntry[]>([]);
   const [disposalEvents, setDisposalEvents] = React.useState<DisposalEvent[]>([]);
   const [isDataLoading, setIsDataLoading] = React.useState(true);
+  const [isClient, setIsClient] = React.useState(false);
 
   React.useEffect(() => {
+    setIsClient(true);
     const fetchDashboardData = async () => {
       if (!selectedCompany) {
         setIsDataLoading(false);
@@ -119,13 +121,15 @@ export function DashboardClient({
 
         <div className="mt-8">
           <h4 className="font-semibold text-lg">{dictionary.welcome.gettingStarted.title}</h4>
-          <div className="text-muted-foreground mt-2">
-            {role === 'admin' ? (
-               <p>{dictionary.welcome.gettingStarted.adminText}</p>
-            ) : (
-              <p>{dictionary.welcome.gettingStarted.clientText}</p>
-            )}
-          </div>
+          {isClient && (
+             <div className="text-muted-foreground mt-2">
+              {role === 'admin' ? (
+                 <p>{dictionary.welcome.gettingStarted.adminText}</p>
+              ) : (
+                <p>{dictionary.welcome.gettingStarted.clientText}</p>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

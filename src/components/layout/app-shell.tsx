@@ -545,12 +545,12 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
           <main className="flex flex-1 flex-col overflow-auto bg-background/50 relative">
             <div className="absolute inset-0 z-[-1]">
                 <Image
-                    src="https://storage.googleapis.com/project-spark-341015.appspot.com/generated/a95267a8-3868-450f-9357-195b6c310b1a.png"
+                    src="https://cdn.pixabay.com/photo/2019/05/10/09/55/demonstration-4193109_1280.jpg"
                     alt="Abstract background representing recycling and data"
                     fill
                     priority
                     className="object-cover opacity-5 blur-sm"
-                    data-ai-hint="abstract recycling data"
+                    data-ai-hint="environment protest"
                 />
             </div>
             <div className="relative z-10">

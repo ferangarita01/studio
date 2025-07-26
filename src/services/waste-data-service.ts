@@ -111,7 +111,7 @@ export async function addCompany(name: string, userId: string): Promise<Company>
     name, 
     createdBy: userId,
     logoUrl: `https://placehold.co/100x100.png?text=${name.charAt(0)}`,
-    coverImageUrl: 'https://storage.googleapis.com/project-spark-341015.appspot.com/generated/a95267a8-3868-450f-9357-195b6c310b1a.png'
+    coverImageUrl: 'https://cdn.pixabay.com/photo/2019/05/10/09/55/demonstration-4193109_1280.jpg'
   };
   const companiesRef = ref(db, 'companies');
   const newCompanyRef = push(companiesRef);
