@@ -16,7 +16,6 @@ export function AsorecifuentesClient({
   lang: Locale;
 }) {
   const d = dictionary.asorecifuentesPage;
-  const landingDict = dictionary.landingPage;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">

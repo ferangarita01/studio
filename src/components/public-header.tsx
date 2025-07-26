@@ -126,14 +126,14 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
                     <LanguageToggle dictionary={dictionary.navigation.languageToggle} />
                     <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
                   {isClient && (
-                    <>
+                    <div className="hidden md:flex items-center gap-2">
                       <Button asChild>
                           <Link href={`/${lang}/login`}>{d.header.login}</Link>
                       </Button>
                       <Button asChild variant="outline">
                           <Link href={`/${lang}/landing#contact`}>{d.header.getStarted}</Link>
                       </Button>
-                    </>
+                    </div>
                   )}
                 </div>
             </div>
