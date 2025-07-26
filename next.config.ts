@@ -34,6 +34,12 @@ const nextConfig: NextConfig = {
         hostname: 'www.rmcad.edu',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'space.gov.ae',
+        port: '',
+        pathname: '/**',
       }
     ],
   },

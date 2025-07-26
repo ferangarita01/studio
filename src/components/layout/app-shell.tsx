@@ -545,12 +545,12 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
           <main className="flex flex-1 flex-col overflow-auto bg-background/50 relative">
             <div className="absolute inset-0 z-[-1]">
                 <Image
-                    src="https://www.rmcad.edu/wp-content/uploads/2025/03/shutterstock_1798767082-scaled.jpg"
+                    src="https://space.gov.ae/app_themes/lg21016/images/Sustainability%20Development%20Goals.png"
                     alt="Abstract background representing recycling and data"
                     fill
                     priority
                     className="object-cover opacity-5 blur-sm"
-                    data-ai-hint="environment protest"
+                    data-ai-hint="sustainability goals"
                 />
             </div>
             <div className="relative z-10">

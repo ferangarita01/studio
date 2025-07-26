@@ -111,7 +111,7 @@ export async function addCompany(name: string, userId: string): Promise<Company>
     name, 
     createdBy: userId,
     logoUrl: `https://placehold.co/100x100.png?text=${name.charAt(0)}`,
-    coverImageUrl: 'https://www.rmcad.edu/wp-content/uploads/2025/03/shutterstock_1798767082-scaled.jpg'
+    coverImageUrl: 'https://space.gov.ae/app_themes/lg21016/images/Sustainability%20Development%20Goals.png'
   };
   const companiesRef = ref(db, 'companies');
   const newCompanyRef = push(companiesRef);

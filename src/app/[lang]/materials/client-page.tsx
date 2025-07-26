@@ -57,6 +57,11 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
   const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(null);
   const { toast } = useToast();
   const { user, role, isLoading: isAuthLoading } = useAuth(); // Use auth loading state
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -128,7 +133,7 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
     }).format(amount);
   };
 
-  const showAdminFeatures = !isAuthLoading && role === 'admin';
+  const showAdminFeatures = isClient && !isAuthLoading && role === 'admin';
 
   return (
     <>
