@@ -142,9 +142,9 @@
       "login": "Iniciar Sesión"
     },
     "hero": {
-      "title": "Asorecifuentes",
-      "subtitle": "Fortaleciendo la cadena de reciclaje desde la base.",
-      "cta": "Conocer Más"
+      "title": "Asorecifuente E.S.P.",
+      "subtitle": "La sostenibilidad es vida",
+      "cta": "Calcula tus ingresos"
     },
     "partnership": {
       "title": "Ecocircle Apoya a sus Asociados",
@@ -155,7 +155,7 @@
       "rights": "© 2024 EcoCircle S.A.S. E.S.P. Todos los derechos reservados."
     }
   },
-   "pricingPage": {
+  "pricingPage": {
     "title": "Precios Simples y Transparentes",
     "subtitle": "Elige el plan adecuado para tu negocio. Sin comisiones ocultas, nunca.",
     "plans": {
@@ -632,3 +632,5 @@
     }
   }
 }
+
+    
