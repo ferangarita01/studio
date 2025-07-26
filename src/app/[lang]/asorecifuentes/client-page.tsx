@@ -12,10 +12,20 @@ export function AsorecifuentesClient({
   dictionary,
   lang,
 }: {
-  dictionary: Dictionary["asorecifuentesPage"];
+  dictionary: Dictionary;
   lang: Locale;
 }) {
-  const d = dictionary;
+  // Best practice: Add a loading state if the dictionary or its required parts are not yet available.
+  if (!dictionary?.asorecifuentesPage || !dictionary?.landingPage) {
+    return (
+        <div className="flex h-screen w-full items-center justify-center">
+            <div>Loading...</div>
+        </div>
+    );
+  }
+
+  const d = dictionary.asorecifuentesPage;
+  const landingDict = dictionary.landingPage;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -97,7 +107,7 @@ export function AsorecifuentesClient({
             {d.footer.rights}
           </p>
           <p className="text-sm text-center md:text-right text-muted-foreground">
-            {d.footer.madeWith}
+            {landingDict.footer.madeWith}
           </p>
         </div>
       </footer>

@@ -23,8 +23,10 @@ interface EmbeddableImpactPanelClientProps {
 
 export function EmbeddableImpactPanelClient({ data, lang }: EmbeddableImpactPanelClientProps) {
     const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+    const [isClient, setIsClient] = useState(false);
     
     useEffect(() => {
+        setIsClient(true);
         // Set the date only on the client-side to avoid hydration mismatch
         const dateOptions: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
         setLastUpdated(new Date().toLocaleDateString(lang, dateOptions));
@@ -83,12 +85,14 @@ export function EmbeddableImpactPanelClient({ data, lang }: EmbeddableImpactPane
 
             <footer className="mt-6 text-center text-xs text-muted-foreground">
                 <p>{lang === 'es' ? 'Datos proporcionados por' : 'Data provided by'} <span className="font-bold text-primary">WasteWise</span></p>
-                <p>
-                    {lastUpdated 
-                        ? (lang === 'es' ? `Actualizado por última vez: ${lastUpdated}` : `Last updated: ${lastUpdated}`)
-                        : (lang === 'es' ? 'Cargando fecha...' : 'Loading date...')
-                    }
-                </p>
+                {isClient && (
+                     <p>
+                        {lastUpdated 
+                            ? (lang === 'es' ? `Actualizado por última vez: ${lastUpdated}` : `Last updated: ${lastUpdated}`)
+                            : (lang === 'es' ? 'Cargando fecha...' : 'Loading date...')
+                        }
+                    </p>
+                )}
             </footer>
         </div>
     );
