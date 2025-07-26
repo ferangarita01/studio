@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, Languages, Recycle } from "lucide-react";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import type { Dictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import { useTheme } from "next-themes";
@@ -85,6 +85,11 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
     const d = dictionary.landingPage;
     const pathname = usePathname();
     const isPricingPage = pathname.includes('/pricing');
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -93,37 +98,43 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
                     <Recycle className="h-6 w-6" />
                     <span>{d.header.title}</span>
                 </Link>
-                <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
-                    <Link
-                        href={`/${lang}/landing#use-cases`}
-                        onClick={(e) => handleScroll(e, 'use-cases')}
-                        className="text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
-                    >
-                        {d.header.nav.useCases}
-                    </Link>
-                    <Link
-                        href={`/${lang}/landing#features`}
-                        onClick={(e) => handleScroll(e, 'features')}
-                        className="text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
-                    >
-                        {d.header.nav.features}
-                    </Link>
-                    <Link
-                        href={`/${lang}/pricing`}
-                        className={isPricingPage ? "font-semibold text-primary" : "text-muted-foreground transition-colors hover:text-foreground"}
-                    >
-                        {d.header.nav.pricing}
-                    </Link>
-                </nav>
+                {isClient && (
+                  <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
+                      <Link
+                          href={`/${lang}/landing#use-cases`}
+                          onClick={(e) => handleScroll(e, 'use-cases')}
+                          className="text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+                      >
+                          {d.header.nav.useCases}
+                      </Link>
+                      <Link
+                          href={`/${lang}/landing#features`}
+                          onClick={(e) => handleScroll(e, 'features')}
+                          className="text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+                      >
+                          {d.header.nav.features}
+                      </Link>
+                      <Link
+                          href={`/${lang}/pricing`}
+                          className={isPricingPage ? "font-semibold text-primary" : "text-muted-foreground transition-colors hover:text-foreground"}
+                      >
+                          {d.header.nav.pricing}
+                      </Link>
+                  </nav>
+                )}
                 <div className="flex items-center gap-2 ml-auto">
                     <LanguageToggle dictionary={dictionary.navigation.languageToggle} />
                     <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
-                   <Button asChild>
-                       <Link href={`/${lang}/login`}>{d.header.login}</Link>
-                   </Button>
-                   <Button asChild variant="outline">
-                       <Link href={`/${lang}/landing#contact`}>{d.header.getStarted}</Link>
-                   </Button>
+                  {isClient && (
+                    <>
+                      <Button asChild>
+                          <Link href={`/${lang}/login`}>{d.header.login}</Link>
+                      </Button>
+                      <Button asChild variant="outline">
+                          <Link href={`/${lang}/landing#contact`}>{d.header.getStarted}</Link>
+                      </Button>
+                    </>
+                  )}
                 </div>
             </div>
         </header>
