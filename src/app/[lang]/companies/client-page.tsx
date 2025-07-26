@@ -40,7 +40,12 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const { toast } = useToast();
   const { role, isLoading: isAuthLoading } = useAuth();
-  
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
@@ -120,7 +125,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
     }
   }, [toast, dictionary]);
 
-  const showAdminFeatures = !isAuthLoading && role === 'admin';
+  const showAdminFeatures = isClient && !isAuthLoading && role === 'admin';
 
   return (
     <>

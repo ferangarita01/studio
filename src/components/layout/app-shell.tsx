@@ -62,7 +62,7 @@ const Logo = () => {
   if (!dictionary) return null;
   return (
     <Link href="/" className="flex items-center gap-2 font-semibold text-primary">
-      <Image src="https://placehold.co/40x40.png" alt="WasteWise Logo" width={32} height={32} data-ai-hint="logo" />
+      <Recycle className="h-6 w-6" />
       <span className="text-lg">{dictionary.title}</span>
     </Link>
   );
@@ -584,3 +584,5 @@ export function AppShell({ children, lang, dictionary }: { children: React.React
     </ThemeProvider>
    )
 }
+
+    

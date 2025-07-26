@@ -95,7 +95,7 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container-responsive flex h-14 items-center">
                 <Link href={`/${lang}/landing`} className="flex items-center gap-2 font-bold text-lg text-primary mr-auto">
-                    <Image src="https://placehold.co/40x40.png" alt="WasteWise Logo" width={32} height={32} data-ai-hint="logo" />
+                    <Recycle className="h-6 w-6" />
                     <span>{d.header.title}</span>
                 </Link>
                 <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
@@ -138,3 +138,5 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
         </header>
     );
 }
+
+    
