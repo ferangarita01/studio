@@ -37,7 +37,7 @@ export function AsorecifuentesClient({
         <section className="relative py-20 md:py-32">
           <div className="absolute inset-0 z-0">
             <Image
-              src="https://cdn.pixabay.com/photo/2019/05/10/09/55/demonstration-4193109_1280.jpg"
+              src="https://www.rmcad.edu/wp-content/uploads/2025/03/shutterstock_1798767082-scaled.jpg"
               alt="Background image of recycling for money"
               fill
               priority

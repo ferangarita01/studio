@@ -14,8 +14,13 @@ export function ComplianceClient({
   dictionary: Dictionary["compliancePage"];
 }) {
   const { role, isLoading } = useAuth();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   
-  const showAdminFeatures = !isLoading && role === 'admin';
+  const showAdminFeatures = isClient && !isLoading && role === 'admin';
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

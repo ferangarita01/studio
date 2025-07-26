@@ -545,7 +545,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
           <main className="flex flex-1 flex-col overflow-auto bg-background/50 relative">
             <div className="absolute inset-0 z-[-1]">
                 <Image
-                    src="https://cdn.pixabay.com/photo/2019/05/10/09/55/demonstration-4193109_1280.jpg"
+                    src="https://www.rmcad.edu/wp-content/uploads/2025/03/shutterstock_1798767082-scaled.jpg"
                     alt="Abstract background representing recycling and data"
                     fill
                     priority
@@ -584,5 +584,3 @@ export function AppShell({ children, lang, dictionary }: { children: React.React
     </ThemeProvider>
    )
 }
-
-    
