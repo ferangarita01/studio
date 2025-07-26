@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import type { Dictionary } from "@/lib/get-dictionary";
@@ -244,7 +244,7 @@ export function ReportsClient({
     );
   }
   
-  if (isLoading) {
+  if (isLoading || isAuthLoading) {
     return (
       <div className="flex flex-1 items-center justify-center p-8">
          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -285,3 +285,5 @@ export function ReportsClient({
     </div>
   );
 }
+
+    

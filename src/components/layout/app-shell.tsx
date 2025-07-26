@@ -542,18 +542,19 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
               <ThemeToggle />
             </div>
           </header>
-          <main className="flex-1 overflow-auto bg-background/50 relative">
+          <main className="flex flex-1 flex-col overflow-auto bg-background/50 relative">
             <div className="absolute inset-0 z-[-1]">
-              <Image
-                src="https://storage.googleapis.com/project-spark-341015.appspot.com/generated/3de55a69-a642-4ec4-9426-ba10d32e96b3.png"
-                alt="Background image of recycling for money"
-                fill
-                priority
-                className="object-cover opacity-5 blur-sm"
-              />
+                <Image
+                    src="https://storage.googleapis.com/project-spark-341015.appspot.com/generated/a95267a8-3868-450f-9357-195b6c310b1a.png"
+                    alt="Abstract background representing recycling and data"
+                    fill
+                    priority
+                    className="object-cover opacity-5 blur-sm"
+                    data-ai-hint="abstract recycling data"
+                />
             </div>
-            <div className="relative z-0">
-              {children}
+            <div className="relative z-10">
+                {children}
             </div>
           </main>
         </div>
@@ -583,5 +584,3 @@ export function AppShell({ children, lang, dictionary }: { children: React.React
     </ThemeProvider>
    )
 }
-
-    
