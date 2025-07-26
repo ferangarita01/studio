@@ -56,7 +56,7 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(null);
   const { toast } = useToast();
-  const { user, role, isLoading: isAuthLoading } = useAuth(); // Use auth loading state
+  const { user, role, isLoading: isAuthLoading } = useAuth();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -245,3 +245,5 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
     </>
   );
 }
+
+    
