@@ -212,6 +212,11 @@ export function ReportsClient({
   const [weeklyDataAll, setWeeklyDataAll] = useState<Record<string, ReportData>>({});
   const [monthlyDataAll, setMonthlyDataAll] = useState<Record<string, ReportData>>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -227,7 +232,7 @@ export function ReportsClient({
     fetchReports();
   }, []);
   
-  const showAdminFeatures = !isAuthLoading && role === 'admin';
+  const showAdminFeatures = isClient && !isAuthLoading && role === 'admin';
 
   if (!selectedCompany) {
     return (
