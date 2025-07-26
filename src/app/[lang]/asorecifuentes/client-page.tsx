@@ -12,9 +12,11 @@ export function AsorecifuentesClient({
   dictionary,
   lang,
 }: {
-  dictionary: Dictionary["asorecifuentesPage"];
+  dictionary: Dictionary;
   lang: Locale;
 }) {
+  const d = dictionary.asorecifuentesPage;
+  const landingDict = dictionary.landingPage;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -22,11 +24,11 @@ export function AsorecifuentesClient({
             <div className="container-responsive flex h-14 items-center">
                 <Link href={`/${lang}/landing`} className="flex items-center gap-2 font-bold text-lg text-primary mr-auto">
                     <Recycle className="h-6 w-6" aria-hidden="true" />
-                    <span>{dictionary.header.title}</span>
+                    <span>{d.header.title}</span>
                 </Link>
                 <div className="flex items-center gap-2 ml-auto">
                    <Button asChild>
-                       <Link href={`/${lang}/login`}>{dictionary.header.login}</Link>
+                       <Link href={`/${lang}/login`}>{d.header.login}</Link>
                    </Button>
                 </div>
             </div>
@@ -58,14 +60,14 @@ export function AsorecifuentesClient({
                 />
               </div>
               <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">
-                {dictionary.hero.title}
+                {d.hero.title}
               </h1>
               <p className="mt-6 text-lg text-gray-200 sm:text-xl">
-                {dictionary.hero.subtitle}
+                {d.hero.subtitle}
               </p>
               <div className="mt-10">
                 <Button size="lg" asChild>
-                  <Link href={`/${lang}/login`}>{dictionary.hero.cta}</Link>
+                  <Link href={`/${lang}/login`}>{d.hero.cta}</Link>
                 </Button>
               </div>
             </div>
@@ -75,13 +77,13 @@ export function AsorecifuentesClient({
         <section id="partnership" className="py-16 sm:py-24 bg-muted/50">
           <div className="container-responsive">
             <div className="text-center max-w-3xl mx-auto">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{dictionary.partnership.title}</h2>
-              <p className="text-muted-foreground mt-4">{dictionary.partnership.description}</p>
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{d.partnership.title}</h2>
+              <p className="text-muted-foreground mt-4">{d.partnership.description}</p>
               <div className="mt-8">
                 <Button asChild>
                   <Link href="https://asorecifuente.com/" target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="mr-2 h-4 w-4" />
-                    {dictionary.partnership.cta}
+                    {d.partnership.cta}
                   </Link>
                 </Button>
               </div>
@@ -93,10 +95,10 @@ export function AsorecifuentesClient({
       <footer className="border-t">
         <div className="container-responsive flex flex-col items-center justify-between gap-4 py-10 md:h-24 md:flex-row md:py-0">
           <p className="text-sm text-center md:text-left text-muted-foreground">
-            {dictionary.footer.rights}
+            {d.footer.rights}
           </p>
           <p className="text-sm text-center md:text-right text-muted-foreground">
-            {dictionary.footer.madeWith}
+            {d.footer.madeWith}
           </p>
         </div>
       </footer>
