@@ -348,6 +348,11 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   const { isAuthenticated, isLoading: isAuthLoading, logout, role } = useAuth();
   const dictionary = useDictionaries()?.navigation;
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   
   const isPublicPage = pathname.endsWith('/login') || pathname.endsWith('/landing') || pathname.endsWith('/pricing') || pathname.endsWith('/asorecifuentes');
 
@@ -496,7 +501,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
               <Logo />
             </div>
             <div className="flex-1 overflow-y-auto py-2">
-              <NavContent />
+               {isClient && !isAuthLoading && role ? <NavContent /> : <NavSkeleton />}
             </div>
              <div className="mt-auto p-4 border-t">
                  <Button size="sm" variant="ghost" onClick={logout} className="w-full justify-start gap-2">
@@ -524,7 +529,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                     <Logo />
                  </div>
                  <div className="flex-1 overflow-y-auto py-2">
-                    <NavContent />
+                    {isClient && !isAuthLoading && role ? <NavContent /> : <NavSkeleton />}
                  </div>
                  <div className="mt-auto p-4 border-t">
                    <Button size="sm" variant="ghost" onClick={logout} className="w-full justify-start gap-2">
