@@ -16,6 +16,7 @@ export type Company = {
   assignedUserUid?: string; // UID of the client user assigned to this company
   assignedUserName?: string; // email of the assigned user, for display
   logoUrl?: string; // URL for the company's logo, for embeddable modules
+  coverImageUrl?: string; // URL for the company's cover/hero image
 };
 
 export type Material = {

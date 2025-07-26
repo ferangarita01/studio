@@ -13,8 +13,9 @@ import {
   equalTo,
   update
 } from "firebase/database";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import { unstable_cache } from "next/cache";
-import { db } from "@/lib/firebase";
+import { db, storage } from "@/lib/firebase";
 import { wasteData, weeklyReportData, monthlyReportData } from "@/lib/data";
 import type { WasteEntry, Material, DisposalEvent, ReportData, Company, UserRole, UserProfile } from "@/lib/types";
 
@@ -109,7 +110,8 @@ export async function addCompany(name: string, userId: string): Promise<Company>
   const companyData = { 
     name, 
     createdBy: userId,
-    logoUrl: `https://placehold.co/100x100.png?text=${name.charAt(0)}`
+    logoUrl: `https://placehold.co/100x100.png?text=${name.charAt(0)}`,
+    coverImageUrl: 'https://storage.googleapis.com/project-spark-341015.appspot.com/generated/a95267a8-3868-450f-9357-195b6c310b1a.png'
   };
   const companiesRef = ref(db, 'companies');
   const newCompanyRef = push(companiesRef);
@@ -121,6 +123,12 @@ export async function updateCompany(companyId: string, newName: string): Promise
   const companyRef = ref(db, `companies/${companyId}`);
   await update(companyRef, { name: newName });
 }
+
+export async function updateCompanyCoverImage(companyId: string, imageUrl: string): Promise<void> {
+  const companyRef = ref(db, `companies/${companyId}`);
+  await update(companyRef, { coverImageUrl: imageUrl });
+}
+
 
 export async function assignUserToCompany(companyId: string, userId: string | null): Promise<void> {
     const companyRef = ref(db, `companies/${companyId}`);
@@ -293,4 +301,13 @@ export async function getWasteChartData() {
         resolve(wasteData);
       }, 300);
     });
+}
+
+
+// --- File Upload Service ---
+export async function uploadFile(file: File, path: string): Promise<string> {
+    const fileRef = storageRef(storage, path);
+    await uploadBytes(fileRef, file);
+    const downloadURL = await getDownloadURL(fileRef);
+    return downloadURL;
 }
