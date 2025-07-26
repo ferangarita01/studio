@@ -50,7 +50,7 @@ export function AsorecifuentesClient({
             <div className="mx-auto max-w-4xl text-center">
               <div className="mb-8 flex justify-center">
                 <Image
-                  src="https://placehold.co/150x150.png"
+                  src="https://cdn.durable.co/blocks/30WhP605AVBhlh62x13B7wUXVQA3cE6HhmYJafPxhEYE8TUpFUZ4T4u3VNCLdiLl.png"
                   alt="Asorecifuentes Logo"
                   width={120}
                   height={120}

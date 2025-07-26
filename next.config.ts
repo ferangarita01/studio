@@ -40,6 +40,12 @@ const nextConfig: NextConfig = {
         hostname: 'space.gov.ae',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.durable.co',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
