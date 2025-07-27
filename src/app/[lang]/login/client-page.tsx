@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -78,6 +78,13 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
 
+  const validationDictionary = dictionary.validation;
+
+  const currentSchema = useMemo(() => {
+    return isSignUp ? signUpSchema(validationDictionary) : loginSchema;
+  }, [isSignUp, validationDictionary]);
+
+
   const {
     register,
     handleSubmit,
@@ -86,7 +93,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
     control,
     reset,
   } = useForm<SignUpSchema>({
-    resolver: zodResolver(isSignUp ? signUpSchema(dictionary.validation) : loginSchema),
+    resolver: zodResolver(currentSchema),
   });
   
   const accountType = watch("accountType");
@@ -319,6 +326,15 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
 
 export function LoginClient({ dictionary }: { dictionary: Dictionary }) {
   
+  if (!dictionary?.loginPage?.validation) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background p-4">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Loading dictionary...</span>
+      </div>
+    );
+  }
+
   return (
     <ThemeProvider
       attribute="class"
