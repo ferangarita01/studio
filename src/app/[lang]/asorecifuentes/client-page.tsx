@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { Recycle, ExternalLink } from "lucide-react";
+import { PublicHeader } from "@/components/public-header";
 
 export function AsorecifuentesClient({
   dictionary,
@@ -29,19 +30,7 @@ export function AsorecifuentesClient({
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container-responsive flex h-14 items-center">
-                <Link href={`/${lang}/landing`} className="flex items-center gap-2 font-bold text-lg text-primary mr-auto">
-                    <Recycle className="h-6 w-6" aria-hidden="true" />
-                    <span>{d.header.title}</span>
-                </Link>
-                <div className="flex items-center gap-2 ml-auto">
-                   <Button asChild>
-                       <Link href={`/${lang}/login`}>{d.header.login}</Link>
-                   </Button>
-                </div>
-            </div>
-        </header>
+       <PublicHeader dictionary={dictionary} lang={lang} />
 
       <main className="flex-1">
         <section className="relative py-20 md:py-32">
