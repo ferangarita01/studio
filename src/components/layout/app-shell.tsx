@@ -72,7 +72,7 @@ const allNavItems = [
     { href: '/', icon: LayoutDashboard, labelKey: 'dashboard', roles: ['admin', 'client'] },
     { href: '/analyzer', icon: BrainCircuit, labelKey: 'aiAgent', roles: ['admin', 'client'] },
     { href: '/log', icon: Trash2, labelKey: 'log', roles: ['admin', 'client'] },
-    { href: '/schedule', icon: Calendar, labelKey: 'schedule', roles: ['admin', 'client'] },
+    { href: '/schedule', icon: Calendar, labelKey: 'collections', roles: ['admin', 'client'] },
     { 
       icon: FileText, 
       labelKey: 'reports', 
@@ -82,7 +82,7 @@ const allNavItems = [
         { href: '/reports/disposal', labelKey: 'finalDisposal', roles: ['admin', 'client'] }
       ]
     },
-    { href: '/materials', icon: Package, labelKey: 'materials', roles: ['admin', 'client'] },
+    { href: '/materials', icon: Package, labelKey: 'prices', roles: ['admin', 'client'] },
     { href: '/companies', icon: Users, labelKey: 'companies', roles: ['admin'] },
     { href: '/compliance', icon: Gavel, labelKey: 'compliance', roles: ['admin', 'client'] },
 ] as const;
@@ -470,8 +470,8 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
             onClick={() => setMobileMenuOpen(false)}
           >
             <div className="flex items-center gap-3">
-              <item.icon className="h-4 w-4" />
-              {label}
+                <item.icon className="h-4 w-4" />
+                <span>{label}</span>
             </div>
             {role === 'admin' && item.labelKey === 'aiAgent' && (
               <Badge variant="outline" className="text-xs">Beta</Badge>

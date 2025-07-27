@@ -6,11 +6,11 @@
       "dashboard": "Dashboard",
       "aiAgent": "AI Agent",
       "log": "Waste Log",
-      "schedule": "Collections",
+      "collections": "Collections",
       "reports": "Reports",
       "financialReports": "Financial Reports",
       "finalDisposal": "Final Disposal",
-      "materials": "Prices",
+      "prices": "Prices",
       "compliance": "Legal Compliance",
       "companies": "Companies"
     },

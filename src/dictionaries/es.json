@@ -6,11 +6,11 @@
       "dashboard": "Tablero",
       "aiAgent": "Agente IA",
       "log": "Registro de Residuos",
-      "schedule": "Recolecciones",
+      "collections": "Recolecciones",
       "reports": "Reportes",
       "financialReports": "Reportes Financieros",
       "finalDisposal": "Disposición Final",
-      "materials": "Precios",
+      "prices": "Precios",
       "compliance": "Cumplimiento Legal",
       "companies": "Empresas"
     },
@@ -411,7 +411,7 @@
     }
   },
   "schedulePage": {
-    "title": "Calendario de Recolecciones",
+    "title": "Calendario de Recolección",
     "description": "Vea y gestione las próximas recolecciones de residuos.",
     "requestCollection": "Solicitar Recolección",
     "days": {
