@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import Link from "next/link";
@@ -74,8 +75,8 @@ const allNavItems = [
     { href: '/log', icon: Trash2, labelKey: 'log', roles: ['admin', 'client'] },
     { href: '/schedule', icon: Calendar, labelKey: 'collections', roles: ['admin', 'client'] },
     { 
-      icon: FileText, 
       labelKey: 'reports', 
+      icon: FileText, 
       roles: ['admin', 'client'],
       subItems: [
         { href: '/reports', labelKey: 'financialReports', roles: ['admin', 'client'] },
@@ -295,9 +296,6 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
             if (role === 'admin') {
                 const userCompanies = await getCompanies(user.uid);
                 setCompanies(userCompanies);
-                // No longer auto-select the first company to prevent hydration issues.
-                // The admin will have to select one from the dropdown.
-                // We only set it if it was already selected previously.
                 if (selectedCompany && !userCompanies.some(c => c.id === selectedCompany.id)) {
                     setSelectedCompany(null);
                 }
@@ -386,7 +384,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     }
   }, [isAuthenticated, isAuthorized, role, router, lang, navItems.length]);
   
-  if (isAuthLoading) {
+  if (isAuthLoading || !isClient) {
     return <div className="flex h-screen w-full items-center justify-center">Loading...</div>;
   }
   
@@ -464,17 +462,15 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
             key={item.labelKey}
             href={href}
             className={cn(
-              "flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+              "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
               isActive && "bg-muted text-primary"
             )}
             onClick={() => setMobileMenuOpen(false)}
           >
-            <div className="flex items-center gap-3">
-                <item.icon className="h-4 w-4" />
-                <span>{label}</span>
-            </div>
+            <item.icon className="h-4 w-4" />
+            <span>{label}</span>
             {role === 'admin' && item.labelKey === 'aiAgent' && (
-              <Badge variant="outline" className="text-xs">Beta</Badge>
+              <Badge variant="outline" className="ml-auto text-xs">Beta</Badge>
             )}
           </Link>
         );
@@ -589,3 +585,5 @@ export function AppShell({ children, lang, dictionary }: { children: React.React
     </ThemeProvider>
    )
 }
+
+    
