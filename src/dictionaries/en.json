@@ -4,13 +4,13 @@
     "title": "WasteWise",
     "links": {
       "dashboard": "Dashboard",
-      "analyzer": "AI Analyzer",
+      "analyzer": "AI Agent",
       "log": "Waste Log",
-      "schedule": "Schedule",
+      "schedule": "Collections",
       "reports": "Reports",
       "financialReports": "Financial Reports",
       "finalDisposal": "Final Disposal",
-      "materials": "Materials",
+      "materials": "Prices",
       "compliance": "Legal Compliance",
       "companies": "Companies"
     },
@@ -257,7 +257,7 @@
             "description": "An intuitive space where you can view and manage all your environmental activities at a glance."
           },
           "aiAnalyzer": {
-            "title": "AI Analyzer:",
+            "title": "AI Agent:",
             "description": "Our powerful artificial intelligence will soon provide you with deep insights to optimize your waste processes."
           },
           "wasteLog": {
@@ -329,9 +329,9 @@
     }
   },
   "analyzerPage": {
-    "title": "AI Waste Reduction Assistant",
+    "title": "AI Waste Reduction Agent",
     "description": "Chat with our AI to get insights on your waste data.",
-    "initialMessage": "Hello! I'm the WasteWise AI Assistant. Paste your waste data in CSV format, or just ask me to analyze the sample data to see how I can help you with waste reduction insights.",
+    "initialMessage": "Hello! I'm the WasteWise AI Agent. Paste your waste data in CSV format, or just ask me to analyze the sample data to see how I can help you with waste reduction insights.",
     "inputPlaceholder": "Ask a question or paste your CSV data here...",
     "loading": "Analyzing...",
     "report": {
@@ -411,7 +411,7 @@
     }
   },
   "schedulePage": {
-    "title": "Disposal Schedule",
+    "title": "Collection Schedule",
     "description": "View and manage upcoming waste collections.",
     "requestCollection": "Request Collection",
     "days": {
@@ -519,7 +519,7 @@
     }
   },
   "materialsPage": {
-    "title": "Manage Materials",
+    "title": "Manage Prices",
     "addMaterial": "Add New Material",
     "cardTitle": "Materials List",
     "cardDescription": "Add, edit, or remove materials and set their buyback prices.",

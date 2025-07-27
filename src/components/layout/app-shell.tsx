@@ -70,7 +70,7 @@ const Logo = () => {
 
 const allNavItems = [
     { href: '/', icon: LayoutDashboard, labelKey: 'dashboard', roles: ['admin', 'client'] },
-    { href: '/analyzer', icon: BrainCircuit, labelKey: 'analyzer', roles: ['admin'] },
+    { href: '/analyzer', icon: BrainCircuit, labelKey: 'analyzer', roles: ['admin', 'client'] },
     { href: '/log', icon: Trash2, labelKey: 'log', roles: ['admin', 'client'] },
     { href: '/schedule', icon: Calendar, labelKey: 'schedule', roles: ['admin', 'client'] },
     { 

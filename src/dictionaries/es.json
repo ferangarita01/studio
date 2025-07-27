@@ -4,13 +4,13 @@
     "title": "WasteWise",
     "links": {
       "dashboard": "Tablero",
-      "analyzer": "Analizador IA",
+      "analyzer": "Agente de IA",
       "log": "Registro de Residuos",
-      "schedule": "Calendario",
+      "schedule": "Recolecciones",
       "reports": "Reportes",
       "financialReports": "Reportes Financieros",
       "finalDisposal": "Disposición Final",
-      "materials": "Materiales",
+      "materials": "Precios",
       "compliance": "Cumplimiento Legal",
       "companies": "Empresas"
     },
@@ -257,7 +257,7 @@
             "description": "Un espacio intuitivo donde podrás visualizar y gestionar todas tus actividades ambientales de un vistazo."
           },
           "aiAnalyzer": {
-            "title": "Analizador IA:",
+            "title": "Agente de IA:",
             "description": "Próximamente, nuestra potente inteligencia artificial te brindará insights profundos para la optimización de tus procesos de residuos."
           },
           "wasteLog": {
@@ -329,9 +329,9 @@
     }
   },
   "analyzerPage": {
-    "title": "Asistente IA de Reducción de Residuos",
+    "title": "Agente de IA para Reducción de Residuos",
     "description": "Chatea con nuestra IA para obtener ideas sobre tus datos de residuos.",
-    "initialMessage": "¡Hola! Soy el Asistente de IA de WasteWise. Pega tus datos de residuos en formato CSV, o simplemente pídeme que analice los datos de ejemplo para ver cómo puedo ayudarte a reducir residuos.",
+    "initialMessage": "¡Hola! Soy el Agente de IA de WasteWise. Pega tus datos de residuos en formato CSV, o simplemente pídeme que analice los datos de ejemplo para ver cómo puedo ayudarte a reducir residuos.",
     "inputPlaceholder": "Haz una pregunta o pega tus datos CSV aquí...",
     "loading": "Analizando...",
     "report": {
@@ -411,7 +411,7 @@
     }
   },
   "schedulePage": {
-    "title": "Calendario de Eliminación",
+    "title": "Calendario de Recolecciones",
     "description": "Vea y gestione las próximas recolecciones de residuos.",
     "requestCollection": "Solicitar Recolección",
     "days": {
@@ -519,7 +519,7 @@
     }
   },
   "materialsPage": {
-    "title": "Gestionar Materiales",
+    "title": "Gestionar Precios",
     "addMaterial": "Añadir Nuevo Material",
     "cardTitle": "Lista de Materiales",
     "cardDescription": "Añade, edita o elimina materiales y establece sus precios de recompra.",
