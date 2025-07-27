@@ -4,7 +4,7 @@
     "title": "WasteWise",
     "links": {
       "dashboard": "Tablero",
-      "analyzer": "Agente de IA",
+      "aiAgent": "Agente IA",
       "log": "Registro de Residuos",
       "schedule": "Recolecciones",
       "reports": "Reportes",
@@ -329,7 +329,7 @@
     }
   },
   "analyzerPage": {
-    "title": "Agente de IA para Reducción de Residuos",
+    "title": "Agente IA",
     "description": "Chatea con nuestra IA para obtener ideas sobre tus datos de residuos.",
     "initialMessage": "¡Hola! Soy el Agente de IA de WasteWise. Pega tus datos de residuos en formato CSV, o simplemente pídeme que analice los datos de ejemplo para ver cómo puedo ayudarte a reducir residuos.",
     "inputPlaceholder": "Haz una pregunta o pega tus datos CSV aquí...",

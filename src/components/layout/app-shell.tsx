@@ -70,7 +70,7 @@ const Logo = () => {
 
 const allNavItems = [
     { href: '/', icon: LayoutDashboard, labelKey: 'dashboard', roles: ['admin', 'client'] },
-    { href: '/analyzer', icon: BrainCircuit, labelKey: 'analyzer', roles: ['admin', 'client'] },
+    { href: '/analyzer', icon: BrainCircuit, labelKey: 'aiAgent', roles: ['admin', 'client'] },
     { href: '/log', icon: Trash2, labelKey: 'log', roles: ['admin', 'client'] },
     { href: '/schedule', icon: Calendar, labelKey: 'schedule', roles: ['admin', 'client'] },
     { 
@@ -473,7 +473,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
               <item.icon className="h-4 w-4" />
               {label}
             </div>
-            {role === 'admin' && item.labelKey === 'analyzer' && (
+            {role === 'admin' && item.labelKey === 'aiAgent' && (
               <Badge variant="outline" className="text-xs">Beta</Badge>
             )}
           </Link>

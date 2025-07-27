@@ -105,8 +105,9 @@ export function AIAnalyzerClient({
     
     startTransition(async () => {
         try {
-            // If the user just says "hi" or something, use the placeholder data
-            const dataToAnalyze = input.toLowerCase().includes('csv') || input.includes(',') ? input : placeholderData;
+            // If the user pasted CSV data, use it. Otherwise, send an empty string
+            // and let the AI use its tool to fetch the real data.
+            const dataToAnalyze = input.toLowerCase().includes('csv') || input.includes(',') ? input : "";
             
             const result = await analyzeWasteData({ wasteData: dataToAnalyze, lang: lang });
             
@@ -312,3 +313,5 @@ const AnalysisResult = ({ dictionary, analysis }: { dictionary: Dictionary["anal
     </div>
   );
 };
+
+    

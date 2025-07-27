@@ -4,7 +4,7 @@
     "title": "WasteWise",
     "links": {
       "dashboard": "Dashboard",
-      "analyzer": "AI Agent",
+      "aiAgent": "AI Agent",
       "log": "Waste Log",
       "schedule": "Collections",
       "reports": "Reports",
@@ -329,7 +329,7 @@
     }
   },
   "analyzerPage": {
-    "title": "AI Waste Reduction Agent",
+    "title": "AI Agent",
     "description": "Chat with our AI to get insights on your waste data.",
     "initialMessage": "Hello! I'm the WasteWise AI Agent. Paste your waste data in CSV format, or just ask me to analyze the sample data to see how I can help you with waste reduction insights.",
     "inputPlaceholder": "Ask a question or paste your CSV data here...",

@@ -20,7 +20,15 @@ const getWasteLog = ai.defineTool(
     outputSchema: z.any(),
   },
   async () => {
-    return await getWasteLogService();
+    // This is a simplification. In a real app, you'd pass the companyId.
+    const log = await getWasteLogService();
+    // Convert to CSV for the prompt
+    if (log.length === 0) {
+      return "No waste data found.";
+    }
+    const headers = "Waste Type,Quantity (kg)";
+    const rows = log.map(entry => `${entry.type},${entry.quantity}`);
+    return `${headers}\n${rows.join('\n')}`;
   }
 )
 
@@ -29,7 +37,7 @@ const AnalyzeWasteDataInputSchema = z.object({
   wasteData: z
     .string()
     .describe(
-      'A CSV file containing waste data. Columns should include waste type and quantity.'
+      'A CSV file containing waste data. Columns should include waste type and quantity. If this is empty, use the getWasteLog tool to fetch the data.'
     ),
   lang: z.enum(['en', 'es']).describe('The language for the response.'),
 });
@@ -62,7 +70,7 @@ const prompt = ai.definePrompt({
   prompt: `You are an AI-powered waste management assistant. You must respond in the following language: {{{lang}}}.
   
 Analyze the provided waste data and provide actionable recommendations for waste reduction.
-If you need more context, you can use the getWasteLog tool to get the full history of waste entries.
+If the user has not provided waste data, you MUST use the getWasteLog tool to get the full history of waste entries.
 
 Waste Data: {{{wasteData}}}
 
@@ -87,3 +95,5 @@ const analyzeWasteDataFlow = ai.defineFlow(
     return output!;
   }
 );
+
+    
