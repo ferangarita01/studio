@@ -210,6 +210,7 @@
     "password": "Contraseña",
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "loginButton": "Iniciar Sesión",
+    "backButton": "Volver",
     "loginAsAdmin": "Iniciar Sesión como Admin",
     "loginAsClient": "Iniciar Sesión como Cliente",
     "loginWithGoogle": "Iniciar sesión con Google",
@@ -632,5 +633,3 @@
     }
   }
 }
-
-    

@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth, AuthProvider } from "@/context/auth-context";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2, ArrowLeft } from "lucide-react";
 import { FirebaseError } from "firebase/app";
 import type { Dictionary } from "@/lib/get-dictionary";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -143,7 +143,13 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4 relative">
+       <Button asChild variant="outline" className="absolute top-4 left-4">
+        <Link href={`/${lang}/landing`}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          {dictionary.backButton}
+        </Link>
+      </Button>
       <Card className="mx-auto w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl">{isSignUp ? dictionary.signUp : dictionary.title}</CardTitle>
