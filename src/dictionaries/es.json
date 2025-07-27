@@ -181,10 +181,10 @@
         "cta": "Empezar con Premium",
         "features": [
           "Todo en el plan Gratis, más:",
-          "Hasta 5 Perfiles de Empresa",
-          "Analizador de Residuos con IA",
-          "Informes Financieros Avanzados",
-          "Soporte Prioritario"
+          "Soporte de Agente IA",
+          "Cumplimiento Legal",
+          "API",
+          "Soporte"
         ]
       },
       "enterprise": {
