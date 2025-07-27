@@ -25,7 +25,6 @@ import {
   Gavel,
   ChevronDown,
   Users,
-  Star,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -368,13 +367,10 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   }, [isAuthenticated, isAuthLoading, pathname, router, lang, isPublicPage]);
   
   const navItems = useMemo(() => {
-    if (!role || !isClient) return [];
-    
-    // We show all items for the user's role, filtering will happen client-side if needed for premium features
-    // but the list of available items is determined by role.
+    if (!role) return [];
+    // Admins see everything. Clients see everything but premium features are handled by handlePremiumClick.
     return allNavItems.filter(item => item.roles.includes(role));
-    
-  }, [role, isClient]);
+  }, [role]);
   
 
   const currentPath = `/${pathname.split('/').slice(2).join('/')}`;
@@ -382,9 +378,11 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     if (!role) return false;
     // Special case for root
     if (currentPath === '/') return true;
-    return navItems.some(item => 'href' in item && item.href !== '/' && currentPath.startsWith(item.href)) ||
-           navItems.some(item => 'subItems' in item && item.subItems.some(sub => sub.href !== '/' && currentPath.startsWith(sub.href)));
-  }, [role, navItems, currentPath]);
+    return allNavItems.filter(item => item.roles.includes(role)).some(item => 
+      ('href' in item && item.href !== '/' && currentPath.startsWith(item.href)) ||
+      ('subItems' in item && item.subItems.some(sub => sub.href !== '/' && currentPath.startsWith(sub.href)))
+    );
+  }, [role, currentPath]);
 
   useEffect(() => {
     if (isClient && isAuthenticated && role && navItems.length > 0 && !isAuthorized) {
@@ -392,8 +390,38 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     }
   }, [isAuthenticated, isAuthorized, role, router, lang, navItems.length, isClient]);
   
+  const handlePremiumClick = (e: React.MouseEvent<HTMLAnchorElement>, item: { plan?: string }) => {
+    const isPremiumFeature = item.plan === 'Premium';
+    const isFreeUser = role === 'client' && userProfile?.plan !== 'Premium';
+
+    if (isClient && isPremiumFeature && isFreeUser) {
+      e.preventDefault();
+      setUpgradeDialogOpen(true);
+    }
+  };
+
   if (isAuthLoading || !isClient) {
-    return <div className="flex h-screen w-full items-center justify-center">Loading...</div>;
+    return (
+        <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+            <div className="hidden border-r bg-muted/40 md:block">
+                <div className="flex h-full max-h-screen flex-col gap-2">
+                    <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+                        <Skeleton className="h-6 w-32" />
+                    </div>
+                    <div className="flex-1">
+                        <NavSkeleton />
+                    </div>
+                </div>
+            </div>
+            <div className="flex flex-col">
+                <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+                </header>
+                <main className="flex flex-1 items-center justify-center">
+                    Loading...
+                </main>
+            </div>
+        </div>
+    );
   }
   
   if (isPublicPage) {
@@ -401,7 +429,9 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   }
 
   if (!isAuthenticated) {
-     return <div className="flex h-screen w-full items-center justify-center">Loading...</div>;
+     return (
+        <div className="flex h-screen w-full items-center justify-center">Loading...</div>
+     );
   }
   
   if (!dictionary) return null;
@@ -417,16 +447,6 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     if (href === '/') return `/${lang}`;
     return `/${lang}${href}`;
   }
-
-  const handlePremiumClick = (e: React.MouseEvent<HTMLAnchorElement>, item: { plan?: string }) => {
-    const isPremiumFeature = item.plan === 'Premium';
-    const isFreeUser = role === 'client' && userProfile?.plan !== 'Premium';
-
-    if (isClient && isPremiumFeature && isFreeUser) {
-      e.preventDefault();
-      setUpgradeDialogOpen(true);
-    }
-  };
 
   const NavContent = () => (
     <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
@@ -490,8 +510,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
             <item.icon className="h-4 w-4" />
             <span>{label}</span>
              {item.plan === 'Premium' && (
-              <Badge variant="outline" className="ml-auto flex items-center gap-1 border-yellow-500/50 text-yellow-500 text-xs">
-                <Star className="h-3 w-3" />
+              <Badge variant="outline" className="ml-auto flex items-center gap-1 border-yellow-500/50 text-yellow-500 text-xs px-2">
                 {dictionary.premium}
               </Badge>
             )}
