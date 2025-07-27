@@ -75,9 +75,9 @@ const allNavItems = [
     { href: '/analyzer', icon: BrainCircuit, labelKey: 'aiAgent', roles: ['admin', 'client'], plan: 'Premium' },
     { href: '/log', icon: Trash2, labelKey: 'log', roles: ['admin', 'client'] },
     { href: '/schedule', icon: Calendar, labelKey: 'collections', roles: ['admin', 'client'] },
-    { 
-      labelKey: 'reports', 
-      icon: FileText, 
+    {
+      labelKey: 'reports',
+      icon: FileText,
       roles: ['admin', 'client'],
       subItems: [
         { href: '/reports', labelKey: 'financialReports', roles: ['admin', 'client'] },
@@ -171,7 +171,7 @@ function CompanySwitcher() {
   const { companies, selectedCompany, setSelectedCompany, addCompany, isLoading } = useCompany();
   const [search, setSearch] = useState("");
   const [isCreateOpen, setCreateOpen] = useState(false);
-  
+
   if (!dictionary || !user) return null;
 
   const handleCreateCompany = async (name: string) => {
@@ -181,11 +181,11 @@ function CompanySwitcher() {
     setSelectedCompany(newCompany);
     setCreateOpen(false);
   };
-  
+
   if (isLoading) {
     return <Skeleton className="h-9 w-full" />;
   }
-  
+
   if (role === 'client') {
       if (!selectedCompany) {
          return <div className="p-2 text-sm text-center text-muted-foreground">No company assigned.</div>;
@@ -215,8 +215,8 @@ function CompanySwitcher() {
       </div>
     );
   }
-  
-  const filteredCompanies = companies.filter(company => 
+
+  const filteredCompanies = companies.filter(company =>
     company.name.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -293,7 +293,7 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
     const manageCompanies = async () => {
         if (user) {
             setIsLoading(true);
-            
+
             if (role === 'admin') {
                 const userCompanies = await getCompanies(user.uid);
                 setCompanies(userCompanies);
@@ -317,11 +317,11 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
     }
     manageCompanies();
 }, [user, role, userProfile]);
-  
+
   const addCompany = (company: Company) => {
     setCompanies(prev => [...prev, company].sort((a,b) => a.name.localeCompare(b.name)));
   };
-  
+
   const companyContextValue = useMemo(() => ({
     selectedCompany,
     setSelectedCompany: (company: Company | null) => {
@@ -341,19 +341,25 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
 }
 
 function AppShellContent({ children, lang }: { children: React.ReactNode, lang: string }) {
+  const NavSkeleton = () => (
+     <div className="grid items-start gap-2 px-2 text-sm font-medium lg:px-4">
+        <div className="p-2">
+            <Skeleton className="h-9 w-full" />
+        </div>
+        {[...Array(5)].map((_, i) => (
+             <Skeleton key={i} className="h-10 w-full" />
+        ))}
+     </div>
+  );
+
   const pathname = usePathname();
   const router = useRouter();
-  
+
   const { isAuthenticated, isLoading: isAuthLoading, logout, role, userProfile } = useAuth();
   const dictionary = useDictionaries()?.navigation;
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isClient, setIsClient] = useState(false);
   const [isUpgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-  
   const isPublicPage = pathname.endsWith('/login') || pathname.endsWith('/landing') || pathname.endsWith('/pricing') || pathname.endsWith('/asorecifuentes');
 
   useEffect(() => {
@@ -365,42 +371,44 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
         router.push(`/${lang}`);
     }
   }, [isAuthenticated, isAuthLoading, pathname, router, lang, isPublicPage]);
-  
+
   const navItems = useMemo(() => {
     if (!role) return [];
-    // Admins see everything. Clients see everything but premium features are handled by handlePremiumClick.
     return allNavItems.filter(item => item.roles.includes(role));
   }, [role]);
-  
+
 
   const currentPath = `/${pathname.split('/').slice(2).join('/')}`;
   const isAuthorized = useMemo(() => {
     if (!role) return false;
     // Special case for root
     if (currentPath === '/') return true;
-    return allNavItems.filter(item => item.roles.includes(role)).some(item => 
+    return navItems.some(item =>
       ('href' in item && item.href !== '/' && currentPath.startsWith(item.href)) ||
       ('subItems' in item && item.subItems.some(sub => sub.href !== '/' && currentPath.startsWith(sub.href)))
     );
-  }, [role, currentPath]);
+  }, [role, currentPath, navItems]);
 
   useEffect(() => {
-    if (isClient && isAuthenticated && role && navItems.length > 0 && !isAuthorized) {
+    if (isAuthenticated && role && navItems.length > 0 && !isAuthorized) {
        router.push(`/${lang}`);
     }
-  }, [isAuthenticated, isAuthorized, role, router, lang, navItems.length, isClient]);
-  
+  }, [isAuthenticated, isAuthorized, role, router, lang, navItems.length]);
+
   const handlePremiumClick = (e: React.MouseEvent<HTMLAnchorElement>, item: { plan?: string }) => {
     const isPremiumFeature = item.plan === 'Premium';
     const isFreeUser = role === 'client' && userProfile?.plan !== 'Premium';
 
-    if (isClient && isPremiumFeature && isFreeUser) {
+    if (isPremiumFeature && isFreeUser) {
       e.preventDefault();
       setUpgradeDialogOpen(true);
+      setMobileMenuOpen(false);
+    } else {
+      setMobileMenuOpen(false);
     }
   };
 
-  if (isAuthLoading || !isClient) {
+  if (isAuthLoading) {
     return (
         <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
             <div className="hidden border-r bg-muted/40 md:block">
@@ -423,7 +431,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
         </div>
     );
   }
-  
+
   if (isPublicPage) {
     return <>{children}</>;
   }
@@ -433,7 +441,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
         <div className="flex h-screen w-full items-center justify-center">Loading...</div>
      );
   }
-  
+
   if (!dictionary) return null;
    if (role && navItems.length > 0 && !isAuthorized && currentPath !== '/') {
     return (
@@ -448,89 +456,88 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     return `/${lang}${href}`;
   }
 
-  const NavContent = () => (
-    <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-      <div className="p-2">
-        <CompanySwitcher />
-      </div>
-      {navItems.map((item) => {
-        const label = dictionary.links[item.labelKey as keyof typeof dictionary.links];
-        
-        if ('subItems' in item) {
-          const isActive = item.subItems.some(sub => pathname.startsWith(getHref(sub.href)));
-          return (
-            <Collapsible key={item.labelKey} defaultOpen={isActive}>
-              <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&[data-state=open]>svg]:rotate-180">
-                <div className="flex items-center gap-3">
-                  <item.icon className="h-4 w-4" />
-                  <span>{label}</span>
-                </div>
-                <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-1 py-1 pl-7">
-                {item.subItems.map(subItem => {
-                   if (!subItem.roles.includes(role!)) return null;
-                   const subHref = getHref(subItem.href);
-                   const subLabel = dictionary.links[subItem.labelKey as keyof typeof dictionary.links];
-                   const isSubActive = pathname === subHref;
-                   return (
-                    <Link
-                      key={subItem.labelKey}
-                      href={subHref}
-                      className={cn(
-                        "flex items-center gap-3 rounded-md px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                        isSubActive && "bg-muted text-primary"
-                      )}
-                      onClick={(e) => {
-                        handlePremiumClick(e, subItem);
-                        setMobileMenuOpen(false);
-                      }}
-                    >
-                      <span>{subLabel}</span>
-                    </Link>
-                  );
-                })}
-              </CollapsibleContent>
-            </Collapsible>
-          );
-        }
+  const NavContent = () => {
+      const isFreeUser = role === 'client' && userProfile?.plan !== 'Premium';
 
-        const href = getHref(item.href);
-        const isActive = pathname === href || (item.href !== '/' && pathname.startsWith(href) && item.href.length > 1);
-        return (
-          <Link
-            key={item.labelKey}
-            href={href}
-            onClick={(e) => handlePremiumClick(e, item)}
-            className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-              isActive && "bg-muted text-primary"
-            )}
-          >
-            <item.icon className="h-4 w-4" />
-            <span>{label}</span>
-             {item.plan === 'Premium' && (
-              <Badge variant="outline" className="ml-auto flex items-center gap-1 border-yellow-500/50 text-yellow-500 text-xs px-2">
-                {dictionary.premium}
-              </Badge>
-            )}
-          </Link>
-        );
-      })}
-    </nav>
-  );
+      return (
+        <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+          <div className="p-2">
+            <CompanySwitcher />
+          </div>
+          {allNavItems.map((item) => {
+            const isPremiumFeature = item.plan === 'Premium';
+            if (!item.roles.includes(role!)) return null;
+            if (isPremiumFeature && isFreeUser) return null; // Hide premium features for free users
 
-  const NavSkeleton = () => (
-     <div className="grid items-start gap-2 px-2 text-sm font-medium lg:px-4">
-        <div className="p-2">
-            <Skeleton className="h-9 w-full" />
-        </div>
-        {[...Array(5)].map((_, i) => (
-             <Skeleton key={i} className="h-10 w-full" />
-        ))}
-     </div>
-  );
-  
+            const label = dictionary.links[item.labelKey as keyof typeof dictionary.links];
+
+            if ('subItems' in item) {
+              const isActive = item.subItems.some(sub => pathname.startsWith(getHref(sub.href)));
+              return (
+                <Collapsible key={item.labelKey} defaultOpen={isActive}>
+                  <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&[data-state=open]>svg]:rotate-180">
+                    <div className="flex items-center gap-3">
+                      <item.icon className="h-4 w-4" />
+                      <span>{label}</span>
+                    </div>
+                    <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="space-y-1 py-1 pl-7">
+                    {item.subItems.map(subItem => {
+                       if (!subItem.roles.includes(role!)) return null;
+                       const subHref = getHref(subItem.href);
+                       const subLabel = dictionary.links[subItem.labelKey as keyof typeof dictionary.links];
+                       const isSubActive = pathname === subHref;
+                       return (
+                        <Link
+                          key={subItem.labelKey}
+                          href={subHref}
+                          className={cn(
+                            "flex items-center gap-3 rounded-md px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+                            isSubActive && "bg-muted text-primary"
+                          )}
+                          onClick={(e) => handlePremiumClick(e, subItem)}
+                        >
+                          <span>{subLabel}</span>
+                           {subItem.plan === 'Premium' && (
+                            <Badge variant="outline" className="ml-auto flex items-center gap-1 border-yellow-500/50 text-yellow-500 text-xs px-2">
+                              {dictionary.premium}
+                            </Badge>
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </CollapsibleContent>
+                </Collapsible>
+              );
+            }
+
+            const href = getHref(item.href);
+            const isActive = pathname === href || (item.href !== '/' && pathname.startsWith(href) && item.href.length > 1);
+            return (
+              <Link
+                key={item.labelKey}
+                href={href}
+                onClick={(e) => handlePremiumClick(e, item)}
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+                  isActive && "bg-muted text-primary",
+                )}
+              >
+                <item.icon className="h-4 w-4" />
+                <span>{label}</span>
+                 {isPremiumFeature && (
+                  <Badge variant="outline" className="ml-auto flex items-center gap-1 border-yellow-500/50 text-yellow-500 text-xs px-2">
+                    {dictionary.premium}
+                  </Badge>
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+      )
+  };
+
   return (
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
         <div className="hidden border-r bg-muted/40 md:block">
@@ -539,7 +546,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
               <Logo />
             </div>
             <div className="flex-1 overflow-y-auto py-2">
-               {isClient && !isAuthLoading && role ? <NavContent /> : <NavSkeleton />}
+               {role ? <NavContent /> : <NavSkeleton />}
             </div>
              <div className="mt-auto p-4 border-t">
                  <Button size="sm" variant="ghost" onClick={logout} className="w-full justify-start gap-2">
@@ -567,7 +574,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                     <Logo />
                  </div>
                  <div className="flex-1 overflow-y-auto py-2">
-                    {isClient && !isAuthLoading && role ? <NavContent /> : <NavSkeleton />}
+                    {role ? <NavContent /> : <NavSkeleton />}
                  </div>
                  <div className="mt-auto p-4 border-t" onClick={() => setMobileMenuOpen(false)}>
                    <Button size="sm" variant="ghost" onClick={logout} className="w-full justify-start gap-2">
@@ -602,7 +609,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
           </main>
         </div>
         <WhatsAppButton />
-        {isClient && dictionary.upgradeDialog && (
+        {dictionary.upgradeDialog && (
           <UpgradePlanDialog
             open={isUpgradeDialogOpen}
             onOpenChange={setUpgradeDialogOpen}
@@ -635,3 +642,5 @@ export function AppShell({ children, lang, dictionary }: { children: React.React
     </ThemeProvider>
    )
 }
+
+    

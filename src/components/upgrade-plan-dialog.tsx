@@ -58,7 +58,7 @@ export function UpgradePlanDialog({ open, onOpenChange, dictionary, lang }: Upgr
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
               {dictionary.cancel}
             </Button>
-            <Button asChild>
+            <Button asChild onClick={() => onOpenChange(false)}>
                 <Link href={`/${lang}/pricing`}>{dictionary.confirm}</Link>
             </Button>
           </DialogFooter>
