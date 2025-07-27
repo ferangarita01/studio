@@ -28,7 +28,7 @@ import { DictionariesProvider } from "@/context/dictionary-context";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { UserProfile } from "@/lib/types";
 import { Checkbox } from "@/components/ui/checkbox";
-import { FormField, FormItem, FormControl, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormField, FormItem, FormControl, FormLabel, FormMessage } from "@/components/ui/form";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -77,7 +77,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
-
+  
   const validationDictionary = dictionary.validation;
 
   const currentSchema = useMemo(() => {
@@ -85,18 +85,25 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   }, [isSignUp, validationDictionary]);
 
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    watch,
-    control,
-    reset,
-  } = useForm<SignUpSchema>({
+  const form = useForm<SignUpSchema>({
     resolver: zodResolver(currentSchema),
+    defaultValues: {
+      fullName: "",
+      accountType: undefined,
+      taxId: "",
+      idNumber: "",
+      jobTitle: "",
+      address: "",
+      city: "",
+      country: "",
+      phone: "",
+      email: "",
+      password: "",
+      terms: false,
+    }
   });
   
-  const accountType = watch("accountType");
+  const accountType = form.watch("accountType");
 
   useEffect(() => {
     if (!isAuthLoading && isAuthenticated) {
@@ -151,7 +158,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   const toggleForm = () => {
     setIsSignUp(!isSignUp);
     setError('');
-    reset();
+    form.reset();
   }
 
   return (
@@ -170,147 +177,224 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid gap-4">
-              {isSignUp && (
-                 <>
-                    <div className="grid gap-2">
-                        <Label htmlFor="fullName">{dictionary.labels.fullName}</Label>
-                        <Input id="fullName" {...register("fullName")} disabled={isSubmitting} />
-                        {errors.fullName && <p className="text-sm text-destructive">{errors.fullName.message}</p>}
-                    </div>
-
-                    <div className="grid gap-2">
-                      <Label htmlFor="accountType">{dictionary.labels.accountType}</Label>
-                      <Controller
-                        name="accountType"
-                        control={control}
-                        render={({ field }) => (
-                           <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
-                              <SelectTrigger>
-                                <SelectValue placeholder={dictionary.labels.selectAccountType} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="individual">{dictionary.labels.individual}</SelectItem>
-                                <SelectItem value="company">{dictionary.labels.company}</SelectItem>
-                              </SelectContent>
-                            </Select>
-                        )}
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                {isSignUp && (
+                   <>
+                      <FormField
+                          control={form.control}
+                          name="fullName"
+                          render={({ field }) => (
+                              <FormItem>
+                                  <FormLabel>{dictionary.labels.fullName}</FormLabel>
+                                  <FormControl>
+                                      <Input {...field} disabled={isSubmitting} />
+                                  </FormControl>
+                                  <FormMessage />
+                              </FormItem>
+                          )}
                       />
-                       {errors.accountType && <p className="text-sm text-destructive">{errors.accountType.message}</p>}
-                    </div>
-                   
-                    {accountType === 'company' && (
-                        <div className="grid gap-2">
-                            <Label htmlFor="taxId">{dictionary.labels.taxId}</Label>
-                            <Input id="taxId" {...register("taxId")} disabled={isSubmitting} />
-                            {errors.taxId && <p className="text-sm text-destructive">{errors.taxId.message}</p>}
-                        </div>
-                    )}
 
-                    {accountType === 'individual' && (
-                        <div className="grid gap-2">
-                            <Label htmlFor="idNumber">{dictionary.labels.idNumber}</Label>
-                            <Input id="idNumber" {...register("idNumber")} disabled={isSubmitting} />
-                            {errors.idNumber && <p className="text-sm text-destructive">{errors.idNumber.message}</p>}
-                        </div>
-                    )}
+                      <FormField
+                          control={form.control}
+                          name="accountType"
+                          render={({ field }) => (
+                              <FormItem>
+                                  <FormLabel>{dictionary.labels.accountType}</FormLabel>
+                                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
+                                      <FormControl>
+                                          <SelectTrigger>
+                                              <SelectValue placeholder={dictionary.labels.selectAccountType} />
+                                          </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent>
+                                          <SelectItem value="individual">{dictionary.labels.individual}</SelectItem>
+                                          <SelectItem value="company">{dictionary.labels.company}</SelectItem>
+                                      </SelectContent>
+                                  </Select>
+                                  <FormMessage />
+                              </FormItem>
+                          )}
+                      />
+                     
+                      {accountType === 'company' && (
+                          <FormField
+                              control={form.control}
+                              name="taxId"
+                              render={({ field }) => (
+                                  <FormItem>
+                                      <FormLabel>{dictionary.labels.taxId}</FormLabel>
+                                      <FormControl>
+                                          <Input {...field} disabled={isSubmitting} />
+                                      </FormControl>
+                                      <FormMessage />
+                                  </FormItem>
+                              )}
+                          />
+                      )}
 
-                    <div className="grid gap-2">
-                        <Label htmlFor="jobTitle">{dictionary.labels.jobTitle}</Label>
-                        <Input id="jobTitle" {...register("jobTitle")} disabled={isSubmitting} />
-                    </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="address">{dictionary.labels.address}</Label>
-                        <Input id="address" {...register("address")} disabled={isSubmitting} />
-                    </div>
-                     <div className="grid grid-cols-2 gap-4">
-                        <div className="grid gap-2">
-                            <Label htmlFor="city">{dictionary.labels.city}</Label>
-                            <Input id="city" {...register("city")} disabled={isSubmitting} />
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="country">{dictionary.labels.country}</Label>
-                            <Input id="country" {...register("country")} disabled={isSubmitting} />
-                        </div>
-                    </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="phone">{dictionary.labels.phone}</Label>
-                        <Input id="phone" type="tel" {...register("phone")} disabled={isSubmitting} />
-                    </div>
-                 </>
-              )}
+                      {accountType === 'individual' && (
+                           <FormField
+                              control={form.control}
+                              name="idNumber"
+                              render={({ field }) => (
+                                  <FormItem>
+                                      <FormLabel>{dictionary.labels.idNumber}</FormLabel>
+                                      <FormControl>
+                                          <Input {...field} disabled={isSubmitting} />
+                                      </FormControl>
+                                      <FormMessage />
+                                  </FormItem>
+                              )}
+                          />
+                      )}
 
-              <div className="grid gap-2">
-                <Label htmlFor="email">{dictionary.email}</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="name@example.com"
-                  {...register("email")}
-                  disabled={isSubmitting}
-                />
-                {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
-              </div>
+                       <FormField
+                          control={form.control}
+                          name="jobTitle"
+                          render={({ field }) => (
+                              <FormItem>
+                                  <FormLabel>{dictionary.labels.jobTitle}</FormLabel>
+                                  <FormControl>
+                                      <Input {...field} disabled={isSubmitting} />
+                                  </FormControl>
+                                  <FormMessage />
+                              </FormItem>
+                          )}
+                      />
+                       <FormField
+                          control={form.control}
+                          name="address"
+                          render={({ field }) => (
+                              <FormItem>
+                                  <FormLabel>{dictionary.labels.address}</FormLabel>
+                                  <FormControl>
+                                      <Input {...field} disabled={isSubmitting} />
+                                  </FormControl>
+                                  <FormMessage />
+                              </FormItem>
+                          )}
+                      />
+                       <div className="grid grid-cols-2 gap-4">
+                           <FormField
+                              control={form.control}
+                              name="city"
+                              render={({ field }) => (
+                                  <FormItem>
+                                      <FormLabel>{dictionary.labels.city}</FormLabel>
+                                      <FormControl>
+                                          <Input {...field} disabled={isSubmitting} />
+                                      </FormControl>
+                                      <FormMessage />
+                                  </FormItem>
+                              )}
+                          />
+                           <FormField
+                              control={form.control}
+                              name="country"
+                              render={({ field }) => (
+                                  <FormItem>
+                                      <FormLabel>{dictionary.labels.country}</FormLabel>
+                                      <FormControl>
+                                          <Input {...field} disabled={isSubmitting} />
+                                      </FormControl>
+                                      <FormMessage />
+                                  </FormItem>
+                              )}
+                          />
+                      </div>
+                       <FormField
+                          control={form.control}
+                          name="phone"
+                          render={({ field }) => (
+                              <FormItem>
+                                  <FormLabel>{dictionary.labels.phone}</FormLabel>
+                                  <FormControl>
+                                      <Input type="tel" {...field} disabled={isSubmitting} />
+                                  </FormControl>
+                                  <FormMessage />
+                              </FormItem>
+                          )}
+                      />
+                   </>
+                )}
 
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">{dictionary.password}</Label>
-                  {!isSignUp && (
-                    <Link
-                      href="#"
-                      className="ml-auto inline-block text-sm underline"
-                    >
-                      {dictionary.forgotPassword}
-                    </Link>
-                  )}
-                </div>
-                <Input
-                  id="password"
-                  type="password"
-                  {...register("password")}
-                  disabled={isSubmitting}
-                />
-                 {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
-              </div>
-
-              {isSignUp && (
                 <FormField
-                    control={control}
-                    name="terms"
+                    control={form.control}
+                    name="email"
                     render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md py-2">
+                        <FormItem>
+                            <FormLabel>{dictionary.email}</FormLabel>
                             <FormControl>
-                                <Checkbox
-                                    checked={field.value}
-                                    onCheckedChange={field.onChange}
-                                />
+                                <Input type="email" placeholder="name@example.com" {...field} disabled={isSubmitting} />
                             </FormControl>
-                            <div className="space-y-1 leading-none">
-                                <FormLabel>
-                                    {dictionary.labels.acceptTerms}{" "}
-                                    <Link href="#" className="underline">{dictionary.labels.termsAndConditions}</Link>.
-                                </FormLabel>
-                                 {errors.terms && <p className="text-sm text-destructive">{errors.terms.message}</p>}
-                            </div>
+                            <FormMessage />
                         </FormItem>
                     )}
                 />
-              )}
 
-              {error && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Action Failed</AlertTitle>
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isSignUp ? dictionary.signUp : dictionary.loginButton}
-              </Button>
-            </div>
-          </form>
+                <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                        <FormItem>
+                             <div className="flex items-center">
+                                <FormLabel>{dictionary.password}</FormLabel>
+                                {!isSignUp && (
+                                    <Link
+                                    href="#"
+                                    className="ml-auto inline-block text-sm underline"
+                                    >
+                                    {dictionary.forgotPassword}
+                                    </Link>
+                                )}
+                            </div>
+                            <FormControl>
+                                <Input type="password" {...field} disabled={isSubmitting} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                {isSignUp && (
+                  <FormField
+                      control={form.control}
+                      name="terms"
+                      render={({ field }) => (
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md py-2">
+                              <FormControl>
+                                  <Checkbox
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                      disabled={isSubmitting}
+                                  />
+                              </FormControl>
+                              <div className="space-y-1 leading-none">
+                                  <FormLabel>
+                                      {dictionary.labels.acceptTerms}{" "}
+                                      <Link href="#" className="underline">{dictionary.labels.termsAndConditions}</Link>.
+                                  </FormLabel>
+                                   <FormMessage />
+                              </div>
+                          </FormItem>
+                      )}
+                  />
+                )}
+
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Action Failed</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isSignUp ? dictionary.signUp : dictionary.loginButton}
+                </Button>
+            </form>
+          </Form>
           <div className="mt-4 text-center text-sm">
             {isSignUp ? dictionary.hasAccount : dictionary.noAccount}{" "}
             <Button variant="link" className="p-0 h-auto" onClick={toggleForm}>
@@ -341,3 +425,5 @@ export function LoginClient({ dictionary }: { dictionary: Dictionary }) {
     </ThemeProvider>
   )
 }
+
+    
