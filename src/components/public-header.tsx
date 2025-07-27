@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 function ThemeToggle({ dictionary }: { dictionary: Dictionary["navigation"]["themeToggle"] }) {
   const { setTheme } = useTheme();
@@ -98,8 +99,10 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
                     <Recycle className="h-6 w-6" />
                     <span>{d.header.title}</span>
                 </Link>
-                {isClient && (
-                  <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
+                  <nav className={cn(
+                      "hidden md:flex items-center gap-4 text-sm font-medium",
+                      isClient ? "opacity-100" : "opacity-0"
+                    )}>
                       <Link
                           href={`/${lang}/landing#use-cases`}
                           onClick={(e) => handleScroll(e, 'use-cases')}
@@ -121,12 +124,13 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
                           {d.header.nav.pricing}
                       </Link>
                   </nav>
-                )}
                 <div className="flex items-center gap-2 ml-auto">
                     <LanguageToggle dictionary={dictionary.navigation.languageToggle} />
                     <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
-                  {isClient && (
-                    <div className="hidden md:flex items-center gap-2">
+                    <div className={cn(
+                        "hidden md:flex items-center gap-2",
+                        isClient ? "opacity-100" : "opacity-0"
+                      )}>
                       <Button asChild>
                           <Link href={`/${lang}/login`}>{d.header.login}</Link>
                       </Button>
@@ -134,7 +138,6 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
                           <Link href={`/${lang}/landing#contact`}>{d.header.getStarted}</Link>
                       </Button>
                     </div>
-                  )}
                 </div>
             </div>
         </header>

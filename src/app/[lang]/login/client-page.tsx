@@ -325,16 +325,6 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
 
 
 export function LoginClient({ dictionary }: { dictionary: Dictionary }) {
-  
-  if (!dictionary?.loginPage?.validation) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background p-4">
-        <Loader2 className="h-8 w-8 animate-spin" />
-        <span className="ml-2">Loading dictionary...</span>
-      </div>
-    );
-  }
-
   return (
     <ThemeProvider
       attribute="class"
