@@ -38,6 +38,17 @@
       "cancel": "Cancelar",
       "create": "Crear Empresa"
     },
+    "upgradeDialog": {
+      "title": "Desbloquea Funciones Premium",
+      "description": "Actualiza tu plan para acceder a esta y otras potentes herramientas para optimizar tu gestión de residuos.",
+      "features": {
+        "ai": "Análisis avanzado con nuestro Agente IA.",
+        "compliance": "Cumplimiento legal y normativo automatizado.",
+        "reports": "Reportes financieros detallados e ilimitados."
+      },
+      "cancel": "Quizás Luego",
+      "confirm": "Mejorar Plan"
+    },
     "logout": "Cerrar Sesión",
     "backButton": "Volver",
     "premium": "Premium"
@@ -332,8 +343,8 @@
   "analyzerPage": {
     "title": "Agente IA",
     "description": "Chatea con nuestra IA para obtener ideas sobre tus datos de residuos.",
-    "initialMessage": "¡Hola! Soy el Agente de IA de WasteWise. Pega tus datos de residuos en formato CSV, o simplemente pídeme que analice los datos de ejemplo para ver cómo puedo ayudarte a reducir residuos.",
-    "inputPlaceholder": "Haz una pregunta o pega tus datos CSV aquí...",
+    "initialMessage": "¡Hola! Soy el Agente de IA de WasteWise. Pega tus datos de residuos en formato CSV o simplemente pídeme que analice el registro de residuos de tu empresa para ver cómo puedo ayudarte a reducir residuos.",
+    "inputPlaceholder": "Haz una pregunta o solicita un análisis...",
     "loading": "Analizando...",
     "report": {
       "title": "Reporte de Análisis de Residuos con IA",
@@ -411,7 +422,7 @@
       }
     }
   },
-  "schedulePage": {
+  "collectionsPage": {
     "title": "Calendario de Recolección",
     "description": "Vea y gestione las próximas recolecciones de residuos.",
     "requestCollection": "Solicitar Recolección",
@@ -519,7 +530,7 @@
       }
     }
   },
-  "materialsPage": {
+  "pricesPage": {
     "title": "Gestionar Precios",
     "addMaterial": "Añadir Nuevo Material",
     "cardTitle": "Lista de Materiales",

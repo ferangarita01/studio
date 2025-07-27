@@ -38,6 +38,17 @@
       "cancel": "Cancel",
       "create": "Create Company"
     },
+    "upgradeDialog": {
+      "title": "Unlock Premium Features",
+      "description": "Upgrade your plan to access this and other powerful tools to optimize your waste management.",
+      "features": {
+        "ai": "Advanced analysis with our AI Agent.",
+        "compliance": "Automated legal and regulatory compliance.",
+        "reports": "Unlimited and detailed financial reports."
+      },
+      "cancel": "Maybe Later",
+      "confirm": "Upgrade Plan"
+    },
     "logout": "Logout",
     "backButton": "Back",
     "premium": "Premium"
@@ -257,7 +268,7 @@
             "title": "Centralized Dashboard:",
             "description": "An intuitive space where you can view and manage all your environmental activities at a glance."
           },
-          "aiAnalyzer": {
+          "aiAgent": {
             "title": "AI Agent:",
             "description": "Our powerful artificial intelligence will soon provide you with deep insights to optimize your waste processes."
           },
@@ -332,8 +343,8 @@
   "analyzerPage": {
     "title": "AI Agent",
     "description": "Chat with our AI to get insights on your waste data.",
-    "initialMessage": "Hello! I'm the WasteWise AI Agent. Paste your waste data in CSV format, or just ask me to analyze the sample data to see how I can help you with waste reduction insights.",
-    "inputPlaceholder": "Ask a question or paste your CSV data here...",
+    "initialMessage": "Hello! I'm the WasteWise AI Agent. Paste your waste data in CSV format, or just ask me to analyze your company's waste log to see how I can help you with waste reduction insights.",
+    "inputPlaceholder": "Ask a question or request an analysis...",
     "loading": "Analyzing...",
     "report": {
       "title": "AI Waste Analysis Report",
@@ -411,7 +422,7 @@
       }
     }
   },
-  "schedulePage": {
+  "collectionsPage": {
     "title": "Collection Schedule",
     "description": "View and manage upcoming waste collections.",
     "requestCollection": "Request Collection",
@@ -519,7 +530,7 @@
       }
     }
   },
-  "materialsPage": {
+  "pricesPage": {
     "title": "Manage Prices",
     "addMaterial": "Add New Material",
     "cardTitle": "Materials List",

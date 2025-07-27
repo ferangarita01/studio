@@ -86,11 +86,6 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
     const d = dictionary.landingPage;
     const pathname = usePathname();
     const isPricingPage = pathname.includes('/pricing');
-    const [isClient, setIsClient] = useState(false);
-
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -99,10 +94,7 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
                     <Recycle className="h-6 w-6" />
                     <span>{d.header.title}</span>
                 </Link>
-                  <nav className={cn(
-                      "hidden md:flex items-center gap-4 text-sm font-medium",
-                      isClient ? "opacity-100" : "opacity-0"
-                    )}>
+                  <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
                       <Link
                           href={`/${lang}/landing#use-cases`}
                           onClick={(e) => handleScroll(e, 'use-cases')}
@@ -127,10 +119,7 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
                 <div className="flex items-center gap-2 ml-auto">
                     <LanguageToggle dictionary={dictionary.navigation.languageToggle} />
                     <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
-                    <div className={cn(
-                        "hidden md:flex items-center gap-2",
-                        isClient ? "opacity-100" : "opacity-0"
-                      )}>
+                    <div className="hidden md:flex items-center gap-2">
                       <Button asChild>
                           <Link href={`/${lang}/login`}>{d.header.login}</Link>
                       </Button>

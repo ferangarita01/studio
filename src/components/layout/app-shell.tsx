@@ -45,7 +45,7 @@ import {
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import type { Company, UserProfile, PlanType } from "@/lib/types";
+import type { Company, UserProfile } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { CreateCompanyDialog } from "@/components/create-company-dialog";
 import { useAuth, AuthProvider } from "@/context/auth-context";
@@ -58,6 +58,7 @@ import type { Dictionary } from "@/lib/get-dictionary";
 import { ThemeProvider } from "../theme-provider";
 import { Toaster } from "../ui/toaster";
 import { WhatsAppButton } from "../whatsapp-button";
+import { UpgradePlanDialog } from "../upgrade-plan-dialog";
 
 const Logo = () => {
   const dictionary = useDictionaries()?.navigation;
@@ -348,6 +349,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   const dictionary = useDictionaries()?.navigation;
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [isUpgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -368,19 +370,12 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   const navItems = useMemo(() => {
     if (!role || !isClient) return [];
     
-    return allNavItems.filter(item => {
-        if (!item.roles.includes(role)) return false;
-
-        if (role === 'client') {
-            const plan = userProfile?.plan || 'Free';
-            if ('plan' in item && item.plan === 'Premium' && plan !== 'Premium') {
-                return false;
-            }
-        }
-        
-        return true;
-    });
-  }, [role, userProfile?.plan, isClient]);
+    // We show all items for the user's role, filtering will happen client-side if needed for premium features
+    // but the list of available items is determined by role.
+    return allNavItems.filter(item => item.roles.includes(role));
+    
+  }, [role, isClient]);
+  
 
   const currentPath = `/${pathname.split('/').slice(2).join('/')}`;
   const isAuthorized = useMemo(() => {
@@ -418,11 +413,20 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     );
   }
 
-
   const getHref = (href: string) => {
     if (href === '/') return `/${lang}`;
     return `/${lang}${href}`;
   }
+
+  const handlePremiumClick = (e: React.MouseEvent<HTMLAnchorElement>, item: { plan?: string }) => {
+    const isPremiumFeature = item.plan === 'Premium';
+    const isFreeUser = role === 'client' && userProfile?.plan !== 'Premium';
+
+    if (isClient && isPremiumFeature && isFreeUser) {
+      e.preventDefault();
+      setUpgradeDialogOpen(true);
+    }
+  };
 
   const NavContent = () => (
     <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
@@ -457,7 +461,10 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                         "flex items-center gap-3 rounded-md px-3 py-2 text-muted-foreground transition-all hover:text-primary",
                         isSubActive && "bg-muted text-primary"
                       )}
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={(e) => {
+                        handlePremiumClick(e, subItem);
+                        setMobileMenuOpen(false);
+                      }}
                     >
                       <span>{subLabel}</span>
                     </Link>
@@ -474,15 +481,15 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
           <Link
             key={item.labelKey}
             href={href}
+            onClick={(e) => handlePremiumClick(e, item)}
             className={cn(
               "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
               isActive && "bg-muted text-primary"
             )}
-            onClick={() => setMobileMenuOpen(false)}
           >
             <item.icon className="h-4 w-4" />
             <span>{label}</span>
-             {'plan' in item && item.plan === 'Premium' && (
+             {item.plan === 'Premium' && (
               <Badge variant="outline" className="ml-auto flex items-center gap-1 border-yellow-500/50 text-yellow-500 text-xs">
                 <Star className="h-3 w-3" />
                 {dictionary.premium}
@@ -543,7 +550,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                  <div className="flex-1 overflow-y-auto py-2">
                     {isClient && !isAuthLoading && role ? <NavContent /> : <NavSkeleton />}
                  </div>
-                 <div className="mt-auto p-4 border-t">
+                 <div className="mt-auto p-4 border-t" onClick={() => setMobileMenuOpen(false)}>
                    <Button size="sm" variant="ghost" onClick={logout} className="w-full justify-start gap-2">
                       <LogOut className="h-4 w-4"/>
                       <span>{dictionary.logout}</span>
@@ -576,6 +583,14 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
           </main>
         </div>
         <WhatsAppButton />
+        {isClient && dictionary.upgradeDialog && (
+          <UpgradePlanDialog
+            open={isUpgradeDialogOpen}
+            onOpenChange={setUpgradeDialogOpen}
+            dictionary={dictionary.upgradeDialog}
+            lang={lang}
+          />
+        )}
       </div>
   );
 }
