@@ -25,6 +25,7 @@ import {
   Gavel,
   ChevronDown,
   Users,
+  Star,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -44,7 +45,7 @@ import {
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import type { Company, UserProfile } from "@/lib/types";
+import type { Company, UserProfile, PlanType } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { CreateCompanyDialog } from "@/components/create-company-dialog";
 import { useAuth, AuthProvider } from "@/context/auth-context";
@@ -71,7 +72,7 @@ const Logo = () => {
 
 const allNavItems = [
     { href: '/', icon: LayoutDashboard, labelKey: 'dashboard', roles: ['admin', 'client'] },
-    { href: '/analyzer', icon: BrainCircuit, labelKey: 'aiAgent', roles: ['admin', 'client'] },
+    { href: '/analyzer', icon: BrainCircuit, labelKey: 'aiAgent', roles: ['admin', 'client'], plan: 'Premium' },
     { href: '/log', icon: Trash2, labelKey: 'log', roles: ['admin', 'client'] },
     { href: '/schedule', icon: Calendar, labelKey: 'collections', roles: ['admin', 'client'] },
     { 
@@ -85,7 +86,7 @@ const allNavItems = [
     },
     { href: '/materials', icon: Package, labelKey: 'prices', roles: ['admin', 'client'] },
     { href: '/companies', icon: Users, labelKey: 'companies', roles: ['admin'] },
-    { href: '/compliance', icon: Gavel, labelKey: 'compliance', roles: ['admin', 'client'] },
+    { href: '/compliance', icon: Gavel, labelKey: 'compliance', roles: ['admin', 'client'], plan: 'Premium' },
 ] as const;
 
 
@@ -343,7 +344,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   const pathname = usePathname();
   const router = useRouter();
   
-  const { isAuthenticated, isLoading: isAuthLoading, logout, role } = useAuth();
+  const { isAuthenticated, isLoading: isAuthLoading, logout, role, userProfile } = useAuth();
   const dictionary = useDictionaries()?.navigation;
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -365,9 +366,21 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   }, [isAuthenticated, isAuthLoading, pathname, router, lang, isPublicPage]);
   
   const navItems = useMemo(() => {
-    if (!role) return [];
-    return allNavItems.filter(item => item.roles.includes(role));
-  }, [role]);
+    if (!role || !isClient) return [];
+    
+    return allNavItems.filter(item => {
+        if (!item.roles.includes(role)) return false;
+
+        if (role === 'client') {
+            const plan = userProfile?.plan || 'Free';
+            if ('plan' in item && item.plan === 'Premium' && plan !== 'Premium') {
+                return false;
+            }
+        }
+        
+        return true;
+    });
+  }, [role, userProfile?.plan, isClient]);
 
   const currentPath = `/${pathname.split('/').slice(2).join('/')}`;
   const isAuthorized = useMemo(() => {
@@ -379,10 +392,10 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   }, [role, navItems, currentPath]);
 
   useEffect(() => {
-    if (isAuthenticated && role && navItems.length > 0 && !isAuthorized) {
+    if (isClient && isAuthenticated && role && navItems.length > 0 && !isAuthorized) {
        router.push(`/${lang}`);
     }
-  }, [isAuthenticated, isAuthorized, role, router, lang, navItems.length]);
+  }, [isAuthenticated, isAuthorized, role, router, lang, navItems.length, isClient]);
   
   if (isAuthLoading || !isClient) {
     return <div className="flex h-screen w-full items-center justify-center">Loading...</div>;
@@ -426,7 +439,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
               <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&[data-state=open]>svg]:rotate-180">
                 <div className="flex items-center gap-3">
                   <item.icon className="h-4 w-4" />
-                  {label}
+                  <span>{label}</span>
                 </div>
                 <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
               </CollapsibleTrigger>
@@ -446,7 +459,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                       )}
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      {subLabel}
+                      <span>{subLabel}</span>
                     </Link>
                   );
                 })}
@@ -469,8 +482,11 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
           >
             <item.icon className="h-4 w-4" />
             <span>{label}</span>
-            {role === 'admin' && item.labelKey === 'aiAgent' && (
-              <Badge variant="outline" className="ml-auto text-xs">Beta</Badge>
+             {'plan' in item && item.plan === 'Premium' && (
+              <Badge variant="outline" className="ml-auto flex items-center gap-1 border-yellow-500/50 text-yellow-500 text-xs">
+                <Star className="h-3 w-3" />
+                {dictionary.premium}
+              </Badge>
             )}
           </Link>
         );
@@ -585,5 +601,3 @@ export function AppShell({ children, lang, dictionary }: { children: React.React
     </ThemeProvider>
    )
 }
-
-    

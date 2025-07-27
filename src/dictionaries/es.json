@@ -39,7 +39,8 @@
       "create": "Crear Empresa"
     },
     "logout": "Cerrar Sesión",
-    "backButton": "Volver"
+    "backButton": "Volver",
+    "premium": "Premium"
   },
   "landingPage": {
     "header": {

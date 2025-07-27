@@ -39,7 +39,8 @@
       "create": "Create Company"
     },
     "logout": "Logout",
-    "backButton": "Back"
+    "backButton": "Back",
+    "premium": "Premium"
   },
   "landingPage": {
     "header": {
