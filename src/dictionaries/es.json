@@ -622,6 +622,7 @@
     "table": {
       "companyName": "Nombre de la Empresa",
       "assignedClient": "Cliente Asignado",
+      "plan": "Plan",
       "actions": "Acciones",
       "assign": "Asignar Cliente",
       "reassign": "Re-asignar",
@@ -639,12 +640,19 @@
       "unassign": "Ninguno (Desasignar)"
     },
     "editDialog": {
-      "title": "Editar Nombre de la Empresa",
-      "description": "Actualice el nombre de esta empresa.",
+      "title": "Editar Empresa",
+      "description": "Actualice los detalles de esta empresa.",
       "nameLabel": "Nombre de la Empresa",
       "namePlaceholder": "ej., Exportaciones Globales S.A.",
+      "planLabel": "Plan de Suscripción",
+      "planPlaceholder": "Seleccione un plan",
+      "plans": {
+        "Free": "Gratis",
+        "Premium": "Premium",
+        "Custom": "Personalizado"
+      },
       "cancel": "Cancelar",
-      "update": "Actualizar Nombre"
+      "update": "Actualizar"
     },
     "toast": {
       "assign": {
@@ -653,7 +661,7 @@
       },
       "update": {
         "title": "Empresa Actualizada",
-        "description": "El nombre de la empresa se ha actualizado correctamente."
+        "description": "Los detalles de la empresa se han actualizado correctamente."
       }
     }
   }

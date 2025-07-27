@@ -622,6 +622,7 @@
     "table": {
       "companyName": "Company Name",
       "assignedClient": "Assigned Client",
+      "plan": "Plan",
       "actions": "Actions",
       "assign": "Assign Client",
       "reassign": "Re-assign",
@@ -639,12 +640,19 @@
       "unassign": "None (Unassign)"
     },
     "editDialog": {
-      "title": "Edit Company Name",
-      "description": "Update the name for this company.",
+      "title": "Edit Company",
+      "description": "Update the details for this company.",
       "nameLabel": "Company Name",
       "namePlaceholder": "e.g., Global Exports Ltd.",
+      "planLabel": "Subscription Plan",
+      "planPlaceholder": "Select a plan",
+      "plans": {
+        "Free": "Free",
+        "Premium": "Premium",
+        "Custom": "Custom"
+      },
       "cancel": "Cancel",
-      "update": "Update Name"
+      "update": "Update"
     },
     "toast": {
       "assign": {
@@ -653,7 +661,7 @@
       },
       "update": {
         "title": "Company Updated",
-        "description": "The company name has been successfully updated."
+        "description": "The company details have been successfully updated."
       }
     }
   }

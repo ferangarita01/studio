@@ -18,7 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { Dictionary } from "@/lib/get-dictionary";
-import type { Company, UserProfile } from "@/lib/types";
+import type { Company, UserProfile, PlanType } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { getUsers, assignUserToCompany, updateCompany, getCompanies } from "@/services/waste-data-service";
@@ -26,6 +26,7 @@ import { AssignUserDialog } from "@/components/assign-user-dialog";
 import { EditCompanyDialog } from "@/components/edit-company-dialog";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
+import { Badge } from "@/components/ui/badge";
 
 interface CompaniesClientProps {
   dictionary: Dictionary["companiesPage"];
@@ -46,27 +47,28 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
     setIsClient(true);
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      const [fetchedCompanies, fetchedClients] = await Promise.all([
-        getCompanies(),
-        getUsers('client')
-      ]);
+  const fetchCompaniesData = useCallback(async () => {
+    setIsLoading(true);
+    const [fetchedCompanies, fetchedClients] = await Promise.all([
+      getCompanies(),
+      getUsers('client')
+    ]);
 
-      const clientMap = new Map(fetchedClients.map(client => [client.id, client.email]));
-      
-      const companiesWithClientNames = fetchedCompanies.map(company => ({
-          ...company,
-          assignedUserName: company.assignedUserUid ? clientMap.get(company.assignedUserUid) : undefined
-      }));
+    const clientMap = new Map(fetchedClients.map(client => [client.id, client.email]));
+    
+    const companiesWithClientNames = fetchedCompanies.map(company => ({
+        ...company,
+        assignedUserName: company.assignedUserUid ? clientMap.get(company.assignedUserUid) : undefined
+    }));
 
-      setCompanies(companiesWithClientNames);
-      setClients(fetchedClients);
-      setIsLoading(false);
-    };
-    fetchData();
+    setCompanies(companiesWithClientNames);
+    setClients(fetchedClients);
+    setIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    fetchCompaniesData();
+  }, [fetchCompaniesData]);
 
   const handleOpenAssignDialog = (company: Company) => {
     setSelectedCompany(company);
@@ -105,11 +107,11 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
     }
   }, [companies, clients, toast, dictionary]);
 
-  const handleUpdateCompany = useCallback(async (companyId: string, newName: string) => {
+  const handleUpdateCompany = useCallback(async (companyId: string, data: { name: string; plan: PlanType }) => {
     try {
-      await updateCompany(companyId, newName);
+      await updateCompany(companyId, data);
       setCompanies(prevCompanies => prevCompanies.map(c => 
-        c.id === companyId ? { ...c, name: newName } : c
+        c.id === companyId ? { ...c, ...data } : c
       ));
       toast({
         title: dictionary.toast.update.title,
@@ -119,7 +121,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
     } catch (error) {
        toast({
         title: "Error",
-        description: "Failed to update company name.",
+        description: "Failed to update company.",
         variant: "destructive"
       });
     }
@@ -145,6 +147,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
                   <TableRow>
                     <TableHead>{dictionary.table.companyName}</TableHead>
                     <TableHead>{dictionary.table.assignedClient}</TableHead>
+                    <TableHead>{dictionary.table.plan}</TableHead>
                     {showAdminFeatures && (
                       <TableHead className="w-[250px] text-right"><span className="sr-only">{dictionary.table.actions}</span></TableHead>
                     )}
@@ -153,7 +156,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={showAdminFeatures ? 3 : 2} className="h-24 text-center">
+                      <TableCell colSpan={showAdminFeatures ? 4 : 3} className="h-24 text-center">
                         <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                       </TableCell>
                     </TableRow>
@@ -163,6 +166,9 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
                         <TableCell className="font-medium">{company.name}</TableCell>
                         <TableCell>
                           {company.assignedUserName || <span className="text-muted-foreground">{dictionary.table.unassigned}</span>}
+                        </TableCell>
+                        <TableCell>
+                            <Badge variant={company.plan === 'Premium' ? 'default' : 'secondary'}>{company.plan || 'Free'}</Badge>
                         </TableCell>
                         {showAdminFeatures && (
                           <TableCell className="text-right space-x-2">
@@ -178,7 +184,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={showAdminFeatures ? 3 : 2} className="h-24 text-center">
+                      <TableCell colSpan={showAdminFeatures ? 4 : 3} className="h-24 text-center">
                         {dictionary.noCompanies}
                       </TableCell>
                     </TableRow>

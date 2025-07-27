@@ -4,6 +4,8 @@
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { useAuth } from "@/context/auth-context";
+import { updateUserPlan } from "@/services/waste-data-service";
 
 // In a real application, you would get this from your environment variables
 const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "test";
@@ -15,6 +17,7 @@ interface PayPalButtonProps {
 
 export function PayPalButtonWrapper({ amount, description }: PayPalButtonProps) {
     const { toast } = useToast();
+    const { user, refreshUserProfile } = useAuth();
 
     if (!PAYPAL_CLIENT_ID) {
         console.error("PayPal Client ID is not set.");
@@ -39,12 +42,20 @@ export function PayPalButtonWrapper({ amount, description }: PayPalButtonProps) 
                         });
                     }}
                     onApprove={(data, actions) => {
-                         return actions.order!.capture().then((details) => {
-                            toast({
-                                title: "Payment Successful",
-                                description: `Thank you, ${details.payer.name?.given_name}! Your transaction is complete.`,
-                            });
-                            // Here you would typically redirect the user or update your backend
+                         return actions.order!.capture().then(async (details) => {
+                            if (user) {
+                                await updateUserPlan(user.uid, 'Premium');
+                                await refreshUserProfile(); // Refresh user profile to get the new plan
+                                toast({
+                                    title: "Payment Successful & Plan Upgraded!",
+                                    description: `Thank you, ${details.payer.name?.given_name}! You are now on the Premium plan.`,
+                                });
+                            } else {
+                                toast({
+                                    title: "Payment Successful",
+                                    description: `Thank you, ${details.payer.name?.given_name}! Your transaction is complete.`,
+                                });
+                            }
                         });
                     }}
                     onError={(err) => {

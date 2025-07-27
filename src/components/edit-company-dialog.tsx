@@ -14,21 +14,29 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { Dictionary } from "@/lib/get-dictionary";
-import type { Company } from "@/lib/types";
+import type { Company, PlanType } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
-import { uploadFile, updateCompanyCoverImage } from "@/services/waste-data-service";
+import { uploadFile, updateCompanyCoverImage, updateCompany } from "@/services/waste-data-service";
 import { Loader2 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface EditCompanyDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onUpdate: (companyId: string, newName: string) => void;
+  onUpdate: (companyId: string, data: { name: string; plan: PlanType }) => void;
   dictionary: Dictionary["companiesPage"]["editDialog"];
   company: Company | null;
 }
 
 export function EditCompanyDialog({ open, onOpenChange, onUpdate, dictionary, company }: EditCompanyDialogProps) {
   const [name, setName] = useState("");
+  const [plan, setPlan] = useState<PlanType>("Free");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
@@ -36,13 +44,14 @@ export function EditCompanyDialog({ open, onOpenChange, onUpdate, dictionary, co
   useEffect(() => {
     if (company) {
       setName(company.name);
+      setPlan(company.plan || "Free");
     }
   }, [company, open]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (name.trim() && company) {
-      onUpdate(company.id, name.trim());
+      onUpdate(company.id, { name: name.trim(), plan });
     }
   };
 
@@ -55,9 +64,7 @@ export function EditCompanyDialog({ open, onOpenChange, onUpdate, dictionary, co
         const imageUrl = await uploadFile(file, path);
         await updateCompanyCoverImage(company.id, imageUrl);
         
-        // This is a bit of a hack to refresh the company data in the parent.
-        // A more robust solution might involve a global state manager like Zustand or TanStack Query.
-        onUpdate(company.id, name); // re-call onUpdate to trigger a re-fetch in the parent
+        onUpdate(company.id, { name, plan }); // re-call onUpdate to trigger a re-fetch in the parent
 
         toast({
           title: "Cover Image Updated",
@@ -102,6 +109,23 @@ export function EditCompanyDialog({ open, onOpenChange, onUpdate, dictionary, co
                 className="col-span-3"
                 required
               />
+            </div>
+             <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="plan-select" className="text-right">
+                {dictionary.planLabel}
+              </Label>
+              <div className="col-span-3">
+                <Select value={plan} onValueChange={(value) => setPlan(value as PlanType)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={dictionary.planPlaceholder} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Free">{dictionary.plans.Free}</SelectItem>
+                    <SelectItem value="Premium">{dictionary.plans.Premium}</SelectItem>
+                    <SelectItem value="Custom">{dictionary.plans.Custom}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
              <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="cover-image" className="text-right">

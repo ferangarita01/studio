@@ -17,7 +17,7 @@ import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "fire
 import { unstable_cache } from "next/cache";
 import { db, storage } from "@/lib/firebase";
 import { wasteData, weeklyReportData, monthlyReportData } from "@/lib/data";
-import type { WasteEntry, Material, DisposalEvent, ReportData, Company, UserRole, UserProfile } from "@/lib/types";
+import type { WasteEntry, Material, DisposalEvent, ReportData, Company, UserRole, UserProfile, PlanType } from "@/lib/types";
 
 // Helper to convert snapshot to array
 const snapshotToArray = (snapshot: any) => {
@@ -34,7 +34,7 @@ const snapshotToArray = (snapshot: any) => {
 
 export async function createUserProfile(uid: string, data: Omit<UserProfile, 'id'>): Promise<void> {
   const userRef = ref(db, `users/${uid}`);
-  await set(userRef, data);
+  await set(userRef, { ...data, plan: 'Free' });
 }
 
 export async function getUserProfile(uid: string): Promise<UserProfile | null> {
@@ -57,6 +57,11 @@ export async function getUsers(role?: UserRole): Promise<UserProfile[]> {
     return allUsers.filter(user => user.role === role);
   }
   return allUsers;
+}
+
+export async function updateUserPlan(userId: string, plan: PlanType): Promise<void> {
+  const userRef = ref(db, `users/${userId}`);
+  await update(userRef, { plan });
 }
 
 
@@ -111,7 +116,8 @@ export async function addCompany(name: string, userId: string): Promise<Company>
     name, 
     createdBy: userId,
     logoUrl: `https://placehold.co/100x100.png?text=${name.charAt(0)}`,
-    coverImageUrl: 'https://space.gov.ae/app_themes/lg21016/images/Sustainability%20Development%20Goals.png'
+    coverImageUrl: 'https://space.gov.ae/app_themes/lg21016/images/Sustainability%20Development%20Goals.png',
+    plan: 'Free'
   };
   const companiesRef = ref(db, 'companies');
   const newCompanyRef = push(companiesRef);
@@ -119,9 +125,9 @@ export async function addCompany(name: string, userId: string): Promise<Company>
   return { id: newCompanyRef.key!, ...companyData };
 }
 
-export async function updateCompany(companyId: string, newName: string): Promise<void> {
-  const companyRef = ref(db, `companies/${companyId}`);
-  await update(companyRef, { name: newName });
+export async function updateCompany(companyId: string, data: { name: string; plan: PlanType }): Promise<void> {
+    const companyRef = ref(db, `companies/${companyId}`);
+    await update(companyRef, data);
 }
 
 export async function updateCompanyCoverImage(companyId: string, imageUrl: string): Promise<void> {

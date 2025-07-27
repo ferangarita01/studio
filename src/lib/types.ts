@@ -2,6 +2,7 @@
 export type WasteType = "Recycling" | "Organic" | "General" | "Hazardous";
 export type UserRole = "admin" | "client";
 export type AccountType = "company" | "individual";
+export type PlanType = "Free" | "Premium" | "Custom";
 
 export type UserProfile = {
   id: string; // Firebase UID
@@ -17,6 +18,7 @@ export type UserProfile = {
   country?: string;
   phone?: string;
   assignedCompanyId?: string;
+  plan?: PlanType;
 }
 
 export type Company = {
@@ -27,6 +29,7 @@ export type Company = {
   assignedUserName?: string; // email of the assigned user, for display
   logoUrl?: string; // URL for the company's logo, for embeddable modules
   coverImageUrl?: string; // URL for the company's cover/hero image
+  plan?: PlanType;
 };
 
 export type Material = {

@@ -27,6 +27,7 @@ interface AuthContextType {
   login: (email:string, pass:string) => Promise<any>;
   logout: () => void;
   signUp: (email:string, pass:string, profileData: Omit<UserProfile, 'id' | 'role' | 'email'>) => Promise<any>;
+  refreshUserProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -40,6 +41,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   
   const lang = pathname.split('/')[1] || 'en';
+  
+  const refreshUserProfile = useCallback(async () => {
+    if (user) {
+        const profile = await getUserProfile(user.uid);
+        setUserProfile(profile);
+         if (user.email === 'prueba2@admin.co') {
+          setRole('admin');
+        } else if (profile) {
+          setRole(profile.role);
+        } else {
+          setRole(null);
+        }
+    }
+  }, [user]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -84,7 +99,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           await createUserProfile(newUser.uid, { 
             email: newUser.email!, 
             role: 'client',
-            ...profileData
+            ...profileData,
+            plan: 'Free'
           });
         }
         // onAuthStateChanged will handle setting the new user and profile
@@ -112,6 +128,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         signUp,
         role, 
         userProfile,
+        refreshUserProfile
     }}>
       {children}
     </AuthContext.Provider>
