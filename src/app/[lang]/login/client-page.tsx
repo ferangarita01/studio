@@ -27,15 +27,17 @@ import { Toaster } from "@/components/ui/toaster";
 import { DictionariesProvider } from "@/context/dictionary-context";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { UserProfile } from "@/lib/types";
+import { Checkbox } from "@/components/ui/checkbox";
+import { FormField, FormItem, FormControl, FormLabel, FormMessage } from "@/components/ui/form";
 
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1, "Password is required"),
 });
 
-const signUpSchema = z.object({
-  fullName: z.string().min(2, "Full name is required"),
-  accountType: z.enum(["company", "individual"], { required_error: "Please select an account type." }),
+const signUpSchema = (dictionary: Dictionary["loginPage"]["validation"]) => z.object({
+  fullName: z.string().min(2, dictionary.fullName),
+  accountType: z.enum(["company", "individual"], { required_error: dictionary.accountType }),
   taxId: z.string().optional(),
   idNumber: z.string().optional(),
   jobTitle: z.string().optional(),
@@ -43,24 +45,27 @@ const signUpSchema = z.object({
   city: z.string().optional(),
   country: z.string().optional(),
   phone: z.string().optional(),
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters long" }),
+  email: z.string().email({ message: dictionary.email }),
+  password: z.string().min(6, { message: dictionary.password }),
+  terms: z.boolean().refine(val => val === true, {
+    message: dictionary.terms,
+  }),
 }).refine(data => {
     if (data.accountType === 'company') return !!data.taxId;
     return true;
 }, {
-    message: "NIT is required for companies",
+    message: dictionary.taxId,
     path: ["taxId"],
 }).refine(data => {
     if (data.accountType === 'individual') return !!data.idNumber;
     return true;
 }, {
-    message: "Identification number is required for individuals",
+    message: dictionary.idNumber,
     path: ["idNumber"],
 });
 
 type LoginSchema = z.infer<typeof loginSchema>;
-type SignUpSchema = z.infer<typeof signUpSchema>;
+type SignUpSchema = z.infer<ReturnType<typeof signUpSchema>>;
 
 
 function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] }) {
@@ -81,7 +86,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
     control,
     reset,
   } = useForm<SignUpSchema>({
-    resolver: zodResolver(isSignUp ? signUpSchema : loginSchema),
+    resolver: zodResolver(isSignUp ? signUpSchema(dictionary.validation) : loginSchema),
   });
   
   const accountType = watch("accountType");
@@ -163,24 +168,24 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
               {isSignUp && (
                  <>
                     <div className="grid gap-2">
-                        <Label htmlFor="fullName">Full Name</Label>
+                        <Label htmlFor="fullName">{dictionary.labels.fullName}</Label>
                         <Input id="fullName" {...register("fullName")} disabled={isSubmitting} />
                         {errors.fullName && <p className="text-sm text-destructive">{errors.fullName.message}</p>}
                     </div>
 
                     <div className="grid gap-2">
-                      <Label htmlFor="accountType">Account Type</Label>
+                      <Label htmlFor="accountType">{dictionary.labels.accountType}</Label>
                       <Controller
                         name="accountType"
                         control={control}
                         render={({ field }) => (
                            <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select account type..." />
+                                <SelectValue placeholder={dictionary.labels.selectAccountType} />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="individual">Individual</SelectItem>
-                                <SelectItem value="company">Company</SelectItem>
+                                <SelectItem value="individual">{dictionary.labels.individual}</SelectItem>
+                                <SelectItem value="company">{dictionary.labels.company}</SelectItem>
                               </SelectContent>
                             </Select>
                         )}
@@ -190,7 +195,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                    
                     {accountType === 'company' && (
                         <div className="grid gap-2">
-                            <Label htmlFor="taxId">NIT</Label>
+                            <Label htmlFor="taxId">{dictionary.labels.taxId}</Label>
                             <Input id="taxId" {...register("taxId")} disabled={isSubmitting} />
                             {errors.taxId && <p className="text-sm text-destructive">{errors.taxId.message}</p>}
                         </div>
@@ -198,32 +203,32 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
 
                     {accountType === 'individual' && (
                         <div className="grid gap-2">
-                            <Label htmlFor="idNumber">Identification Number</Label>
+                            <Label htmlFor="idNumber">{dictionary.labels.idNumber}</Label>
                             <Input id="idNumber" {...register("idNumber")} disabled={isSubmitting} />
                             {errors.idNumber && <p className="text-sm text-destructive">{errors.idNumber.message}</p>}
                         </div>
                     )}
 
                     <div className="grid gap-2">
-                        <Label htmlFor="jobTitle">Job Title</Label>
+                        <Label htmlFor="jobTitle">{dictionary.labels.jobTitle}</Label>
                         <Input id="jobTitle" {...register("jobTitle")} disabled={isSubmitting} />
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="address">Address</Label>
+                        <Label htmlFor="address">{dictionary.labels.address}</Label>
                         <Input id="address" {...register("address")} disabled={isSubmitting} />
                     </div>
                      <div className="grid grid-cols-2 gap-4">
                         <div className="grid gap-2">
-                            <Label htmlFor="city">City</Label>
+                            <Label htmlFor="city">{dictionary.labels.city}</Label>
                             <Input id="city" {...register("city")} disabled={isSubmitting} />
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="country">Country</Label>
+                            <Label htmlFor="country">{dictionary.labels.country}</Label>
                             <Input id="country" {...register("country")} disabled={isSubmitting} />
                         </div>
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="phone">Phone Number</Label>
+                        <Label htmlFor="phone">{dictionary.labels.phone}</Label>
                         <Input id="phone" type="tel" {...register("phone")} disabled={isSubmitting} />
                     </div>
                  </>
@@ -261,6 +266,30 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                 />
                  {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
               </div>
+
+              {isSignUp && (
+                <FormField
+                    control={control}
+                    name="terms"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md py-2">
+                            <FormControl>
+                                <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                                <FormLabel>
+                                    {dictionary.labels.acceptTerms}{" "}
+                                    <Link href="#" className="underline">{dictionary.labels.termsAndConditions}</Link>.
+                                </FormLabel>
+                                 {errors.terms && <p className="text-sm text-destructive">{errors.terms.message}</p>}
+                            </div>
+                        </FormItem>
+                    )}
+                />
+              )}
 
               {error && (
                 <Alert variant="destructive">

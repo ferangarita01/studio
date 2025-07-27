@@ -138,8 +138,7 @@
   },
   "asorecifuentesPage": {
     "header": {
-      "title": "Asorecifuentes",
-      "login": "Iniciar Sesión"
+      "title": "Asorecifuentes"
     },
     "hero": {
       "title": "Asorecifuente E.S.P.",
@@ -217,7 +216,32 @@
     "noAccount": "¿No tienes una cuenta?",
     "hasAccount": "¿Ya tienes una cuenta?",
     "signUp": "Regístrate",
-    "signUpDescription": "Crea una nueva cuenta de cliente."
+    "signUpDescription": "Crea una nueva cuenta de cliente.",
+    "labels": {
+      "fullName": "Nombre Completo",
+      "accountType": "Tipo de Cuenta",
+      "selectAccountType": "Seleccione el tipo de cuenta...",
+      "individual": "Individual",
+      "company": "Empresa",
+      "taxId": "NIT",
+      "idNumber": "Número de Identificación",
+      "jobTitle": "Cargo que Ocupa",
+      "address": "Dirección",
+      "city": "Ciudad",
+      "country": "País",
+      "phone": "Número de Teléfono",
+      "acceptTerms": "Acepto los",
+      "termsAndConditions": "términos y condiciones"
+    },
+    "validation": {
+      "fullName": "El nombre completo es requerido",
+      "accountType": "Por favor, seleccione un tipo de cuenta.",
+      "taxId": "El NIT es requerido para empresas",
+      "idNumber": "El número de identificación es requerido para individuales",
+      "email": "Dirección de correo electrónico inválida",
+      "password": "La contraseña debe tener al menos 6 caracteres",
+      "terms": "Debes aceptar los términos y condiciones."
+    }
   },
   "dashboard": {
     "title": "Tablero",
