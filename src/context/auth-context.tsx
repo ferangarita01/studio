@@ -26,7 +26,7 @@ interface AuthContextType {
   userProfile: UserProfile | null;
   login: (email:string, pass:string) => Promise<any>;
   logout: () => void;
-  signUp: (email:string, pass:string) => Promise<any>;
+  signUp: (email:string, pass:string, profileData: Omit<UserProfile, 'id' | 'role' | 'email'>) => Promise<any>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return userCredential;
   };
 
-  const signUp = async (email: string, password: string):Promise<any> => {
+  const signUp = async (email: string, password: string, profileData: Omit<UserProfile, 'id' | 'role' | 'email'>):Promise<any> => {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const newUser = userCredential.user;
@@ -83,7 +83,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           // Create a user profile in the database with the 'client' role
           await createUserProfile(newUser.uid, { 
             email: newUser.email!, 
-            role: 'client' 
+            role: 'client',
+            ...profileData
           });
         }
         // onAuthStateChanged will handle setting the new user and profile
@@ -124,5 +125,3 @@ export const useAuth = () => {
   }
   return context;
 };
-
-    

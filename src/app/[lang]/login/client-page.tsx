@@ -4,6 +4,9 @@
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,6 +25,42 @@ import type { Dictionary } from "@/lib/get-dictionary";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { DictionariesProvider } from "@/context/dictionary-context";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import type { UserProfile } from "@/lib/types";
+
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1, "Password is required"),
+});
+
+const signUpSchema = z.object({
+  fullName: z.string().min(2, "Full name is required"),
+  accountType: z.enum(["company", "individual"], { required_error: "Please select an account type." }),
+  taxId: z.string().optional(),
+  idNumber: z.string().optional(),
+  jobTitle: z.string().optional(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+  country: z.string().optional(),
+  phone: z.string().optional(),
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters long" }),
+}).refine(data => {
+    if (data.accountType === 'company') return !!data.taxId;
+    return true;
+}, {
+    message: "NIT is required for companies",
+    path: ["taxId"],
+}).refine(data => {
+    if (data.accountType === 'individual') return !!data.idNumber;
+    return true;
+}, {
+    message: "Identification number is required for individuals",
+    path: ["idNumber"],
+});
+
+type LoginSchema = z.infer<typeof loginSchema>;
+type SignUpSchema = z.infer<typeof signUpSchema>;
 
 
 function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] }) {
@@ -30,11 +69,22 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   const params = useParams();
   const lang = params.lang;
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    control,
+    reset,
+  } = useForm<SignUpSchema>({
+    resolver: zodResolver(isSignUp ? signUpSchema : loginSchema),
+  });
+  
+  const accountType = watch("accountType");
 
   useEffect(() => {
     if (!isAuthLoading && isAuthenticated) {
@@ -43,16 +93,26 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   }, [isAuthLoading, isAuthenticated, router, lang]);
 
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: any) => {
     setError("");
     setIsSubmitting(true);
 
     try {
       if (isSignUp) {
-        await signUp(email, password);
+        const profileData: Omit<UserProfile, 'id' | 'role' | 'email'> = {
+            fullName: data.fullName,
+            accountType: data.accountType,
+            taxId: data.taxId,
+            idNumber: data.idNumber,
+            jobTitle: data.jobTitle,
+            address: data.address,
+            city: data.city,
+            country: data.country,
+            phone: data.phone,
+        };
+        await signUp(data.email, data.password, profileData);
       } else {
-        await login(email, password);
+        await login(data.email, data.password);
       }
       // Successful login/signup will trigger the useEffect above to redirect
     } catch (err: any) {
@@ -76,9 +136,15 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
     )
   }
 
+  const toggleForm = () => {
+    setIsSignUp(!isSignUp);
+    setError('');
+    reset();
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <Card className="mx-auto w-full max-w-sm">
+      <Card className="mx-auto w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl">{isSignUp ? dictionary.signUp : dictionary.title}</CardTitle>
           <CardDescription>
@@ -86,20 +152,89 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid gap-4">
+              {isSignUp && (
+                 <>
+                    <div className="grid gap-2">
+                        <Label htmlFor="fullName">Full Name</Label>
+                        <Input id="fullName" {...register("fullName")} disabled={isSubmitting} />
+                        {errors.fullName && <p className="text-sm text-destructive">{errors.fullName.message}</p>}
+                    </div>
+
+                    <div className="grid gap-2">
+                      <Label htmlFor="accountType">Account Type</Label>
+                      <Controller
+                        name="accountType"
+                        control={control}
+                        render={({ field }) => (
+                           <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select account type..." />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="individual">Individual</SelectItem>
+                                <SelectItem value="company">Company</SelectItem>
+                              </SelectContent>
+                            </Select>
+                        )}
+                      />
+                       {errors.accountType && <p className="text-sm text-destructive">{errors.accountType.message}</p>}
+                    </div>
+                   
+                    {accountType === 'company' && (
+                        <div className="grid gap-2">
+                            <Label htmlFor="taxId">NIT</Label>
+                            <Input id="taxId" {...register("taxId")} disabled={isSubmitting} />
+                            {errors.taxId && <p className="text-sm text-destructive">{errors.taxId.message}</p>}
+                        </div>
+                    )}
+
+                    {accountType === 'individual' && (
+                        <div className="grid gap-2">
+                            <Label htmlFor="idNumber">Identification Number</Label>
+                            <Input id="idNumber" {...register("idNumber")} disabled={isSubmitting} />
+                            {errors.idNumber && <p className="text-sm text-destructive">{errors.idNumber.message}</p>}
+                        </div>
+                    )}
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="jobTitle">Job Title</Label>
+                        <Input id="jobTitle" {...register("jobTitle")} disabled={isSubmitting} />
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="address">Address</Label>
+                        <Input id="address" {...register("address")} disabled={isSubmitting} />
+                    </div>
+                     <div className="grid grid-cols-2 gap-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="city">City</Label>
+                            <Input id="city" {...register("city")} disabled={isSubmitting} />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="country">Country</Label>
+                            <Input id="country" {...register("country")} disabled={isSubmitting} />
+                        </div>
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="phone">Phone Number</Label>
+                        <Input id="phone" type="tel" {...register("phone")} disabled={isSubmitting} />
+                    </div>
+                 </>
+              )}
+
               <div className="grid gap-2">
                 <Label htmlFor="email">{dictionary.email}</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="name@example.com"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  {...register("email")}
                   disabled={isSubmitting}
                 />
+                {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
               </div>
+
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">{dictionary.password}</Label>
@@ -115,12 +250,12 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                 <Input
                   id="password"
                   type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  {...register("password")}
                   disabled={isSubmitting}
                 />
+                 {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
               </div>
+
               {error && (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
@@ -136,7 +271,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
           </form>
           <div className="mt-4 text-center text-sm">
             {isSignUp ? dictionary.hasAccount : dictionary.noAccount}{" "}
-            <Button variant="link" className="p-0 h-auto" onClick={() => { setIsSignUp(!isSignUp); setError(''); }}>
+            <Button variant="link" className="p-0 h-auto" onClick={toggleForm}>
                 {isSignUp ? dictionary.loginButton : dictionary.signUp}
             </Button>
           </div>

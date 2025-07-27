@@ -1,11 +1,21 @@
 
 export type WasteType = "Recycling" | "Organic" | "General" | "Hazardous";
 export type UserRole = "admin" | "client";
+export type AccountType = "company" | "individual";
 
 export type UserProfile = {
   id: string; // Firebase UID
   email: string;
   role: UserRole;
+  fullName?: string;
+  accountType?: AccountType;
+  taxId?: string; // For companies (NIT)
+  idNumber?: string; // For individuals (Cédula)
+  jobTitle?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  phone?: string;
   assignedCompanyId?: string;
 }
 
