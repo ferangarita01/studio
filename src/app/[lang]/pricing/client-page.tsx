@@ -1,5 +1,5 @@
 
-"use client";
+"use " + "client";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import type { Locale } from "@/i18n-config";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { PublicHeader } from "@/components/public-header";
+import { PayPalButtonWrapper } from "@/components/paypal-button";
 
 interface PricingCardProps {
   plan: {
@@ -30,9 +31,12 @@ interface PricingCardProps {
   };
   lang: Locale;
   isPopular?: boolean;
+  isPayPal?: boolean;
 }
 
-const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, isPopular }) => {
+const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, isPopular, isPayPal = false }) => {
+  const planPrice = plan.price.replace(/[^0-9.]/g, '');
+
   return (
     <Card className={cn("flex flex-col", isPopular ? "border-2 border-primary shadow-lg" : "")}>
       <CardHeader className="relative">
@@ -57,9 +61,13 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, isPopular }) => {
             </li>
           ))}
         </ul>
-        <Button asChild className="w-full" variant={isPopular ? "default" : "outline"}>
-          <Link href={`/${lang}/login`}>{plan.cta}</Link>
-        </Button>
+        {isPayPal ? (
+            <PayPalButtonWrapper amount={planPrice} description={`${plan.name} Plan Subscription`} />
+        ) : (
+            <Button asChild className="w-full" variant={isPopular ? "default" : "outline"}>
+              <Link href={`/${lang}/login`}>{plan.cta}</Link>
+            </Button>
+        )}
       </CardContent>
     </Card>
   );
@@ -87,7 +95,7 @@ export function PricingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto items-start">
                           <PricingCard plan={d.plans.basic} lang={lang} />
-                          <PricingCard plan={d.plans.professional} lang={lang} isPopular />
+                          <PricingCard plan={d.plans.professional} lang={lang} isPopular isPayPal />
                           <PricingCard plan={d.plans.enterprise} lang={lang} />
                         </div>
                     </div>
