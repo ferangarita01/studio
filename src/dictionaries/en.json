@@ -38,7 +38,8 @@
       "cancel": "Cancel",
       "create": "Create Company"
     },
-    "logout": "Logout"
+    "logout": "Logout",
+    "backButton": "Back"
   },
   "landingPage": {
     "header": {
@@ -223,7 +224,7 @@
         "selectAccountType": "Select account type...",
         "individual": "Individual",
         "company": "Company",
-        "taxId": "NIT",
+        "taxId": "Tax ID (NIT)",
         "idNumber": "Identification Number",
         "jobTitle": "Job Title",
         "address": "Address",
@@ -234,12 +235,12 @@
         "termsAndConditions": "terms and conditions"
     },
     "validation": {
-        "fullName": "Full name is required",
+        "fullName": "Full name must be at least 2 characters.",
         "accountType": "Please select an account type.",
-        "taxId": "NIT is required for companies",
-        "idNumber": "Identification number is required for individuals",
-        "email": "Invalid email address",
-        "password": "Password must be at least 6 characters long",
+        "taxId": "Tax ID is required for companies.",
+        "idNumber": "Identification number is required for individuals.",
+        "email": "Invalid email address.",
+        "password": "Password must be at least 6 characters long.",
         "terms": "You must accept the terms and conditions."
     }
   },
@@ -657,3 +658,5 @@
     }
   }
 }
+
+    

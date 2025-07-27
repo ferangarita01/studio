@@ -38,7 +38,8 @@
       "cancel": "Cancelar",
       "create": "Crear Empresa"
     },
-    "logout": "Cerrar Sesión"
+    "logout": "Cerrar Sesión",
+    "backButton": "Volver"
   },
   "landingPage": {
     "header": {
@@ -234,12 +235,12 @@
       "termsAndConditions": "términos y condiciones"
     },
     "validation": {
-      "fullName": "El nombre completo es requerido",
+      "fullName": "El nombre completo debe tener al menos 2 caracteres.",
       "accountType": "Por favor, seleccione un tipo de cuenta.",
-      "taxId": "El NIT es requerido para empresas",
-      "idNumber": "El número de identificación es requerido para individuales",
-      "email": "Dirección de correo electrónico inválida",
-      "password": "La contraseña debe tener al menos 6 caracteres",
+      "taxId": "El NIT es requerido para empresas.",
+      "idNumber": "El número de identificación es requerido para individuales.",
+      "email": "Dirección de correo electrónico inválida.",
+      "password": "La contraseña debe tener al menos 6 caracteres.",
       "terms": "Debes aceptar los términos y condiciones."
     }
   },
@@ -657,3 +658,5 @@
     }
   }
 }
+
+    
