@@ -157,7 +157,7 @@ export function DashboardClient({
        </div>
   )
 
-  if (isCompanyContextLoading || isAuthLoading) {
+  if (isCompanyContextLoading || isAuthLoading || !isClient) {
       return renderLoadingState();
   }
   
@@ -342,5 +342,3 @@ export function DashboardClient({
     </div>
   );
 }
-
-    

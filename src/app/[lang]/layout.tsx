@@ -8,8 +8,8 @@ import { AppShell } from '@/components/layout/app-shell';
 const APP_NAME = "WasteWise";
 const APP_DESCRIPTION = "WasteWise is a business and event waste management platform by EcoCircle, designed to track and manage waste generation for companies, festivals, and concerts.";
 
-export async function generateMetadata({ params: { lang } }: { params: { lang: Locale } }): Promise<Metadata> {
-  const dictionary = await getDictionary(lang);
+export async function generateMetadata({ params }: { params: { lang: Locale } }): Promise<Metadata> {
+  const dictionary = await getDictionary(params.lang);
   
   return {
     applicationName: APP_NAME,
@@ -18,7 +18,7 @@ export async function generateMetadata({ params: { lang } }: { params: { lang: L
       template: `%s | ${APP_NAME}`,
     },
     description: APP_DESCRIPTION,
-    manifest: `/${lang}/manifest.json`,
+    manifest: `/${params.lang}/manifest.json`,
     appleWebApp: {
       capable: true,
       statusBarStyle: "default",
