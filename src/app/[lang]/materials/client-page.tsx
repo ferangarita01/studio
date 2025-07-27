@@ -135,6 +135,14 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
 
   const showAdminFeatures = isClient && !isAuthLoading && role === 'admin';
 
+  if (!dictionary) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

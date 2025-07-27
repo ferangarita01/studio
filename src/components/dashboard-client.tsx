@@ -67,7 +67,7 @@ function WelcomeMessage({ dictionary }: { dictionary: Dictionary["dashboard"]["w
           <h4 className="font-semibold text-lg mb-4 text-center">{dictionary.whatToExpect.title}</h4>
           <div className="grid md:grid-cols-2 gap-6">
             <div><strong>{dictionary.whatToExpect.items.centralDashboard.title}</strong> {dictionary.whatToExpect.items.centralDashboard.description}</div>
-            <div><strong>{dictionary.whatToExpect.items.aiAnalyzer.title}</strong> {dictionary.whatToExpect.items.aiAnalyzer.description}</div>
+            <div><strong>{dictionary.whatToExpect.items.aiAgent.title}</strong> {dictionary.whatToExpect.items.aiAgent.description}</div>
             <div><strong>{dictionary.whatToExpect.items.wasteLog.title}</strong> {dictionary.whatToExpect.items.wasteLog.description}</div>
             <div><strong>{dictionary.whatToExpect.items.calendar.title}</strong> {dictionary.whatToExpect.items.calendar.description}</div>
             <div><strong>{dictionary.whatToExpect.items.detailedReports.title}</strong> {dictionary.whatToExpect.items.detailedReports.description}</div>
@@ -342,3 +342,5 @@ export function DashboardClient({
     </div>
   );
 }
+
+    
