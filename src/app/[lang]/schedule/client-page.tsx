@@ -67,23 +67,28 @@ export function ScheduleClient({ dictionary, lang }: ScheduleClientProps) {
   const [isSheetOpen, setSheetOpen] = React.useState(false);
   const [isRequestDialogOpen, setRequestDialogOpen] = React.useState(false);
   const { selectedCompany } = useCompany();
-  const [allEvents, setAllEvents] = React.useState<DisposalEvent[]>([]);
+  const [events, setEvents] = React.useState<DisposalEvent[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   
   const dateLocale = lang === 'es' ? es : enUS;
 
   React.useEffect(() => {
     const fetchEvents = async () => {
+      if (!selectedCompany) {
+        setEvents([]);
+        setIsLoading(false);
+        return;
+      }
       setIsLoading(true);
-      const events = await getDisposalEvents();
-      setAllEvents(events);
+      const fetchedEvents = await getDisposalEvents(selectedCompany.id);
+      setEvents(fetchedEvents);
       setIsLoading(false);
     };
     fetchEvents();
-  }, []);
+  }, [selectedCompany]);
 
   const handleEventAdded = React.useCallback((newEvent: DisposalEvent) => {
-    setAllEvents(currentEvents => [...currentEvents, newEvent].sort((a, b) => b.date.getTime() - a.date.getTime()));
+    setEvents(currentEvents => [...currentEvents, newEvent].sort((a, b) => b.date.getTime() - a.date.getTime()));
   }, []);
 
   if (!dictionary) {
@@ -108,8 +113,6 @@ export function ScheduleClient({ dictionary, lang }: ScheduleClientProps) {
        </div>
     );
   }
-  
-  const events = allEvents.filter(event => event.companyId === selectedCompany.id);
 
   const firstDayOfMonth = startOfMonth(currentMonth);
   const lastDayOfMonth = endOfMonth(currentMonth);

@@ -35,7 +35,7 @@ interface LogClientProps {
 export function LogClient({ dictionary }: LogClientProps) {
   const { selectedCompany } = useCompany();
   const [isAddWasteDialogOpen, setAddWasteDialogOpen] = useState(false);
-  const [allWasteLog, setAllWasteLog] = useState<WasteEntry[]>([]);
+  const [wasteLog, setWasteLog] = useState<WasteEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { role, isLoading: isAuthLoading } = useAuth();
   const [isClient, setIsClient] = useState(false);
@@ -46,18 +46,22 @@ export function LogClient({ dictionary }: LogClientProps) {
 
   useEffect(() => {
     const fetchLog = async () => {
+      if (!selectedCompany) {
+        setWasteLog([]);
+        setIsLoading(false);
+        return;
+      }
       setIsLoading(true);
-      const log = await getWasteLog();
-      setAllWasteLog(log);
+      const log = await getWasteLog(selectedCompany.id);
+      setWasteLog(log);
       setIsLoading(false);
     };
     fetchLog();
-  }, []);
+  }, [selectedCompany]);
   
 
   const handleEntryAdded = useCallback((newEntry: WasteEntry) => {
-    // Add new entry to the top of the list
-    setAllWasteLog(currentLog => [newEntry, ...currentLog].sort((a,b) => b.date.getTime() - a.date.getTime()));
+    setWasteLog(currentLog => [newEntry, ...currentLog].sort((a,b) => b.date.getTime() - a.date.getTime()));
   }, []);
 
   if (!selectedCompany) {
@@ -74,10 +78,6 @@ export function LogClient({ dictionary }: LogClientProps) {
        </div>
     );
   }
-
-  const wasteLog = allWasteLog.filter(
-    (entry) => entry.companyId === selectedCompany.id
-  );
 
   const formatCurrency = (amount: number | undefined) => {
     if (amount === undefined) return "N/A";

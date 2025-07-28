@@ -47,15 +47,17 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
 
 export async function getUsers(role?: UserRole): Promise<UserProfile[]> {
   const usersRef = ref(db, 'users');
-  const snapshot = await get(usersRef);
+  let usersQuery;
+  if (role) {
+    usersQuery = query(usersRef, orderByChild('role'), equalTo(role));
+  } else {
+    usersQuery = usersRef;
+  }
+  const snapshot = await get(usersQuery);
   if (!snapshot.exists()) {
     return [];
   }
-  const allUsers = snapshotToArray(snapshot);
-  if (role) {
-    return allUsers.filter(user => user.role === role);
-  }
-  return allUsers;
+  return snapshotToArray(snapshot);
 }
 
 export async function updateUserPlan(userId: string, plan: PlanType): Promise<void> {
@@ -68,21 +70,23 @@ export async function updateUserPlan(userId: string, plan: PlanType): Promise<vo
 
 export async function getCompanies(userId?: string): Promise<Company[]> {
   const dbRef = ref(db, 'companies');
-  const snapshot = await get(dbRef);
+  let companiesQuery;
+  if (userId) {
+    companiesQuery = query(dbRef, orderByChild('createdBy'), equalTo(userId));
+  } else {
+    companiesQuery = dbRef;
+  }
+  
+  const snapshot = await get(companiesQuery);
 
   if (!snapshot.exists()) {
     return [];
   }
 
-  let allCompanies = snapshotToArray(snapshot).map(c => ({
+  const allCompanies = snapshotToArray(snapshot).map(c => ({
     ...c,
     logoUrl: c.logoUrl || `https://placehold.co/100x100.png?text=${c.name.charAt(0)}`
   }));
-
-  if (userId) {
-    // Filter in code instead of a Firebase query to avoid needing a DB index.
-    allCompanies = allCompanies.filter(company => company.createdBy === userId);
-  }
   
   return allCompanies.sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -194,18 +198,15 @@ export async function deleteMaterial(materialId: string, userId: string): Promis
 // --- Waste Log Service Functions ---
 
 export async function getWasteLog(companyId?: string): Promise<WasteEntry[]> {
-    const wasteLogRef = ref(db, "wasteLog");
-    const snapshot = await get(wasteLogRef);
+    const baseRef = ref(db, "wasteLog");
+    const logQuery = companyId ? query(baseRef, orderByChild('companyId'), equalTo(companyId)) : baseRef;
+    const snapshot = await get(logQuery);
     
     if(snapshot.exists()) {
         let logList = snapshotToArray(snapshot);
         // Dates are stored as ISO strings, convert them back to Date objects
-        const convertedList = logList.map(entry => ({...entry, date: new Date(entry.date)}));
-        
-        if (companyId) {
-            return convertedList.filter(entry => entry.companyId === companyId).sort((a, b) => b.date.getTime() - a.date.getTime());
-        }
-        return convertedList.sort((a, b) => b.date.getTime() - a.date.getTime());
+        return logList.map(entry => ({...entry, date: new Date(entry.date)}))
+                      .sort((a, b) => b.date.getTime() - a.date.getTime());
     }
     return [];
 }
@@ -231,18 +232,15 @@ export async function addWasteEntry(entry: Omit<WasteEntry, 'id' | 'date'> & { d
 // --- Disposal Event Service Functions ---
 
 export async function getDisposalEvents(companyId?: string): Promise<DisposalEvent[]> {
-    const eventsRef = ref(db, 'disposalEvents');
-    const snapshot = await get(eventsRef);
+    const baseRef = ref(db, 'disposalEvents');
+    const eventsQuery = companyId ? query(baseRef, orderByChild('companyId'), equalTo(companyId)) : baseRef;
+    const snapshot = await get(eventsQuery);
 
     if (snapshot.exists()) {
       let eventList = snapshotToArray(snapshot);
       // Dates are stored as ISO strings, convert them back to Date objects
-      const convertedList = eventList.map(event => ({ ...event, date: new Date(event.date) }));
-
-      if (companyId) {
-          return convertedList.filter(event => event.companyId === companyId).sort((a,b) => b.date.getTime() - a.date.getTime());
-      }
-      return convertedList.sort((a,b) => b.date.getTime() - a.date.getTime());
+      return eventList.map(event => ({ ...event, date: new Date(event.date) }))
+                      .sort((a,b) => b.date.getTime() - a.date.getTime());
     }
     return [];
 }

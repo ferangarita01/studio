@@ -41,7 +41,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const { toast } = useToast();
-  const { role, isLoading: isAuthLoading } = useAuth();
+  const { user, role, isLoading: isAuthLoading } = useAuth();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -49,6 +49,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
   }, []);
 
   const fetchCompaniesData = useCallback(async () => {
+    if (!user) return;
     setIsLoading(true);
     const [fetchedCompanies, fetchedClients] = await Promise.all([
       getCompanies(),
@@ -65,11 +66,13 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
     setCompanies(companiesWithClientNames);
     setClients(fetchedClients);
     setIsLoading(false);
-  }, []);
+  }, [user]);
 
   useEffect(() => {
-    fetchCompaniesData();
-  }, [fetchCompaniesData]);
+    if (user) {
+        fetchCompaniesData();
+    }
+  }, [user, fetchCompaniesData]);
 
   const handleOpenAssignDialog = (company: Company) => {
     setSelectedCompany(company);
@@ -155,7 +158,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={showAdminFeatures ? 4 : 3} className="h-24 text-center">
+                      <TableCell colSpan={4} className="h-24 text-center">
                         <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                       </TableCell>
                     </TableRow>
@@ -181,7 +184,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={showAdminFeatures ? 4 : 3} className="h-24 text-center">
+                      <TableCell colSpan={4} className="h-24 text-center">
                         {dictionary.noCompanies}
                       </TableCell>
                     </TableRow>

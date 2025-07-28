@@ -297,8 +297,10 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
             if (role === 'admin') {
                 const userCompanies = await getCompanies(user.uid);
                 setCompanies(userCompanies);
-                if (selectedCompany && !userCompanies.some(c => c.id === selectedCompany.id)) {
-                    setSelectedCompany(null);
+                if (userCompanies.length > 0 && !selectedCompany) {
+                    setSelectedCompany(userCompanies[0]);
+                } else if (selectedCompany && !userCompanies.some(c => c.id === selectedCompany.id)) {
+                    setSelectedCompany(userCompanies[0] || null);
                 }
             } else if (role === 'client' && userProfile?.assignedCompanyId) {
                 const clientCompany = await getCompanyById(userProfile.assignedCompanyId);

@@ -100,7 +100,7 @@ export function DashboardClient({
   const { selectedCompany, isLoading: isCompanyContextLoading } = useCompany();
   
   const [wasteDataAll, setWasteDataAll] = React.useState<Record<string, any[]>>({});
-  const [wasteLogAll, setWasteLogAll] = React.useState<WasteEntry[]>([]);
+  const [wasteLog, setWasteLog] = React.useState<WasteEntry[]>([]);
   const [disposalEvents, setDisposalEvents] = React.useState<DisposalEvent[]>([]);
   const [isDataLoading, setIsDataLoading] = React.useState(true);
   const [isClient, setIsClient] = React.useState(false);
@@ -116,19 +116,21 @@ export function DashboardClient({
         return;
       }
       setIsDataLoading(true);
-      const [wasteData, wasteLog, events] = await Promise.all([
+      const [wasteData, log, events] = await Promise.all([
         getWasteChartData(),
-        getWasteLog(),
-        getDisposalEvents(),
+        getWasteLog(selectedCompany.id),
+        getDisposalEvents(selectedCompany.id),
       ]);
       setWasteDataAll(wasteData);
-      setWasteLogAll(wasteLog);
+      setWasteLog(log);
       setDisposalEvents(events);
       setIsDataLoading(false);
     };
 
-    if (!isCompanyContextLoading) {
+    if (!isCompanyContextLoading && selectedCompany) {
       fetchDashboardData();
+    } else if (!selectedCompany) {
+        setIsDataLoading(false);
     }
   }, [selectedCompany, isCompanyContextLoading]);
   
@@ -187,8 +189,7 @@ export function DashboardClient({
   }
 
   const wasteData = selectedCompany ? wasteDataAll[selectedCompany.id] || [] : [];
-  const wasteLog = selectedCompany ? wasteLogAll.filter(entry => entry.companyId === selectedCompany.id) : [];
-  const upcomingDisposals = selectedCompany ? disposalEvents.filter(d => (d.status === 'Scheduled' || d.status === 'Ongoing') && d.companyId === selectedCompany.id) : [];
+  const upcomingDisposals = disposalEvents.filter(d => (d.status === 'Scheduled' || d.status === 'Ongoing'));
 
   const totalWaste = wasteLog.reduce((acc, entry) => acc + entry.quantity, 0);
   const totalRecycling = wasteLog.filter(e => e.type === 'Recycling').reduce((acc, entry) => acc + entry.quantity, 0);
@@ -368,6 +369,3 @@ export function DashboardClient({
     </div>
   );
 }
-
-    
-    

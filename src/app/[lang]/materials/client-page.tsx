@@ -177,7 +177,7 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
                 <TableBody>
                   {isLoading ? (
                      <TableRow>
-                      <TableCell colSpan={showAdminFeatures ? 4 : 3} className="h-24 text-center">
+                      <TableCell colSpan={4} className="h-24 text-center">
                          <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                       </TableCell>
                     </TableRow>
@@ -227,7 +227,7 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={showAdminFeatures ? 4 : 3} className="h-24 text-center">
+                      <TableCell colSpan={4} className="h-24 text-center">
                         {dictionary.noMaterials}
                       </TableCell>
                     </TableRow>
