@@ -179,8 +179,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                {isSignUp && (
-                   <>
+                <div className={cn("space-y-4", !isSignUp && "hidden")}>
                       <FormField
                           control={form.control}
                           name="fullName"
@@ -217,7 +216,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                           )}
                       />
                      
-                      {accountType === 'company' && (
+                      <div className={cn(accountType !== 'company' && "hidden")}>
                           <FormField
                               control={form.control}
                               name="taxId"
@@ -231,9 +230,9 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                                   </FormItem>
                               )}
                           />
-                      )}
+                      </div>
 
-                      {accountType === 'individual' && (
+                      <div className={cn(accountType !== 'individual' && "hidden")}>
                            <FormField
                               control={form.control}
                               name="idNumber"
@@ -247,7 +246,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                                   </FormItem>
                               )}
                           />
-                      )}
+                      </div>
 
                        <FormField
                           control={form.control}
@@ -316,8 +315,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                               </FormItem>
                           )}
                       />
-                   </>
-                )}
+                </div>
 
                 <FormField
                     control={form.control}
@@ -357,7 +355,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                     )}
                 />
 
-                {isSignUp && (
+                <div className={cn(!isSignUp && "hidden")}>
                   <FormField
                       control={form.control}
                       name="terms"
@@ -380,7 +378,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                           </FormItem>
                       )}
                   />
-                )}
+                </div>
 
                 {error && (
                   <Alert variant="destructive">
