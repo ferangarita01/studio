@@ -233,14 +233,19 @@ export async function addWasteEntry(entry: Omit<WasteEntry, 'id' | 'date'> & { d
 
 export async function getDisposalEvents(companyId?: string): Promise<DisposalEvent[]> {
     const baseRef = ref(db, 'disposalEvents');
-    const eventsQuery = companyId ? query(baseRef, orderByChild('companyId'), equalTo(companyId)) : baseRef;
-    const snapshot = await get(eventsQuery);
+    const snapshot = await get(baseRef);
 
     if (snapshot.exists()) {
       let eventList = snapshotToArray(snapshot);
+      
       // Dates are stored as ISO strings, convert them back to Date objects
-      return eventList.map(event => ({ ...event, date: new Date(event.date) }))
-                      .sort((a,b) => b.date.getTime() - a.date.getTime());
+      const processedEvents = eventList.map(event => ({ ...event, date: new Date(event.date) }));
+
+      const filteredEvents = companyId 
+        ? processedEvents.filter(event => event.companyId === companyId)
+        : processedEvents;
+      
+      return filteredEvents.sort((a,b) => b.date.getTime() - a.date.getTime());
     }
     return [];
 }

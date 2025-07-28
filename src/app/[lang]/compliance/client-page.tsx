@@ -31,8 +31,8 @@ export function ComplianceClient({
                 <h1 className="text-3xl font-semibold">{dictionary.title}</h1>
                 <p className="text-muted-foreground">{dictionary.description}</p>
             </div>
-            <div className={cn(!showAdminFeatures && 'hidden')}>
-              <Button size="sm" className="h-8 gap-1 mt-4 sm:mt-0">
+            <div className={cn("mt-4 sm:mt-0", !showAdminFeatures && 'hidden')}>
+              <Button size="sm" className="h-8 gap-1">
                   <PlusCircle className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                       {dictionary.admin.addRegulation}
