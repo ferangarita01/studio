@@ -32,7 +32,7 @@ import { Form, FormField, FormItem, FormControl, FormLabel, FormMessage } from "
 
 const loginFormSchema = (dictionary: Dictionary["loginPage"]["validation"]) => z.object({
   email: z.string().email({ message: dictionary.email }),
-  password: z.string().min(1, "Password is required"),
+  password: z.string().min(1, { message: dictionary.password }),
 });
 
 const signUpFormSchema = (dictionary: Dictionary["loginPage"]["validation"]) => z.object({
