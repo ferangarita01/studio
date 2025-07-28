@@ -157,7 +157,7 @@ export function DashboardClient({
   const renderLoadingState = () => (
       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="flex items-center">
-            <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
+            <h1 className="text-lg font-semibold md:text-2xl">{dictionary?.title || "Dashboard"}</h1>
           </div>
           <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -167,6 +167,10 @@ export function DashboardClient({
 
   if (isCompanyContextLoading || isAuthLoading || !isClient) {
       return renderLoadingState();
+  }
+
+  if (!dictionary) {
+    return renderLoadingState();
   }
   
   if (!selectedCompany) {
@@ -368,5 +372,3 @@ export function DashboardClient({
     </div>
   );
 }
-
-    

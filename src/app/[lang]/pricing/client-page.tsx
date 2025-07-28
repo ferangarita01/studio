@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Check } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import type { Dictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import { cn } from "@/lib/utils";
@@ -36,6 +36,12 @@ interface PricingCardProps {
 
 const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, isPopular, isPayPal = false }) => {
   const planPrice = plan.price.replace(/[^0-9.]/g, '');
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
 
   return (
     <Card className={cn("flex flex-col", isPopular ? "border-2 border-primary shadow-lg" : "")}>
@@ -61,7 +67,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, isPopular, isPayP
             </li>
           ))}
         </ul>
-        {isPayPal ? (
+        {isPayPal && isClient ? (
             <PayPalButtonWrapper amount={planPrice} description={`${plan.name} Plan Subscription`} />
         ) : (
             <Button asChild className="w-full" variant={isPopular ? "default" : "outline"}>
@@ -75,7 +81,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, isPopular, isPayP
 
 
 export function PricingClient({ dictionary, lang }: { dictionary: Dictionary, lang: Locale }) {
-    if (!dictionary?.pricingPage || !dictionary?.landingPage?.footer) {
+    if (!dictionary?.pricingPage || !dictionary?.landingPage?.footer || !dictionary.pricingPage.plans.basic || !dictionary.pricingPage.plans.professional || !dictionary.pricingPage.plans.enterprise) {
         return (
             <div className="flex h-screen w-full items-center justify-center">
                 <div>Loading...</div>
