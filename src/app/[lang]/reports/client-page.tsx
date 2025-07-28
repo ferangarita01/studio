@@ -31,6 +31,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/context/auth-context";
 import { useDictionaries } from "@/context/dictionary-context";
 import { getWeeklyReportData, getMonthlyReportData } from "@/services/waste-data-service";
+import { cn } from "@/lib/utils";
 
 const chartConfig = {
   costs: {
@@ -273,22 +274,16 @@ export function ReportsClient({
         <Tabs defaultValue="weekly" className="space-y-4">
           <TabsList>
             <TabsTrigger value="weekly">{dictionary.tabs.weekly}</TabsTrigger>
-            {showAdminFeatures && (
-              <TabsTrigger value="monthly">{dictionary.tabs.monthly}</TabsTrigger>
-            )}
+            <TabsTrigger value="monthly" className={cn(!showAdminFeatures && 'hidden')}>{dictionary.tabs.monthly}</TabsTrigger>
           </TabsList>
           <TabsContent value="weekly" className="space-y-4">
             <ReportView dictionary={dictionary.reportView} data={weeklyData} />
           </TabsContent>
-          {showAdminFeatures && (
-            <TabsContent value="monthly" className="space-y-4">
-              <ReportView dictionary={dictionary.reportView} data={monthlyData} />
-            </TabsContent>
-          )}
+          <TabsContent value="monthly" className={cn("space-y-4", !showAdminFeatures && "hidden")}>
+             {monthlyData && <ReportView dictionary={dictionary.reportView} data={monthlyData} />}
+          </TabsContent>
         </Tabs>
       )}
     </div>
   );
 }
-
-    

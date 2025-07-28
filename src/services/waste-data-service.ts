@@ -14,7 +14,6 @@ import {
   update
 } from "firebase/database";
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
-import { unstable_cache } from "next/cache";
 import { db, storage } from "@/lib/firebase";
 import { wasteData, weeklyReportData, monthlyReportData } from "@/lib/data";
 import type { WasteEntry, Material, DisposalEvent, ReportData, Company, UserRole, UserProfile, PlanType } from "@/lib/types";
@@ -87,15 +86,6 @@ export async function getCompanies(userId?: string): Promise<Company[]> {
   
   return allCompanies.sort((a, b) => a.name.localeCompare(b.name));
 }
-
-export const getCachedCompanies = unstable_cache(
-  async () => {
-    // We get all companies and let the caller filter. This avoids complex caching keys.
-    return getCompanies();
-  },
-  ['companies'],
-  { revalidate: 3600 } // Cache for 1 hour
-);
 
 export async function getCompanyById(companyId: string): Promise<Company | null> {
     if (!companyId) return null;
@@ -275,31 +265,21 @@ export async function addDisposalEvent(event: Omit<DisposalEvent, 'id'>): Promis
 
 // --- Mocked Data for Reports and Chart (can be migrated to Cloud Functions later) ---
 
-export const getWeeklyReportData = unstable_cache(
-  async () => {
-    return new Promise<Record<string, ReportData>>((resolve) => {
-      setTimeout(() => {
-        resolve(weeklyReportData);
-      }, 300);
-    });
-  },
-  ['weekly-reports'],
-  { revalidate: 10 }
-);
+export async function getWeeklyReportData(): Promise<Record<string, ReportData>> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(weeklyReportData);
+    }, 300);
+  });
+}
 
-
-export const getMonthlyReportData = unstable_cache(
-  async () => {
-    return new Promise<Record<string, ReportData>>((resolve) => {
-      setTimeout(() => {
-        resolve(monthlyReportData);
-      }, 300);
-    });
-  },
-  ['monthly-reports'],
-  { revalidate: 10 }
-);
-
+export async function getMonthlyReportData(): Promise<Record<string, ReportData>> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(monthlyReportData);
+    }, 300);
+  });
+}
 
 export async function getWasteChartData() {
     return new Promise<Record<string, any[]>>((resolve) => {

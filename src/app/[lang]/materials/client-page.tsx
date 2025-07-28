@@ -44,6 +44,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/context/auth-context";
+import { cn } from "@/lib/utils";
 
 
 interface MaterialsClientProps {
@@ -148,15 +149,13 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <div className="flex items-center">
           <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
-           <div className="ml-auto flex items-center gap-2">
-             {showAdminFeatures && (
-                <Button size="sm" className="h-8 gap-1" onClick={handleAdd}>
-                  <PlusCircle className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    {dictionary.addMaterial}
-                  </span>
-                </Button>
-              )}
+           <div className={cn("ml-auto flex items-center gap-2", !showAdminFeatures && "hidden")}>
+              <Button size="sm" className="h-8 gap-1" onClick={handleAdd}>
+                <PlusCircle className="h-3.5 w-3.5" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  {dictionary.addMaterial}
+                </span>
+              </Button>
           </div>
         </div>
         <Card>
@@ -172,9 +171,7 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
                     <TableHead>{dictionary.table.name}</TableHead>
                     <TableHead>{dictionary.table.type}</TableHead>
                     <TableHead className="text-right">{dictionary.table.pricePerKg}</TableHead>
-                    {showAdminFeatures && (
-                      <TableHead className="w-[50px]"><span className="sr-only">{dictionary.table.actions}</span></TableHead>
-                    )}
+                    <TableHead className={cn("w-[50px]", !showAdminFeatures && "hidden")}><span className="sr-only">{dictionary.table.actions}</span></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -194,40 +191,38 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
                         <TableCell className="text-right">
                            {formatCurrency(material.pricePerKg)}
                         </TableCell>
-                        {showAdminFeatures && (
-                          <TableCell>
-                            <AlertDialog>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" className="h-8 w-8 p-0">
-                                    <span className="sr-only">{dictionary.table.openMenu}</span>
-                                    <MoreHorizontal className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuItem onClick={() => handleEdit(material)}>{dictionary.table.edit}</DropdownMenuItem>
-                                  <AlertDialogTrigger asChild>
-                                    <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()}>
-                                      {dictionary.table.delete}
-                                    </DropdownMenuItem>
-                                  </AlertDialogTrigger>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                               <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>{dictionary.deleteDialog.title}</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      {dictionary.deleteDialog.description}
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>{dictionary.deleteDialog.cancel}</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => handleDelete(material.id)}>{dictionary.deleteDialog.confirm}</AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-                          </TableCell>
-                        )}
+                        <TableCell className={cn(!showAdminFeatures && "hidden")}>
+                          <AlertDialog>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                  <span className="sr-only">{dictionary.table.openMenu}</span>
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => handleEdit(material)}>{dictionary.table.edit}</DropdownMenuItem>
+                                <AlertDialogTrigger asChild>
+                                  <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()}>
+                                    {dictionary.table.delete}
+                                  </DropdownMenuItem>
+                                </AlertDialogTrigger>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                             <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>{dictionary.deleteDialog.title}</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    {dictionary.deleteDialog.description}
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>{dictionary.deleteDialog.cancel}</AlertDialogCancel>
+                                  <AlertDialogAction onClick={() => handleDelete(material.id)}>{dictionary.deleteDialog.confirm}</AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                          </AlertDialog>
+                        </TableCell>
                       </TableRow>
                     ))
                   ) : (

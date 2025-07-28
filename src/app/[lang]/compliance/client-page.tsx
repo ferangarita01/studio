@@ -7,6 +7,7 @@ import type { Dictionary } from "@/lib/get-dictionary";
 import { Gavel, FileText, ShieldCheck, PlusCircle, Pencil } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export function ComplianceClient({
   dictionary,
@@ -30,14 +31,14 @@ export function ComplianceClient({
                 <h1 className="text-3xl font-semibold">{dictionary.title}</h1>
                 <p className="text-muted-foreground">{dictionary.description}</p>
             </div>
-            {showAdminFeatures && (
-                <Button size="sm" className="h-8 gap-1 mt-4 sm:mt-0">
-                    <PlusCircle className="h-3.5 w-3.5" />
-                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                        {dictionary.admin.addRegulation}
-                    </span>
-                </Button>
-            )}
+            <div className={cn(!showAdminFeatures && 'hidden')}>
+              <Button size="sm" className="h-8 gap-1 mt-4 sm:mt-0">
+                  <PlusCircle className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                      {dictionary.admin.addRegulation}
+                  </span>
+              </Button>
+            </div>
         </div>
       </div>
 
@@ -50,14 +51,12 @@ export function ComplianceClient({
             <CardContent>
                  <p>{dictionary.main.content}</p>
             </CardContent>
-            {showAdminFeatures && (
-                 <CardFooter className="border-t px-6 py-4">
-                    <Button variant="outline" size="sm">
-                        <Pencil className="mr-2 h-4 w-4" />
-                        {dictionary.admin.editContent}
-                    </Button>
-                 </CardFooter>
-            )}
+            <CardFooter className={cn("border-t px-6 py-4", !showAdminFeatures && 'hidden')}>
+              <Button variant="outline" size="sm">
+                  <Pencil className="mr-2 h-4 w-4" />
+                  {dictionary.admin.editContent}
+              </Button>
+            </CardFooter>
         </Card>
 
         <div className="grid gap-6 md:grid-cols-3">
@@ -69,11 +68,9 @@ export function ComplianceClient({
             <CardContent className="flex-grow">
                 <p className="text-sm text-muted-foreground">{dictionary.cards.regulations.description}</p>
             </CardContent>
-             {showAdminFeatures && (
-                <CardFooter>
-                    <Button className="w-full">{dictionary.admin.manage}</Button>
-                </CardFooter>
-            )}
+            <CardFooter className={cn(!showAdminFeatures && 'hidden')}>
+              <Button className="w-full">{dictionary.admin.manage}</Button>
+            </CardFooter>
           </Card>
           <Card className="flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -83,11 +80,9 @@ export function ComplianceClient({
             <CardContent className="flex-grow">
                  <p className="text-sm text-muted-foreground">{dictionary.cards.reports.description}</p>
             </CardContent>
-             {showAdminFeatures && (
-                <CardFooter>
-                    <Button className="w-full">{dictionary.admin.manage}</Button>
-                </CardFooter>
-            )}
+            <CardFooter className={cn(!showAdminFeatures && 'hidden')}>
+              <Button className="w-full">{dictionary.admin.manage}</Button>
+            </CardFooter>
           </Card>
           <Card className="flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -97,11 +92,9 @@ export function ComplianceClient({
             <CardContent className="flex-grow">
                  <p className="text-sm text-muted-foreground">{dictionary.cards.audits.description}</p>
             </CardContent>
-            {showAdminFeatures && (
-                <CardFooter>
-                    <Button className="w-full">{dictionary.admin.manage}</Button>
-                </CardFooter>
-            )}
+            <CardFooter className={cn(!showAdminFeatures && 'hidden')}>
+              <Button className="w-full">{dictionary.admin.manage}</Button>
+            </CardFooter>
           </Card>
         </div>
       </div>

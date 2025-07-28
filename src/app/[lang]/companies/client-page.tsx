@@ -27,6 +27,7 @@ import { EditCompanyDialog } from "@/components/edit-company-dialog";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface CompaniesClientProps {
   dictionary: Dictionary["companiesPage"];
@@ -148,9 +149,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
                     <TableHead>{dictionary.table.companyName}</TableHead>
                     <TableHead>{dictionary.table.assignedClient}</TableHead>
                     <TableHead>{dictionary.table.plan}</TableHead>
-                    {showAdminFeatures && (
-                      <TableHead className="w-[250px] text-right"><span className="sr-only">{dictionary.table.actions}</span></TableHead>
-                    )}
+                    <TableHead className={cn("w-[250px] text-right", !showAdminFeatures && "hidden")}><span className="sr-only">{dictionary.table.actions}</span></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -170,16 +169,14 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
                         <TableCell>
                             <Badge variant={company.plan === 'Premium' ? 'default' : 'secondary'}>{company.plan || 'Free'}</Badge>
                         </TableCell>
-                        {showAdminFeatures && (
-                          <TableCell className="text-right space-x-2">
-                              <Button variant="outline" size="sm" onClick={() => handleOpenEditDialog(company)}>
-                                  {dictionary.table.edit}
-                              </Button>
-                              <Button variant="outline" size="sm" onClick={() => handleOpenAssignDialog(company)}>
-                                  {company.assignedUserUid ? dictionary.table.reassign : dictionary.table.assign}
-                              </Button>
-                          </TableCell>
-                        )}
+                        <TableCell className={cn("text-right space-x-2", !showAdminFeatures && "hidden")}>
+                            <Button variant="outline" size="sm" onClick={() => handleOpenEditDialog(company)}>
+                                {dictionary.table.edit}
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={() => handleOpenAssignDialog(company)}>
+                                {company.assignedUserUid ? dictionary.table.reassign : dictionary.table.assign}
+                            </Button>
+                        </TableCell>
                       </TableRow>
                     ))
                   ) : (
@@ -195,8 +192,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
           </CardContent>
         </Card>
       </div>
-      {showAdminFeatures && (
-        <>
+      <div className={cn(!showAdminFeatures && "hidden")}>
           <AssignUserDialog
             open={isAssignDialogOpen}
             onOpenChange={setAssignDialogOpen}
@@ -212,8 +208,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
             company={selectedCompany}
             onUpdate={handleUpdateCompany}
           />
-        </>
-      )}
+      </div>
     </>
   );
 }
