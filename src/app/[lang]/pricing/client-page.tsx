@@ -75,6 +75,14 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, isPopular, isPayP
 
 
 export function PricingClient({ dictionary, lang }: { dictionary: Dictionary, lang: Locale }) {
+    if (!dictionary?.pricingPage || !dictionary?.landingPage?.footer) {
+        return (
+            <div className="flex h-screen w-full items-center justify-center">
+                <div>Loading...</div>
+            </div>
+        );
+    }
+
     const d = dictionary.pricingPage;
     const l = dictionary.landingPage;
     
