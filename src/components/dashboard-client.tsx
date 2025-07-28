@@ -3,7 +3,7 @@
 
 import * as React from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { Activity, CalendarIcon, Trash2, Recycle, Loader2 } from "lucide-react";
+import { Activity, CalendarIcon, Trash2, Recycle, Loader2, DollarSign } from "lucide-react";
 
 import {
   Card,
@@ -27,6 +27,7 @@ import type { Dictionary } from "@/lib/get-dictionary";
 import { useCompany } from "./layout/app-shell";
 import { getWasteChartData, getWasteLog, getDisposalEvents } from "@/services/waste-data-service";
 import { useAuth } from "@/context/auth-context";
+import { cn } from "@/lib/utils";
 
 const chartConfig = {
   quantity: {
@@ -145,6 +146,13 @@ export function DashboardClient({
       day: 'numeric'
     }).format(new Date(date));
   }
+  
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(amount);
+  };
 
   const renderLoadingState = () => (
       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -182,6 +190,12 @@ export function DashboardClient({
   const wasteLog = selectedCompany ? wasteLogAll.filter(entry => entry.companyId === selectedCompany.id) : [];
   const upcomingDisposals = selectedCompany ? disposalEvents.filter(d => (d.status === 'Scheduled' || d.status === 'Ongoing') && d.companyId === selectedCompany.id) : [];
 
+  const totalWaste = wasteLog.reduce((acc, entry) => acc + entry.quantity, 0);
+  const totalRecycling = wasteLog.filter(e => e.type === 'Recycling').reduce((acc, entry) => acc + entry.quantity, 0);
+  const recyclingRate = totalWaste > 0 ? (totalRecycling / totalWaste) * 100 : 0;
+  
+  const totalIncome = wasteLog.filter(e => e.type === 'Recycling' && e.price).reduce((acc, entry) => acc + (entry.quantity * entry.price!), 0);
+
 
   return (
     <div className="flex w-full flex-col">
@@ -189,7 +203,7 @@ export function DashboardClient({
         <div className="flex items-center">
           <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
@@ -198,7 +212,7 @@ export function DashboardClient({
               <Trash2 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">1,254 kg</div>
+              <div className="text-2xl font-bold">{totalWaste.toFixed(2)} kg</div>
               <p className="text-xs text-muted-foreground">
                 {dictionary.cards.totalWaste.change}
               </p>
@@ -210,9 +224,21 @@ export function DashboardClient({
               <Recycle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">68%</div>
+              <div className="text-2xl font-bold">{recyclingRate.toFixed(1)}%</div>
               <p className="text-xs text-muted-foreground">
                 {dictionary.cards.recyclingRate.change}
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">{dictionary.cards.income.title}</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{formatCurrency(totalIncome)}</div>
+              <p className="text-xs text-muted-foreground">
+                {dictionary.cards.income.description}
               </p>
             </CardContent>
           </Card>

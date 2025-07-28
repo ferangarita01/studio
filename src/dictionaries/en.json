@@ -305,6 +305,10 @@
         "title": "Recycling Rate",
         "change": "+5% from last month"
       },
+      "income": {
+        "title": "Income from Recycling",
+        "description": "Total value from sold recyclables."
+      },
       "upcomingDisposals": {
         "title": "Upcoming Disposals",
         "next": "Next one in 2 days"
@@ -422,7 +426,7 @@
       }
     }
   },
-  "collectionsPage": {
+  "schedulePage": {
     "title": "Collection Schedule",
     "description": "View and manage upcoming waste collections.",
     "requestCollection": "Request Collection",
@@ -460,7 +464,8 @@
         "placeholder": "Pick a date"
       },
       "time": {
-        "label": "Pickup Time"
+        "label": "Pickup Time",
+        "invalid": "Please enter a valid time (HH:MM)."
       },
       "instructions": {
         "label": "Special Instructions",
@@ -530,7 +535,7 @@
       }
     }
   },
-  "pricesPage": {
+  "materialsPage": {
     "title": "Manage Prices",
     "addMaterial": "Add New Material",
     "cardTitle": "Materials List",
@@ -678,3 +683,5 @@
     }
   }
 }
+
+    

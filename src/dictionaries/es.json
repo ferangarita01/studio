@@ -305,6 +305,10 @@
         "title": "Tasa de Reciclaje",
         "change": "+5% desde el mes pasado"
       },
+      "income": {
+        "title": "Ingresos por Reciclaje",
+        "description": "Valor total de los reciclables vendidos."
+      },
       "upcomingDisposals": {
         "title": "Próximas Eliminaciones",
         "next": "La próxima en 2 días"
@@ -422,7 +426,7 @@
       }
     }
   },
-  "collectionsPage": {
+  "schedulePage": {
     "title": "Calendario de Recolección",
     "description": "Vea y gestione las próximas recolecciones de residuos.",
     "requestCollection": "Solicitar Recolección",
@@ -460,7 +464,8 @@
         "placeholder": "Elija una fecha"
       },
       "time": {
-        "label": "Hora de Recogida"
+        "label": "Hora de Recogida",
+        "invalid": "Por favor, ingrese una hora válida (HH:MM)."
       },
       "instructions": {
         "label": "Instrucciones Especiales",
@@ -530,7 +535,7 @@
       }
     }
   },
-  "pricesPage": {
+  "materialsPage": {
     "title": "Gestionar Precios",
     "addMaterial": "Añadir Nuevo Material",
     "cardTitle": "Lista de Materiales",
@@ -678,3 +683,5 @@
     }
   }
 }
+
+    
