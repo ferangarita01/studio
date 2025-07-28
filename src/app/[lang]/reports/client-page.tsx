@@ -274,7 +274,9 @@ export function ReportsClient({
         <Tabs defaultValue="weekly" className="space-y-4">
           <TabsList>
             <TabsTrigger value="weekly">{dictionary.tabs.weekly}</TabsTrigger>
-            <TabsTrigger value="monthly" className={cn(!showAdminFeatures && 'hidden')}>{dictionary.tabs.monthly}</TabsTrigger>
+            <TabsTrigger value="monthly" className={cn(!showAdminFeatures && "hidden")}>
+              {dictionary.tabs.monthly}
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="weekly" className="space-y-4">
             <ReportView dictionary={dictionary.reportView} data={weeklyData} />

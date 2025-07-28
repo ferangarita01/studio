@@ -199,14 +199,20 @@ export async function deleteMaterial(materialId: string, userId: string): Promis
 
 export async function getWasteLog(companyId?: string): Promise<WasteEntry[]> {
     const baseRef = ref(db, "wasteLog");
-    const logQuery = companyId ? query(baseRef, orderByChild('companyId'), equalTo(companyId)) : baseRef;
-    const snapshot = await get(logQuery);
+    // Firebase query is removed to avoid needing an index. Filtering is done client-side.
+    const snapshot = await get(baseRef);
     
     if(snapshot.exists()) {
         let logList = snapshotToArray(snapshot);
         // Dates are stored as ISO strings, convert them back to Date objects
-        return logList.map(entry => ({...entry, date: new Date(entry.date)}))
-                      .sort((a, b) => b.date.getTime() - a.date.getTime());
+        const processedLog = logList.map(entry => ({...entry, date: new Date(entry.date)}));
+        
+        // Filter on the client-side if companyId is provided
+        const filteredLog = companyId 
+            ? processedLog.filter(entry => entry.companyId === companyId)
+            : processedLog;
+        
+        return filteredLog.sort((a, b) => b.date.getTime() - a.date.getTime());
     }
     return [];
 }
