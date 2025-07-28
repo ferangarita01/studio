@@ -30,12 +30,12 @@ import type { UserProfile } from "@/lib/types";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormField, FormItem, FormControl, FormLabel, FormMessage } from "@/components/ui/form";
 
-const loginSchema = z.object({
-  email: z.string().email(),
+const loginFormSchema = (dictionary: Dictionary["loginPage"]["validation"]) => z.object({
+  email: z.string().email({ message: dictionary.email }),
   password: z.string().min(1, "Password is required"),
 });
 
-const signUpSchema = (dictionary: Dictionary["loginPage"]["validation"]) => z.object({
+const signUpFormSchema = (dictionary: Dictionary["loginPage"]["validation"]) => z.object({
   fullName: z.string().min(2, dictionary.fullName),
   accountType: z.enum(["company", "individual"], { required_error: dictionary.accountType }),
   taxId: z.string().optional(),
@@ -64,9 +64,6 @@ const signUpSchema = (dictionary: Dictionary["loginPage"]["validation"]) => z.ob
     path: ["idNumber"],
 });
 
-type LoginSchema = z.infer<typeof loginSchema>;
-type SignUpSchema = z.infer<ReturnType<typeof signUpSchema>>;
-
 
 function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] }) {
   const { login, signUp, isLoading: isAuthLoading, isAuthenticated } = useAuth();
@@ -79,15 +76,14 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   const [isSignUp, setIsSignUp] = useState(false);
   
   const validationDictionary = dictionary.validation;
-
+  
   const currentSchema = useMemo(() => {
-    return isSignUp ? signUpSchema(validationDictionary) : loginSchema;
+    return isSignUp ? signUpFormSchema(validationDictionary) : loginFormSchema(validationDictionary);
   }, [isSignUp, validationDictionary]);
 
-
-  const form = useForm<SignUpSchema>({
+  const form = useForm<z.infer<typeof currentSchema>>({
     resolver: zodResolver(currentSchema),
-    defaultValues: {
+    defaultValues: isSignUp ? {
       fullName: "",
       accountType: undefined,
       taxId: "",
@@ -100,6 +96,9 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
       email: "",
       password: "",
       terms: false,
+    } : {
+      email: "",
+      password: "",
     }
   });
   
