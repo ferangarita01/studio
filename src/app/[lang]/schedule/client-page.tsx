@@ -86,6 +86,14 @@ export function ScheduleClient({ dictionary, lang }: ScheduleClientProps) {
     setAllEvents(currentEvents => [...currentEvents, newEvent].sort((a, b) => b.date.getTime() - a.date.getTime()));
   }, []);
 
+  if (!dictionary) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
   if (!selectedCompany) {
     return (
        <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -241,7 +249,7 @@ export function ScheduleClient({ dictionary, lang }: ScheduleClientProps) {
           <div className="ml-auto flex items-center gap-2 mt-4 sm:mt-0">
             <Button size="sm" className="h-8 gap-1" onClick={() => setRequestDialogOpen(true)}>
               <PlusCircle className="h-3.5 w-3.5" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              <span className="sr-only sm:not-sr-only sm:whitespace-rap">
                 {dictionary.requestCollection}
               </span>
             </Button>
