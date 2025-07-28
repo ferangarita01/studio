@@ -359,6 +359,11 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   const dictionary = useDictionaries()?.navigation;
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isUpgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const isPublicPage = pathname.endsWith('/login') || pathname.endsWith('/landing') || pathname.endsWith('/pricing') || pathname.endsWith('/asorecifuentes');
 
@@ -373,9 +378,9 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   }, [isAuthenticated, isAuthLoading, pathname, router, lang, isPublicPage]);
 
   const navItems = useMemo(() => {
-    if (!role) return [];
+    if (!isClient || !role) return [];
     return allNavItems.filter(item => item.roles.includes(role));
-  }, [role]);
+  }, [isClient, role]);
 
 
   const currentPath = `/${pathname.split('/').slice(2).join('/')}`;
@@ -383,14 +388,18 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     if (!role) return false;
     // Special case for root
     if (currentPath === '/') return true;
-    return navItems.some(item =>
-      ('href' in item && item.href !== '/' && currentPath.startsWith(item.href)) ||
-      ('subItems' in item && item.subItems.some(sub => sub.href !== '/' && currentPath.startsWith(sub.href)))
-    );
-  }, [role, currentPath, navItems]);
+    
+    // Flatten all items and sub-items for easier checking
+    const allAllowedPaths = allNavItems
+        .filter(item => item.roles.includes(role))
+        .flatMap(item => 'subItems' in item ? item.subItems.map(sub => sub.href) : [item.href]);
+    
+    return allAllowedPaths.some(href => href !== '/' && currentPath.startsWith(href));
+
+  }, [role, currentPath]);
 
   useEffect(() => {
-    if (isAuthenticated && role && navItems.length > 0 && !isAuthorized) {
+    if (isAuthenticated && role && navItems.length > 0 && !isAuthorized && currentPath !== '/') {
        router.push(`/${lang}`);
     }
   }, [isAuthenticated, isAuthorized, role, router, lang, navItems.length]);
@@ -408,7 +417,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     }
   };
 
-  if (isAuthLoading) {
+  if (isAuthLoading || !isClient) {
     return (
         <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
             <div className="hidden border-r bg-muted/40 md:block">
@@ -457,18 +466,15 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   }
 
   const NavContent = () => {
-      const isFreeUser = role === 'client' && userProfile?.plan !== 'Premium';
-
+      if (navItems.length === 0) {
+          return <NavSkeleton />;
+      }
       return (
         <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
           <div className="p-2">
             <CompanySwitcher />
           </div>
-          {allNavItems.map((item) => {
-            const isPremiumFeature = item.plan === 'Premium';
-            if (!item.roles.includes(role!)) return null;
-            if (isPremiumFeature && isFreeUser) return null; // Hide premium features for free users
-
+          {navItems.map((item) => {
             const label = dictionary.links[item.labelKey as keyof typeof dictionary.links];
 
             if ('subItems' in item) {
@@ -526,7 +532,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
               >
                 <item.icon className="h-4 w-4" />
                 <span>{label}</span>
-                 {isPremiumFeature && (
+                 {item.plan === 'Premium' && (
                   <Badge variant="outline" className="ml-auto flex items-center gap-1 border-yellow-500/50 text-yellow-500 text-xs px-2">
                     {dictionary.premium}
                   </Badge>
@@ -546,7 +552,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
               <Logo />
             </div>
             <div className="flex-1 overflow-y-auto py-2">
-               {role ? <NavContent /> : <NavSkeleton />}
+               {isClient && role ? <NavContent /> : <NavSkeleton />}
             </div>
              <div className="mt-auto p-4 border-t">
                  <Button size="sm" variant="ghost" onClick={logout} className="w-full justify-start gap-2">
@@ -574,7 +580,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                     <Logo />
                  </div>
                  <div className="flex-1 overflow-y-auto py-2">
-                    {role ? <NavContent /> : <NavSkeleton />}
+                    {isClient && role ? <NavContent /> : <NavSkeleton />}
                  </div>
                  <div className="mt-auto p-4 border-t" onClick={() => setMobileMenuOpen(false)}>
                    <Button size="sm" variant="ghost" onClick={logout} className="w-full justify-start gap-2">
@@ -642,5 +648,3 @@ export function AppShell({ children, lang, dictionary }: { children: React.React
     </ThemeProvider>
    )
 }
-
-    
