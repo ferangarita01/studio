@@ -29,6 +29,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { UserProfile } from "@/lib/types";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormField, FormItem, FormControl, FormLabel, FormMessage } from "@/components/ui/form";
+import { cn } from "@/lib/utils";
 
 const loginFormSchema = (dictionary: Dictionary["loginPage"]["validation"]) => z.object({
   email: z.string().email({ message: dictionary.email }),
@@ -339,14 +340,14 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                         <FormItem>
                              <div className="flex items-center">
                                 <FormLabel>{dictionary.password}</FormLabel>
-                                {!isSignUp && (
-                                    <Link
-                                    href="#"
-                                    className="ml-auto inline-block text-sm underline"
-                                    >
-                                    {dictionary.forgotPassword}
-                                    </Link>
-                                )}
+                                <div className={cn("ml-auto", isSignUp && "hidden")}>
+                                     <Link
+                                        href="#"
+                                        className="inline-block text-sm underline"
+                                     >
+                                        {dictionary.forgotPassword}
+                                     </Link>
+                                </div>
                             </div>
                             <FormControl>
                                 <Input type="password" {...field} disabled={isSubmitting} />

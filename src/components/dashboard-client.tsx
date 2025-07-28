@@ -165,12 +165,8 @@ export function DashboardClient({
        </div>
   )
 
-  if (isCompanyContextLoading || isAuthLoading || !isClient) {
+  if (isCompanyContextLoading || isAuthLoading || !isClient || !dictionary?.cards?.income) {
       return renderLoadingState();
-  }
-
-  if (!dictionary) {
-    return renderLoadingState();
   }
   
   if (!selectedCompany) {
@@ -373,4 +369,5 @@ export function DashboardClient({
   );
 }
 
+    
     
