@@ -43,7 +43,7 @@ export function EditCompanyDialog({ open, onOpenChange, onUpdate, dictionary, co
 
   useEffect(() => {
     if (company) {
-      setName(company.name);
+      setName(company.name || "");
       setPlan(company.plan || "Free");
     }
   }, [company, open]);
