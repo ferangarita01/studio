@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -72,6 +72,27 @@ const signUpFormSchema = (dictionary: Dictionary["loginPage"]["validation"]) => 
     path: ["idNumber"],
 });
 
+const signUpDefaultValues = {
+  fullName: "",
+  accountType: undefined,
+  companyName: "",
+  taxId: "",
+  idNumber: "",
+  jobTitle: "",
+  address: "",
+  city: "",
+  country: "",
+  phone: "",
+  email: "",
+  password: "",
+  terms: false,
+};
+
+const loginDefaultValues = {
+  email: "",
+  password: "",
+};
+
 
 function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] }) {
   const { login, signUp, isLoading: isAuthLoading, isAuthenticated } = useAuth();
@@ -90,26 +111,9 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
     return isSignUp ? signUpFormSchema(validationDictionary) : loginFormSchema(validationDictionary);
   }, [isSignUp, validationDictionary]);
 
-  const form = useForm<z.infer<typeof currentSchema>>({
+  const form = useForm({
     resolver: zodResolver(currentSchema),
-    defaultValues: isSignUp ? {
-      fullName: "",
-      accountType: undefined,
-      companyName: "",
-      taxId: "",
-      idNumber: "",
-      jobTitle: "",
-      address: "",
-      city: "",
-      country: "",
-      phone: "",
-      email: "",
-      password: "",
-      terms: false,
-    } : {
-      email: "",
-      password: "",
-    }
+    defaultValues: isSignUp ? signUpDefaultValues : loginDefaultValues
   });
   
   const accountType = form.watch("accountType");
@@ -165,12 +169,21 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
       </div>
     )
   }
-
-  const toggleForm = () => {
-    setIsSignUp(!isSignUp);
+  
+  const toggleForm = useCallback(() => {
+    const newIsSignUp = !isSignUp;
+    setIsSignUp(newIsSignUp);
     setError('');
-    form.reset();
-  }
+    form.reset(newIsSignUp ? signUpDefaultValues : loginDefaultValues, {
+      keepValues: false,
+      keepErrors: false,
+      keepDirty: false,
+      keepTouched: false,
+      keepIsValid: false,
+      keepSubmitCount: false,
+    });
+  }, [isSignUp, form]);
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4 relative">
@@ -228,52 +241,50 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                           )}
                       />
                      
-                      {accountType === 'company' && (
-                        <div className="space-y-4">
-                           <FormField
-                              control={form.control}
-                              name="companyName"
-                              render={({ field }) => (
-                                  <FormItem>
-                                      <FormLabel>{dictionary.labels.companyName}</FormLabel>
-                                      <FormControl>
-                                          <Input {...field} disabled={isSubmitting} />
-                                      </FormControl>
-                                      <FormMessage />
-                                  </FormItem>
-                              )}
-                          />
-                          <FormField
-                              control={form.control}
-                              name="taxId"
-                              render={({ field }) => (
-                                  <FormItem>
-                                      <FormLabel>{dictionary.labels.taxId}</FormLabel>
-                                      <FormControl>
-                                          <Input {...field} disabled={isSubmitting} />
-                                      </FormControl>
-                                      <FormMessage />
-                                  </FormItem>
-                              )}
-                          />
-                        </div>
-                      )}
+                      <div className={cn("space-y-4", accountType !== 'company' && "hidden")}>
+                         <FormField
+                            control={form.control}
+                            name="companyName"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{dictionary.labels.companyName}</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} disabled={isSubmitting} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="taxId"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{dictionary.labels.taxId}</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} disabled={isSubmitting} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                      </div>
 
-                      {accountType === 'individual' && (
-                           <FormField
-                              control={form.control}
-                              name="idNumber"
-                              render={({ field }) => (
-                                  <FormItem>
-                                      <FormLabel>{dictionary.labels.idNumber}</FormLabel>
-                                      <FormControl>
-                                          <Input {...field} disabled={isSubmitting} />
-                                      </FormControl>
-                                      <FormMessage />
-                                  </FormItem>
-                              )}
-                          />
-                      )}
+                      <div className={cn(accountType !== 'individual' && "hidden")}>
+                         <FormField
+                            control={form.control}
+                            name="idNumber"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{dictionary.labels.idNumber}</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} disabled={isSubmitting} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                      </div>
 
                        <FormField
                           control={form.control}
