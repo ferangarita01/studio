@@ -232,6 +232,7 @@
     "signUpDescription": "Crea una nueva cuenta de cliente.",
     "labels": {
       "fullName": "Nombre Completo",
+      "companyName": "Nombre de la Empresa",
       "accountType": "Tipo de Cuenta",
       "selectAccountType": "Seleccione el tipo de cuenta...",
       "individual": "Individual",
@@ -248,6 +249,7 @@
     },
     "validation": {
       "fullName": "El nombre completo debe tener al menos 2 caracteres.",
+      "companyName": "El nombre de la empresa es obligatorio y debe tener al menos 2 caracteres.",
       "accountType": "Por favor, seleccione un tipo de cuenta.",
       "taxId": "El NIT es requerido para empresas.",
       "idNumber": "El número de identificación es requerido para individuales.",

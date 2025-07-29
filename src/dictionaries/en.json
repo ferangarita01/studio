@@ -232,6 +232,7 @@
     "signUpDescription": "Create a new client account.",
     "labels": {
       "fullName": "Full Name",
+      "companyName": "Company Name",
       "accountType": "Account Type",
       "selectAccountType": "Select account type...",
       "individual": "Individual",
@@ -248,6 +249,7 @@
     },
     "validation": {
       "fullName": "Full name must be at least 2 characters.",
+      "companyName": "Company name is required and must be at least 2 characters.",
       "accountType": "Please select an account type.",
       "taxId": "Tax ID is required for companies.",
       "idNumber": "Identification number is required for individuals.",
@@ -683,5 +685,3 @@
     }
   }
 }
-
-    

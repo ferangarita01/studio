@@ -9,6 +9,7 @@ export type UserProfile = {
   email: string;
   role: UserRole;
   fullName?: string;
+  companyName?: string;
   accountType?: AccountType;
   taxId?: string; // For companies (NIT)
   idNumber?: string; // For individuals (Cédula)

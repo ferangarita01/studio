@@ -39,6 +39,7 @@ const loginFormSchema = (dictionary: Dictionary["loginPage"]["validation"]) => z
 const signUpFormSchema = (dictionary: Dictionary["loginPage"]["validation"]) => z.object({
   fullName: z.string().min(2, dictionary.fullName),
   accountType: z.enum(["company", "individual"], { required_error: dictionary.accountType }),
+  companyName: z.string().optional(),
   taxId: z.string().optional(),
   idNumber: z.string().optional(),
   jobTitle: z.string().optional(),
@@ -58,6 +59,12 @@ const signUpFormSchema = (dictionary: Dictionary["loginPage"]["validation"]) => 
     message: dictionary.taxId,
     path: ["taxId"],
 }).refine(data => {
+    if (data.accountType === 'company') return !!data.companyName && data.companyName.length >= 2;
+    return true;
+}, {
+    message: dictionary.companyName,
+    path: ["companyName"],
+}).refine(data => {
     if (data.accountType === 'individual') return !!data.idNumber;
     return true;
 }, {
@@ -71,6 +78,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   const router = useRouter();
   const params = useParams();
   const lang = params.lang;
+  const [isClient, setIsClient] = useState(false);
 
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -87,6 +95,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
     defaultValues: isSignUp ? {
       fullName: "",
       accountType: undefined,
+      companyName: "",
       taxId: "",
       idNumber: "",
       jobTitle: "",
@@ -106,6 +115,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   const accountType = form.watch("accountType");
 
   useEffect(() => {
+    setIsClient(true);
     if (!isAuthLoading && isAuthenticated) {
       router.push(`/${lang}`);
     }
@@ -121,6 +131,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
         const profileData: Omit<UserProfile, 'id' | 'role' | 'email'> = {
             fullName: data.fullName,
             accountType: data.accountType,
+            companyName: data.companyName,
             taxId: data.taxId,
             idNumber: data.idNumber,
             jobTitle: data.jobTitle,
@@ -147,7 +158,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
     }
   };
   
-  if (isAuthLoading || isAuthenticated) {
+  if (!isClient || isAuthLoading || isAuthenticated) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background p-4">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -179,7 +190,8 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <div className={cn("space-y-4", !isSignUp && "hidden")}>
+                {isSignUp ? (
+                    <div className="space-y-4">
                       <FormField
                           control={form.control}
                           name="fullName"
@@ -216,7 +228,21 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                           )}
                       />
                      
-                      <div className={cn(accountType !== 'company' && "hidden")}>
+                      {accountType === 'company' && (
+                        <div className="space-y-4">
+                           <FormField
+                              control={form.control}
+                              name="companyName"
+                              render={({ field }) => (
+                                  <FormItem>
+                                      <FormLabel>{dictionary.labels.companyName}</FormLabel>
+                                      <FormControl>
+                                          <Input {...field} disabled={isSubmitting} />
+                                      </FormControl>
+                                      <FormMessage />
+                                  </FormItem>
+                              )}
+                          />
                           <FormField
                               control={form.control}
                               name="taxId"
@@ -230,9 +256,10 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                                   </FormItem>
                               )}
                           />
-                      </div>
+                        </div>
+                      )}
 
-                      <div className={cn(accountType !== 'individual' && "hidden")}>
+                      {accountType === 'individual' && (
                            <FormField
                               control={form.control}
                               name="idNumber"
@@ -246,7 +273,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                                   </FormItem>
                               )}
                           />
-                      </div>
+                      )}
 
                        <FormField
                           control={form.control}
@@ -315,7 +342,8 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                               </FormItem>
                           )}
                       />
-                </div>
+                    </div>
+                ) : null}
 
                 <FormField
                     control={form.control}
@@ -338,14 +366,14 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                         <FormItem>
                              <div className="flex items-center">
                                 <FormLabel>{dictionary.password}</FormLabel>
-                                <div className={cn("ml-auto", isSignUp && "hidden")}>
+                                {!isSignUp && (
                                      <Link
                                         href="#"
-                                        className="inline-block text-sm underline"
+                                        className="ml-auto inline-block text-sm underline"
                                      >
                                         {dictionary.forgotPassword}
                                      </Link>
-                                </div>
+                                )}
                             </div>
                             <FormControl>
                                 <Input type="password" {...field} disabled={isSubmitting} />
@@ -355,7 +383,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                     )}
                 />
 
-                <div className={cn(!isSignUp && "hidden")}>
+                {isSignUp && (
                   <FormField
                       control={form.control}
                       name="terms"
@@ -378,7 +406,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                           </FormItem>
                       )}
                   />
-                </div>
+                )}
 
                 {error && (
                   <Alert variant="destructive">
