@@ -70,30 +70,18 @@ export async function updateUserPlan(userId: string, plan: PlanType): Promise<vo
 
 export async function getCompanies(userId?: string): Promise<Company[]> {
   const dbRef = ref(db, 'companies');
-  let companiesQuery;
-  if (userId) {
-    // This query might require an index on 'createdBy' for larger datasets.
-    // For now, it should work for a reasonable number of companies.
-    companiesQuery = query(dbRef, orderByChild('createdBy'), equalTo(userId));
-  } else {
-    companiesQuery = dbRef;
-  }
-  
-  const snapshot = await get(companiesQuery);
+  // Removed the query to avoid index error. Filtering will be done client-side.
+  const snapshot = await get(dbRef);
 
   if (!snapshot.exists()) {
     return [];
   }
-
-  // Client-side fetch of all companies if no userId is provided
-  // This is less efficient but avoids needing a generic index.
+  
   let allCompanies: Company[] = snapshotToArray(snapshot);
 
-  if (!userId) {
-     const allSnapshot = await get(ref(db, 'companies'));
-     if(allSnapshot.exists()) {
-       allCompanies = snapshotToArray(allSnapshot);
-     }
+  // Filter by userId if it's provided
+  if (userId) {
+    allCompanies = allCompanies.filter(company => company.createdBy === userId);
   }
 
   const companiesWithDefaults = allCompanies.map(c => ({
