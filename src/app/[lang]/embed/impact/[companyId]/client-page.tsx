@@ -85,14 +85,12 @@ export function EmbeddableImpactPanelClient({ data, lang }: EmbeddableImpactPane
 
             <footer className="mt-6 text-center text-xs text-muted-foreground">
                 <p>{lang === 'es' ? 'Datos proporcionados por' : 'Data provided by'} <span className="font-bold text-primary">WasteWise</span></p>
-                {isClient && (
-                     <p>
-                        {lastUpdated 
-                            ? (lang === 'es' ? `Actualizado por última vez: ${lastUpdated}` : `Last updated: ${lastUpdated}`)
-                            : (lang === 'es' ? 'Cargando fecha...' : 'Loading date...')
-                        }
-                    </p>
-                )}
+                <p>
+                    {isClient && lastUpdated 
+                        ? (lang === 'es' ? `Actualizado por última vez: ${lastUpdated}` : `Last updated: ${lastUpdated}`)
+                        : (lang === 'es' ? 'Cargando fecha...' : 'Loading date...')
+                    }
+                </p>
             </footer>
         </div>
     );

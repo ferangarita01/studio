@@ -135,11 +135,13 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
 
   useEffect(() => {
     setIsClient(true);
+  }, []);
+
+  useEffect(() => {
     if (!isAuthLoading && isAuthenticated) {
       router.push(`/${lang}`);
     }
   }, [isAuthLoading, isAuthenticated, router, lang]);
-
 
   const onSubmit = async (data: any) => {
     setError("");
