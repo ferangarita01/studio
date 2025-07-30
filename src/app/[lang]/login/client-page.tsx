@@ -118,6 +118,21 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   
   const accountType = form.watch("accountType");
 
+  const toggleForm = useCallback(() => {
+    const newIsSignUp = !isSignUp;
+    setIsSignUp(newIsSignUp);
+    setError('');
+    form.reset(newIsSignUp ? signUpDefaultValues : loginDefaultValues, {
+      keepValues: false,
+      keepErrors: false,
+      keepDirty: false,
+      keepTouched: false,
+      keepIsValid: false,
+      keepSubmitCount: false,
+    });
+  }, [isSignUp, form]);
+
+
   useEffect(() => {
     setIsClient(true);
     if (!isAuthLoading && isAuthenticated) {
@@ -170,21 +185,6 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
     )
   }
   
-  const toggleForm = useCallback(() => {
-    const newIsSignUp = !isSignUp;
-    setIsSignUp(newIsSignUp);
-    setError('');
-    form.reset(newIsSignUp ? signUpDefaultValues : loginDefaultValues, {
-      keepValues: false,
-      keepErrors: false,
-      keepDirty: false,
-      keepTouched: false,
-      keepIsValid: false,
-      keepSubmitCount: false,
-    });
-  }, [isSignUp, form]);
-
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4 relative">
        <Button asChild variant="outline" className="absolute top-4 left-4">
