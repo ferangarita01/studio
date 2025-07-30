@@ -554,7 +554,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
               <Logo />
             </div>
             <div className="flex-1 overflow-y-auto py-2">
-               {isClient && role ? <NavContent /> : <NavSkeleton />}
+               <NavContent />
             </div>
              <div className="mt-auto p-4 border-t">
                  <Button size="sm" variant="ghost" onClick={logout} className="w-full justify-start gap-2">
@@ -582,7 +582,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                     <Logo />
                  </div>
                  <div className="flex-1 overflow-y-auto py-2">
-                    {isClient && role ? <NavContent /> : <NavSkeleton />}
+                    <NavContent />
                  </div>
                  <div className="mt-auto p-4 border-t" onClick={() => setMobileMenuOpen(false)}>
                    <Button size="sm" variant="ghost" onClick={logout} className="w-full justify-start gap-2">
