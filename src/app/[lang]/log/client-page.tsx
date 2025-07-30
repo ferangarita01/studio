@@ -102,7 +102,7 @@ export function LogClient({ dictionary }: LogClientProps) {
       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <div className="flex items-center">
           <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
-           <div className={cn("ml-auto flex items-center gap-2", !showAdminFeatures && 'hidden')}>
+           <div className={cn("ml-auto flex items-center gap-2", !showAdminFeatures && "hidden")}>
              <Button size="sm" className="h-8 gap-1" onClick={() => setAddWasteDialogOpen(true)}>
                <PlusCircle className="h-3.5 w-3.5" />
                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
