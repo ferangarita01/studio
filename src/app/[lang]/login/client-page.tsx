@@ -93,7 +93,6 @@ const loginDefaultValues = {
   password: "",
 };
 
-
 function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] }) {
   const { login, signUp, isLoading: isAuthLoading, isAuthenticated } = useAuth();
   const router = useRouter();
@@ -137,10 +136,10 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   }, []);
 
   useEffect(() => {
-    if (!isAuthLoading && isAuthenticated) {
+    if (isAuthenticated) {
       router.push(`/${lang}`);
     }
-  }, [isAuthLoading, isAuthenticated, router, lang]);
+  }, [isAuthenticated, router, lang]);
 
   const onSubmit = async (data: any) => {
     setError("");
@@ -164,13 +163,12 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
       } else {
         await login(data.email, data.password);
       }
-      // Successful login/signup will trigger the useEffect above to redirect
     } catch (err: any) {
       if (err instanceof FirebaseError && err.code === 'auth/email-already-in-use') {
-         setError("This email address is already in use. Try logging in instead.");
+         setError("This email address is already registered. Please try logging in instead.");
       } else {
         const message = err.message || "An unexpected error occurred.";
-        setError(message.replace('Firebase: ','').replace('Error', ''));
+        setError(message.replace('Firebase: ','').replace('Error ', ''));
       }
     } finally {
       setIsSubmitting(false);
@@ -462,5 +460,3 @@ export function LoginClient({ dictionary }: { dictionary: Dictionary }) {
     </ThemeProvider>
   )
 }
-
-    
