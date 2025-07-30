@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -66,13 +67,16 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, isPopular, isPayP
             </li>
           ))}
         </ul>
-        {isPayPal && isClient ? (
-            <PayPalButtonWrapper amount={planPrice} description={`${plan.name} Plan Subscription`} />
-        ) : (
-            <Button asChild className="w-full" variant={isPopular ? "default" : "outline"}>
-              <Link href={`/${lang}/login`}>{plan.cta}</Link>
-            </Button>
-        )}
+        <div className="relative h-10">
+            <div className={cn("absolute inset-0 transition-opacity", isPayPal && isClient ? 'opacity-100' : 'opacity-0')}>
+                {isPayPal && isClient && <PayPalButtonWrapper amount={planPrice} description={`${plan.name} Plan Subscription`} />}
+            </div>
+            <div className={cn("absolute inset-0 transition-opacity", isPayPal && isClient ? 'opacity-0' : 'opacity-100')}>
+                <Button asChild className="w-full" variant={isPopular ? "default" : "outline"}>
+                    <Link href={`/${lang}/login`}>{plan.cta}</Link>
+                </Button>
+            </div>
+        </div>
       </CardContent>
     </Card>
   );

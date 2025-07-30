@@ -100,7 +100,6 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   const params = useParams();
   const lang = params.lang;
   const [isClient, setIsClient] = useState(false);
-
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
@@ -152,14 +151,14 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
         const profileData: Omit<UserProfile, 'id' | 'role' | 'email'> = {
             fullName: data.fullName,
             accountType: data.accountType,
-            companyName: data.companyName,
-            taxId: data.taxId,
-            idNumber: data.idNumber,
-            jobTitle: data.jobTitle,
-            address: data.address,
-            city: data.city,
-            country: data.country,
-            phone: data.phone,
+            companyName: data.companyName || "",
+            taxId: data.taxId || "",
+            idNumber: data.idNumber || "",
+            jobTitle: data.jobTitle || "",
+            address: data.address || "",
+            city: data.city || "",
+            country: data.country || "",
+            phone: data.phone || "",
         };
         await signUp(data.email, data.password, profileData);
       } else {
@@ -167,7 +166,6 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
       }
       // Successful login/signup will trigger the useEffect above to redirect
     } catch (err: any) {
-      console.error(err);
       if (err instanceof FirebaseError && err.code === 'auth/email-already-in-use') {
          setError("This email address is already in use. Try logging in instead.");
       } else {
