@@ -1,3 +1,4 @@
+
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
@@ -27,7 +28,25 @@ const nextConfig: NextConfig = {
         hostname: 'www.paypal.com',
         port: '',
         pathname: '/**',
-      }
+      },
+      {
+        protocol: 'https',
+        hostname: 'space.gov.ae',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.rmcad.edu',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.durable.co',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };
