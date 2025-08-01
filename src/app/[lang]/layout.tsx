@@ -4,6 +4,13 @@ import '../globals.css';
 import { getDictionary } from '@/lib/get-dictionary';
 import type { Locale } from '@/i18n-config';
 import { AppShell } from '@/components/layout/app-shell';
+import { Inter } from 'next/font/google';
+import { cn } from '@/lib/utils';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-sans',
+})
 
 const APP_NAME = "WasteWise";
 const APP_DESCRIPTION = "WasteWise is a business and event waste management platform by EcoCircle, designed to track and manage waste generation for companies, festivals, and concerts.";
@@ -64,12 +71,8 @@ export default async function RootLayout({
 
   return (
     <html lang={lang} suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      </head>
-      <body className="font-body antialiased" suppressHydrationWarning>
+      <head />
+      <body className={cn("font-sans antialiased", inter.variable)} suppressHydrationWarning>
           <AppShell lang={lang} dictionary={dictionary}>
             {children}
           </AppShell>
@@ -77,5 +80,3 @@ export default async function RootLayout({
     </html>
   );
 }
-
-    

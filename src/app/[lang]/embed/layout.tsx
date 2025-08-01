@@ -6,6 +6,13 @@
 import '../../globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import type { Locale } from '@/i18n-config';
+import { Inter } from 'next/font/google';
+import { cn } from '@/lib/utils';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-sans',
+})
 
 export default function EmbedLayout({
   children,
@@ -16,12 +23,8 @@ export default function EmbedLayout({
 }) {
   return (
     <html lang={params.lang} suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      </head>
-      <body className="font-body antialiased h-full w-full bg-transparent">
+      <head />
+      <body className={cn("font-sans antialiased h-full w-full bg-transparent", inter.variable)}>
         <ThemeProvider
             attribute="class"
             defaultTheme="light" // Embeds usually look better on a light theme by default
