@@ -13,7 +13,7 @@ import {
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import type { UserProfile } from "@/lib/types";
-import { getUserProfile, createUserProfile } from "@/services/waste-data-service";
+import { getUserProfile, createUserProfile, addCompany as addCompanyService } from "@/services/waste-data-service";
 
 
 export type UserRole = "admin" | "client";
@@ -46,9 +46,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (user) {
         const profile = await getUserProfile(user.uid);
         setUserProfile(profile);
-         if (user.email === 'prueba2@admin.co') {
-          setRole('admin');
-        } else if (profile) {
+        if (profile) {
           setRole(profile.role);
         } else {
           setRole(null);
@@ -63,16 +61,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (user) {
         const profile = await getUserProfile(user.uid);
         setUserProfile(profile);
-
-        // Explicitly set the role for the admin account
-        if (user.email === 'prueba2@admin.co') {
-          setRole('admin');
-        } else if (profile) {
+        if (profile) {
           setRole(profile.role);
         } else {
           setRole(null);
         }
-
       } else {
         setUserProfile(null);
         setRole(null);
@@ -95,12 +88,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const newUser = userCredential.user;
         if (newUser) {
+          
+          let assignedCompanyId: string | undefined = undefined;
+
+          // If the account type is company, create the company and get its ID
+          if (profileData.accountType === 'company' && profileData.companyName) {
+            const newCompany = await addCompanyService(profileData.companyName, newUser.uid, newUser.uid);
+            assignedCompanyId = newCompany.id;
+          }
+
           // Create a user profile in the database with the 'client' role
           await createUserProfile(newUser.uid, { 
             email: newUser.email!, 
             role: 'client',
             ...profileData,
-            plan: 'Free'
+            plan: 'Free',
+            assignedCompanyId: assignedCompanyId, // Add the assigned company ID
           });
         }
         // onAuthStateChanged will handle setting the new user and profile
