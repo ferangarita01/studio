@@ -367,21 +367,27 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     setIsClient(true);
   }, []);
 
+  const currentPath = `/${pathname.split('/').slice(2).join('/')}`;
+
   const isPublicPage = useMemo(() => {
     const publicPaths = ['/login', '/landing', '/asorecifuentes', '/pricing'];
-    return publicPaths.some(p => pathname.endsWith(p));
-  }, [pathname]);
+    // Use currentPath which doesn't have locale
+    return publicPaths.some(p => currentPath === p);
+  }, [currentPath]);
 
   useEffect(() => {
     if (isAuthLoading) return;
+    
+    // If not authenticated and not on a public page, redirect to landing
     if (!isAuthenticated && !isPublicPage) {
       router.push(`/${lang}/landing`);
     }
-    // Only redirect from /login if authenticated. Allow access to other public pages.
-    if (isAuthenticated && pathname.endsWith('/login')) {
+
+    // If authenticated, only redirect away from the login page
+    if (isAuthenticated && currentPath === '/login') {
         router.push(`/${lang}`);
     }
-  }, [isAuthenticated, isAuthLoading, pathname, router, lang, isPublicPage]);
+  }, [isAuthenticated, isAuthLoading, currentPath, isPublicPage, router, lang]);
 
   const navItems = useMemo(() => {
     if (!isClient || !role) return [];
@@ -389,26 +395,29 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   }, [isClient, role]);
 
 
-  const currentPath = `/${pathname.split('/').slice(2).join('/')}`;
   const isAuthorized = useMemo(() => {
-    if (!role) return false;
-    // Special case for root
-    if (currentPath === '/') return true;
+    if (!isClient || !role) return false;
+    // Public pages are always "authorized" for logged-in users to prevent redirection loops
+    if (isPublicPage) return true;
     
-    // Flatten all items and sub-items for easier checking
+    // Check against role-based navigation items
     const allAllowedPaths = allNavItems
         .filter(item => item.roles.includes(role))
         .flatMap(item => 'subItems' in item ? item.subItems.map(sub => sub.href) : [item.href]);
     
-    return allAllowedPaths.some(href => href !== '/' && currentPath.startsWith(href));
+    // Check if current path starts with any of the allowed hrefs
+    return allAllowedPaths.some(href => href === '/' ? currentPath === '/' : currentPath.startsWith(href));
 
-  }, [role, currentPath]);
+  }, [isClient, role, currentPath, isPublicPage]);
 
   useEffect(() => {
-    if (isAuthenticated && role && navItems.length > 0 && !isAuthorized && currentPath !== '/') {
+    // This effect handles redirection for unauthorized access to protected pages
+    if (isAuthLoading || !isClient || !isAuthenticated || !role || navItems.length === 0) return;
+    
+    if (!isAuthorized) {
        router.push(`/${lang}`);
     }
-  }, [isAuthenticated, isAuthorized, role, router, lang, navItems.length]);
+  }, [isAuthenticated, isAuthorized, role, router, lang, navItems.length, isAuthLoading, isClient]);
 
   const handlePremiumClick = (e: React.MouseEvent<HTMLAnchorElement>, item: { plan?: string }) => {
     const isPremiumFeature = item.plan === 'Premium';
@@ -531,7 +540,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
 
   if (!dictionary) return null;
 
-   if (role && navItems.length > 0 && !isAuthorized && currentPath !== '/') {
+   if (!isAuthorized) {
     return (
        <div className="flex h-screen w-full items-center justify-center">
         <div>Loading...</div>
