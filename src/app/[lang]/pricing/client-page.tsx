@@ -49,8 +49,8 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, isPopular, isPaym
 
   const showPaymentButtons = isPayment && isClient && isAuthenticated && !isAlreadyPremium;
   const showContactSales = plan.name === 'Custom';
-  const showGetStarted = !showPaymentButtons && !showContactSales;
-  const showCurrentPlan = isPayment && isClient && isAlreadyPremium;
+  const showGetStarted = !showPaymentButtons && !showContactSales && !(isPayment && isClient && isAlreadyPremium);
+  const showCurrentPlan = isPayment && isClient && isAuthenticated && isAlreadyPremium;
 
   return (
     <Card className={cn("flex flex-col", isPopular ? "border-2 border-primary shadow-lg" : "")}>

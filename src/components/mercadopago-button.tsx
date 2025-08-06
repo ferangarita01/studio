@@ -124,20 +124,23 @@ export function MercadoPagoButtonWrapper({ amount, description }: MercadoPagoBut
                         valueProp: 'smart_option',
                     },
                 }}
-                onSubmit={() => new Promise((resolve) => {
-                     // This is where you would handle the post-payment logic.
-                     // Since we can't complete a real payment, we'll simulate success.
-                     if (user) {
-                         updateUserPlan(user.uid, 'Premium')
-                             .then(() => refreshUserProfile())
-                             .then(() => {
-                                 toast({
-                                     title: "¡Plan Actualizado!",
-                                     description: "Ahora estás en el plan Premium.",
-                                 });
-                             });
-                     }
-                     resolve();
+                onSubmit={() => new Promise(async (resolve, reject) => {
+                    if (!user) {
+                        toast({ title: "Error", description: "You must be logged in to complete the purchase.", variant: "destructive" });
+                        return reject();
+                    }
+                    try {
+                        await updateUserPlan(user.uid, 'Premium');
+                        await refreshUserProfile();
+                        toast({
+                            title: "¡Plan Actualizado!",
+                            description: "Ahora estás en el plan Premium.",
+                        });
+                        resolve();
+                    } catch (error) {
+                        toast({ title: "Error", description: "Failed to update your plan.", variant: "destructive" });
+                        reject(error);
+                    }
                 })}
              />
         </div>
