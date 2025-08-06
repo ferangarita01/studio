@@ -17,6 +17,7 @@ import {
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/auth-context";
 
 function ThemeToggle({ dictionary }: { dictionary: Dictionary["navigation"]["themeToggle"] }) {
   const { setTheme } = useTheme();
@@ -86,6 +87,13 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
     const d = dictionary.landingPage;
     const pathname = usePathname();
     const isPricingPage = pathname.includes('/pricing');
+    const isLandingPage = pathname.includes('/landing');
+    const { isAuthenticated } = useAuth();
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -95,20 +103,24 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
                     <span>{d.header.title}</span>
                 </Link>
                   <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
-                      <Link
-                          href={`/${lang}/landing#use-cases`}
-                          onClick={(e) => handleScroll(e, 'use-cases')}
-                          className="text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
-                      >
-                          {d.header.nav.useCases}
-                      </Link>
-                      <Link
-                          href={`/${lang}/landing#features`}
-                          onClick={(e) => handleScroll(e, 'features')}
-                          className="text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
-                      >
-                          {d.header.nav.features}
-                      </Link>
+                    {isLandingPage && (
+                        <>
+                        <Link
+                            href={`/${lang}/landing#use-cases`}
+                            onClick={(e) => handleScroll(e, 'use-cases')}
+                            className="text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+                        >
+                            {d.header.nav.useCases}
+                        </Link>
+                        <Link
+                            href={`/${lang}/landing#features`}
+                            onClick={(e) => handleScroll(e, 'features')}
+                            className="text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+                        >
+                            {d.header.nav.features}
+                        </Link>
+                        </>
+                    )}
                       <Link
                           href={`/${lang}/pricing`}
                           className={isPricingPage ? "font-semibold text-primary" : "text-muted-foreground transition-colors hover:text-foreground"}
@@ -120,15 +132,21 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
                     <LanguageToggle dictionary={dictionary.navigation.languageToggle} />
                     <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
                     <div className="hidden md:flex items-center gap-2">
-                      <Button asChild>
-                          <Link href={`/${lang}/login`}>{d.header.login}</Link>
-                      </Button>
-                      <Button asChild variant="outline">
-                          <Link href={`/${lang}/landing#contact`}>{d.header.getStarted}</Link>
-                      </Button>
+                        {isClient && !isAuthenticated && (
+                             <Button asChild>
+                                <Link href={`/${lang}/login`}>{d.header.login}</Link>
+                            </Button>
+                        )}
+                         <Button asChild variant="outline">
+                            <Link href={isClient && isAuthenticated ? `/${lang}` : `/${lang}/landing#contact`}>
+                                {isClient && isAuthenticated ? dictionary.navigation.links.dashboard : d.header.getStarted}
+                            </Link>
+                        </Button>
                     </div>
                 </div>
             </div>
         </header>
     );
 }
+
+    

@@ -14,6 +14,7 @@ import {
 import { auth } from "@/lib/firebase";
 import type { UserProfile } from "@/lib/types";
 import { getUserProfile, createUserProfile, addCompany as addCompanyService } from "@/services/waste-data-service";
+import type { Locale } from "@/i18n-config";
 
 
 export type UserRole = "admin" | "client";
@@ -28,6 +29,7 @@ interface AuthContextType {
   logout: () => void;
   signUp: (email:string, pass:string, profileData: Omit<UserProfile, 'id' | 'role' | 'email'>) => Promise<any>;
   refreshUserProfile: () => Promise<void>;
+  lang: Locale;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -40,10 +42,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
   
-  const lang = pathname.split('/')[1] || 'en';
+  const lang = (pathname.split('/')[1] || 'en') as Locale;
   
   const refreshUserProfile = useCallback(async () => {
     if (user) {
+        setIsLoading(true);
         const profile = await getUserProfile(user.uid);
         setUserProfile(profile);
         if (profile) {
@@ -51,6 +54,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
           setRole(null);
         }
+        setIsLoading(false);
     }
   }, [user]);
 
@@ -139,7 +143,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         signUp,
         role, 
         userProfile,
-        refreshUserProfile
+        refreshUserProfile,
+        lang
     }}>
       {children}
     </AuthContext.Provider>
@@ -153,3 +158,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
+    

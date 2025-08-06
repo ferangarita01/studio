@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { PublicHeader } from "@/components/public-header";
 import { PayPalButtonWrapper } from "@/components/paypal-button";
+import { useAuth } from "@/context/auth-context";
 
 interface PricingCardProps {
   plan: {
@@ -37,11 +38,18 @@ interface PricingCardProps {
 const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, isPopular, isPayPal = false }) => {
   const planPrice = plan.price.replace(/[^0-9.]/g, '');
   const [isClient, setIsClient] = useState(false);
+  const { isAuthenticated, userProfile } = useAuth();
+  
+  const isAlreadyPremium = userProfile?.plan === 'Premium';
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
+  const showPayPal = isPayPal && isClient && isAuthenticated && !isAlreadyPremium;
+  const showContactSales = plan.name === 'Custom';
+  const showGetStarted = !showPayPal && !showContactSales;
+  const showCurrentPlan = isPayPal && isClient && isAlreadyPremium;
 
   return (
     <Card className={cn("flex flex-col", isPopular ? "border-2 border-primary shadow-lg" : "")}>
@@ -68,11 +76,20 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, isPopular, isPayP
           ))}
         </ul>
         <div className="h-10">
-            {isPayPal && isClient ? (
+            {showPayPal && (
                 <PayPalButtonWrapper amount={planPrice} description={`${plan.name} Plan Subscription`} />
-            ) : (
+            )}
+            {showCurrentPlan && (
+                 <Button className="w-full" disabled>Your Current Plan</Button>
+            )}
+            {showContactSales && (
+                 <Button asChild className="w-full" variant={isPopular ? "default" : "outline"}>
+                    <Link href={`/${lang}/landing#contact`}>{plan.cta}</Link>
+                </Button>
+            )}
+            {showGetStarted && (
                 <Button asChild className="w-full" variant={isPopular ? "default" : "outline"}>
-                    <Link href={`/${lang}/login`}>{plan.cta}</Link>
+                    <Link href={isClient && isAuthenticated ? `/${lang}` : `/${lang}/login`}>{plan.cta}</Link>
                 </Button>
             )}
         </div>
@@ -127,3 +144,5 @@ export function PricingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
+
+    

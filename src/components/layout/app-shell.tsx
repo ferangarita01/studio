@@ -367,14 +367,17 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     setIsClient(true);
   }, []);
 
-  const isPublicPage = pathname.endsWith('/login') || pathname.endsWith('/landing') || pathname.endsWith('/pricing') || pathname.endsWith('/asorecifuentes');
+  const isPublicPage = useMemo(() => {
+    const publicPaths = ['/login', '/landing', '/asorecifuentes', '/pricing'];
+    return publicPaths.some(p => pathname.endsWith(p));
+  }, [pathname]);
 
   useEffect(() => {
     if (isAuthLoading) return;
     if (!isAuthenticated && !isPublicPage) {
       router.push(`/${lang}/landing`);
     }
-    if (isAuthenticated && isPublicPage) {
+    if (isAuthenticated && (pathname.endsWith('/login') || pathname.endsWith('/landing'))) {
         router.push(`/${lang}`);
     }
   }, [isAuthenticated, isAuthLoading, pathname, router, lang, isPublicPage]);
@@ -425,105 +428,91 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   }
 
   const NavContent = () => {
+    if (isAuthLoading || !isClient || !dictionary) {
+      return <NavSkeleton />;
+    }
     return (
-      <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+      <div>
         <div className="p-2">
           <CompanySwitcher />
         </div>
-        {(navItems.length === 0 && (isAuthLoading || !isClient)) ? (
-          <NavSkeleton />
-        ) : (
-          navItems.map((item) => {
-            const label = dictionary.links[item.labelKey as keyof typeof dictionary.links];
+        <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+          {navItems.map((item) => {
+              const label = dictionary.links[item.labelKey as keyof typeof dictionary.links];
 
-            if ('subItems' in item) {
-              const isActive = item.subItems.some(sub => pathname.startsWith(getHref(sub.href)));
+              if ('subItems' in item) {
+                const isActive = item.subItems.some(sub => pathname.startsWith(getHref(sub.href)));
+                return (
+                  <Collapsible key={item.labelKey} defaultOpen={isActive}>
+                    <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&[data-state=open]>svg]:rotate-180">
+                      <div className="flex items-center gap-3">
+                        <item.icon className="h-4 w-4" />
+                        <span>{label}</span>
+                      </div>
+                      <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="space-y-1 py-1 pl-7">
+                      {item.subItems.map(subItem => {
+                        if (!subItem.roles.includes(role!)) return null;
+                        const subHref = getHref(subItem.href);
+                        const subLabel = dictionary.links[subItem.labelKey as keyof typeof dictionary.links];
+                        const isSubActive = pathname === subHref;
+                        return (
+                          <Link
+                            key={subItem.labelKey}
+                            href={subHref}
+                            className={cn(
+                              "flex items-center gap-3 rounded-md px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+                              isSubActive && "bg-muted text-primary"
+                            )}
+                            onClick={(e) => handlePremiumClick(e, subItem)}
+                          >
+                            <span>{subLabel}</span>
+                            {subItem.plan === 'Premium' && (
+                              <Badge variant="outline" className="ml-auto flex items-center gap-1 border-yellow-500/50 text-yellow-500 text-xs px-2">
+                                {dictionary.premium}
+                              </Badge>
+                            )}
+                          </Link>
+                        );
+                      })}
+                    </CollapsibleContent>
+                  </Collapsible>
+                );
+              }
+
+              const href = getHref(item.href);
+              const isActive = pathname === href || (item.href !== '/' && pathname.startsWith(href) && item.href.length > 1);
               return (
-                <Collapsible key={item.labelKey} defaultOpen={isActive}>
-                  <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&[data-state=open]>svg]:rotate-180">
-                    <div className="flex items-center gap-3">
-                      <item.icon className="h-4 w-4" />
-                      <span>{label}</span>
-                    </div>
-                    <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="space-y-1 py-1 pl-7">
-                    {item.subItems.map(subItem => {
-                       if (!subItem.roles.includes(role!)) return null;
-                       const subHref = getHref(subItem.href);
-                       const subLabel = dictionary.links[subItem.labelKey as keyof typeof dictionary.links];
-                       const isSubActive = pathname === subHref;
-                       return (
-                        <Link
-                          key={subItem.labelKey}
-                          href={subHref}
-                          className={cn(
-                            "flex items-center gap-3 rounded-md px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                            isSubActive && "bg-muted text-primary"
-                          )}
-                          onClick={(e) => handlePremiumClick(e, subItem)}
-                        >
-                          <span>{subLabel}</span>
-                           {subItem.plan === 'Premium' && (
-                            <Badge variant="outline" className="ml-auto flex items-center gap-1 border-yellow-500/50 text-yellow-500 text-xs px-2">
-                              {dictionary.premium}
-                            </Badge>
-                          )}
-                        </Link>
-                      );
-                    })}
-                  </CollapsibleContent>
-                </Collapsible>
+                <Link
+                  key={item.labelKey}
+                  href={href}
+                  onClick={(e) => handlePremiumClick(e, item)}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+                    isActive && "bg-muted text-primary",
+                  )}
+                >
+                  <item.icon className="h-4 w-4" />
+                  <span>{label}</span>
+                  {item.plan === 'Premium' && (
+                    <Badge variant="outline" className="ml-auto flex items-center gap-1 border-yellow-500/50 text-yellow-500 text-xs px-2">
+                      {dictionary.premium}
+                    </Badge>
+                  )}
+                </Link>
               );
-            }
-
-            const href = getHref(item.href);
-            const isActive = pathname === href || (item.href !== '/' && pathname.startsWith(href) && item.href.length > 1);
-            return (
-              <Link
-                key={item.labelKey}
-                href={href}
-                onClick={(e) => handlePremiumClick(e, item)}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                  isActive && "bg-muted text-primary",
-                )}
-              >
-                <item.icon className="h-4 w-4" />
-                <span>{label}</span>
-                 {item.plan === 'Premium' && (
-                  <Badge variant="outline" className="ml-auto flex items-center gap-1 border-yellow-500/50 text-yellow-500 text-xs px-2">
-                    {dictionary.premium}
-                  </Badge>
-                )}
-              </Link>
-            );
-          })
-        )}
-      </nav>
+            })
+          }
+        </nav>
+      </div>
     );
   };
   
   if (isAuthLoading || !isClient) {
     return (
-        <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-            <div className="hidden border-r bg-muted/40 md:block">
-                <div className="flex h-full max-h-screen flex-col gap-2">
-                    <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-                        <Skeleton className="h-6 w-32" />
-                    </div>
-                    <div className="flex-1">
-                        <NavSkeleton />
-                    </div>
-                </div>
-            </div>
-            <div className="flex flex-col">
-                <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-                </header>
-                <main className="flex flex-1 items-center justify-center">
-                    Loading...
-                </main>
-            </div>
+        <div className="flex h-screen w-full items-center justify-center">
+            Loading...
         </div>
     );
   }
@@ -539,6 +528,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   }
 
   if (!dictionary) return null;
+
    if (role && navItems.length > 0 && !isAuthorized && currentPath !== '/') {
     return (
        <div className="flex h-screen w-full items-center justify-center">
