@@ -419,64 +419,21 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     }
   };
 
-  if (isAuthLoading || !isClient) {
-    return (
-        <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-            <div className="hidden border-r bg-muted/40 md:block">
-                <div className="flex h-full max-h-screen flex-col gap-2">
-                    <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-                        <Skeleton className="h-6 w-32" />
-                    </div>
-                    <div className="flex-1">
-                        <NavSkeleton />
-                    </div>
-                </div>
-            </div>
-            <div className="flex flex-col">
-                <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-                </header>
-                <main className="flex flex-1 items-center justify-center">
-                    Loading...
-                </main>
-            </div>
-        </div>
-    );
-  }
-
-  if (isPublicPage) {
-    return <>{children}</>;
-  }
-
-  if (!isAuthenticated) {
-     return (
-        <div className="flex h-screen w-full items-center justify-center">Loading...</div>
-     );
-  }
-
-  if (!dictionary) return null;
-   if (role && navItems.length > 0 && !isAuthorized && currentPath !== '/') {
-    return (
-       <div className="flex h-screen w-full items-center justify-center">
-        <div>Loading...</div>
-      </div>
-    );
-  }
-
   const getHref = (href: string) => {
     if (href === '/') return `/${lang}`;
     return `/${lang}${href}`;
   }
 
   const NavContent = () => {
-      if (navItems.length === 0) {
-          return <NavSkeleton />;
-      }
-      return (
-        <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-          <div className="p-2">
-            <CompanySwitcher />
-          </div>
-          {navItems.map((item) => {
+    return (
+      <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+        <div className="p-2">
+          <CompanySwitcher />
+        </div>
+        {(navItems.length === 0 && (isAuthLoading || !isClient)) ? (
+          <NavSkeleton />
+        ) : (
+          navItems.map((item) => {
             const label = dictionary.links[item.labelKey as keyof typeof dictionary.links];
 
             if ('subItems' in item) {
@@ -541,10 +498,54 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                 )}
               </Link>
             );
-          })}
-        </nav>
-      )
+          })
+        )}
+      </nav>
+    );
   };
+  
+  if (isAuthLoading || !isClient) {
+    return (
+        <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+            <div className="hidden border-r bg-muted/40 md:block">
+                <div className="flex h-full max-h-screen flex-col gap-2">
+                    <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+                        <Skeleton className="h-6 w-32" />
+                    </div>
+                    <div className="flex-1">
+                        <NavSkeleton />
+                    </div>
+                </div>
+            </div>
+            <div className="flex flex-col">
+                <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+                </header>
+                <main className="flex flex-1 items-center justify-center">
+                    Loading...
+                </main>
+            </div>
+        </div>
+    );
+  }
+
+  if (isPublicPage) {
+    return <>{children}</>;
+  }
+
+  if (!isAuthenticated) {
+     return (
+        <div className="flex h-screen w-full items-center justify-center">Loading...</div>
+     );
+  }
+
+  if (!dictionary) return null;
+   if (role && navItems.length > 0 && !isAuthorized && currentPath !== '/') {
+    return (
+       <div className="flex h-screen w-full items-center justify-center">
+        <div>Loading...</div>
+      </div>
+    );
+  }
 
   return (
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
