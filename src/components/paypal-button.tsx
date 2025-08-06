@@ -1,4 +1,3 @@
-
 "use client";
 
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
@@ -7,8 +6,8 @@ import { Loader2 } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import { updateUserPlan } from "@/services/waste-data-service";
 
-// In a real application, you would get this from your environment variables
-const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "test";
+// Make sure to set your PayPal client ID in the .env file
+const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
 
 interface PayPalButtonProps {
     amount: string;
@@ -20,8 +19,8 @@ export function PayPalButtonWrapper({ amount, description }: PayPalButtonProps) 
     const { user, refreshUserProfile } = useAuth();
 
     if (!PAYPAL_CLIENT_ID) {
-        console.error("PayPal Client ID is not set.");
-        return <div className="text-red-500 text-center p-4">Could not load PayPal.</div>;
+        console.error("PayPal Client ID is not set in .env file.");
+        return <div className="text-destructive text-center p-4 text-sm">Could not load PayPal. Please contact support.</div>;
     }
 
     return (
