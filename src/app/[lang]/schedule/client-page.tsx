@@ -48,6 +48,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RequestCollectionDialog } from "@/components/request-collection-dialog";
 import type { Locale } from "@/i18n-config";
 import { getDisposalEvents } from "@/services/waste-data-service";
+import { useAuth } from "@/context/auth-context";
 
 const statusColors: Record<DisposalEvent["status"], string> = {
   Scheduled: "bg-blue-500",
@@ -69,6 +70,12 @@ export function ScheduleClient({ dictionary, lang }: ScheduleClientProps) {
   const { selectedCompany } = useCompany();
   const [events, setEvents] = React.useState<DisposalEvent[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
+  const { role, isLoading: isAuthLoading } = useAuth();
+  const [isClient, setIsClient] = React.useState(false);
+  
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
   
   const dateLocale = lang === 'es' ? es : enUS;
 
@@ -169,6 +176,8 @@ export function ScheduleClient({ dictionary, lang }: ScheduleClientProps) {
     audio: <Mic className="h-5 w-5 flex-shrink-0" />,
   };
   
+  const showAdminFeatures = isClient && !isAuthLoading && role === 'admin';
+  
   const renderCalendarGrid = () => {
     if (isLoading) {
       return (
@@ -249,7 +258,7 @@ export function ScheduleClient({ dictionary, lang }: ScheduleClientProps) {
             <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
             <p className="text-sm text-muted-foreground">{dictionary.description}</p>
           </div>
-          <div className="ml-auto flex items-center gap-2 mt-4 sm:mt-0">
+          <div className={cn("ml-auto flex items-center gap-2 mt-4 sm:mt-0", !showAdminFeatures && "hidden")}>
             <Button size="sm" className="h-8 gap-1" onClick={() => setRequestDialogOpen(true)}>
               <PlusCircle className="h-3.5 w-3.5" />
               <span className="sr-only sm:not-sr-only sm:whitespace-rap">
