@@ -16,7 +16,8 @@ const APP_NAME = "WasteWise";
 const APP_DESCRIPTION = "WasteWise is a business and event waste management platform by EcoCircle, designed to track and manage waste generation for companies, festivals, and concerts.";
 
 export async function generateMetadata({ params }: { params: { lang: Locale } }): Promise<Metadata> {
-  const dictionary = await getDictionary(params.lang);
+  const lang = params.lang;
+  const dictionary = await getDictionary(lang);
   
   return {
     applicationName: APP_NAME,
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: { params: { lang: Locale } })
       template: `%s | ${APP_NAME}`,
     },
     description: APP_DESCRIPTION,
-    manifest: `/${params.lang}/manifest.json`,
+    manifest: `/${lang}/manifest.json`,
     appleWebApp: {
       capable: true,
       statusBarStyle: "default",
@@ -66,8 +67,8 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { lang: Locale };
 }>) {
-  const dictionary = await getDictionary(params.lang);
   const { lang } = params;
+  const dictionary = await getDictionary(lang);
 
   return (
     <html lang={lang} suppressHydrationWarning>

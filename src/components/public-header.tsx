@@ -132,21 +132,23 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
                     <LanguageToggle dictionary={dictionary.navigation.languageToggle} />
                     <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
                     <div className="hidden md:flex items-center gap-2">
-                        {isClient && !isAuthenticated && (
-                             <Button asChild>
-                                <Link href={`/${lang}/login`}>{d.header.login}</Link>
-                            </Button>
+                        {isClient && (
+                            <>
+                                {!isAuthenticated && (
+                                    <Button asChild>
+                                        <Link href={`/${lang}/login`}>{d.header.login}</Link>
+                                    </Button>
+                                )}
+                                <Button asChild variant="outline">
+                                    <Link href={isAuthenticated ? `/${lang}` : `/${lang}/landing#contact`}>
+                                        {isAuthenticated ? dictionary.navigation.links.dashboard : d.header.getStarted}
+                                    </Link>
+                                </Button>
+                            </>
                         )}
-                         <Button asChild variant="outline">
-                            <Link href={isClient && isAuthenticated ? `/${lang}` : `/${lang}/landing#contact`}>
-                                {isClient && isAuthenticated ? dictionary.navigation.links.dashboard : d.header.getStarted}
-                            </Link>
-                        </Button>
                     </div>
                 </div>
             </div>
         </header>
     );
 }
-
-    
