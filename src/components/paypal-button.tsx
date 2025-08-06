@@ -1,3 +1,4 @@
+
 "use client";
 
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
@@ -7,7 +8,7 @@ import { useAuth } from "@/context/auth-context";
 import { updateUserPlan } from "@/services/waste-data-service";
 
 // Make sure to set your PayPal client ID in the .env file
-const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
+const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "test";
 
 interface PayPalButtonProps {
     amount: string;
@@ -18,7 +19,7 @@ export function PayPalButtonWrapper({ amount, description }: PayPalButtonProps) 
     const { toast } = useToast();
     const { user, refreshUserProfile } = useAuth();
 
-    if (!PAYPAL_CLIENT_ID) {
+    if (!PAYPAL_CLIENT_ID || PAYPAL_CLIENT_ID === "test") {
         console.error("PayPal Client ID is not set in .env file.");
         return <div className="text-destructive text-center p-4 text-sm">Could not load PayPal. Please contact support.</div>;
     }
@@ -55,6 +56,14 @@ export function PayPalButtonWrapper({ amount, description }: PayPalButtonProps) 
                                     description: `Thank you, ${details.payer.name?.given_name}! Your transaction is complete.`,
                                 });
                             }
+                        });
+                    }}
+                    onCancel={(data) => {
+                        console.log("PayPal payment cancelled:", data);
+                        toast({
+                            title: "Payment Cancelled",
+                            description: "You have cancelled the payment process. Please try again when you're ready.",
+                            variant: "default",
                         });
                     }}
                     onError={(err) => {
