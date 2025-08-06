@@ -428,9 +428,10 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   }
 
   const NavContent = () => {
-    if (isAuthLoading || !isClient || !dictionary) {
+    if (isAuthLoading || !isClient || !dictionary || (role && navItems.length === 0)) {
       return <NavSkeleton />;
     }
+    
     return (
       <div>
         <div className="p-2">
