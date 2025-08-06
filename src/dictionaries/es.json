@@ -643,7 +643,8 @@
       "assign": "Asignar Cliente",
       "reassign": "Re-asignar",
       "unassigned": "Sin asignar",
-      "edit": "Editar"
+      "edit": "Editar",
+      "delete": "Eliminar"
     },
     "assignDialog": {
       "title": "Asignar Cliente",
@@ -670,6 +671,12 @@
       "cancel": "Cancelar",
       "update": "Actualizar"
     },
+    "deleteDialog": {
+      "title": "¿Estás totalmente seguro?",
+      "description": "Esta acción no se puede deshacer. Esto eliminará permanentemente la empresa y todos sus datos asociados (incluidos los usuarios asignados, los registros de residuos y los horarios).",
+      "cancel": "Cancelar",
+      "confirm": "Sí, eliminar empresa"
+    },
     "toast": {
       "assign": {
         "title": "Cliente Asignado",
@@ -678,6 +685,10 @@
       "update": {
         "title": "Empresa Actualizada",
         "description": "Los detalles de la empresa se han actualizado correctamente."
+      },
+      "delete": {
+        "title": "Empresa Eliminada",
+        "description": "La empresa y todos sus datos han sido eliminados."
       }
     }
   }

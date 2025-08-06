@@ -21,13 +21,31 @@ import type { Dictionary } from "@/lib/get-dictionary";
 import type { Company, UserProfile, PlanType } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { getUsers, assignUserToCompany, updateCompany, getCompanies } from "@/services/waste-data-service";
+import { getUsers, assignUserToCompany, updateCompany, getCompanies, deleteCompany } from "@/services/waste-data-service";
 import { AssignUserDialog } from "@/components/assign-user-dialog";
 import { EditCompanyDialog } from "@/components/edit-company-dialog";
-import { Loader2 } from "lucide-react";
+import { Loader2, MoreHorizontal, Trash2 } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useCompany } from "@/components/layout/app-shell";
 
 interface CompaniesClientProps {
   dictionary: Dictionary["companiesPage"];
@@ -42,6 +60,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const { toast } = useToast();
   const { user, role, isLoading: isAuthLoading } = useAuth();
+  const { setSelectedCompany: setGlobalSelectedCompany } = useCompany();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -83,6 +102,25 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
     setSelectedCompany(company);
     setEditDialogOpen(true);
   }
+
+  const handleDeleteCompany = useCallback(async (companyId: string) => {
+    try {
+        await deleteCompany(companyId);
+        setCompanies(prev => prev.filter(c => c.id !== companyId));
+        // Reset global company if it was the one deleted
+        setGlobalSelectedCompany(null);
+        toast({
+            title: dictionary.toast.delete.title,
+            description: dictionary.toast.delete.description
+        });
+    } catch (error) {
+         toast({
+            title: "Error",
+            description: "Failed to delete company.",
+            variant: "destructive"
+        });
+    }
+  }, [toast, dictionary.toast.delete, setGlobalSelectedCompany]);
   
   const handleAssignUser = useCallback(async (companyId: string, userId: string | null) => {
     try {
@@ -152,7 +190,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
                     <TableHead>{dictionary.table.companyName}</TableHead>
                     <TableHead>{dictionary.table.assignedClient}</TableHead>
                     <TableHead>{dictionary.table.plan}</TableHead>
-                    <TableHead className={cn("w-[250px] text-right", !showAdminFeatures && "hidden")}><span className="sr-only">{dictionary.table.actions}</span></TableHead>
+                    <TableHead className="text-right"><span className="sr-only">{dictionary.table.actions}</span></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -172,13 +210,41 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
                         <TableCell>
                             <Badge variant={company.plan === 'Premium' ? 'default' : 'secondary'}>{company.plan || 'Free'}</Badge>
                         </TableCell>
-                        <TableCell className={cn("text-right space-x-2", !showAdminFeatures && "hidden")}>
-                            <Button variant="outline" size="sm" onClick={() => handleOpenEditDialog(company)}>
-                                {dictionary.table.edit}
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={() => handleOpenAssignDialog(company)}>
-                                {company.assignedUserUid ? dictionary.table.reassign : dictionary.table.assign}
-                            </Button>
+                        <TableCell className={cn("text-right", !showAdminFeatures && "hidden")}>
+                           <AlertDialog>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" className="h-8 w-8 p-0">
+                                    <span className="sr-only">Open menu</span>
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem onClick={() => handleOpenEditDialog(company)}>{dictionary.table.edit}</DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleOpenAssignDialog(company)}>
+                                    {company.assignedUserUid ? dictionary.table.reassign : dictionary.table.assign}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem asChild>
+                                      <AlertDialogTrigger className="w-full text-destructive">
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        {dictionary.table.delete}
+                                      </AlertDialogTrigger>
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                              <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                  <AlertDialogTitle>{dictionary.deleteDialog.title}</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                      {dictionary.deleteDialog.description}
+                                  </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                  <AlertDialogCancel>{dictionary.deleteDialog.cancel}</AlertDialogCancel>
+                                  <AlertDialogAction onClick={() => handleDeleteCompany(company.id)}>{dictionary.deleteDialog.confirm}</AlertDialogAction>
+                                  </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
                         </TableCell>
                       </TableRow>
                     ))
@@ -196,21 +262,21 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
         </Card>
       </div>
       <div className={cn(!showAdminFeatures && "hidden")}>
-          <AssignUserDialog
-            open={isAssignDialogOpen}
-            onOpenChange={setAssignDialogOpen}
-            dictionary={dictionary.assignDialog}
-            clients={clients}
-            company={selectedCompany}
-            onAssign={handleAssignUser}
-          />
-          <EditCompanyDialog
-            open={isEditDialogOpen}
-            onOpenChange={setEditDialogOpen}
-            dictionary={dictionary.editDialog}
-            company={selectedCompany}
-            onUpdate={handleUpdateCompany}
-          />
+        <AssignUserDialog
+          open={isAssignDialogOpen}
+          onOpenChange={setAssignDialogOpen}
+          dictionary={dictionary.assignDialog}
+          clients={clients}
+          company={selectedCompany}
+          onAssign={handleAssignUser}
+        />
+        <EditCompanyDialog
+          open={isEditDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          dictionary={dictionary.editDialog}
+          company={selectedCompany}
+          onUpdate={handleUpdateCompany}
+        />
       </div>
     </>
   );

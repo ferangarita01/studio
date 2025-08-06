@@ -162,6 +162,46 @@ export async function assignUserToCompany(companyId: string, userId: string | nu
     await update(ref(db), updates);
 }
 
+export async function deleteCompany(companyId: string): Promise<void> {
+    const updates: { [key: string]: any } = {};
+
+    // 1. Find and mark users assigned to this company for deletion
+    const usersRef = ref(db, 'users');
+    const usersQuery = query(usersRef, orderByChild('assignedCompanyId'), equalTo(companyId));
+    const usersSnapshot = await get(usersQuery);
+    if (usersSnapshot.exists()) {
+        usersSnapshot.forEach((childSnapshot) => {
+            updates[`/users/${childSnapshot.key}`] = null;
+        });
+    }
+
+    // 2. Find and mark waste logs for this company for deletion
+    const wasteLogRef = ref(db, 'wasteLog');
+    const wasteLogQuery = query(wasteLogRef, orderByChild('companyId'), equalTo(companyId));
+    const wasteLogSnapshot = await get(wasteLogQuery);
+    if (wasteLogSnapshot.exists()) {
+      wasteLogSnapshot.forEach((childSnapshot) => {
+        updates[`/wasteLog/${childSnapshot.key}`] = null;
+      });
+    }
+    
+    // 3. Find and mark disposal events for this company for deletion
+    const disposalEventsRef = ref(db, 'disposalEvents');
+    const disposalEventsQuery = query(disposalEventsRef, orderByChild('companyId'), equalTo(companyId));
+    const disposalEventsSnapshot = await get(disposalEventsQuery);
+    if (disposalEventsSnapshot.exists()) {
+      disposalEventsSnapshot.forEach((childSnapshot) => {
+        updates[`/disposalEvents/${childSnapshot.key}`] = null;
+      });
+    }
+
+    // 4. Mark company itself for deletion
+    updates[`/companies/${companyId}`] = null;
+    
+    // 5. Perform all deletions atomically
+    await update(ref(db), updates);
+}
+
 
 // --- Material Service Functions ---
 
@@ -308,3 +348,4 @@ export async function uploadFile(file: File, path: string): Promise<string> {
     const downloadURL = await getDownloadURL(fileRef);
     return downloadURL;
 }
+

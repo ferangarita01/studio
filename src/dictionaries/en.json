@@ -643,7 +643,8 @@
       "assign": "Assign Client",
       "reassign": "Re-assign",
       "unassigned": "Unassigned",
-      "edit": "Edit"
+      "edit": "Edit",
+      "delete": "Delete"
     },
     "assignDialog": {
       "title": "Assign Client",
@@ -670,6 +671,12 @@
       "cancel": "Cancel",
       "update": "Update"
     },
+    "deleteDialog": {
+      "title": "Are you absolutely sure?",
+      "description": "This action cannot be undone. This will permanently delete the company and all associated data (including assigned users, waste logs, and schedules).",
+      "cancel": "Cancel",
+      "confirm": "Yes, delete company"
+    },
     "toast": {
       "assign": {
         "title": "Client Assigned",
@@ -678,6 +685,10 @@
       "update": {
         "title": "Company Updated",
         "description": "The company details have been successfully updated."
+      },
+      "delete": {
+        "title": "Company Deleted",
+        "description": "The company and all its data have been deleted."
       }
     }
   }
