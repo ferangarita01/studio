@@ -15,7 +15,8 @@ const inter = Inter({
 const APP_NAME = "WasteWise";
 const APP_DESCRIPTION = "WasteWise is a business and event waste management platform by EcoCircle, designed to track and manage waste generation for companies, festivals, and concerts.";
 
-export async function generateMetadata({ params }: { params: { lang: Locale } }): Promise<Metadata> {
+export async function generateMetadata({ params: p }: { params: { lang: Locale } }): Promise<Metadata> {
+  const params = await Promise.resolve(p);
   const lang = params.lang;
   const dictionary = await getDictionary(lang);
   
@@ -62,11 +63,12 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({
   children,
-  params,
+  params: p,
 }: Readonly<{
   children: React.ReactNode;
   params: { lang: Locale };
 }>) {
+  const params = await Promise.resolve(p);
   const { lang } = params;
   const dictionary = await getDictionary(lang);
 
