@@ -388,6 +388,7 @@
     "table": {
       "date": "Fecha",
       "type": "Tipo",
+      "material": "Material",
       "quantity": "Cantidad",
       "price": "Precio/kg",
       "serviceCost": "Costo de Servicio",
@@ -402,13 +403,9 @@
      "addWasteDialog": {
       "title": "Añadir Nueva Entrada de Residuos",
       "description": "Registre una nueva entrada de residuos. Haga clic en guardar cuando haya terminado.",
-      "wasteType": "Tipo de Residuo",
-      "selectType": "Seleccione un tipo",
-      "types": {
-        "Recycling": "Reciclaje",
-        "Organic": "Orgánico",
-        "General": "General",
-        "Hazardous": "Peligroso"
+      "material": {
+        "label": "Material",
+        "selectPlaceholder": "Seleccione un material"
       },
       "quantity": "Cantidad (kg)",
       "quantityPlaceholder": "ej., 25.5",
@@ -419,8 +416,8 @@
         "description": "Su entrada de residuos ha sido registrada exitosamente."
       },
       "validation": {
-        "type": {
-          "required": "Por favor, seleccione un tipo de residuo."
+        "material": {
+          "required": "Por favor, seleccione un material."
         },
         "quantity": {
           "min": "La cantidad debe ser mayor que 0."

@@ -27,12 +27,14 @@ import { AddWasteDialog } from "@/components/add-waste-dialog";
 import { useAuth } from "@/context/auth-context";
 import { getWasteLog } from "@/services/waste-data-service";
 import { cn } from "@/lib/utils";
+import type { Locale } from "@/i18n-config";
 
 interface LogClientProps {
   dictionary: Dictionary["logPage"];
+  lang: Locale;
 }
 
-export function LogClient({ dictionary }: LogClientProps) {
+export function LogClient({ dictionary, lang }: LogClientProps) {
   const { selectedCompany } = useCompany();
   const [isAddWasteDialogOpen, setAddWasteDialogOpen] = useState(false);
   const [wasteLog, setWasteLog] = useState<WasteEntry[]>([]);
@@ -81,14 +83,14 @@ export function LogClient({ dictionary }: LogClientProps) {
 
   const formatCurrency = (amount: number | undefined) => {
     if (amount === undefined) return "N/A";
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat(lang, {
       style: "currency",
       currency: "USD",
     }).format(amount);
   };
   
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString(undefined, {
+    return new Date(date).toLocaleDateString(lang, {
       month: "long",
       day: "numeric",
       year: "numeric"
@@ -123,6 +125,7 @@ export function LogClient({ dictionary }: LogClientProps) {
                   <TableRow>
                     <TableHead>{dictionary.table.date}</TableHead>
                     <TableHead>{dictionary.table.type}</TableHead>
+                    <TableHead>{dictionary.table.material}</TableHead>
                     <TableHead className="text-right">{dictionary.table.quantity}</TableHead>
                     <TableHead className="text-right">{dictionary.table.price}</TableHead>
                     <TableHead className="text-right">{dictionary.table.serviceCost}</TableHead>
@@ -132,7 +135,7 @@ export function LogClient({ dictionary }: LogClientProps) {
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="h-24 text-center">
+                      <TableCell colSpan={7} className="h-24 text-center">
                         <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                       </TableCell>
                     </TableRow>
@@ -147,6 +150,7 @@ export function LogClient({ dictionary }: LogClientProps) {
                           <TableCell>
                             <Badge variant="outline">{dictionary.types[entry.type]}</Badge>
                           </TableCell>
+                          <TableCell>{entry.materialName || 'N/A'}</TableCell>
                           <TableCell className="text-right">
                             {entry.quantity.toFixed(2)} kg
                           </TableCell>
@@ -166,7 +170,7 @@ export function LogClient({ dictionary }: LogClientProps) {
                     })
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={6} className="h-24 text-center">
+                      <TableCell colSpan={7} className="h-24 text-center">
                         {dictionary.noEntries}
                       </TableCell>
                     </TableRow>

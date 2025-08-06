@@ -388,6 +388,7 @@
     "table": {
       "date": "Date",
       "type": "Type",
+      "material": "Material",
       "quantity": "Quantity",
       "price": "Price/kg",
       "serviceCost": "Service Cost",
@@ -402,13 +403,9 @@
     "addWasteDialog": {
       "title": "Add New Waste Entry",
       "description": "Record a new waste entry. Click save when you're done.",
-      "wasteType": "Waste Type",
-      "selectType": "Select a type",
-      "types": {
-        "Recycling": "Recycling",
-        "Organic": "Organic",
-        "General": "General",
-        "Hazardous": "Hazardous"
+      "material": {
+        "label": "Material",
+        "selectPlaceholder": "Select a material"
       },
       "quantity": "Quantity (kg)",
       "quantityPlaceholder": "e.g., 25.5",
@@ -419,8 +416,8 @@
         "description": "Your waste entry has been successfully recorded."
       },
       "validation": {
-        "type": {
-          "required": "Please select a waste type."
+        "material": {
+          "required": "Please select a material."
         },
         "quantity": {
           "min": "Quantity must be greater than 0."

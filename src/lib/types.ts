@@ -45,6 +45,8 @@ export type WasteEntry = {
   companyId: string;
   date: Date;
   type: WasteType;
+  materialId?: string; // ID of the material from the materials list
+  materialName?: string; // Name of the material
   quantity: number; // in kg
   price?: number; // price per kg, for recyclables
   serviceCost?: number; // cost for disposal service

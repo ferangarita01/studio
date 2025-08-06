@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -36,8 +37,8 @@ import { useCompany } from "./layout/app-shell";
 import { useEffect, useState } from "react";
 
 const formSchema = (dictionary: Dictionary["logPage"]["addWasteDialog"]["validation"]) => z.object({
-    type: z.enum(["Recycling", "Organic", "General", "Hazardous"], {
-        required_error: dictionary.type.required,
+    materialId: z.string({
+        required_error: dictionary.material.required,
     }),
     quantity: z.coerce.number().min(0.1, { message: dictionary.quantity.min }),
 });
@@ -69,31 +70,36 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntryAdded }:
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema(dictionary.validation)),
     defaultValues: {
-      type: undefined,
+      materialId: undefined,
       quantity: 0,
     },
   });
 
   const onSubmit = async (values: FormSchema) => {
+    if (!selectedCompany) return;
+    
+    const selectedMaterial = materials.find(m => m.id === values.materialId);
+    if (!selectedMaterial) {
+        console.error("Selected material not found");
+        return;
+    }
+
     try {
-        const entryType = values.type as WasteType;
         let price: number | undefined = undefined;
         let serviceCost: number | undefined = 20; // Default service cost
 
-        if (entryType === 'Recycling') {
-            // This is a simplification. A real app might have a dropdown for specific materials.
-            // Here we just find a representative price for general recycling.
-            const recyclingMaterial = materials.find(m => m.type === 'Recycling');
-            price = recyclingMaterial?.pricePerKg;
+        if (selectedMaterial.type === 'Recycling') {
+            price = selectedMaterial.pricePerKg;
             serviceCost = 5; // Lower service cost for recycling
-        } else if (entryType === 'Hazardous') {
+        } else if (selectedMaterial.type === 'Hazardous') {
             serviceCost = 100; // Higher service cost for hazardous
         }
 
-
         const newEntryData = {
             companyId: selectedCompany.id,
-            type: entryType,
+            type: selectedMaterial.type,
+            materialId: selectedMaterial.id,
+            materialName: selectedMaterial.name,
             quantity: values.quantity,
             date: new Date(),
             price,
@@ -139,21 +145,22 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntryAdded }:
                 <div className="grid gap-4 py-4">
                     <FormField
                         control={form.control}
-                        name="type"
+                        name="materialId"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{dictionary.wasteType}</FormLabel>
+                            <FormLabel>{dictionary.material.label}</FormLabel>
                              <Select onValueChange={field.onChange} defaultValue={field.value}>
                               <FormControl>
                                 <SelectTrigger>
-                                  <SelectValue placeholder={dictionary.selectType} />
+                                  <SelectValue placeholder={dictionary.material.selectPlaceholder} />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                <SelectItem value="Recycling">{dictionary.types.Recycling}</SelectItem>
-                                <SelectItem value="Organic">{dictionary.types.Organic}</SelectItem>
-                                <SelectItem value="General">{dictionary.types.General}</SelectItem>
-                                <SelectItem value="Hazardous">{dictionary.types.Hazardous}</SelectItem>
+                                {materials.map((material) => (
+                                    <SelectItem key={material.id} value={material.id}>
+                                        {material.name}
+                                    </SelectItem>
+                                ))}
                               </SelectContent>
                             </Select>
                             <FormMessage />

@@ -11,5 +11,5 @@ export default async function LogPage({
   const dictionary = await getDictionary(lang);
   
   // Data will now be fetched on the client side to prevent hydration errors.
-  return <LogClient dictionary={dictionary.logPage} />;
+  return <LogClient dictionary={dictionary.logPage} lang={lang} />;
 }
