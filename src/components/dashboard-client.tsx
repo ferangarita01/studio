@@ -77,15 +77,17 @@ function WelcomeMessage({ dictionary }: { dictionary: Dictionary["dashboard"]["w
         </div>
         <div className="mt-8">
           <h4 className="font-semibold text-lg">{dictionary.gettingStarted.title}</h4>
-          {isClient && (
-            <div className="text-muted-foreground mt-2">
-              {role === 'admin' ? (
-                <p>{dictionary.gettingStarted.adminText}</p>
-              ) : (
-                <p>{dictionary.gettingStarted.clientText}</p>
-              )}
-            </div>
-          )}
+          <div className="text-muted-foreground mt-2">
+            {isClient && (
+                <>
+                {role === 'admin' ? (
+                    <p>{dictionary.gettingStarted.adminText}</p>
+                ) : (
+                    <p>{dictionary.gettingStarted.clientText}</p>
+                )}
+                </>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -369,7 +371,3 @@ export function DashboardClient({
     </div>
   );
 }
-
-    
-
-    
