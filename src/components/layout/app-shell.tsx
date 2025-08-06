@@ -377,7 +377,8 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     if (!isAuthenticated && !isPublicPage) {
       router.push(`/${lang}/landing`);
     }
-    if (isAuthenticated && (pathname.endsWith('/login') || pathname.endsWith('/landing'))) {
+    // Only redirect from /login if authenticated. Allow access to other public pages.
+    if (isAuthenticated && pathname.endsWith('/login')) {
         router.push(`/${lang}`);
     }
   }, [isAuthenticated, isAuthLoading, pathname, router, lang, isPublicPage]);
