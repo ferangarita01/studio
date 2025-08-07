@@ -1,0 +1,10 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null && (auth.token.admin == true || auth.uid != null)",
+    "adminData": {
+      ".read": "auth.token.admin == true",
+      ".write": "auth.token.admin == true"
+    }
+  }
+}
