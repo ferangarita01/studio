@@ -209,7 +209,7 @@ export function ReportsClient({
   dictionary,
 }: ReportsClientProps) {
   const { selectedCompany } = useCompany();
-  const { role, isLoading: isAuthLoading } = useAuth();
+  const { role, userProfile, isLoading: isAuthLoading } = useAuth();
   const [weeklyDataAll, setWeeklyDataAll] = useState<Record<string, ReportData>>({});
   const [monthlyDataAll, setMonthlyDataAll] = useState<Record<string, ReportData>>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -233,7 +233,7 @@ export function ReportsClient({
     fetchReports();
   }, []);
   
-  const showAdminFeatures = isClient && !isAuthLoading && role === 'admin';
+  const showAdminFeatures = isClient && !isAuthLoading && (role === 'admin' || userProfile?.plan === 'Premium');
 
   if (!selectedCompany) {
     return (

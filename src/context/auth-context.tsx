@@ -117,10 +117,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = useCallback(async () => {
     await signOut(auth);
-    setUser(null);
-    setUserProfile(null);
-    setRole(null);
-    router.push(`/${lang}/login`);
+    // state will be cleared by onAuthStateChanged
+    router.push(`/${lang}/landing`);
   }, [router, lang]);
 
   return (

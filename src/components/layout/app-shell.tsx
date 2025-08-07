@@ -301,8 +301,8 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
             const userCompanies = await getCompanies(user.uid);
             setCompanies(userCompanies);
             setSelectedCompany(userCompanies[0] || null);
-        } else if (role === 'client') {
-            const clientCompany = userProfile?.assignedCompany || null;
+        } else if (role === 'client' && userProfile) {
+            const clientCompany = userProfile.assignedCompany || null;
             if (clientCompany) {
                 setCompanies([clientCompany]);
                 setSelectedCompany(clientCompany);
@@ -368,32 +368,29 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
 
   const isPublicPage = useMemo(() => {
     const publicPaths = ['/login', '/landing', '/asorecifuentes', '/pricing'];
-    // Use currentPath which doesn't have locale
     return publicPaths.some(p => currentPath === p);
   }, [currentPath]);
 
   useEffect(() => {
-    if (isAuthLoading) return;
+    if (isAuthLoading || !isClient) return;
     
-    // If not authenticated and not on a public page, redirect to landing
     if (!isAuthenticated && !isPublicPage) {
       router.push(`/${lang}/landing`);
     }
 
-    // If authenticated, only redirect away from the login page
     if (isAuthenticated && currentPath === '/login') {
         router.push(`/${lang}`);
     }
-  }, [isAuthenticated, isAuthLoading, currentPath, isPublicPage, router, lang]);
+  }, [isAuthenticated, isAuthLoading, currentPath, isPublicPage, router, lang, isClient]);
 
   const navItems = useMemo(() => {
-    if (!isClient || !role) return [];
+    if (!role) return [];
     return allNavItems.filter(item => item.roles.includes(role));
-  }, [isClient, role]);
+  }, [role]);
 
 
   const isAuthorized = useMemo(() => {
-    if (!isClient || !role) return false;
+    if (!role) return false;
     if (isPublicPage) return true;
 
     const findItem = (items: typeof allNavItems, path: string): (typeof allNavItems[number]) | undefined => {
@@ -424,17 +421,16 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     }
     
     return true;
-}, [isClient, role, currentPath, isPublicPage, userProfile]);
+}, [role, currentPath, isPublicPage, userProfile]);
 
 
   useEffect(() => {
-    // This effect handles redirection for unauthorized access to protected pages
-    if (isAuthLoading || !isClient || !isAuthenticated || !role || navItems.length === 0) return;
+    if (isAuthLoading || !isClient || !isAuthenticated || !role || isPublicPage) return;
     
     if (!isAuthorized) {
        router.push(`/${lang}`);
     }
-  }, [isAuthenticated, isAuthorized, role, router, lang, navItems.length, isAuthLoading, isClient]);
+  }, [isAuthenticated, isAuthorized, role, router, lang, navItems.length, isAuthLoading, isClient, isPublicPage]);
 
   const handlePremiumClick = (e: React.MouseEvent<HTMLAnchorElement>, item: { plan?: string }) => {
     const isPremiumFeature = item.plan === 'Premium';
@@ -455,7 +451,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   }
 
   const NavContent = () => {
-    if (isAuthLoading || !isClient || !dictionary || (role && navItems.length === 0)) {
+    if (isAuthLoading || !dictionary || (role && navItems.length === 0)) {
       return <NavSkeleton />;
     }
     
