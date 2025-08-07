@@ -47,7 +47,7 @@ const chartConfig = {
   },
 };
 
-interface DashboardClientProps {
+interface DashboardPageContentProps {
   dictionary: Dictionary["dashboard"];
 }
 
@@ -95,9 +95,9 @@ function WelcomeMessage({ dictionary }: { dictionary: Dictionary["dashboard"]["w
 }
 
 
-export function DashboardClient({
+export function DashboardPageContent({
   dictionary,
-}: DashboardClientProps) {
+}: DashboardPageContentProps) {
   const { isAuthLoading } = useAuth();
   const { selectedCompany, isLoading: isCompanyContextLoading } = useCompany();
   
