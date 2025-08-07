@@ -79,9 +79,8 @@ export async function updateUserPlan(userId: string, plan: PlanType): Promise<vo
 
 // --- Company Service Functions ---
 
-export async function getCompanies(userId?: string): Promise<Company[]> {
+export async function getCompanies(userId?: string, isAdmin: boolean = false): Promise<Company[]> {
   const dbRef = ref(db, 'companies');
-  // Removed the query to avoid index error. Filtering will be done client-side.
   const snapshot = await get(dbRef);
 
   if (!snapshot.exists()) {
@@ -90,8 +89,8 @@ export async function getCompanies(userId?: string): Promise<Company[]> {
   
   let allCompanies: Company[] = snapshotToArray(snapshot);
 
-  // Filter by userId if it's provided
-  if (userId) {
+  // Filter by userId if it's provided AND the user is not an admin
+  if (userId && !isAdmin) {
     allCompanies = allCompanies.filter(company => company.createdBy === userId);
   }
 

@@ -298,7 +298,7 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
 
         setIsLoading(true);
         if (role === 'admin') {
-            const userCompanies = await getCompanies(user.uid);
+            const userCompanies = await getCompanies(user.uid, true);
             setCompanies(userCompanies);
             setSelectedCompany(userCompanies[0] || null);
         } else if (role === 'client' && userProfile?.assignedCompany) {
