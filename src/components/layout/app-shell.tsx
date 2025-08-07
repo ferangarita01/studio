@@ -293,28 +293,26 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
     const manageCompanies = async () => {
         if (user) {
             setIsLoading(true);
+            let currentSelectedCompany: Company | null = null;
 
             if (role === 'admin') {
                 const userCompanies = await getCompanies(user.uid);
                 setCompanies(userCompanies);
-                if (userCompanies.length > 0 && !selectedCompany) {
-                    setSelectedCompany(userCompanies[0]);
-                } else if (selectedCompany && !userCompanies.some(c => c.id === selectedCompany.id)) {
-                    setSelectedCompany(userCompanies[0] || null);
+                if (userCompanies.length > 0) {
+                    currentSelectedCompany = userCompanies[0];
                 }
             } else if (role === 'client') {
                  if (userProfile?.assignedCompany) {
                     const clientCompany = userProfile.assignedCompany;
                     setCompanies([clientCompany]);
-                    setSelectedCompany(clientCompany);
+                    currentSelectedCompany = clientCompany;
                 } else {
                     setCompanies([]);
-                    setSelectedCompany(null);
                 }
             } else {
                 setCompanies([]);
-                setSelectedCompany(null);
             }
+            setSelectedCompany(currentSelectedCompany);
             setIsLoading(false);
         } else {
             setCompanies([]);
@@ -323,7 +321,7 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
         }
     }
     manageCompanies();
-}, [user, role, userProfile, selectedCompany]);
+}, [user, role, userProfile]);
 
 
   const addCompany = (company: Company) => {

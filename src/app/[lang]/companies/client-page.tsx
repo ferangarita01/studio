@@ -190,7 +190,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
                     <TableHead>{dictionary.table.companyName}</TableHead>
                     <TableHead>{dictionary.table.assignedClient}</TableHead>
                     <TableHead>{dictionary.table.plan}</TableHead>
-                    <TableHead className="text-right"><span className="sr-only">{dictionary.table.actions}</span></TableHead>
+                    <TableHead className={cn("text-right", !showAdminFeatures && "hidden")}><span className="sr-only">{dictionary.table.actions}</span></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
