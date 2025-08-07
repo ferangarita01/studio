@@ -10,6 +10,8 @@ export default async function LoginPage({
 }) {
   const dictionary = await getDictionary(lang);
 
+  // Robust check to ensure the validation dictionary is present before rendering.
+  // This prevents runtime errors if the dictionary structure is incomplete.
   if (!dictionary?.loginPage?.validation) {
     console.error('Dictionary is missing required structure: loginPage.validation');
     return (

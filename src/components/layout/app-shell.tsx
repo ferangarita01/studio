@@ -352,7 +352,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   const router = useRouter();
 
   const { isAuthenticated, isLoading: isAuthLoading, logout, role, userProfile } = useAuth();
-  const dictionary = useDictionaries()?.navigation;
+  const dictionary = useDictionaries();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isUpgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -443,10 +443,12 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   }
 
   const NavContent = () => {
-    if (isAuthLoading || !dictionary || (isAuthenticated && (!role || navItems.length === 0))) {
+    if (!dictionary) {
       return <NavSkeleton />;
     }
     
+    const navDictionary = dictionary.navigation;
+
     return (
       <div>
         <div className="p-2">
@@ -454,7 +456,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
         </div>
         <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
           {navItems.map((item) => {
-              const label = dictionary.links[item.labelKey as keyof typeof dictionary.links];
+              const label = navDictionary.links[item.labelKey as keyof typeof navDictionary.links];
 
               if ('subItems' in item) {
                 const isActive = item.subItems.some(sub => pathname.startsWith(getHref(sub.href)));
@@ -471,7 +473,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                       {item.subItems.map(subItem => {
                         if (!subItem.roles.includes(role!)) return null;
                         const subHref = getHref(subItem.href);
-                        const subLabel = dictionary.links[subItem.labelKey as keyof typeof dictionary.links];
+                        const subLabel = navDictionary.links[subItem.labelKey as keyof typeof navDictionary.links];
                         const isSubActive = pathname === subHref;
                         return (
                           <Link
@@ -486,7 +488,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                             <span>{subLabel}</span>
                             {subItem.plan === 'Premium' && (
                               <Badge variant="outline" className="ml-auto flex items-center gap-1 border-yellow-500/50 text-yellow-500 text-xs px-2">
-                                {dictionary.premium}
+                                {navDictionary.premium}
                               </Badge>
                             )}
                           </Link>
@@ -513,7 +515,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                   <span>{label}</span>
                   {item.plan === 'Premium' && (
                     <Badge variant="outline" className="ml-auto flex items-center gap-1 border-yellow-500/50 text-yellow-500 text-xs px-2">
-                      {dictionary.premium}
+                      {navDictionary.premium}
                     </Badge>
                   )}
                 </Link>
@@ -525,7 +527,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     );
   };
   
-  if (!isClient || isAuthLoading) {
+  if (!isClient || isAuthLoading || !dictionary) {
     return (
         <div className="flex h-screen w-full items-center justify-center">
             <div>Loading...</div>
@@ -543,7 +545,6 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
      );
   }
 
-  if (!dictionary) return null;
 
    if (!isAuthorizedForCurrentPath) {
     return (
@@ -552,6 +553,8 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
       </div>
     );
   }
+  
+  const navDictionary = dictionary.navigation;
 
   return (
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -566,7 +569,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
              <div className="mt-auto p-4 border-t">
                  <Button size="sm" variant="ghost" onClick={logout} className="w-full justify-start gap-2">
                     <LogOut className="h-4 w-4"/>
-                    <span>{dictionary.logout}</span>
+                    <span>{navDictionary.logout}</span>
                   </Button>
               </div>
           </div>
@@ -594,13 +597,13 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                  <div className="mt-auto p-4 border-t" onClick={() => setMobileMenuOpen(false)}>
                    <Button size="sm" variant="ghost" onClick={logout} className="w-full justify-start gap-2">
                       <LogOut className="h-4 w-4"/>
-                      <span>{dictionary.logout}</span>
+                      <span>{navDictionary.logout}</span>
                     </Button>
                 </div>
               </SheetContent>
             </Sheet>
             <div className="w-full flex-1 md:hidden">
-              <span className="font-semibold">{dictionary.title}</span>
+              <span className="font-semibold">{navDictionary.title}</span>
             </div>
             <div className="ml-auto flex items-center gap-2">
               <LanguageToggle />
@@ -624,11 +627,11 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
           </main>
         </div>
         <WhatsAppButton />
-        {dictionary.upgradeDialog && (
+        {navDictionary.upgradeDialog && (
           <UpgradePlanDialog
             open={isUpgradeDialogOpen}
             onOpenChange={setUpgradeDialogOpen}
-            dictionary={dictionary.upgradeDialog}
+            dictionary={navDictionary.upgradeDialog}
             lang={lang}
           />
         )}
