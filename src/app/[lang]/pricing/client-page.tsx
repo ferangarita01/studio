@@ -47,11 +47,45 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, dictionary, isPop
   useEffect(() => {
     setIsClient(true);
   }, []);
-
-  const showPaymentButtons = isPayment && isClient && isAuthenticated && !isAlreadyPremium;
+  
+  const showPaymentButtons = isPayment && isAuthenticated && !isAlreadyPremium;
   const showContactSales = plan.name === 'Custom' || plan.name === 'Personalizado';
-  const showCurrentPlan = isPayment && isClient && isAuthenticated && isAlreadyPremium;
+  const showCurrentPlan = isPayment && isAuthenticated && isAlreadyPremium;
   const showGetStarted = !showPaymentButtons && !showContactSales && !showCurrentPlan;
+
+
+  const renderCtaButton = () => {
+    if (!isClient) {
+      // Render a placeholder or nothing on the server and during initial client render
+      return <div className="h-10 w-full"></div>;
+    }
+    
+    if (showPaymentButtons) {
+      return (
+        <div className="space-y-2">
+          <PayPalButtonWrapper amount={planPrice} description={`${plan.name} Plan Subscription`} />
+          <MercadoPagoButtonWrapper amount={Number(planPrice)} description={`${plan.name} Plan Subscription`} />
+        </div>
+      );
+    }
+    if (showCurrentPlan) {
+      return <Button className="w-full" disabled>{dictionary.yourCurrentPlan}</Button>;
+    }
+    if (showContactSales) {
+      return (
+        <Button asChild className="w-full" variant={isPopular ? "default" : "outline"}>
+          <Link href={`/${lang}/landing#contact`}>{plan.cta}</Link>
+        </Button>
+      );
+    }
+    // Default/fallback case
+    return (
+      <Button asChild className="w-full" variant={isPopular ? "default" : "outline"}>
+        <Link href={isAuthenticated ? `/${lang}` : `/${lang}/login`}>{plan.cta}</Link>
+      </Button>
+    );
+  };
+
 
   return (
     <Card className={cn("flex flex-col", isPopular ? "border-2 border-primary shadow-lg" : "")}>
@@ -77,27 +111,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, dictionary, isPop
             </li>
           ))}
         </ul>
-        <div className="space-y-2">
-            {showPaymentButtons && (
-              <>
-                <PayPalButtonWrapper amount={planPrice} description={`${plan.name} Plan Subscription`} />
-                <MercadoPagoButtonWrapper amount={Number(planPrice)} description={`${plan.name} Plan Subscription`} />
-              </>
-            )}
-            {showCurrentPlan && (
-                 <Button className="w-full" disabled>{dictionary.yourCurrentPlan}</Button>
-            )}
-            {showContactSales && (
-                 <Button asChild className="w-full" variant={isPopular ? "default" : "outline"}>
-                    <Link href={`/${lang}/landing#contact`}>{plan.cta}</Link>
-                </Button>
-            )}
-            {showGetStarted && (
-                <Button asChild className="w-full" variant={isPopular ? "default" : "outline"}>
-                    <Link href={isClient && isAuthenticated ? `/${lang}` : `/${lang}/login`}>{plan.cta}</Link>
-                </Button>
-            )}
-        </div>
+        {renderCtaButton()}
       </CardContent>
     </Card>
   );
@@ -149,5 +163,3 @@ export function PricingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
-
-    

@@ -28,7 +28,7 @@ export function PayPalButtonWrapper({ amount, description }: PayPalButtonProps) 
         <PayPalScriptProvider options={{ clientId: PAYPAL_CLIENT_ID, currency: "USD", intent: "capture" }}>
             <div className="relative">
                 <PayPalButtons
-                    style={{ layout: "vertical", color: "blue", shape: "rect", label: "pay" }}
+                    style={{ layout: "horizontal", color: "blue", shape: "rect", label: "pay", tagline: false }}
                     createOrder={(data, actions) => {
                         return actions.order.create({
                             purchase_units: [
