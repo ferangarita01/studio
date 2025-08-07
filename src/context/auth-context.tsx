@@ -63,11 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (user) {
         const profile = await getUserProfile(user.uid);
         setUserProfile(profile);
-        if (profile) {
-          setRole(profile.role);
-        } else {
-          setRole(null);
-        }
+        setRole(profile?.role || null);
       } else {
         setUserProfile(null);
         setRole(null);

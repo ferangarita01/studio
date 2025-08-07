@@ -291,8 +291,8 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const manageCompanies = async () => {
-        if (isAuthLoading || !user || !role) {
-            setIsLoading(false);
+        if (isAuthLoading || !user) {
+            if (!isAuthLoading) setIsLoading(false);
             return;
         }
 
@@ -301,15 +301,12 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
             const userCompanies = await getCompanies(user.uid);
             setCompanies(userCompanies);
             setSelectedCompany(userCompanies[0] || null);
-        } else if (role === 'client' && userProfile) {
-            const clientCompany = userProfile.assignedCompany || null;
-            if (clientCompany) {
-                setCompanies([clientCompany]);
-                setSelectedCompany(clientCompany);
-            } else {
-                setCompanies([]);
-                setSelectedCompany(null);
-            }
+        } else if (role === 'client' && userProfile?.assignedCompany) {
+            setCompanies([userProfile.assignedCompany]);
+            setSelectedCompany(userProfile.assignedCompany);
+        } else {
+            setCompanies([]);
+            setSelectedCompany(null);
         }
         setIsLoading(false);
     };
@@ -367,19 +364,18 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   const currentPath = `/${pathname.split('/').slice(2).join('/')}`;
 
   const isPublicPage = useMemo(() => {
-    const publicPaths = ['/login', '/landing', '/asorecifuentes', '/pricing'];
-    return publicPaths.some(p => currentPath === p);
+    const publicPaths = ['/login', '/landing', '/asorecifuentes', '/pricing', '/embed/impact'];
+    return publicPaths.some(p => currentPath.startsWith(p));
   }, [currentPath]);
 
+  // Auth & Routing effect
   useEffect(() => {
     if (isAuthLoading || !isClient) return;
-    
+
     if (!isAuthenticated && !isPublicPage) {
       router.push(`/${lang}/landing`);
-    }
-
-    if (isAuthenticated && currentPath === '/login') {
-        router.push(`/${lang}`);
+    } else if (isAuthenticated && currentPath === '/login') {
+      router.push(`/${lang}`);
     }
   }, [isAuthenticated, isAuthLoading, currentPath, isPublicPage, router, lang, isClient]);
 
@@ -388,51 +384,45 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     return allNavItems.filter(item => item.roles.includes(role));
   }, [role]);
 
+  const isAuthorizedForCurrentPath = useMemo(() => {
+      if (isAuthLoading || !role || isPublicPage) return true; // Assume authorized for public pages or while loading
 
-  const isAuthorized = useMemo(() => {
-    if (!role) return false;
-    if (isPublicPage) return true;
+      const findItem = (items: typeof allNavItems, path: string): (typeof allNavItems[number]) | undefined => {
+          for (const item of items) {
+              if ('subItems' in item) {
+                  const subItem = item.subItems.find(sub => path.startsWith(sub.href));
+                  if (subItem) return subItem as any;
+              }
+              if (item.href === path || (item.href !== '/' && path.startsWith(item.href) && item.href.length > 1)) {
+                  return item;
+              }
+          }
+          if (path === '/') return items.find(item => item.href === '/');
+          return undefined;
+      };
 
-    const findItem = (items: typeof allNavItems, path: string): (typeof allNavItems[number]) | undefined => {
-        for (const item of items) {
-            if ('subItems' in item) {
-                const subItem = item.subItems.find(sub => path.startsWith(sub.href));
-                if (subItem) return subItem as any;
-            }
-            if (item.href === path || (item.href !== '/' && path.startsWith(item.href) && item.href.length > 1)) {
-                return item;
-            }
-        }
-        // Special case for dashboard root
-        if (path === '/') return items.find(item => item.href === '/');
-        return undefined;
-    };
+      const currentItem = findItem(allNavItems, currentPath);
 
-    const currentItem = findItem(allNavItems, currentPath);
+      if (!currentItem) return false;
+      if (!currentItem.roles.includes(role)) return false;
 
-    if (!currentItem) {
-        return false;
-    }
-    if (!currentItem.roles.includes(role)) {
-        return false;
-    }
+      const isPremiumFeature = 'plan' in currentItem && currentItem.plan === 'Premium';
+      if (isPremiumFeature && role === 'client' && userProfile?.plan !== 'Premium') {
+          return false;
+      }
+      
+      return true;
+  }, [role, currentPath, isPublicPage, userProfile, isAuthLoading]);
 
-    const isPremiumFeature = 'plan' in currentItem && currentItem.plan === 'Premium';
-    if (isPremiumFeature && role === 'client' && userProfile?.plan !== 'Premium') {
-        return false;
-    }
-    
-    return true;
-}, [role, currentPath, isPublicPage, userProfile]);
-
-
+  // Authorization effect
   useEffect(() => {
-    if (isAuthLoading || !isClient || isPublicPage) return;
-    
-    if (isAuthenticated && !isAuthorized) {
-       router.push(`/${lang}`);
-    }
-  }, [isAuthenticated, isAuthorized, role, router, lang, isAuthLoading, isClient, isPublicPage]);
+      if (isAuthLoading || !isAuthenticated || isPublicPage) return;
+
+      if (!isAuthorizedForCurrentPath) {
+          router.push(`/${lang}`);
+      }
+  }, [isAuthenticated, isAuthorizedForCurrentPath, router, lang, isAuthLoading, isPublicPage]);
+
 
   const handlePremiumClick = (e: React.MouseEvent<HTMLAnchorElement>, item: { plan?: string }) => {
     const isPremiumFeature = item.plan === 'Premium';
@@ -535,7 +525,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     );
   };
   
-  if (isAuthLoading || !isClient) {
+  if (!isClient || isAuthLoading) {
     return (
         <div className="flex h-screen w-full items-center justify-center">
             <div>Loading...</div>
@@ -555,10 +545,10 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
 
   if (!dictionary) return null;
 
-   if (!isAuthorized) {
+   if (!isAuthorizedForCurrentPath) {
     return (
        <div className="flex h-screen w-full items-center justify-center">
-        <div>Loading...</div>
+        <div>Redirecting...</div>
       </div>
     );
   }

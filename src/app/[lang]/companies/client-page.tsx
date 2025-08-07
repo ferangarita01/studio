@@ -196,7 +196,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={4} className="h-24 text-center">
+                      <TableCell colSpan={showAdminFeatures ? 4 : 3} className="h-24 text-center">
                         <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                       </TableCell>
                     </TableRow>
@@ -250,7 +250,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={4} className="h-24 text-center">
+                      <TableCell colSpan={showAdminFeatures ? 4 : 3} className="h-24 text-center">
                         {dictionary.noCompanies}
                       </TableCell>
                     </TableRow>
