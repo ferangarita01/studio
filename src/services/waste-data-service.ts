@@ -38,11 +38,6 @@ export async function createUserProfile(uid: string, data: Omit<UserProfile, 'id
 }
 
 export async function getUserProfile(uid: string): Promise<UserProfile | null> {
-    // Special GOD user rule
-    if (uid === 'I3YvYeyrPzZXSQ5p53k4e6Jd9A82') { // Corresponds to prueba2@admin.co
-        return { id: uid, email: 'prueba2@admin.co', role: 'admin', plan: 'Premium' };
-    }
-
     const userRef = ref(db, `users/${uid}`);
     const snapshot = await get(userRef);
     if (snapshot.exists()) {
