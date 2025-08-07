@@ -11,7 +11,9 @@ function getLocale(request: NextRequest): string | undefined {
 
   // @ts-ignore locales are readonly
   const locales: string[] = i18n.locales;
-  const languages = new Negotiator({ headers: negotiatorHeaders }).languages();
+  
+  // Filter out the wildcard character before matching
+  const languages = new Negotiator({ headers: negotiatorHeaders }).languages().filter(l => l !== '*');
   const defaultLocale = i18n.defaultLocale;
 
   return matchLocale(languages, locales, defaultLocale);
