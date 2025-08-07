@@ -4,12 +4,13 @@ import type { Locale } from "@/i18n-config";
 import { LogClient } from "./client-page";
 
 export default async function LogPage({
-  params: { lang },
+  params: p,
 }: {
   params: { lang: Locale };
 }) {
-  const dictionary = await getDictionary(lang);
+  const params = await Promise.resolve(p);
+  const dictionary = await getDictionary(params.lang);
   
   // Data will now be fetched on the client side to prevent hydration errors.
-  return <LogClient dictionary={dictionary.logPage} lang={lang} />;
+  return <LogClient dictionary={dictionary.logPage} lang={params.lang} />;
 }

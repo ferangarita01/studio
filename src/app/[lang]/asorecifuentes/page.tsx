@@ -4,11 +4,12 @@ import type { Locale } from "@/i18n-config";
 import { AsorecifuentesClient } from "./client-page";
 
 export default async function AsorecifuentesPage({
-  params: { lang },
+  params: p,
 }: {
   params: { lang: Locale };
 }) {
-  const dictionary = await getDictionary(lang);
+  const params = await Promise.resolve(p);
+  const dictionary = await getDictionary(params.lang);
 
-  return <AsorecifuentesClient dictionary={dictionary} lang={lang} />;
+  return <AsorecifuentesClient dictionary={dictionary} lang={params.lang} />;
 }

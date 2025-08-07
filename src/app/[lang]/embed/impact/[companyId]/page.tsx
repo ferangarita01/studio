@@ -26,7 +26,8 @@ async function getImpactData(companyId: string) {
 }
 
 
-export default async function EmbeddableImpactPanel({ params }: { params: { companyId: string, lang: Locale } }) {
+export default async function EmbeddableImpactPanel({ params: p }: { params: { companyId: string, lang: Locale } }) {
+    const params = await Promise.resolve(p);
     const data = await getImpactData(params.companyId);
 
     if (!data) {

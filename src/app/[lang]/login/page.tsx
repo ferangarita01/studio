@@ -4,11 +4,12 @@ import type { Locale } from "@/i18n-config";
 import { LoginClient } from "./client-page";
 
 export default async function LoginPage({
-  params: { lang },
+  params: p,
 }: {
   params: { lang: Locale };
 }) {
-  const dictionary = await getDictionary(lang);
+  const params = await Promise.resolve(p);
+  const dictionary = await getDictionary(params.lang);
 
   // Robust check to ensure the validation dictionary is present before rendering.
   // This prevents runtime errors if the dictionary structure is incomplete.

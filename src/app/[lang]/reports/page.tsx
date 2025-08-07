@@ -4,11 +4,12 @@ import type { Locale } from "@/i18n-config";
 import { ReportsClient } from "./client-page";
 
 export default async function FinancialReportsPage({
-  params: { lang },
+  params: p,
 }: {
   params: { lang: Locale };
 }) {
-  const dictionary = await getDictionary(lang);
+  const params = await Promise.resolve(p);
+  const dictionary = await getDictionary(params.lang);
 
   // Data is now fetched on the client side to avoid hydration mismatches
   return (
