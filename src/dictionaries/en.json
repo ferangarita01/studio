@@ -271,7 +271,7 @@
             "title": "Centralized Dashboard:",
             "description": "An intuitive space where you can view and manage all your environmental activities at a glance."
           },
-          "aiAgent": {
+          "aiAnalyzer": {
             "title": "AI Agent:",
             "description": "Our powerful artificial intelligence will soon provide you with deep insights to optimize your waste processes."
           },

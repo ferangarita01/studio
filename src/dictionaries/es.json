@@ -271,7 +271,7 @@
             "title": "Tablero Centralizado:",
             "description": "Un espacio intuitivo donde podrás visualizar y gestionar todas tus actividades ambientales de un vistazo."
           },
-          "aiAgent": {
+          "aiAnalyzer": {
             "title": "Agente IA:",
             "description": "Nuestra potente inteligencia artificial te brindará próximamente insights profundos para la optimización de tus procesos de residuos."
           },
