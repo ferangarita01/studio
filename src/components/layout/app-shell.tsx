@@ -287,11 +287,11 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { user, role, userProfile } = useAuth();
+  const { user, role, userProfile, isLoading: isAuthLoading } = useAuth();
 
   useEffect(() => {
     const manageCompanies = async () => {
-        if (!user || !role) {
+        if (isAuthLoading || !user || !role) {
             setIsLoading(false);
             return;
         }
@@ -315,7 +315,7 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
     };
 
     manageCompanies();
-}, [user, role, userProfile]);
+}, [user, role, userProfile, isAuthLoading]);
 
   const addCompany = (company: Company) => {
     setCompanies(prev => [...prev, company].sort((a,b) => a.name.localeCompare(b.name)));
@@ -403,6 +403,8 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                 return item;
             }
         }
+        // Special case for dashboard root
+        if (path === '/') return items.find(item => item.href === '/');
         return undefined;
     };
 
@@ -425,12 +427,12 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
 
 
   useEffect(() => {
-    if (isAuthLoading || !isClient || !isAuthenticated || !role || isPublicPage) return;
+    if (isAuthLoading || !isClient || isPublicPage) return;
     
-    if (!isAuthorized) {
+    if (isAuthenticated && !isAuthorized) {
        router.push(`/${lang}`);
     }
-  }, [isAuthenticated, isAuthorized, role, router, lang, navItems.length, isAuthLoading, isClient, isPublicPage]);
+  }, [isAuthenticated, isAuthorized, role, router, lang, isAuthLoading, isClient, isPublicPage]);
 
   const handlePremiumClick = (e: React.MouseEvent<HTMLAnchorElement>, item: { plan?: string }) => {
     const isPremiumFeature = item.plan === 'Premium';
@@ -451,7 +453,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   }
 
   const NavContent = () => {
-    if (isAuthLoading || !dictionary || (role && navItems.length === 0)) {
+    if (isAuthLoading || !dictionary || (isAuthenticated && (!role || navItems.length === 0))) {
       return <NavSkeleton />;
     }
     
@@ -536,7 +538,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   if (isAuthLoading || !isClient) {
     return (
         <div className="flex h-screen w-full items-center justify-center">
-            Loading...
+            <div>Loading...</div>
         </div>
     );
   }
@@ -547,7 +549,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
 
   if (!isAuthenticated) {
      return (
-        <div className="flex h-screen w-full items-center justify-center">Loading...</div>
+        <div className="flex h-screen w-full items-center justify-center"><div>Loading...</div></div>
      );
   }
 
