@@ -41,17 +41,9 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
     const userRef = ref(db, `users/${uid}`);
     const snapshot = await get(userRef);
     if (snapshot.exists()) {
-      const profileData = snapshot.val();
-      const profile: UserProfile = { id: uid, ...profileData };
-      
-      // If user is a client and assigned to a company, fetch the company details and embed them
-      if (profile.role === 'client' && profile.assignedCompanyId && !profile.assignedCompany) {
-          const company = await getCompanyById(profile.assignedCompanyId);
-          if (company) {
-              profile.assignedCompany = company;
-          }
-      }
-      return profile;
+        const profileData = snapshot.val();
+        const profile: UserProfile = { id: uid, ...profileData };
+        return profile;
     }
     return null;
 }
@@ -81,26 +73,30 @@ export async function updateUserPlan(userId: string, plan: PlanType): Promise<vo
 
 export async function getCompanies(userId?: string, isAdmin: boolean = false): Promise<Company[]> {
   const dbRef = ref(db, 'companies');
-  const snapshot = await get(dbRef);
+  let snapshot;
+
+  if (isAdmin) {
+      snapshot = await get(dbRef);
+  } else if (userId) {
+      const companiesQuery = query(dbRef, orderByChild('assignedUserUid'), equalTo(userId));
+      snapshot = await get(companiesQuery);
+  } else {
+      // If not admin and no userId, there's nothing to fetch based on current rules
+      return [];
+  }
 
   if (!snapshot.exists()) {
     return [];
   }
   
   const allCompanies: Company[] = snapshotToArray(snapshot);
-
-  // If the user is an admin, return all companies.
-  // Otherwise, if a userId is provided, filter for companies assigned to that user.
+  
+  // The query already filters for the client, but for admin we get all, so we sort here
   if (isAdmin) {
-      return allCompanies.sort((a,b) => a.name.localeCompare(b.name));
+      return allCompanies.sort((a, b) => a.name.localeCompare(b.name));
   }
   
-  if (userId) {
-      const userCompanies = allCompanies.filter(company => company.assignedUserUid === userId);
-      return userCompanies.sort((a, b) => a.name.localeCompare(b.name));
-  }
-  
-  return [];
+  return allCompanies;
 }
 
 export async function getCompanyById(companyId: string): Promise<Company | null> {
