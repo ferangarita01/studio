@@ -75,8 +75,9 @@ export async function getCompanies(userId?: string, isAdmin: boolean = false): P
   const dbRef = ref(db, 'companies');
   let snapshot;
 
-  if (isAdmin) {
-      snapshot = await get(dbRef);
+  if (isAdmin && userId) {
+      const companiesQuery = query(dbRef, orderByChild('createdBy'), equalTo(userId));
+      snapshot = await get(companiesQuery);
   } else if (userId) {
       const companiesQuery = query(dbRef, orderByChild('assignedUserUid'), equalTo(userId));
       snapshot = await get(companiesQuery);
