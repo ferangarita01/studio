@@ -68,7 +68,7 @@ export function ComplianceClient({
             <CardContent className="flex-grow">
                 <p className="text-sm text-muted-foreground">{dictionary.cards.regulations.description}</p>
             </CardContent>
-            <CardFooter className={cn(!showAdminFeatures && 'hidden')}>
+            <CardFooter className={cn(!showAdminFeatures && "hidden")}>
               <Button className="w-full">{dictionary.admin.manage}</Button>
             </CardFooter>
           </Card>
@@ -80,7 +80,7 @@ export function ComplianceClient({
             <CardContent className="flex-grow">
                  <p className="text-sm text-muted-foreground">{dictionary.cards.reports.description}</p>
             </CardContent>
-            <CardFooter className={cn(!showAdminFeatures && 'hidden')}>
+            <CardFooter className={cn(!showAdminFeatures && "hidden")}>
               <Button className="w-full">{dictionary.admin.manage}</Button>
             </CardFooter>
           </Card>
@@ -92,7 +92,7 @@ export function ComplianceClient({
             <CardContent className="flex-grow">
                  <p className="text-sm text-muted-foreground">{dictionary.cards.audits.description}</p>
             </CardContent>
-            <CardFooter className={cn(!showAdminFeatures && 'hidden')}>
+            <CardFooter className={cn(!showAdminFeatures && "hidden")}>
               <Button className="w-full">{dictionary.admin.manage}</Button>
             </CardFooter>
           </Card>
