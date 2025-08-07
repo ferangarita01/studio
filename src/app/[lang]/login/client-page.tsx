@@ -30,6 +30,7 @@ import type { UserProfile } from "@/lib/types";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormField, FormItem, FormControl, FormLabel, FormMessage } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
+import { GoogleReCaptchaProvider, useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 const loginFormSchema = (dictionary: Dictionary["loginPage"]["validation"]) => z.object({
   email: z.string().email({ message: dictionary.email }),
@@ -103,6 +104,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   const [isSignUp, setIsSignUp] = useState(false);
   
   const validationDictionary = dictionary.validation;
+  const { executeRecaptcha } = useGoogleReCaptcha();
   
   const currentSchema = useMemo(() => {
     return isSignUp ? signUpFormSchema(validationDictionary) : loginFormSchema(validationDictionary);
@@ -131,8 +133,6 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
 
 
   useEffect(() => {
-    // This effect handles redirection safely on the client-side
-    // after hydration, preventing mismatches.
     if (isAuthenticated) {
       router.push(`/${lang}`);
     }
@@ -140,9 +140,21 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
 
   const onSubmit = async (data: any) => {
     setError("");
+
+    if (!executeRecaptcha) {
+      setError("reCAPTCHA not ready. Please try again.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      const token = await executeRecaptcha(isSignUp ? 'signup' : 'login');
+      // In a real app, you would send this token to your backend for verification.
+      // For this demo, we'll just log it.
+      console.log("reCAPTCHA token:", token);
+
+
       if (isSignUp) {
         const profileData: Omit<UserProfile, 'id' | 'role' | 'email'> = {
             fullName: data.fullName,
@@ -173,9 +185,6 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   };
   
   if (isAuthLoading || isAuthenticated) {
-    // While loading or if authenticated, show a loading screen.
-    // This state is consistent on server and client initial render (as auth is checked client-side)
-    // or quickly transitions client-side without causing a hydration error on the main form structure.
     return (
       <div className="flex min-h-screen items-center justify-center bg-background p-4">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -442,6 +451,16 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
 
 
 export function LoginClient({ dictionary }: { dictionary: Dictionary }) {
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+
+  if (!recaptchaSiteKey) {
+     return (
+        <div className="flex h-screen w-full items-center justify-center bg-background text-foreground">
+            Error: reCAPTCHA configuration is missing.
+        </div>
+    );
+  }
+
   return (
     <ThemeProvider
       attribute="class"
@@ -452,7 +471,9 @@ export function LoginClient({ dictionary }: { dictionary: Dictionary }) {
       <Toaster />
       <DictionariesProvider dictionary={dictionary}>
         <AuthProvider>
-          <LoginPageContent dictionary={dictionary.loginPage} />
+          <GoogleReCaptchaProvider reCaptchaKey={recaptchaSiteKey}>
+            <LoginPageContent dictionary={dictionary.loginPage} />
+          </GoogleReCaptchaProvider>
         </AuthProvider>
       </DictionariesProvider>
     </ThemeProvider>
