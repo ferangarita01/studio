@@ -19,6 +19,7 @@ export type UserProfile = {
   country?: string;
   phone?: string;
   assignedCompanyId?: string;
+  assignedCompany?: Company; // Denormalized for performance
   plan?: PlanType;
 }
 
@@ -86,6 +87,7 @@ export type ReportData = {
   companyId: string;
   totalCosts: number;
   totalIncome: number;
+...
   netResult: number;
   chartData: {
     name: string;

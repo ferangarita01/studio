@@ -45,7 +45,16 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
     const userRef = ref(db, `users/${uid}`);
     const snapshot = await get(userRef);
     if (snapshot.exists()) {
-      const profile = { id: uid, ...snapshot.val() };
+      const profileData = snapshot.val();
+      const profile: UserProfile = { id: uid, ...profileData };
+      
+      // If user is a client and assigned to a company, fetch the company details and embed them
+      if (profile.role === 'client' && profile.assignedCompanyId) {
+          const company = await getCompanyById(profile.assignedCompanyId);
+          if (company) {
+              profile.assignedCompany = company;
+          }
+      }
       return profile;
     }
     return null;
@@ -162,6 +171,7 @@ export async function assignUserToCompany(companyId: string, userId: string | nu
     if (oldUserId && oldUserId !== userId) {
         updates[`/users/${oldUserId}/assignedCompanyId`] = null;
         updates[`/users/${oldUserId}/plan`] = 'Free';
+        updates[`/users/${oldUserId}/assignedCompany`] = null;
     }
     
     // 2. Update the company with the new user ID
@@ -171,6 +181,7 @@ export async function assignUserToCompany(companyId: string, userId: string | nu
     if (userId) {
         updates[`/users/${userId}/assignedCompanyId`] = companyId;
         updates[`/users/${userId}/plan`] = companyData.plan || 'Free';
+        updates[`/users/${userId}/assignedCompany`] = { id: companyId, ...companyData }; // Denormalize
     }
 
     await update(ref(db), updates);

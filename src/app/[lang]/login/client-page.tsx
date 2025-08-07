@@ -201,14 +201,121 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                {isSignUp ? (
-                    <div className="space-y-4">
-                      <FormField
+                <div className={cn("space-y-4", !isSignUp && "hidden")}>
+                  <FormField
+                      control={form.control}
+                      name="fullName"
+                      render={({ field }) => (
+                          <FormItem>
+                              <FormLabel>{dictionary.labels.fullName}</FormLabel>
+                              <FormControl>
+                                  <Input {...field} disabled={isSubmitting} />
+                              </FormControl>
+                              <FormMessage />
+                          </FormItem>
+                      )}
+                  />
+
+                  <FormField
+                      control={form.control}
+                      name="accountType"
+                      render={({ field }) => (
+                          <FormItem>
+                              <FormLabel>{dictionary.labels.accountType}</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
+                                  <FormControl>
+                                      <SelectTrigger>
+                                          <SelectValue placeholder={dictionary.labels.selectAccountType} />
+                                      </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                      <SelectItem value="individual">{dictionary.labels.individual}</SelectItem>
+                                      <SelectItem value="company">{dictionary.labels.company}</SelectItem>
+                                  </SelectContent>
+                              </Select>
+                              <FormMessage />
+                          </FormItem>
+                      )}
+                  />
+                 
+                  <div className={cn("space-y-4", accountType !== 'company' && "hidden")}>
+                     <FormField
+                        control={form.control}
+                        name="companyName"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{dictionary.labels.companyName}</FormLabel>
+                                <FormControl>
+                                    <Input {...field} disabled={isSubmitting} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="taxId"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{dictionary.labels.taxId}</FormLabel>
+                                <FormControl>
+                                    <Input {...field} disabled={isSubmitting} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                  </div>
+
+                  <div className={cn("space-y-4", accountType !== 'individual' && "hidden")}>
+                     <FormField
+                        control={form.control}
+                        name="idNumber"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{dictionary.labels.idNumber}</FormLabel>
+                                <FormControl>
+                                    <Input {...field} disabled={isSubmitting} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                  </div>
+
+                   <FormField
+                      control={form.control}
+                      name="jobTitle"
+                      render={({ field }) => (
+                          <FormItem>
+                              <FormLabel>{dictionary.labels.jobTitle}</FormLabel>
+                              <FormControl>
+                                  <Input {...field} disabled={isSubmitting} />
+                              </FormControl>
+                              <FormMessage />
+                          </FormItem>
+                      )}
+                  />
+                   <FormField
+                      control={form.control}
+                      name="address"
+                      render={({ field }) => (
+                          <FormItem>
+                              <FormLabel>{dictionary.labels.address}</FormLabel>
+                              <FormControl>
+                                  <Input {...field} disabled={isSubmitting} />
+                              </FormControl>
+                              <FormMessage />
+                          </FormItem>
+                      )}
+                  />
+                   <div className="grid grid-cols-2 gap-4">
+                       <FormField
                           control={form.control}
-                          name="fullName"
+                          name="city"
                           render={({ field }) => (
                               <FormItem>
-                                  <FormLabel>{dictionary.labels.fullName}</FormLabel>
+                                  <FormLabel>{dictionary.labels.city}</FormLabel>
                                   <FormControl>
                                       <Input {...field} disabled={isSubmitting} />
                                   </FormControl>
@@ -216,80 +323,12 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                               </FormItem>
                           )}
                       />
-
-                      <FormField
-                          control={form.control}
-                          name="accountType"
-                          render={({ field }) => (
-                              <FormItem>
-                                  <FormLabel>{dictionary.labels.accountType}</FormLabel>
-                                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
-                                      <FormControl>
-                                          <SelectTrigger>
-                                              <SelectValue placeholder={dictionary.labels.selectAccountType} />
-                                          </SelectTrigger>
-                                      </FormControl>
-                                      <SelectContent>
-                                          <SelectItem value="individual">{dictionary.labels.individual}</SelectItem>
-                                          <SelectItem value="company">{dictionary.labels.company}</SelectItem>
-                                      </SelectContent>
-                                  </Select>
-                                  <FormMessage />
-                              </FormItem>
-                          )}
-                      />
-                     
-                      <div className={cn("space-y-4", accountType !== 'company' && "hidden")}>
-                         <FormField
-                            control={form.control}
-                            name="companyName"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{dictionary.labels.companyName}</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} disabled={isSubmitting} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="taxId"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{dictionary.labels.taxId}</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} disabled={isSubmitting} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                      </div>
-
-                      <div className={cn(accountType !== 'individual' && "hidden")}>
-                         <FormField
-                            control={form.control}
-                            name="idNumber"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{dictionary.labels.idNumber}</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} disabled={isSubmitting} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                      </div>
-
                        <FormField
                           control={form.control}
-                          name="jobTitle"
+                          name="country"
                           render={({ field }) => (
                               <FormItem>
-                                  <FormLabel>{dictionary.labels.jobTitle}</FormLabel>
+                                  <FormLabel>{dictionary.labels.country}</FormLabel>
                                   <FormControl>
                                       <Input {...field} disabled={isSubmitting} />
                                   </FormControl>
@@ -297,62 +336,21 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                               </FormItem>
                           )}
                       />
-                       <FormField
-                          control={form.control}
-                          name="address"
-                          render={({ field }) => (
-                              <FormItem>
-                                  <FormLabel>{dictionary.labels.address}</FormLabel>
-                                  <FormControl>
-                                      <Input {...field} disabled={isSubmitting} />
-                                  </FormControl>
-                                  <FormMessage />
-                              </FormItem>
-                          )}
-                      />
-                       <div className="grid grid-cols-2 gap-4">
-                           <FormField
-                              control={form.control}
-                              name="city"
-                              render={({ field }) => (
-                                  <FormItem>
-                                      <FormLabel>{dictionary.labels.city}</FormLabel>
-                                      <FormControl>
-                                          <Input {...field} disabled={isSubmitting} />
-                                      </FormControl>
-                                      <FormMessage />
-                                  </FormItem>
-                              )}
-                          />
-                           <FormField
-                              control={form.control}
-                              name="country"
-                              render={({ field }) => (
-                                  <FormItem>
-                                      <FormLabel>{dictionary.labels.country}</FormLabel>
-                                      <FormControl>
-                                          <Input {...field} disabled={isSubmitting} />
-                                      </FormControl>
-                                      <FormMessage />
-                                  </FormItem>
-                              )}
-                          />
-                      </div>
-                       <FormField
-                          control={form.control}
-                          name="phone"
-                          render={({ field }) => (
-                              <FormItem>
-                                  <FormLabel>{dictionary.labels.phone}</FormLabel>
-                                  <FormControl>
-                                      <Input type="tel" {...field} disabled={isSubmitting} />
-                                  </FormControl>
-                                  <FormMessage />
-                              </FormItem>
-                          )}
-                      />
-                    </div>
-                ) : null}
+                  </div>
+                   <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                          <FormItem>
+                              <FormLabel>{dictionary.labels.phone}</FormLabel>
+                              <FormControl>
+                                  <Input type="tel" {...field} disabled={isSubmitting} />
+                              </FormControl>
+                              <FormMessage />
+                          </FormItem>
+                      )}
+                  />
+                </div>
 
                 <FormField
                     control={form.control}
@@ -375,14 +373,14 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                         <FormItem>
                              <div className="flex items-center">
                                 <FormLabel>{dictionary.password}</FormLabel>
-                                {!isSignUp && (
+                                <div className={cn(isSignUp && "hidden")}>
                                      <Link
                                         href="#"
                                         className="ml-auto inline-block text-sm underline"
                                      >
                                         {dictionary.forgotPassword}
                                      </Link>
-                                )}
+                                </div>
                             </div>
                             <FormControl>
                                 <Input type="password" {...field} disabled={isSubmitting} />
@@ -392,7 +390,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                     )}
                 />
 
-                {isSignUp && (
+                <div className={cn(!isSignUp && "hidden")}>
                   <FormField
                       control={form.control}
                       name="terms"
@@ -415,7 +413,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                           </FormItem>
                       )}
                   />
-                )}
+                </div>
 
                 {error && (
                   <Alert variant="destructive">
@@ -460,5 +458,3 @@ export function LoginClient({ dictionary }: { dictionary: Dictionary }) {
     </ThemeProvider>
   )
 }
-
-    

@@ -302,10 +302,15 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
                 } else if (selectedCompany && !userCompanies.some(c => c.id === selectedCompany.id)) {
                     setSelectedCompany(userCompanies[0] || null);
                 }
-            } else if (role === 'client' && userProfile?.assignedCompanyId) {
-                const clientCompany = await getCompanyById(userProfile.assignedCompanyId);
-                setCompanies(clientCompany ? [clientCompany] : []);
-                setSelectedCompany(clientCompany || null);
+            } else if (role === 'client') {
+                 if (userProfile?.assignedCompany) {
+                    const clientCompany = userProfile.assignedCompany;
+                    setCompanies([clientCompany]);
+                    setSelectedCompany(clientCompany);
+                } else {
+                    setCompanies([]);
+                    setSelectedCompany(null);
+                }
             } else {
                 setCompanies([]);
                 setSelectedCompany(null);
@@ -318,7 +323,8 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
         }
     }
     manageCompanies();
-}, [user, role, userProfile]);
+}, [user, role, userProfile, selectedCompany]);
+
 
   const addCompany = (company: Company) => {
     setCompanies(prev => [...prev, company].sort((a,b) => a.name.localeCompare(b.name)));
@@ -405,7 +411,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                 const subItem = item.subItems.find(sub => path.startsWith(sub.href));
                 if (subItem) return subItem as any;
             }
-            if (item.href === path || (item.href !== '/' && path.startsWith(item.href))) {
+            if (item.href === path || (item.href !== '/' && path.startsWith(item.href) && item.href.length > 1)) {
                 return item;
             }
         }
