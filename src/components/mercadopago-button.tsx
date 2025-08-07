@@ -9,6 +9,9 @@ import { useState, useEffect } from 'react';
 import { Skeleton } from './ui/skeleton';
 
 const MERCADOPAGO_PUBLIC_KEY = process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY;
+// IMPORTANT: This is a TEST access token for the sandbox environment.
+// Replace with a secure backend call for production.
+const MERCADOPAGO_TEST_ACCESS_TOKEN = "TEST-8514800378495098-073117-91a54776110f03225674c10702672522-1943640243";
 
 interface MercadoPagoButtonProps {
     amount: number;
@@ -30,20 +33,19 @@ export function MercadoPagoButtonWrapper({ amount, description }: MercadoPagoBut
     }, []);
 
     const createPreference = async () => {
+        if (!user) return;
         setIsLoading(true);
         try {
             // This would typically be a call to your own backend server
             // to create the preference securely.
-            // For this example, we'll simulate a client-side creation for simplicity,
-            // which is NOT recommended for production.
+            // For this example, we are using a TEST access token on the client-side
+            // for demonstration purposes in a sandbox environment.
+            // DO NOT use a production access token here.
             const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    // IMPORTANT: This is NOT secure for production.
-                    // The access token should be handled on a backend server.
-                    // This is a placeholder for a demo environment.
-                    'Authorization': `Bearer YOUR_ACCESS_TOKEN_HERE` 
+                    'Authorization': `Bearer ${MERCADOPAGO_TEST_ACCESS_TOKEN}`
                 },
                 body: JSON.stringify({
                     items: [
@@ -51,13 +53,13 @@ export function MercadoPagoButtonWrapper({ amount, description }: MercadoPagoBut
                             title: description,
                             quantity: 1,
                             unit_price: amount,
-                            currency_id: 'COP' 
+                            currency_id: 'COP'
                         }
                     ],
                     back_urls: {
-                        success: window.location.href,
-                        failure: window.location.href,
-                        pending: window.location.href
+                        success: window.location.href.split('?')[0] + '?mp_status=success',
+                        failure: window.location.href.split('?')[0] + '?mp_status=failure',
+                        pending: window.location.href.split('?')[0] + '?mp_status=pending'
                     },
                     auto_return: 'approved'
                 })
@@ -83,21 +85,40 @@ export function MercadoPagoButtonWrapper({ amount, description }: MercadoPagoBut
             setIsLoading(false);
         }
     };
+    
+    useEffect(() => {
+        if (isClient && user) {
+            createPreference();
+        }
+    }, [isClient, user]);
 
-    // This is a placeholder for a real implementation where you would get the preference ID
-    // For now, let's just use a dummy ID to render the button
-     useEffect(() => {
-        // In a real app, you would call createPreference() here.
-        // For the demo, we are skipping this to avoid exposing access tokens.
-        setIsLoading(false);
-     }, []);
+    // Handle payment status feedback from redirect
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const status = urlParams.get('mp_status');
+        if (status === 'success' && user) {
+            updateUserPlan(user.uid, 'Premium').then(() => {
+                refreshUserProfile();
+                 toast({
+                    title: "Pago Exitoso y Plan Actualizado!",
+                    description: `¡Gracias! Ahora tienes el plan Premium.`,
+                });
+            });
+        } else if (status === 'failure') {
+             toast({
+                title: "Pago Fallido",
+                description: "El pago no pudo ser procesado. Por favor, inténtalo de nuevo.",
+                variant: "destructive",
+            });
+        }
+    }, [user]);
 
 
     if (!isClient) {
         return <Skeleton className="h-10 w-full" />;
     }
     
-    if (!MERCADOPAGO_PUBLIC_KEY || MERCADOPAGO_PUBLIC_KEY === "YOUR_PUBLIC_KEY_HERE") {
+    if (!MERCADOPAGO_PUBLIC_KEY || MERCADOPAGO_PUBLIC_KEY === "YOUR_PUBLIC_KEY_HERE" || !MERCADOPAGO_TEST_ACCESS_TOKEN) {
         return (
             <div className="text-destructive text-center p-2 text-xs rounded-md bg-destructive/10">
                 Mercado Pago no está configurado.
@@ -109,14 +130,19 @@ export function MercadoPagoButtonWrapper({ amount, description }: MercadoPagoBut
         return <Skeleton className="h-10 w-full" />;
     }
 
-    // Since we cannot create a preference ID securely on the client-side without
-    // exposing an access token, this button will be disabled for the demo.
-    // A full implementation requires a backend.
+    if (!preferenceId) {
+         return (
+            <div className="text-destructive text-center p-2 text-xs rounded-md bg-destructive/10">
+                Error al inicializar el pago.
+            </div>
+        );
+    }
+    
     return (
         <div id="wallet_container">
              <Wallet
                 initialization={{
-                    // preferenceId: preferenceId,
+                    preferenceId: preferenceId,
                     redirectMode: 'modal'
                 }}
                 customization={{
@@ -124,22 +150,19 @@ export function MercadoPagoButtonWrapper({ amount, description }: MercadoPagoBut
                         valueProp: 'smart_option',
                     },
                 }}
-                onSubmit={() => new Promise((resolve, reject) => {
-                    if (!user) {
-                        toast({ title: "Error", description: "You must be logged in to complete the purchase.", variant: "destructive" });
-                        return reject();
+                onSubmit={() => {
+                     if (!user) {
+                        toast({ title: "Error", description: "Debes iniciar sesión para completar la compra.", variant: "destructive" });
+                        return Promise.reject();
                     }
                     
-                    // The plan should be activated via webhooks after payment confirmation.
-                    // Here, we just inform the user.
                     toast({
-                        title: "Procesando su pago",
-                        description: "Su plan se activará cuando se confirme el pago (esto puede tardar hasta 24 horas). Recibirá una notificación.",
+                        title: "Procesando tu pago",
+                        description: "Serás redirigido a Mercado Pago para completar la transacción.",
                     });
 
-                    // We resolve immediately to let the user proceed to payment.
-                    resolve();
-                })}
+                    return Promise.resolve();
+                }}
              />
         </div>
     );
