@@ -20,6 +20,7 @@ import { PublicHeader } from "@/components/public-header";
 import { PayPalButtonWrapper } from "@/components/paypal-button";
 import { MercadoPagoButtonWrapper } from "@/components/mercadopago-button";
 import { useAuth } from "@/context/auth-context";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface PricingCardProps {
   plan: {
@@ -57,7 +58,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, dictionary, isPop
   const renderCtaButton = () => {
     if (!isClient) {
       // Render a placeholder or nothing on the server and during initial client render
-      return <div className="h-10 w-full"></div>;
+      return <Skeleton className="h-10 w-full" />;
     }
     
     if (showPaymentButtons) {
