@@ -18,6 +18,7 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
+import { Skeleton } from "./ui/skeleton";
 
 function ThemeToggle({ dictionary }: { dictionary: Dictionary["navigation"]["themeToggle"] }) {
   const { setTheme } = useTheme();
@@ -88,7 +89,7 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
     const pathname = usePathname();
     const isPricingPage = pathname.includes('/pricing');
     const isLandingPage = pathname.includes('/landing');
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, isLoading } = useAuth();
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
@@ -132,18 +133,17 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
                     <LanguageToggle dictionary={dictionary.navigation.languageToggle} />
                     <ThemeToggle dictionary={dictionary.navigation.themeToggle} />
                     <div className="hidden md:flex items-center gap-2">
-                        {isClient && (
-                            <>
-                                {isAuthenticated ? (
-                                    <Button asChild variant="outline">
-                                        <Link href={`/${lang}`}>{dictionary.navigation.links.dashboard}</Link>
-                                    </Button>
-                                ) : (
-                                    <Button asChild>
-                                        <Link href={`/${lang}/login`}>{d.header.login}</Link>
-                                    </Button>
-                                )}
-                            </>
+                        {isLoading || !isClient ? (
+                           <Skeleton className="h-10 w-24" />
+                        ) : (
+                           <>
+                            <Button asChild variant="outline" className={cn(isAuthenticated ? '' : 'hidden')}>
+                                <Link href={`/${lang}`}>{dictionary.navigation.links.dashboard}</Link>
+                            </Button>
+                            <Button asChild className={cn(isAuthenticated ? 'hidden' : '')}>
+                                <Link href={`/${lang}/login`}>{d.header.login}</Link>
+                            </Button>
+                           </>
                         )}
                     </div>
                 </div>
