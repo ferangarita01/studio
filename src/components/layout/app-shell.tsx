@@ -397,18 +397,38 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
 
   const isAuthorized = useMemo(() => {
     if (!isClient || !role) return false;
-    // Public pages are always "authorized" for logged-in users to prevent redirection loops
     if (isPublicPage) return true;
-    
-    // Check against role-based navigation items
-    const allAllowedPaths = allNavItems
-        .filter(item => item.roles.includes(role))
-        .flatMap(item => 'subItems' in item ? item.subItems.map(sub => sub.href) : [item.href]);
-    
-    // Check if current path starts with any of the allowed hrefs
-    return allAllowedPaths.some(href => href === '/' ? currentPath === '/' : currentPath.startsWith(href));
 
-  }, [isClient, role, currentPath, isPublicPage]);
+    const findItem = (items: typeof allNavItems, path: string): (typeof allNavItems[number]) | undefined => {
+        for (const item of items) {
+            if ('subItems' in item) {
+                const subItem = item.subItems.find(sub => path.startsWith(sub.href));
+                if (subItem) return subItem as any;
+            }
+            if (item.href === path || (item.href !== '/' && path.startsWith(item.href))) {
+                return item;
+            }
+        }
+        return undefined;
+    };
+
+    const currentItem = findItem(allNavItems, currentPath);
+
+    if (!currentItem) {
+        return false;
+    }
+    if (!currentItem.roles.includes(role)) {
+        return false;
+    }
+
+    const isPremiumFeature = 'plan' in currentItem && currentItem.plan === 'Premium';
+    if (isPremiumFeature && role === 'client' && userProfile?.plan !== 'Premium') {
+        return false;
+    }
+    
+    return true;
+}, [isClient, role, currentPath, isPublicPage, userProfile]);
+
 
   useEffect(() => {
     // This effect handles redirection for unauthorized access to protected pages
