@@ -91,18 +91,16 @@ export async function getCompanies(userId?: string, isAdmin: boolean = false): P
 
   // If the user is an admin, return all companies.
   // Otherwise, if a userId is provided, filter for companies assigned to that user.
-  const userCompanies = isAdmin 
-      ? allCompanies 
-      : userId 
-          ? allCompanies.filter(company => company.assignedUserUid === userId) 
-          : [];
-
-  const companiesWithDefaults = userCompanies.map(c => ({
-    ...c,
-    logoUrl: c.logoUrl || `https://placehold.co/100x100.png?text=${c.name.charAt(0)}`
-  }));
+  if (isAdmin) {
+      return allCompanies.sort((a,b) => a.name.localeCompare(b.name));
+  }
   
-  return companiesWithDefaults.sort((a, b) => a.name.localeCompare(b.name));
+  if (userId) {
+      const userCompanies = allCompanies.filter(company => company.assignedUserUid === userId);
+      return userCompanies.sort((a, b) => a.name.localeCompare(b.name));
+  }
+  
+  return [];
 }
 
 export async function getCompanyById(companyId: string): Promise<Company | null> {
