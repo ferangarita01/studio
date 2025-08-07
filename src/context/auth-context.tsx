@@ -46,7 +46,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   
   const refreshUserProfile = useCallback(async () => {
     if (user) {
-        setIsLoading(true);
         const profile = await getUserProfile(user.uid);
         setUserProfile(profile);
         if (profile) {
@@ -54,7 +53,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
           setRole(null);
         }
-        setIsLoading(false);
     }
   }, [user]);
 

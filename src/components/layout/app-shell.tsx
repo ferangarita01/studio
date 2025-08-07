@@ -291,9 +291,7 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const manageCompanies = async () => {
-        if (!user) {
-            setCompanies([]);
-            setSelectedCompany(null);
+        if (!user || !role) {
             setIsLoading(false);
             return;
         }
