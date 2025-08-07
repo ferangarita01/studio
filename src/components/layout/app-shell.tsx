@@ -302,8 +302,9 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
             setCompanies(userCompanies);
             setSelectedCompany(userCompanies[0] || null);
         } else if (role === 'client' && userProfile?.assignedCompany) {
-            setCompanies([userProfile.assignedCompany]);
-            setSelectedCompany(userProfile.assignedCompany);
+            const userCompanies = await getCompanies(user.uid, false);
+            setCompanies(userCompanies);
+            setSelectedCompany(userCompanies.find(c => c.id === userProfile.assignedCompanyId) || null);
         } else {
             setCompanies([]);
             setSelectedCompany(null);
@@ -660,3 +661,4 @@ export function AppShell({ children, lang, dictionary }: { children: React.React
     </ThemeProvider>
    )
 }
+

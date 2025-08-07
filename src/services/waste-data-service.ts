@@ -87,14 +87,17 @@ export async function getCompanies(userId?: string, isAdmin: boolean = false): P
     return [];
   }
   
-  let allCompanies: Company[] = snapshotToArray(snapshot);
+  const allCompanies: Company[] = snapshotToArray(snapshot);
 
-  // Filter by userId if it's provided AND the user is not an admin
-  if (userId && !isAdmin) {
-    allCompanies = allCompanies.filter(company => company.createdBy === userId);
-  }
+  // If the user is an admin, return all companies.
+  // Otherwise, if a userId is provided, filter for companies assigned to that user.
+  const userCompanies = isAdmin 
+      ? allCompanies 
+      : userId 
+          ? allCompanies.filter(company => company.assignedUserUid === userId) 
+          : [];
 
-  const companiesWithDefaults = allCompanies.map(c => ({
+  const companiesWithDefaults = userCompanies.map(c => ({
     ...c,
     logoUrl: c.logoUrl || `https://placehold.co/100x100.png?text=${c.name.charAt(0)}`
   }));

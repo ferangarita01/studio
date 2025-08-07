@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
@@ -61,9 +62,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsLoading(true);
       setUser(user);
       if (user) {
-        const profile = await getUserProfile(user.uid);
-        setUserProfile(profile);
-        setRole(profile?.role || null);
+        // Special override for a specific admin user for testing/demo purposes
+        if (user.email === 'prueba2@admin.co') {
+            const profile = await getUserProfile(user.uid);
+            setUserProfile({...profile, id: user.uid, email: user.email, role: 'admin' });
+            setRole('admin');
+        } else {
+            const profile = await getUserProfile(user.uid);
+            setUserProfile(profile);
+            setRole(profile?.role || null);
+        }
       } else {
         setUserProfile(null);
         setRole(null);
@@ -142,3 +150,4 @@ export const useAuth = () => {
   }
   return context;
 };
+
