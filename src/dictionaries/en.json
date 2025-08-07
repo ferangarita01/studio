@@ -170,6 +170,7 @@
   "pricingPage": {
     "title": "Simple, Transparent Pricing",
     "subtitle": "Choose the plan that's right for your business. No hidden fees, ever.",
+    "yourCurrentPlan": "Your Current Plan",
     "plans": {
       "basic": {
         "name": "Free",

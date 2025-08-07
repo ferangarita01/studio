@@ -32,11 +32,12 @@ interface PricingCardProps {
     popular?: string;
   };
   lang: Locale;
+  dictionary: Dictionary["pricingPage"];
   isPopular?: boolean;
   isPayment?: boolean;
 }
 
-const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, isPopular, isPayment = false }) => {
+const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, dictionary, isPopular, isPayment = false }) => {
   const planPrice = plan.price.replace(/[^0-9.]/g, '');
   const [isClient, setIsClient] = useState(false);
   const { isAuthenticated, userProfile } = useAuth();
@@ -48,9 +49,9 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, isPopular, isPaym
   }, []);
 
   const showPaymentButtons = isPayment && isClient && isAuthenticated && !isAlreadyPremium;
-  const showContactSales = plan.name === 'Custom';
-  const showGetStarted = !showPaymentButtons && !showContactSales && !(isPayment && isClient && isAlreadyPremium);
+  const showContactSales = plan.name === 'Custom' || plan.name === 'Personalizado';
   const showCurrentPlan = isPayment && isClient && isAuthenticated && isAlreadyPremium;
+  const showGetStarted = !showPaymentButtons && !showContactSales && !showCurrentPlan;
 
   return (
     <Card className={cn("flex flex-col", isPopular ? "border-2 border-primary shadow-lg" : "")}>
@@ -84,7 +85,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, isPopular, isPaym
               </>
             )}
             {showCurrentPlan && (
-                 <Button className="w-full" disabled>Your Current Plan</Button>
+                 <Button className="w-full" disabled>{dictionary.yourCurrentPlan}</Button>
             )}
             {showContactSales && (
                  <Button asChild className="w-full" variant={isPopular ? "default" : "outline"}>
@@ -131,9 +132,9 @@ export function PricingClient({ dictionary, lang }: { dictionary: Dictionary, la
                             </p>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto items-start">
-                          <PricingCard plan={d.plans.basic} lang={lang} />
-                          <PricingCard plan={d.plans.professional} lang={lang} isPopular isPayment />
-                          <PricingCard plan={d.plans.enterprise} lang={lang} />
+                          <PricingCard plan={d.plans.basic} lang={lang} dictionary={d} />
+                          <PricingCard plan={d.plans.professional} lang={lang} dictionary={d} isPopular isPayment />
+                          <PricingCard plan={d.plans.enterprise} lang={lang} dictionary={d} />
                         </div>
                     </div>
                 </section>

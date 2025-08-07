@@ -170,6 +170,7 @@
   "pricingPage": {
     "title": "Precios Simples y Transparentes",
     "subtitle": "Elige el plan adecuado para tu negocio. Sin comisiones ocultas, nunca.",
+    "yourCurrentPlan": "Tu Plan Actual",
     "plans": {
       "basic": {
         "name": "Gratis",
