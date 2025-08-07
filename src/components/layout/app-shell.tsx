@@ -291,34 +291,28 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const manageCompanies = async () => {
+        setIsLoading(true);
         if (user) {
-            setIsLoading(true);
             let currentSelectedCompany: Company | null = null;
-
             if (role === 'admin') {
                 const userCompanies = await getCompanies(user.uid);
                 setCompanies(userCompanies);
                 if (userCompanies.length > 0) {
                     currentSelectedCompany = userCompanies[0];
                 }
-            } else if (role === 'client') {
-                 if (userProfile?.assignedCompany) {
-                    const clientCompany = userProfile.assignedCompany;
-                    setCompanies([clientCompany]);
-                    currentSelectedCompany = clientCompany;
-                } else {
-                    setCompanies([]);
-                }
+            } else if (role === 'client' && userProfile?.assignedCompany) {
+                const clientCompany = userProfile.assignedCompany;
+                setCompanies([clientCompany]);
+                currentSelectedCompany = clientCompany;
             } else {
                 setCompanies([]);
             }
             setSelectedCompany(currentSelectedCompany);
-            setIsLoading(false);
         } else {
             setCompanies([]);
             setSelectedCompany(null);
-            setIsLoading(false);
         }
+        setIsLoading(false);
     }
     manageCompanies();
 }, [user, role, userProfile]);

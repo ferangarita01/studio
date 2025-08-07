@@ -1,4 +1,5 @@
 
+
 // IMPORTANT: This service now uses Firebase Realtime Database.
 // You will need to set up Realtime Database in your Firebase project.
 import {
@@ -179,9 +180,16 @@ export async function assignUserToCompany(companyId: string, userId: string | nu
 
     // 3. Update the new user's profile with the company ID and plan
     if (userId) {
+        // Create a lean version of company data to denormalize
+        const companyForUser = {
+            id: companyId,
+            name: companyData.name,
+            logoUrl: companyData.logoUrl || `https://placehold.co/100x100.png?text=${companyData.name.charAt(0)}`,
+            coverImageUrl: companyData.coverImageUrl
+        }
         updates[`/users/${userId}/assignedCompanyId`] = companyId;
         updates[`/users/${userId}/plan`] = companyData.plan || 'Free';
-        updates[`/users/${userId}/assignedCompany`] = { id: companyId, ...companyData }; // Denormalize
+        updates[`/users/${userId}/assignedCompany`] = companyForUser; // Denormalize
     }
 
     await update(ref(db), updates);
