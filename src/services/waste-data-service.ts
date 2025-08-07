@@ -40,7 +40,20 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
     const userRef = ref(db, `users/${uid}`);
     const snapshot = await get(userRef);
     if (snapshot.exists()) {
-      return { id: uid, ...snapshot.val() };
+      const profile = { id: uid, ...snapshot.val() };
+      // Check for associated company plan
+      if (profile.assignedCompanyId) {
+        const company = await getCompanyById(profile.assignedCompanyId);
+        if (company) {
+            profile.plan = company.plan; // Override user plan with company plan
+            // You can also add expiry logic here if needed
+            const now = new Date();
+            if (company.planExpiryDate && new Date(company.planExpiryDate) < now) {
+                profile.plan = 'Free'; // Downgrade if expired
+            }
+        }
+      }
+      return profile;
     }
     return null;
 }
@@ -113,7 +126,9 @@ export async function addCompany(name: string, userId: string, assignedUserId?: 
     assignedUserUid: assignedUserId,
     logoUrl: `https://placehold.co/100x100.png?text=${name.charAt(0)}`,
     coverImageUrl: 'https://space.gov.ae/app_themes/lg21016/images/Sustainability%20Development%20Goals.png',
-    plan: 'Free'
+    plan: 'Free' as PlanType,
+    planStartDate: null,
+    planExpiryDate: null,
   };
   const companiesRef = ref(db, 'companies');
   const newCompanyRef = push(companiesRef);
@@ -121,7 +136,7 @@ export async function addCompany(name: string, userId: string, assignedUserId?: 
   return { id: newCompanyRef.key!, ...companyData };
 }
 
-export async function updateCompany(companyId: string, data: { name: string; plan: PlanType }): Promise<void> {
+export async function updateCompany(companyId: string, data: Partial<Company>): Promise<void> {
     const companyRef = ref(db, `companies/${companyId}`);
     await update(companyRef, data);
 }
@@ -148,6 +163,8 @@ export async function assignUserToCompany(companyId: string, userId: string | nu
     // 1. Un-assign from the old user if there was one
     if (oldUserId && oldUserId !== userId) {
         updates[`/users/${oldUserId}/assignedCompanyId`] = null;
+        // Also reset the old user's plan to Free if they are no longer associated
+        updates[`/users/${oldUserId}/plan`] = 'Free';
     }
     
     // 2. Update the company with the new user ID
@@ -156,6 +173,7 @@ export async function assignUserToCompany(companyId: string, userId: string | nu
     // 3. Update the new user's profile with the company ID
     if (userId) {
         updates[`/users/${userId}/assignedCompanyId`] = companyId;
+        updates[`/users/${userId}/plan`] = companyData.plan || 'Free'; // Sync plan
     }
 
     // Perform all updates atomically
@@ -348,5 +366,3 @@ export async function uploadFile(file: File, path: string): Promise<string> {
     const downloadURL = await getDownloadURL(fileRef);
     return downloadURL;
 }
-
-

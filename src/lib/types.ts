@@ -31,6 +31,8 @@ export type Company = {
   logoUrl?: string; // URL for the company's logo, for embeddable modules
   coverImageUrl?: string; // URL for the company's cover/hero image
   plan?: PlanType;
+  planStartDate?: string; // ISO 8601 date string
+  planExpiryDate?: string; // ISO 8601 date string
 };
 
 export type Material = {

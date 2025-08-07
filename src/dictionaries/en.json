@@ -663,6 +663,8 @@
       "nameLabel": "Company Name",
       "namePlaceholder": "e.g., Global Exports Ltd.",
       "planLabel": "Subscription Plan",
+      "planStartDate": "Plan Start Date",
+      "planExpiryDate": "Plan Expiry Date",
       "planPlaceholder": "Select a plan",
       "plans": {
         "Free": "Free",

@@ -663,6 +663,8 @@
       "nameLabel": "Nombre de la Empresa",
       "namePlaceholder": "ej., Exportaciones Globales S.A.",
       "planLabel": "Plan de Suscripción",
+      "planStartDate": "Fecha de Inicio del Plan",
+      "planExpiryDate": "Fecha de Vencimiento del Plan",
       "planPlaceholder": "Seleccione un plan",
       "plans": {
         "Free": "Gratis",

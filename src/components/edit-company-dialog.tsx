@@ -25,11 +25,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { format, parseISO } from "date-fns";
 
 interface EditCompanyDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onUpdate: (companyId: string, data: { name: string; plan: PlanType }) => void;
+  onUpdate: (companyId: string, data: Partial<Company>) => void;
   dictionary: Dictionary["companiesPage"]["editDialog"];
   company: Company | null;
 }
@@ -37,6 +38,8 @@ interface EditCompanyDialogProps {
 export function EditCompanyDialog({ open, onOpenChange, onUpdate, dictionary, company }: EditCompanyDialogProps) {
   const [name, setName] = useState("");
   const [plan, setPlan] = useState<PlanType>("Free");
+  const [planStartDate, setPlanStartDate] = useState("");
+  const [planExpiryDate, setPlanExpiryDate] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
@@ -45,13 +48,21 @@ export function EditCompanyDialog({ open, onOpenChange, onUpdate, dictionary, co
     if (company) {
       setName(company.name || "");
       setPlan(company.plan || "Free");
+      setPlanStartDate(company.planStartDate ? format(parseISO(company.planStartDate), 'yyyy-MM-dd') : "");
+      setPlanExpiryDate(company.planExpiryDate ? format(parseISO(company.planExpiryDate), 'yyyy-MM-dd') : "");
     }
   }, [company, open]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (name.trim() && company) {
-      onUpdate(company.id, { name: name.trim(), plan });
+      const updateData: Partial<Company> = {
+        name: name.trim(),
+        plan,
+        planStartDate: planStartDate ? new Date(planStartDate).toISOString() : undefined,
+        planExpiryDate: planExpiryDate ? new Date(planExpiryDate).toISOString() : undefined,
+      };
+      onUpdate(company.id, updateData);
     }
   };
 
@@ -126,6 +137,30 @@ export function EditCompanyDialog({ open, onOpenChange, onUpdate, dictionary, co
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+             <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="plan-start-date" className="text-right">
+                {dictionary.planStartDate}
+              </Label>
+              <Input
+                id="plan-start-date"
+                type="date"
+                value={planStartDate}
+                onChange={(e) => setPlanStartDate(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+             <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="plan-expiry-date" className="text-right">
+                {dictionary.planExpiryDate}
+              </Label>
+              <Input
+                id="plan-expiry-date"
+                type="date"
+                value={planExpiryDate}
+                onChange={(e) => setPlanExpiryDate(e.target.value)}
+                className="col-span-3"
+              />
             </div>
              <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="cover-image" className="text-right">

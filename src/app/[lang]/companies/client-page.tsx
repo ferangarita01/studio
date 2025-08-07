@@ -261,23 +261,21 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
           </CardContent>
         </Card>
       </div>
-      <div className={cn(!showAdminFeatures && "hidden")}>
-        <AssignUserDialog
-          open={isAssignDialogOpen}
-          onOpenChange={setAssignDialogOpen}
-          dictionary={dictionary.assignDialog}
-          clients={clients}
-          company={selectedCompany}
-          onAssign={handleAssignUser}
-        />
-        <EditCompanyDialog
-          open={isEditDialogOpen}
-          onOpenChange={setEditDialogOpen}
-          dictionary={dictionary.editDialog}
-          company={selectedCompany}
-          onUpdate={handleUpdateCompany}
-        />
-      </div>
+      <AssignUserDialog
+        open={isAssignDialogOpen}
+        onOpenChange={setAssignDialogOpen}
+        dictionary={dictionary.assignDialog}
+        clients={clients}
+        company={selectedCompany}
+        onAssign={handleAssignUser}
+      />
+      <EditCompanyDialog
+        open={isEditDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        dictionary={dictionary.editDialog}
+        company={selectedCompany}
+        onUpdate={handleUpdateCompany}
+      />
     </>
   );
 }
