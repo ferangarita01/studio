@@ -98,7 +98,6 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   const router = useRouter();
   const params = useParams();
   const lang = params.lang;
-  const [isClient, setIsClient] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
@@ -132,10 +131,8 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
 
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
+    // This effect handles redirection safely on the client-side
+    // after hydration, preventing mismatches.
     if (isAuthenticated) {
       router.push(`/${lang}`);
     }
@@ -175,7 +172,10 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
     }
   };
   
-  if (!isClient || isAuthLoading || isAuthenticated) {
+  if (isAuthLoading || isAuthenticated) {
+    // While loading or if authenticated, show a loading screen.
+    // This state is consistent on server and client initial render (as auth is checked client-side)
+    // or quickly transitions client-side without causing a hydration error on the main form structure.
     return (
       <div className="flex min-h-screen items-center justify-center bg-background p-4">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -460,3 +460,5 @@ export function LoginClient({ dictionary }: { dictionary: Dictionary }) {
     </ThemeProvider>
   )
 }
+
+    

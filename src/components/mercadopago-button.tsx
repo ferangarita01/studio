@@ -124,26 +124,23 @@ export function MercadoPagoButtonWrapper({ amount, description }: MercadoPagoBut
                         valueProp: 'smart_option',
                     },
                 }}
-                onSubmit={() => new Promise(async (resolve, reject) => {
+                onSubmit={() => new Promise((resolve, reject) => {
                     if (!user) {
                         toast({ title: "Error", description: "You must be logged in to complete the purchase.", variant: "destructive" });
                         return reject();
                     }
-                    try {
-                        await updateUserPlan(user.uid, 'Premium');
-                        await refreshUserProfile();
-                        toast({
-                            title: "¡Plan Actualizado!",
-                            description: "Ahora estás en el plan Premium.",
-                        });
-                        resolve();
-                    } catch (error) {
-                        toast({ title: "Error", description: "Failed to update your plan.", variant: "destructive" });
-                        reject(error);
-                    }
+                    
+                    // The plan should be activated via webhooks after payment confirmation.
+                    // Here, we just inform the user.
+                    toast({
+                        title: "Procesando su pago",
+                        description: "Su plan se activará cuando se confirme el pago (esto puede tardar hasta 24 horas). Recibirá una notificación.",
+                    });
+
+                    // We resolve immediately to let the user proceed to payment.
+                    resolve();
                 })}
              />
         </div>
     );
 }
-
