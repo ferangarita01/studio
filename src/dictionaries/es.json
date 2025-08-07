@@ -268,27 +268,27 @@
         "title": "¿Qué puedes esperar de WasteWise?",
         "items": {
           "centralDashboard": {
-            "title": "Tablero Centralizado:",
+            "title": "Tablero Centralizado",
             "description": "Un espacio intuitivo donde podrás visualizar y gestionar todas tus actividades ambientales de un vistazo."
           },
           "aiAnalyzer": {
-            "title": "Agente IA:",
+            "title": "Agente IA",
             "description": "Nuestra potente inteligencia artificial te brindará próximamente insights profundos para la optimización de tus procesos de residuos."
           },
           "wasteLog": {
-            "title": "Registro de Residuos:",
+            "title": "Registro de Residuos",
             "description": "Simplifica el seguimiento y la documentación de tus residuos, asegurando la trazabilidad y el cumplimiento normativo."
           },
           "calendar": {
-            "title": "Calendario:",
+            "title": "Calendario",
             "description": "Organiza y programa tus actividades ambientales, desde recolecciones hasta auditorías."
           },
           "detailedReports": {
-            "title": "Reportes Detallados:",
+            "title": "Reportes Detallados",
             "description": "Genera informes completos para evaluar tu desempeño ambiental, identificar áreas de mejora y cumplir con las regulaciones."
           },
           "materials": {
-            "title": "Materiales:",
+            "title": "Materiales",
             "description": "Accede a recursos y documentación relevante para una gestión ambiental efectiva."
           }
         }
