@@ -63,14 +63,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsLoading(true);
       setUser(user);
       if (user) {
-        // Special GOD user rule
-        if (user.email === 'prueba2@admin.co') {
-            setUserProfile({ id: user.uid, email: user.email, role: 'admin', plan: 'Premium' });
-            setRole('admin');
-            setIsLoading(false);
-            return;
-        }
-
         const profile = await getUserProfile(user.uid);
         setUserProfile(profile);
         if (profile) {
@@ -158,5 +150,3 @@ export const useAuth = () => {
   }
   return context;
 };
-
-    

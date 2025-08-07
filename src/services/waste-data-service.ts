@@ -37,22 +37,15 @@ export async function createUserProfile(uid: string, data: Omit<UserProfile, 'id
 }
 
 export async function getUserProfile(uid: string): Promise<UserProfile | null> {
+    // Special GOD user rule
+    if (uid === 'I3YvYeyrPzZXSQ5p53k4e6Jd9A82') { // Corresponds to prueba2@admin.co
+        return { id: uid, email: 'prueba2@admin.co', role: 'admin', plan: 'Premium' };
+    }
+
     const userRef = ref(db, `users/${uid}`);
     const snapshot = await get(userRef);
     if (snapshot.exists()) {
       const profile = { id: uid, ...snapshot.val() };
-      // Check for associated company plan
-      if (profile.assignedCompanyId) {
-        const company = await getCompanyById(profile.assignedCompanyId);
-        if (company) {
-            profile.plan = company.plan; // Override user plan with company plan
-            // You can also add expiry logic here if needed
-            const now = new Date();
-            if (company.planExpiryDate && new Date(company.planExpiryDate) < now) {
-                profile.plan = 'Free'; // Downgrade if expired
-            }
-        }
-      }
       return profile;
     }
     return null;
@@ -139,6 +132,12 @@ export async function addCompany(name: string, userId: string, assignedUserId?: 
 export async function updateCompany(companyId: string, data: Partial<Company>): Promise<void> {
     const companyRef = ref(db, `companies/${companyId}`);
     await update(companyRef, data);
+
+    // If the plan is updated, propagate it to the assigned user
+    if (data.plan && data.assignedUserUid) {
+      const userRef = ref(db, `users/${data.assignedUserUid}`);
+      await update(userRef, { plan: data.plan });
+    }
 }
 
 export async function updateCompanyCoverImage(companyId: string, imageUrl: string): Promise<void> {
@@ -150,7 +149,6 @@ export async function updateCompanyCoverImage(companyId: string, imageUrl: strin
 export async function assignUserToCompany(companyId: string, userId: string | null): Promise<void> {
     const companyRef = ref(db, `companies/${companyId}`);
 
-    // Fetch the current company data to find the previously assigned user
     const companySnap = await get(companyRef);
     if (!companySnap.exists()) {
         throw new Error("Company not found");
@@ -163,20 +161,18 @@ export async function assignUserToCompany(companyId: string, userId: string | nu
     // 1. Un-assign from the old user if there was one
     if (oldUserId && oldUserId !== userId) {
         updates[`/users/${oldUserId}/assignedCompanyId`] = null;
-        // Also reset the old user's plan to Free if they are no longer associated
         updates[`/users/${oldUserId}/plan`] = 'Free';
     }
     
     // 2. Update the company with the new user ID
     updates[`/companies/${companyId}/assignedUserUid`] = userId;
 
-    // 3. Update the new user's profile with the company ID
+    // 3. Update the new user's profile with the company ID and plan
     if (userId) {
         updates[`/users/${userId}/assignedCompanyId`] = companyId;
-        updates[`/users/${userId}/plan`] = companyData.plan || 'Free'; // Sync plan
+        updates[`/users/${userId}/plan`] = companyData.plan || 'Free';
     }
 
-    // Perform all updates atomically
     await update(ref(db), updates);
 }
 
