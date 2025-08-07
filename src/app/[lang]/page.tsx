@@ -4,10 +4,11 @@ import { DashboardClient } from "@/components/dashboard-client";
 import type { Locale } from "@/i18n-config";
 
 export default async function DashboardPage({
-  params
+  params: p
 }: {
   params: { lang: Locale };
 }) {
+  const params = await Promise.resolve(p);
   const { lang } = params;
   const dictionary = await getDictionary(lang);
   
