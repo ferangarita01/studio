@@ -291,32 +291,33 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const manageCompanies = async () => {
-        setIsLoading(true);
-        if (user) {
-            let currentSelectedCompany: Company | null = null;
-            if (role === 'admin') {
-                const userCompanies = await getCompanies(user.uid);
-                setCompanies(userCompanies);
-                if (userCompanies.length > 0) {
-                    currentSelectedCompany = userCompanies[0];
-                }
-            } else if (role === 'client' && userProfile?.assignedCompany) {
-                const clientCompany = userProfile.assignedCompany;
-                setCompanies([clientCompany]);
-                currentSelectedCompany = clientCompany;
-            } else {
-                setCompanies([]);
-            }
-            setSelectedCompany(currentSelectedCompany);
-        } else {
+        if (!user) {
             setCompanies([]);
             setSelectedCompany(null);
+            setIsLoading(false);
+            return;
+        }
+
+        setIsLoading(true);
+        if (role === 'admin') {
+            const userCompanies = await getCompanies(user.uid);
+            setCompanies(userCompanies);
+            setSelectedCompany(userCompanies[0] || null);
+        } else if (role === 'client') {
+            const clientCompany = userProfile?.assignedCompany || null;
+            if (clientCompany) {
+                setCompanies([clientCompany]);
+                setSelectedCompany(clientCompany);
+            } else {
+                setCompanies([]);
+                setSelectedCompany(null);
+            }
         }
         setIsLoading(false);
-    }
+    };
+
     manageCompanies();
 }, [user, role, userProfile]);
-
 
   const addCompany = (company: Company) => {
     setCompanies(prev => [...prev, company].sort((a,b) => a.name.localeCompare(b.name)));

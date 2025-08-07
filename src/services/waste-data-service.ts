@@ -50,7 +50,7 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
       const profile: UserProfile = { id: uid, ...profileData };
       
       // If user is a client and assigned to a company, fetch the company details and embed them
-      if (profile.role === 'client' && profile.assignedCompanyId) {
+      if (profile.role === 'client' && profile.assignedCompanyId && !profile.assignedCompany) {
           const company = await getCompanyById(profile.assignedCompanyId);
           if (company) {
               profile.assignedCompany = company;
