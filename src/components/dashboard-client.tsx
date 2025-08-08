@@ -316,8 +316,8 @@ export function DashboardPageContent({
               </p>
             </CardContent>
           </Card>
-          <Card asChild>
-            <Link href={`/${lang}/compliance`} onClick={handlePremiumFeatureClick}>
+          <Link href={`/${lang}/compliance`} onClick={handlePremiumFeatureClick}>
+            <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">{dictionary.cards.complianceStatus.title}</CardTitle>
                 <Activity className="h-4 w-4 text-muted-foreground" />
@@ -328,8 +328,8 @@ export function DashboardPageContent({
                     {dictionary.cards.complianceStatus.detail}
                 </p>
                 </CardContent>
-            </Link>
-          </Card>
+            </Card>
+          </Link>
         </div>
         <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
           <Card className="xl:col-span-2">
@@ -446,4 +446,5 @@ export function DashboardPageContent({
     
 
     
+
 
