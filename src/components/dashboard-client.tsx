@@ -6,6 +6,8 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { Activity, CalendarIcon, Trash2, Recycle, Loader2, DollarSign } from "lucide-react";
 import { format as formatDateFns, getMonth, getYear } from 'date-fns';
 import { enUS, es } from 'date-fns/locale';
+import Link from "next/link";
+
 
 import {
   Card,
@@ -30,6 +32,7 @@ import { useCompany } from "./layout/app-shell";
 import { getWasteLog, getDisposalEvents } from "@/services/waste-data-service";
 import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
+import { UpgradePlanDialog } from "./upgrade-plan-dialog";
 
 const chartConfig = {
   quantity: {
@@ -104,13 +107,15 @@ function WelcomeMessage({ dictionary }: { dictionary: Dictionary["dashboard"]["w
 export function DashboardPageContent({
   dictionary,
 }: DashboardPageContentProps) {
-  const { isAuthLoading, lang } = useAuth();
+  const { isAuthLoading, lang, role, userProfile } = useAuth();
   const { selectedCompany, isLoading: isCompanyContextLoading } = useCompany();
   
   const [wasteLog, setWasteLog] = React.useState<WasteEntry[]>([]);
   const [disposalEvents, setDisposalEvents] = React.useState<DisposalEvent[]>([]);
   const [isDataLoading, setIsDataLoading] = React.useState(true);
   const [isClient, setIsClient] = React.useState(false);
+  const [isUpgradeDialogOpen, setUpgradeDialogOpen] = React.useState(false);
+
 
   React.useEffect(() => {
     setIsClient(true);
@@ -197,6 +202,16 @@ export function DashboardPageContent({
 
   }, [wasteLog, lang]);
 
+  const handlePremiumFeatureClick = (e: React.MouseEvent) => {
+    const isPremiumFeature = true; // This card represents a premium feature
+    const isFreeUser = role === 'client' && userProfile?.plan !== 'Premium';
+
+    if (isPremiumFeature && isFreeUser) {
+      e.preventDefault();
+      setUpgradeDialogOpen(true);
+    }
+  };
+
   const renderLoadingState = () => (
       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="flex items-center">
@@ -242,6 +257,7 @@ export function DashboardPageContent({
 
 
   return (
+    <>
     <div className="flex w-full flex-col">
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <div className="flex items-center">
@@ -298,17 +314,19 @@ export function DashboardPageContent({
               </p>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{dictionary.cards.complianceStatus.title}</CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-primary">{dictionary.cards.complianceStatus.status}</div>
-              <p className="text-xs text-muted-foreground">
-                {dictionary.cards.complianceStatus.detail}
-              </p>
-            </CardContent>
+          <Card asChild>
+            <Link href={`/${lang}/compliance`} onClick={handlePremiumFeatureClick}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{dictionary.cards.complianceStatus.title}</CardTitle>
+                <Activity className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                <div className="text-2xl font-bold text-primary">{dictionary.cards.complianceStatus.status}</div>
+                <p className="text-xs text-muted-foreground">
+                    {dictionary.cards.complianceStatus.detail}
+                </p>
+                </CardContent>
+            </Link>
           </Card>
         </div>
         <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
@@ -411,6 +429,15 @@ export function DashboardPageContent({
         </Card>
       </main>
     </div>
+    {dictionary.navigation.upgradeDialog && (
+      <UpgradePlanDialog
+        open={isUpgradeDialogOpen}
+        onOpenChange={setUpgradeDialogOpen}
+        dictionary={dictionary.navigation.upgradeDialog}
+        lang={lang}
+      />
+    )}
+    </>
   );
 }
 
