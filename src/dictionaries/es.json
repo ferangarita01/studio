@@ -302,11 +302,11 @@
     "cards": {
       "totalWaste": {
         "title": "Residuos Totales Este Mes",
-        "change": "Desde el inicio del seguimiento"
+        "change": "Descúbrelo el próximo mes"
       },
       "recyclingRate": {
         "title": "Tasa de Reciclaje",
-        "change": "Desde el inicio del seguimiento"
+        "change": "Descúbrelo el próximo mes"
       },
       "income": {
         "title": "Ingresos Netos por Residuos",
@@ -738,5 +738,3 @@
     }
   }
 }
-
-    

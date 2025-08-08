@@ -302,11 +302,11 @@
     "cards": {
       "totalWaste": {
         "title": "Total Waste This Month",
-        "change": "Since tracking began"
+        "change": "Find out next month"
       },
       "recyclingRate": {
         "title": "Recycling Rate",
-        "change": "Since tracking began"
+        "change": "Find out next month"
       },
       "income": {
         "title": "Net Income from Waste",
@@ -738,5 +738,3 @@
     }
   }
 }
-
-    
