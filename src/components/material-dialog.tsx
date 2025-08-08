@@ -39,6 +39,7 @@ const formSchema = (dictionary: Dictionary["materialsPage"]["materialDialog"]["v
     required_error: dictionary.type.required,
   }),
   pricePerKg: z.coerce.number().min(0, { message: dictionary.price.min }),
+  serviceCostPerKg: z.coerce.number().min(0, { message: dictionary.serviceCost.min }),
 });
 
 type FormSchema = z.infer<ReturnType<typeof formSchema>>;
@@ -58,6 +59,7 @@ export function MaterialDialog({ open, onOpenChange, dictionary, onSave, materia
       name: "",
       type: undefined,
       pricePerKg: 0,
+      serviceCostPerKg: 0,
     },
   });
   
@@ -65,7 +67,7 @@ export function MaterialDialog({ open, onOpenChange, dictionary, onSave, materia
     if (material) {
       form.reset(material);
     } else {
-      form.reset({ name: "", type: undefined, pricePerKg: 0, id: undefined });
+      form.reset({ name: "", type: undefined, pricePerKg: 0, serviceCostPerKg: 0, id: undefined });
     }
   }, [material, form, open]);
 
@@ -140,6 +142,19 @@ export function MaterialDialog({ open, onOpenChange, dictionary, onSave, materia
                     <FormLabel>{dictionary.price}</FormLabel>
                     <FormControl>
                       <Input type="number" step="0.01" placeholder={dictionary.pricePlaceholder} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="serviceCostPerKg"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{dictionary.serviceCost}</FormLabel>
+                    <FormControl>
+                      <Input type="number" step="0.01" placeholder={dictionary.serviceCostPlaceholder} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

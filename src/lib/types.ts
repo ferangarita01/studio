@@ -41,6 +41,7 @@ export type Material = {
   name: string;
   type: WasteType;
   pricePerKg: number; // price per kg, for recyclables
+  serviceCostPerKg: number;
 };
 
 export type WasteEntry = {

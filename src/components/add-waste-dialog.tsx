@@ -85,15 +85,8 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntryAdded }:
     }
 
     try {
-        let price: number = 0; // Default to 0 instead of undefined
-        let serviceCost: number = 20; // Default service cost
-
-        if (selectedMaterial.type === 'Recycling') {
-            price = selectedMaterial.pricePerKg;
-            serviceCost = 5; // Lower service cost for recycling
-        } else if (selectedMaterial.type === 'Hazardous') {
-            serviceCost = 100; // Higher service cost for hazardous
-        }
+        const price = selectedMaterial.pricePerKg || 0;
+        const serviceCost = (selectedMaterial.serviceCostPerKg || 0) * values.quantity;
 
         const newEntryData = {
             companyId: selectedCompany.id,

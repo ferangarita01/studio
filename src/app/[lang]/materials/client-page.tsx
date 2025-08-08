@@ -171,13 +171,14 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
                     <TableHead>{dictionary.table.name}</TableHead>
                     <TableHead>{dictionary.table.type}</TableHead>
                     <TableHead className="text-right">{dictionary.table.pricePerKg}</TableHead>
+                    <TableHead className="text-right">{dictionary.table.serviceCostPerKg}</TableHead>
                     <TableHead className={cn("w-[50px]", !showAdminFeatures && "hidden")}><span className="sr-only">{dictionary.table.actions}</span></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (
                      <TableRow>
-                      <TableCell colSpan={4} className="h-24 text-center">
+                      <TableCell colSpan={5} className="h-24 text-center">
                          <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                       </TableCell>
                     </TableRow>
@@ -190,6 +191,9 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
                         </TableCell>
                         <TableCell className="text-right">
                            {formatCurrency(material.pricePerKg)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                           {formatCurrency(material.serviceCostPerKg)}
                         </TableCell>
                         <TableCell className={cn(!showAdminFeatures && "hidden")}>
                           <AlertDialog>
@@ -227,7 +231,7 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={4} className="h-24 text-center">
+                      <TableCell colSpan={5} className="h-24 text-center">
                         {dictionary.noMaterials}
                       </TableCell>
                     </TableRow>
@@ -248,4 +252,3 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
     </>
   );
 }
-
