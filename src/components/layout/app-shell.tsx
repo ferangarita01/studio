@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useState, createContext, useContext, useMemo, useEffect, useCallback } from "react";
 import Image from "next/image";
+import dynamic from 'next/dynamic';
 import {
   BrainCircuit,
   Calendar,
@@ -67,6 +68,10 @@ import { Toaster } from "../ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 import { WhatsAppButton } from "../whatsapp-button";
 import { UpgradePlanDialog } from "../upgrade-plan-dialog";
+
+const ClientOnlyToaster = dynamic(() => import('@/components/ui/toaster').then(mod => mod.Toaster), {
+  ssr: false,
+});
 
 const Logo = () => {
   const dictionary = useDictionaries()?.navigation;
@@ -339,8 +344,8 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
            setSelectedCompany(companies[0] || null);
         }
         toast({
-            title: dictionary.toast.delete.title,
-            description: dictionary.toast.delete.description
+            title: dictionary?.toast.delete.title,
+            description: dictionary?.toast.delete.description
         });
     } catch (error) {
          toast({
@@ -365,8 +370,8 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
       setCompanies(updatedCompanies);
 
       toast({
-        title: dictionary.toast.assign.title,
-        description: dictionary.toast.assign.description,
+        title: dictionary?.toast.assign.title,
+        description: dictionary?.toast.assign.description,
       });
     } catch (error) {
        toast({
@@ -384,8 +389,8 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
         c.id === companyId ? { ...c, ...data } : c
       ));
       toast({
-        title: dictionary.toast.update.title,
-        description: dictionary.toast.update.description,
+        title: dictionary?.toast.update.title,
+        description: dictionary?.toast.update.description,
       });
     } catch (error) {
        toast({
@@ -729,7 +734,7 @@ export function AppShell({ children, lang, dictionary }: { children: React.React
         enableSystem
         disableTransitionOnChange
     >
-      <Toaster />
+      <ClientOnlyToaster />
       <DictionariesProvider dictionary={dictionary}>
         <AuthProvider>
           <CompanyProvider>
@@ -746,3 +751,6 @@ export function AppShell({ children, lang, dictionary }: { children: React.React
 
 
 
+
+
+    
