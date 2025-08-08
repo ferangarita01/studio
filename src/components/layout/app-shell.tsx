@@ -291,36 +291,26 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const manageCompanies = async () => {
-        // Don't do anything until authentication is fully resolved
-        if (isAuthLoading) {
-            return;
-        }
-
         setIsLoading(true);
-        
-        if (user && role) { // Check for both user and role
+        if (user && role) {
+            const userCompanies = await getCompanies(user.uid, role === 'admin');
+            setCompanies(userCompanies);
             if (role === 'admin') {
-                const userCompanies = await getCompanies(user.uid, true);
-                setCompanies(userCompanies);
                 setSelectedCompany(userCompanies[0] || null);
             } else if (role === 'client' && userProfile?.assignedCompanyId) {
-                 const userCompanies = await getCompanies(user.uid, false);
-                 setCompanies(userCompanies);
-                 setSelectedCompany(userCompanies.find(c => c.id === userProfile.assignedCompanyId) || null);
-            } else {
-                 setCompanies([]);
-                 setSelectedCompany(null);
+                setSelectedCompany(userCompanies.find(c => c.id === userProfile.assignedCompanyId) || null);
             }
         } else {
-            // Not authenticated or no role, clear company data
             setCompanies([]);
             setSelectedCompany(null);
         }
-        
         setIsLoading(false);
     };
-
-    manageCompanies();
+    
+    // Only run the effect once authentication is complete
+    if (!isAuthLoading) {
+      manageCompanies();
+    }
 }, [user, role, userProfile, isAuthLoading]);
 
   const addCompany = (company: Company) => {
@@ -669,4 +659,5 @@ export function AppShell({ children, lang, dictionary }: { children: React.React
     </ThemeProvider>
    )
 }
+
 
