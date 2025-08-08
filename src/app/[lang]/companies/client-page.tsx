@@ -21,7 +21,7 @@ import type { Dictionary } from "@/lib/get-dictionary";
 import type { Company, UserProfile, PlanType } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { getUsers, assignUserToCompany, updateCompany, getCompanies, deleteCompany } from "@/services/waste-data-service";
+import { getUsers, assignUserToCompany, updateCompany, deleteCompany } from "@/services/waste-data-service";
 import { AssignUserDialog } from "@/components/assign-user-dialog";
 import { EditCompanyDialog } from "@/components/edit-company-dialog";
 import { Loader2, MoreHorizontal, Trash2 } from "lucide-react";
@@ -52,7 +52,7 @@ interface CompaniesClientProps {
 }
 
 export function CompaniesClient({ dictionary }: CompaniesClientProps) {
-  const [companies, setCompanies] = useState<Company[]>([]);
+  const { companies, setCompanies, setSelectedCompany: setGlobalSelectedCompany, isLoading: isCompanyLoading } = useCompany();
   const [clients, setClients] = useState<UserProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAssignDialogOpen, setAssignDialogOpen] = useState(false);
@@ -60,38 +60,26 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const { toast } = useToast();
   const { user, role, isLoading: isAuthLoading } = useAuth();
-  const { setSelectedCompany: setGlobalSelectedCompany } = useCompany();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  const fetchCompaniesData = useCallback(async () => {
+  const fetchClients = useCallback(async () => {
     if (!user) return;
-    setIsLoading(true);
-    const [fetchedCompanies, fetchedClients] = await Promise.all([
-      getCompanies(),
-      getUsers('client')
-    ]);
-
-    const clientMap = new Map(fetchedClients.map(client => [client.id, client.email]));
-    
-    const companiesWithClientNames = fetchedCompanies.map(company => ({
-        ...company,
-        assignedUserName: company.assignedUserUid ? clientMap.get(company.assignedUserUid) : undefined
-    }));
-
-    setCompanies(companiesWithClientNames);
+    const fetchedClients = await getUsers('client');
     setClients(fetchedClients);
-    setIsLoading(false);
   }, [user]);
 
   useEffect(() => {
-    if (user) {
-        fetchCompaniesData();
-    }
-  }, [user, fetchCompaniesData]);
+    fetchClients();
+  }, [fetchClients]);
+
+  useEffect(() => {
+     setIsLoading(isCompanyLoading);
+  }, [isCompanyLoading]);
+
 
   const handleOpenAssignDialog = (company: Company) => {
     setSelectedCompany(company);
@@ -120,7 +108,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
             variant: "destructive"
         });
     }
-  }, [toast, dictionary.toast.delete, setGlobalSelectedCompany]);
+  }, [toast, dictionary.toast.delete, setGlobalSelectedCompany, setCompanies]);
   
   const handleAssignUser = useCallback(async (companyId: string, userId: string | null) => {
     try {
@@ -147,7 +135,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
         variant: "destructive"
       });
     }
-  }, [companies, clients, toast, dictionary]);
+  }, [companies, clients, toast, dictionary, setCompanies]);
 
   const handleUpdateCompany = useCallback(async (companyId: string, data: { name: string; plan: PlanType }) => {
     try {
@@ -167,7 +155,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
         variant: "destructive"
       });
     }
-  }, [toast, dictionary]);
+  }, [toast, dictionary, setCompanies]);
 
   const showAdminFeatures = isClient && !isAuthLoading && role === 'admin';
 
@@ -205,7 +193,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
                       <TableRow key={company.id}>
                         <TableCell className="font-medium">{company.name}</TableCell>
                         <TableCell>
-                          {company.assignedUserName || <span className="text-muted-foreground">{dictionary.table.unassigned}</span>}
+                          {clients.find(c => c.id === company.assignedUserUid)?.email || <span className="text-muted-foreground">{dictionary.table.unassigned}</span>}
                         </TableCell>
                         <TableCell>
                             <Badge variant={company.plan === 'Premium' ? 'default' : 'secondary'}>{company.plan || 'Free'}</Badge>
