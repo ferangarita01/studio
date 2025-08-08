@@ -85,8 +85,8 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntryAdded }:
     }
 
     try {
-        let price: number | undefined = undefined;
-        let serviceCost: number | undefined = 20; // Default service cost
+        let price: number = 0; // Default to 0 instead of undefined
+        let serviceCost: number = 20; // Default service cost
 
         if (selectedMaterial.type === 'Recycling') {
             price = selectedMaterial.pricePerKg;
