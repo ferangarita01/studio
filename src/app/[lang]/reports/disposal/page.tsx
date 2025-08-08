@@ -4,12 +4,10 @@ import { getDictionary } from '@/lib/get-dictionary';
 import type { Locale } from '@/i18n-config';
 import { getDisposalCertificates } from '@/services/waste-data-service';
 import { FinalDisposalClient } from './client-page';
-import { getCurrentUser } from '@/lib/firebase-admin';
 
 // This page is now a Server Component to fetch data efficiently.
 export default async function FinalDisposalPage({ params }: { params: { lang: Locale }}) {
   const dictionary = await getDictionary(params.lang);
-  const user = await getCurrentUser();
 
   // Data is fetched on the server and passed to the client component.
   // We fetch all certificates here since filtering will be based on client-side state (selectedCompany).
