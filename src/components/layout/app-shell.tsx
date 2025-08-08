@@ -4,7 +4,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
-import React, { useState, createContext, useContext, useMemo, useEffect } from "react";
+import React, { useState, createContext, useContext, useMemo, useEffect, useCallback } from "react";
 import Image from "next/image";
 import {
   BrainCircuit,
@@ -44,18 +44,27 @@ import {
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import type { Company, UserProfile } from "@/lib/types";
+import type { Company, UserProfile, PlanType } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { CreateCompanyDialog } from "@/components/create-company-dialog";
 import { useAuth, AuthProvider } from "@/context/auth-context";
 import { useDictionaries, DictionariesProvider } from "@/context/dictionary-context";
-import { addCompany as addCompanyService, getCompanies, getCompanyById } from "@/services/waste-data-service";
+import { 
+  addCompany as addCompanyService, 
+  getCompanies, 
+  getCompanyById,
+  deleteCompany as deleteCompanyService,
+  updateCompany as updateCompanyService,
+  assignUserToCompany as assignUserToCompanyService,
+  getUsers
+} from "@/services/waste-data-service";
 import { Skeleton } from "../ui/skeleton";
 import { Badge } from "../ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import type { Dictionary } from "@/lib/get-dictionary";
 import { ThemeProvider } from "../theme-provider";
 import { Toaster } from "../ui/toaster";
+import { useToast } from "@/hooks/use-toast";
 import { WhatsAppButton } from "../whatsapp-button";
 import { UpgradePlanDialog } from "../upgrade-plan-dialog";
 
@@ -150,9 +159,12 @@ interface CompanyContextType {
   selectedCompany: Company | null;
   setSelectedCompany: (company: Company | null) => void;
   companies: Company[];
-  setCompanies: (companies: Company[]) => void;
+  setCompanies: React.Dispatch<React.SetStateAction<Company[]>>;
   addCompany: (company: Company) => void;
   isLoading: boolean;
+  handleDeleteCompany: (companyId: string) => Promise<void>;
+  handleAssignUser: (companyId: string, userId: string | null) => Promise<void>;
+  handleUpdateCompany: (companyId: string, data: Partial<Company>) => Promise<void>;
 }
 
 const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
@@ -288,6 +300,8 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { user, role, userProfile, isLoading: isAuthLoading } = useAuth();
+  const { toast } = useToast();
+  const dictionary = useDictionaries()?.companiesPage;
 
   useEffect(() => {
     const manageCompanies = async () => {
@@ -317,6 +331,72 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
     setCompanies(prev => [...prev, company].sort((a,b) => a.name.localeCompare(b.name)));
   };
 
+  const handleDeleteCompany = useCallback(async (companyId: string) => {
+    try {
+        await deleteCompanyService(companyId);
+        setCompanies(prev => prev.filter(c => c.id !== companyId));
+        if (selectedCompany?.id === companyId) {
+           setSelectedCompany(companies[0] || null);
+        }
+        toast({
+            title: dictionary.toast.delete.title,
+            description: dictionary.toast.delete.description
+        });
+    } catch (error) {
+         toast({
+            title: "Error",
+            description: "Failed to delete company.",
+            variant: "destructive"
+        });
+    }
+  }, [toast, dictionary, companies, selectedCompany]);
+
+  const handleAssignUser = useCallback(async (companyId: string, userId: string | null) => {
+    try {
+      await assignUserToCompanyService(companyId, userId);
+      const clients = await getUsers('client');
+      const updatedCompanies = companies.map(c => {
+        if (c.id === companyId) {
+          const assignedUser = clients.find(client => client.id === userId);
+          return { ...c, assignedUserUid: userId || undefined, assignedUserName: assignedUser?.email || undefined };
+        }
+        return c;
+      });
+      setCompanies(updatedCompanies);
+
+      toast({
+        title: dictionary.toast.assign.title,
+        description: dictionary.toast.assign.description,
+      });
+    } catch (error) {
+       toast({
+        title: "Error",
+        description: "Failed to assign user.",
+        variant: "destructive"
+      });
+    }
+  }, [companies, toast, dictionary]);
+
+  const handleUpdateCompany = useCallback(async (companyId: string, data: Partial<Company>) => {
+    try {
+      await updateCompanyService(companyId, data);
+      setCompanies(prevCompanies => prevCompanies.map(c => 
+        c.id === companyId ? { ...c, ...data } : c
+      ));
+      toast({
+        title: dictionary.toast.update.title,
+        description: dictionary.toast.update.description,
+      });
+    } catch (error) {
+       toast({
+        title: "Error",
+        description: "Failed to update company.",
+        variant: "destructive"
+      });
+    }
+  }, [toast, dictionary]);
+
+
   const companyContextValue = useMemo(() => ({
     selectedCompany,
     setSelectedCompany: (company: Company | null) => {
@@ -326,7 +406,10 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
     setCompanies,
     addCompany,
     isLoading,
-  }), [selectedCompany, companies, addCompany, isLoading]);
+    handleDeleteCompany,
+    handleAssignUser,
+    handleUpdateCompany,
+  }), [selectedCompany, companies, addCompany, isLoading, handleDeleteCompany, handleAssignUser, handleUpdateCompany]);
 
   return (
       <CompanyContext.Provider value={companyContextValue}>
@@ -659,5 +742,7 @@ export function AppShell({ children, lang, dictionary }: { children: React.React
     </ThemeProvider>
    )
 }
+
+
 
 

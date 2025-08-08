@@ -21,7 +21,7 @@ import type { Dictionary } from "@/lib/get-dictionary";
 import type { Company, UserProfile, PlanType } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { getUsers, assignUserToCompany, updateCompany, deleteCompany } from "@/services/waste-data-service";
+import { getUsers } from "@/services/waste-data-service";
 import { AssignUserDialog } from "@/components/assign-user-dialog";
 import { EditCompanyDialog } from "@/components/edit-company-dialog";
 import { Loader2, MoreHorizontal, Trash2 } from "lucide-react";
@@ -52,34 +52,43 @@ interface CompaniesClientProps {
 }
 
 export function CompaniesClient({ dictionary }: CompaniesClientProps) {
-  const { companies, setCompanies, setSelectedCompany: setGlobalSelectedCompany, isLoading: isCompanyLoading } = useCompany();
+  const { 
+    companies, 
+    isLoading: isCompanyLoading,
+    handleDeleteCompany,
+    handleAssignUser,
+    handleUpdateCompany,
+  } = useCompany();
   const [clients, setClients] = useState<UserProfile[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isAssignDialogOpen, setAssignDialogOpen] = useState(false);
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
-  const { toast } = useToast();
-  const { user, role, isLoading: isAuthLoading } = useAuth();
+  const { role, isLoading: isAuthLoading } = useAuth();
   const [isClient, setIsClient] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
   const fetchClients = useCallback(async () => {
-    if (!user) return;
     const fetchedClients = await getUsers('client');
     setClients(fetchedClients);
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     fetchClients();
   }, [fetchClients]);
 
-  useEffect(() => {
-     setIsLoading(isCompanyLoading);
-  }, [isCompanyLoading]);
+  const onAssign = async (companyId: string, userId: string | null) => {
+      await handleAssignUser(companyId, userId);
+      setAssignDialogOpen(false);
+  }
 
+  const onUpdate = async (companyId: string, data: { name: string; plan: PlanType }) => {
+      await handleUpdateCompany(companyId, data);
+      setEditDialogOpen(false);
+  }
 
   const handleOpenAssignDialog = (company: Company) => {
     setSelectedCompany(company);
@@ -90,73 +99,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
     setSelectedCompany(company);
     setEditDialogOpen(true);
   }
-
-  const handleDeleteCompany = useCallback(async (companyId: string) => {
-    try {
-        await deleteCompany(companyId);
-        setCompanies(prev => prev.filter(c => c.id !== companyId));
-        // Reset global company if it was the one deleted
-        setGlobalSelectedCompany(null);
-        toast({
-            title: dictionary.toast.delete.title,
-            description: dictionary.toast.delete.description
-        });
-    } catch (error) {
-         toast({
-            title: "Error",
-            description: "Failed to delete company.",
-            variant: "destructive"
-        });
-    }
-  }, [toast, dictionary.toast.delete, setGlobalSelectedCompany, setCompanies]);
   
-  const handleAssignUser = useCallback(async (companyId: string, userId: string | null) => {
-    try {
-      await assignUserToCompany(companyId, userId);
-      
-      const updatedCompanies = companies.map(c => {
-        if (c.id === companyId) {
-          const assignedUser = clients.find(client => client.id === userId);
-          return { ...c, assignedUserUid: userId || undefined, assignedUserName: assignedUser?.email || undefined };
-        }
-        return c;
-      });
-      setCompanies(updatedCompanies);
-
-      toast({
-        title: dictionary.toast.assign.title,
-        description: dictionary.toast.assign.description,
-      });
-      setAssignDialogOpen(false);
-    } catch (error) {
-       toast({
-        title: "Error",
-        description: "Failed to assign user.",
-        variant: "destructive"
-      });
-    }
-  }, [companies, clients, toast, dictionary, setCompanies]);
-
-  const handleUpdateCompany = useCallback(async (companyId: string, data: { name: string; plan: PlanType }) => {
-    try {
-      await updateCompany(companyId, data);
-      setCompanies(prevCompanies => prevCompanies.map(c => 
-        c.id === companyId ? { ...c, ...data } : c
-      ));
-      toast({
-        title: dictionary.toast.update.title,
-        description: dictionary.toast.update.description,
-      });
-      setEditDialogOpen(false);
-    } catch (error) {
-       toast({
-        title: "Error",
-        description: "Failed to update company.",
-        variant: "destructive"
-      });
-    }
-  }, [toast, dictionary, setCompanies]);
-
   const showAdminFeatures = isClient && !isAuthLoading && role === 'admin';
 
   return (
@@ -182,7 +125,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {isLoading ? (
+                  {isCompanyLoading ? (
                     <TableRow>
                       <TableCell colSpan={showAdminFeatures ? 4 : 3} className="h-24 text-center">
                         <Loader2 className="h-6 w-6 animate-spin mx-auto" />
@@ -255,14 +198,14 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
         dictionary={dictionary.assignDialog}
         clients={clients}
         company={selectedCompany}
-        onAssign={handleAssignUser}
+        onAssign={onAssign}
       />
       <EditCompanyDialog
         open={isEditDialogOpen}
         onOpenChange={setEditDialogOpen}
         dictionary={dictionary.editDialog}
         company={selectedCompany}
-        onUpdate={handleUpdateCompany}
+        onUpdate={onUpdate}
       />
     </>
   );
