@@ -250,15 +250,15 @@ export function LogClient({ dictionary, lang }: LogClientProps) {
                                </DropdownMenu>
                                <AlertDialogContent>
                                  <AlertDialogHeader>
-                                   <AlertDialogTitle>{dictionary.deleteDialog.title}</AlertDialogTitle>
+                                   <AlertDialogTitle>{dictionary?.deleteDialog?.title || "Are you sure?"}</AlertDialogTitle>
                                    <AlertDialogDescription>
-                                     {dictionary.deleteDialog.description}
+                                     {dictionary?.deleteDialog?.description || "This action cannot be undone. This will permanently delete the waste entry."}
                                    </AlertDialogDescription>
                                  </AlertDialogHeader>
                                  <AlertDialogFooter>
-                                   <AlertDialogCancel>{dictionary.deleteDialog.cancel}</AlertDialogCancel>
+                                   <AlertDialogCancel>{dictionary?.deleteDialog?.cancel || "Cancel"}</AlertDialogCancel>
                                    <AlertDialogAction onClick={() => handleDeleteEntry(entry.id)}>
-                                     {dictionary.deleteDialog.confirm}
+                                     {dictionary?.deleteDialog?.confirm || "Delete"}
                                    </AlertDialogAction>
                                  </AlertDialogFooter>
                                </AlertDialogContent>
