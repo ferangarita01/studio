@@ -438,7 +438,7 @@ export async function getDisposalCertificates(companyId: string): Promise<Dispos
 
 export async function addDisposalCertificate(companyId: string, file: File, userId: string): Promise<DisposalCertificate> {
     // 1. Upload file to storage - path updated to match new security rules
-    const filePath = `certificates/${userId}/${Date.now()}-${file.name}`;
+    const filePath = `certificates/${companyId}/${Date.now()}-${file.name}`;
     const fileRef = storageRef(storage, filePath);
     await uploadBytes(fileRef, file);
     const fileUrl = await getDownloadURL(fileRef);
