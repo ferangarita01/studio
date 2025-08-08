@@ -297,6 +297,26 @@ export async function addWasteEntry(entry: Omit<WasteEntry, 'id' | 'date'> & { d
     };
 }
 
+export async function updateWasteEntry(entry: WasteEntry, userId: string): Promise<void> {
+    const { id, ...entryData } = entry;
+    const entryRef = ref(db, `wasteLog/${id}`);
+    
+    const entryToSave = {
+        ...entryData,
+        date: entry.date.toISOString(), // Ensure date is stored as string
+        updatedBy: userId,
+    };
+    
+    await update(entryRef, entryToSave);
+}
+
+export async function deleteWasteEntry(entryId: string, userId: string): Promise<void> {
+    const entryRef = ref(db, `wasteLog/${entryId}`);
+    // You could add logging here to track who deleted it, e.g., by creating another log entry for the deletion.
+    await remove(entryRef);
+}
+
+
 // --- Disposal Event Service Functions ---
 
 export async function getDisposalEvents(companyId?: string): Promise<DisposalEvent[]> {
@@ -368,5 +388,3 @@ export async function uploadFile(file: File, path: string): Promise<string> {
     const downloadURL = await getDownloadURL(fileRef);
     return downloadURL;
 }
-
-    

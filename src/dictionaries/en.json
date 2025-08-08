@@ -393,7 +393,10 @@
       "quantity": "Quantity",
       "price": "Price/kg",
       "serviceCost": "Service Cost",
-      "totalValue": "Total Value"
+      "totalValue": "Total Value",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete"
     },
     "types": {
       "Recycling": "Recycling",
@@ -403,6 +406,7 @@
     },
     "addWasteDialog": {
       "title": "Add New Waste Entry",
+      "editTitle": "Edit Waste Entry",
       "description": "Record a new waste entry. Click save when you're done.",
       "material": {
         "label": "Material",
@@ -411,10 +415,17 @@
       "quantity": "Quantity (kg)",
       "quantityPlaceholder": "e.g., 25.5",
       "save": "Save Entry",
+      "update": "Update Entry",
       "cancel": "Cancel",
       "toast": {
-        "title": "Entry Added",
-        "description": "Your waste entry has been successfully recorded."
+        "add": {
+          "title": "Entry Added",
+          "description": "Your waste entry has been successfully recorded."
+        },
+        "update": {
+          "title": "Entry Updated",
+          "description": "Your waste entry has been successfully updated."
+        }
       },
       "validation": {
         "material": {
@@ -424,6 +435,18 @@
           "min": "Quantity must be greater than 0."
         }
       }
+    },
+    "deleteDialog": {
+      "title": "Are you sure?",
+      "description": "This action cannot be undone. This will permanently delete the waste entry.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
+    "toast": {
+        "delete": {
+            "title": "Entry Deleted",
+            "description": "The waste entry has been successfully deleted."
+        }
     }
   },
   "schedulePage": {

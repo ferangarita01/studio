@@ -393,7 +393,10 @@
       "quantity": "Cantidad",
       "price": "Precio/kg",
       "serviceCost": "Costo de Servicio",
-      "totalValue": "Valor Total"
+      "totalValue": "Valor Total",
+      "actions": "Acciones",
+      "edit": "Editar",
+      "delete": "Eliminar"
     },
     "types": {
       "Recycling": "Reciclaje",
@@ -401,8 +404,9 @@
       "General": "General",
       "Hazardous": "Peligroso"
     },
-     "addWasteDialog": {
+    "addWasteDialog": {
       "title": "Añadir Nueva Entrada de Residuos",
+      "editTitle": "Editar Entrada de Residuos",
       "description": "Registre una nueva entrada de residuos. Haga clic en guardar cuando haya terminado.",
       "material": {
         "label": "Material",
@@ -411,10 +415,17 @@
       "quantity": "Cantidad (kg)",
       "quantityPlaceholder": "ej., 25.5",
       "save": "Guardar Entrada",
+      "update": "Actualizar Entrada",
       "cancel": "Cancelar",
       "toast": {
-        "title": "Entrada Añadida",
-        "description": "Su entrada de residuos ha sido registrada exitosamente."
+        "add": {
+          "title": "Entrada Añadida",
+          "description": "Su entrada de residuos ha sido registrada exitosamente."
+        },
+        "update": {
+          "title": "Entrada Actualizada",
+          "description": "Su entrada de residuos ha sido actualizada exitosamente."
+        }
       },
       "validation": {
         "material": {
@@ -424,6 +435,18 @@
           "min": "La cantidad debe ser mayor que 0."
         }
       }
+    },
+    "deleteDialog": {
+      "title": "¿Estás seguro?",
+      "description": "Esta acción no se puede deshacer. Esto eliminará permanentemente la entrada de residuos.",
+      "cancel": "Cancelar",
+      "confirm": "Eliminar"
+    },
+    "toast": {
+        "delete": {
+            "title": "Entrada Eliminada",
+            "description": "La entrada de residuos ha sido eliminada exitosamente."
+        }
     }
   },
   "schedulePage": {

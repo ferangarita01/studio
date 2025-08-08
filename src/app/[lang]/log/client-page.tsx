@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { PlusCircle, Loader2 } from "lucide-react";
+import { PlusCircle, Loader2, MoreHorizontal, Trash2, Pencil } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -18,6 +18,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import type { Dictionary } from "@/lib/get-dictionary";
 import type { WasteEntry } from "@/lib/types";
 import { useCompany } from "@/components/layout/app-shell";
@@ -25,9 +42,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AddWasteDialog } from "@/components/add-waste-dialog";
 import { useAuth } from "@/context/auth-context";
-import { getWasteLog } from "@/services/waste-data-service";
+import { getWasteLog, deleteWasteEntry } from "@/services/waste-data-service";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/i18n-config";
+import { useToast } from "@/hooks/use-toast";
+
 
 interface LogClientProps {
   dictionary: Dictionary["logPage"];
@@ -37,10 +56,12 @@ interface LogClientProps {
 export function LogClient({ dictionary, lang }: LogClientProps) {
   const { selectedCompany } = useCompany();
   const [isAddWasteDialogOpen, setAddWasteDialogOpen] = useState(false);
+  const [selectedEntry, setSelectedEntry] = useState<WasteEntry | null>(null);
   const [wasteLog, setWasteLog] = useState<WasteEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { role, isLoading: isAuthLoading } = useAuth();
+  const { role, isLoading: isAuthLoading, user } = useAuth();
   const [isClient, setIsClient] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     setIsClient(true);
@@ -60,11 +81,48 @@ export function LogClient({ dictionary, lang }: LogClientProps) {
     };
     fetchLog();
   }, [selectedCompany]);
-  
 
-  const handleEntryAdded = useCallback((newEntry: WasteEntry) => {
-    setWasteLog(currentLog => [newEntry, ...currentLog].sort((a,b) => b.date.getTime() - a.date.getTime()));
-  }, []);
+  const handleAddClick = () => {
+    setSelectedEntry(null);
+    setAddWasteDialogOpen(true);
+  };
+  
+  const handleEditClick = (entry: WasteEntry) => {
+    setSelectedEntry(entry);
+    setAddWasteDialogOpen(true);
+  };
+
+  const handleDeleteEntry = async (entryId: string) => {
+    if (!user) return;
+    try {
+        await deleteWasteEntry(entryId, user.uid);
+        setWasteLog(prev => prev.filter(entry => entry.id !== entryId));
+        toast({
+            title: dictionary.toast.delete.title,
+            description: dictionary.toast.delete.description,
+        });
+    } catch (error) {
+        toast({
+            title: "Error",
+            description: "Failed to delete waste entry.",
+            variant: "destructive"
+        });
+    }
+  };
+
+  const handleEntrySaved = useCallback((savedEntry: WasteEntry) => {
+    const entryExists = wasteLog.some(entry => entry.id === savedEntry.id);
+    if (entryExists) {
+        // Update existing entry
+        setWasteLog(currentLog => 
+            currentLog.map(entry => entry.id === savedEntry.id ? savedEntry : entry)
+                      .sort((a,b) => b.date.getTime() - a.date.getTime())
+        );
+    } else {
+        // Add new entry
+        setWasteLog(currentLog => [savedEntry, ...currentLog].sort((a,b) => b.date.getTime() - a.date.getTime()));
+    }
+  }, [wasteLog]);
 
   if (!selectedCompany) {
     return (
@@ -105,7 +163,7 @@ export function LogClient({ dictionary, lang }: LogClientProps) {
         <div className="flex items-center">
           <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
            <div className={cn("ml-auto flex items-center gap-2", !showAdminFeatures && "hidden")}>
-             <Button size="sm" className="h-8 gap-1" onClick={() => setAddWasteDialogOpen(true)}>
+             <Button size="sm" className="h-8 gap-1" onClick={handleAddClick}>
                <PlusCircle className="h-3.5 w-3.5" />
                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                  {dictionary.addWasteEntry}
@@ -130,12 +188,15 @@ export function LogClient({ dictionary, lang }: LogClientProps) {
                     <TableHead className="text-right">{dictionary.table.price}</TableHead>
                     <TableHead className="text-right">{dictionary.table.serviceCost}</TableHead>
                     <TableHead className="text-right">{dictionary.table.totalValue}</TableHead>
+                     <TableHead className={cn("text-right", !showAdminFeatures && "hidden")}>
+                        <span className="sr-only">{dictionary.table.actions}</span>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={7} className="h-24 text-center">
+                      <TableCell colSpan={showAdminFeatures ? 8 : 7} className="h-24 text-center">
                         <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                       </TableCell>
                     </TableRow>
@@ -165,12 +226,50 @@ export function LogClient({ dictionary, lang }: LogClientProps) {
                                 {formatCurrency(totalValue)}
                               </span>
                           </TableCell>
+                           <TableCell className={cn("text-right", !showAdminFeatures && "hidden")}>
+                            <AlertDialog>
+                               <DropdownMenu>
+                                 <DropdownMenuTrigger asChild>
+                                   <Button variant="ghost" className="h-8 w-8 p-0">
+                                     <span className="sr-only">Open menu</span>
+                                     <MoreHorizontal className="h-4 w-4" />
+                                   </Button>
+                                 </DropdownMenuTrigger>
+                                 <DropdownMenuContent align="end">
+                                   <DropdownMenuItem onClick={() => handleEditClick(entry)}>
+                                     <Pencil className="mr-2 h-4 w-4" />
+                                     {dictionary.table.edit}
+                                   </DropdownMenuItem>
+                                   <AlertDialogTrigger asChild>
+                                     <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()}>
+                                       <Trash2 className="mr-2 h-4 w-4" />
+                                       {dictionary.table.delete}
+                                     </DropdownMenuItem>
+                                   </AlertDialogTrigger>
+                                 </DropdownMenuContent>
+                               </DropdownMenu>
+                               <AlertDialogContent>
+                                 <AlertDialogHeader>
+                                   <AlertDialogTitle>{dictionary.deleteDialog.title}</AlertDialogTitle>
+                                   <AlertDialogDescription>
+                                     {dictionary.deleteDialog.description}
+                                   </AlertDialogDescription>
+                                 </AlertDialogHeader>
+                                 <AlertDialogFooter>
+                                   <AlertDialogCancel>{dictionary.deleteDialog.cancel}</AlertDialogCancel>
+                                   <AlertDialogAction onClick={() => handleDeleteEntry(entry.id)}>
+                                     {dictionary.deleteDialog.confirm}
+                                   </AlertDialogAction>
+                                 </AlertDialogFooter>
+                               </AlertDialogContent>
+                             </AlertDialog>
+                          </TableCell>
                         </TableRow>
                       );
                     })
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={7} className="h-24 text-center">
+                      <TableCell colSpan={showAdminFeatures ? 8 : 7} className="h-24 text-center">
                         {dictionary.noEntries}
                       </TableCell>
                     </TableRow>
@@ -185,7 +284,8 @@ export function LogClient({ dictionary, lang }: LogClientProps) {
         open={isAddWasteDialogOpen} 
         onOpenChange={setAddWasteDialogOpen}
         dictionary={dictionary.addWasteDialog}
-        onEntryAdded={handleEntryAdded}
+        onEntrySaved={handleEntrySaved}
+        entryToEdit={selectedEntry}
       />
     </>
   );

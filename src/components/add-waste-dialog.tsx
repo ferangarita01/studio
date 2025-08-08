@@ -31,10 +31,12 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import type { Dictionary } from "@/lib/get-dictionary";
-import { addWasteEntry, getMaterials } from "@/services/waste-data-service";
-import type { WasteEntry, WasteType, Material } from "@/lib/types";
+import { addWasteEntry, getMaterials, updateWasteEntry } from "@/services/waste-data-service";
+import type { WasteEntry, Material } from "@/lib/types";
 import { useCompany } from "./layout/app-shell";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/context/auth-context";
+
 
 const formSchema = (dictionary: Dictionary["logPage"]["addWasteDialog"]["validation"]) => z.object({
     materialId: z.string({
@@ -49,23 +51,17 @@ interface AddWasteDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     dictionary: Dictionary["logPage"]["addWasteDialog"];
-    onEntryAdded: (newEntry: WasteEntry) => void;
+    onEntrySaved: (savedEntry: WasteEntry) => void;
+    entryToEdit: WasteEntry | null;
 }
 
-export function AddWasteDialog({ open, onOpenChange, dictionary, onEntryAdded }: AddWasteDialogProps) {
+export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, entryToEdit }: AddWasteDialogProps) {
   const { toast } = useToast();
   const { selectedCompany } = useCompany();
+  const { user } = useAuth();
   const [materials, setMaterials] = useState<Material[]>([]);
-
-  useEffect(() => {
-    if (open) {
-      const fetchMaterials = async () => {
-        const fetchedMaterials = await getMaterials();
-        setMaterials(fetchedMaterials);
-      };
-      fetchMaterials();
-    }
-  }, [open]);
+  
+  const isEditMode = !!entryToEdit;
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema(dictionary.validation)),
@@ -74,9 +70,31 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntryAdded }:
       quantity: 0,
     },
   });
+  
+  useEffect(() => {
+    if (open) {
+      const fetchMaterials = async () => {
+        const fetchedMaterials = await getMaterials();
+        setMaterials(fetchedMaterials);
+      };
+      fetchMaterials();
+
+      if (isEditMode && entryToEdit) {
+        form.reset({
+            materialId: entryToEdit.materialId,
+            quantity: entryToEdit.quantity,
+        });
+      } else {
+        form.reset({
+            materialId: undefined,
+            quantity: 0,
+        });
+      }
+    }
+  }, [open, entryToEdit, isEditMode, form]);
 
   const onSubmit = async (values: FormSchema) => {
-    if (!selectedCompany) return;
+    if (!selectedCompany || !user) return;
     
     const selectedMaterial = materials.find(m => m.id === values.materialId);
     if (!selectedMaterial) {
@@ -88,29 +106,41 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntryAdded }:
         const price = selectedMaterial.pricePerKg || 0;
         const serviceCost = (selectedMaterial.serviceCostPerKg || 0) * values.quantity;
 
-        const newEntryData = {
+        const entryData = {
             companyId: selectedCompany.id,
             type: selectedMaterial.type,
             materialId: selectedMaterial.id,
             materialName: selectedMaterial.name,
             quantity: values.quantity,
-            date: new Date(),
+            date: isEditMode ? entryToEdit!.date : new Date(),
             price,
             serviceCost,
         }
-        const newEntry = await addWasteEntry(newEntryData);
-        onEntryAdded(newEntry);
-        toast({
-            title: dictionary.toast.title,
-            description: dictionary.toast.description,
-        });
+
+        if (isEditMode) {
+            const updatedEntry = { ...entryToEdit, ...entryData };
+            await updateWasteEntry(updatedEntry, user.uid);
+            onEntrySaved(updatedEntry);
+            toast({
+                title: dictionary.toast.update.title,
+                description: dictionary.toast.update.description,
+            });
+        } else {
+            const newEntry = await addWasteEntry(entryData);
+            onEntrySaved(newEntry);
+            toast({
+                title: dictionary.toast.add.title,
+                description: dictionary.toast.add.description,
+            });
+        }
+        
         form.reset();
         onOpenChange(false);
     } catch (error) {
-        console.error("Failed to add waste entry:", error);
+        console.error("Failed to save waste entry:", error);
          toast({
             title: "Error",
-            description: "Failed to add waste entry. Please try again.",
+            description: "Failed to save waste entry. Please try again.",
             variant: "destructive"
         });
     }
@@ -130,7 +160,7 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntryAdded }:
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
                 <DialogHeader>
-                <DialogTitle>{dictionary.title}</DialogTitle>
+                <DialogTitle>{isEditMode ? dictionary.editTitle : dictionary.title}</DialogTitle>
                 <DialogDescription>
                     {dictionary.description}
                 </DialogDescription>
@@ -181,7 +211,7 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntryAdded }:
                 </div>
                 <DialogFooter>
                     <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>{dictionary.cancel}</Button>
-                    <Button type="submit">{dictionary.save}</Button>
+                    <Button type="submit">{isEditMode ? dictionary.update : dictionary.save}</Button>
                 </DialogFooter>
             </form>
         </Form>
