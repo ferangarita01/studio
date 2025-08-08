@@ -136,6 +136,7 @@ export default function FinalDisposalPage() {
         open={isUploadDialogOpen}
         onOpenChange={setUploadDialogOpen}
         onCertificateAdded={handleCertificateAdded}
+        dictionary={pageDictionary?.uploadDialog}
     />
     </>
   );

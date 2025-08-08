@@ -31,29 +31,31 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { useDictionaries } from '@/context/dictionary-context';
+import type { Dictionary } from '@/lib/get-dictionary';
 import { addDisposalCertificate, getCompanies } from "@/services/waste-data-service";
 import type { Company, DisposalCertificate } from "@/lib/types";
 import { useAuth } from "@/context/auth-context";
 import { Loader2 } from 'lucide-react';
 
+type UploadDialogDictionary = Dictionary["reportsPage"]["finalDisposal"]["uploadDialog"];
+
 interface UploadCertificateDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCertificateAdded: (certificate: DisposalCertificate) => void;
+  dictionary: UploadDialogDictionary | undefined;
 }
 
 export function UploadCertificateDialog({
   open,
   onOpenChange,
   onCertificateAdded,
+  dictionary
 }: UploadCertificateDialogProps) {
-  const dictionary = useDictionaries()?.reportsPage.finalDisposal.uploadDialog;
   const { toast } = useToast();
   const { user } = useAuth();
   const [companies, setCompanies] = React.useState<Company[]>([]);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const formSchema = z.object({
     companyId: z.string().min(1, { message: dictionary?.validation.company }),
