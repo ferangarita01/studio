@@ -13,6 +13,7 @@ import { UploadCertificateDialog } from '@/components/upload-certificate-dialog'
 import { cn } from '@/lib/utils';
 import type { Locale } from '@/i18n-config';
 import type { Dictionary } from '@/lib/get-dictionary';
+import { getDisposalCertificates } from '@/services/waste-data-service';
 
 type PageDictionary = Dictionary["reportsPage"]["finalDisposal"];
 type NavDictionary = Dictionary["navigation"]["links"];
@@ -20,38 +21,48 @@ type NavDictionary = Dictionary["navigation"]["links"];
 interface FinalDisposalClientProps {
   dictionary: PageDictionary;
   navDictionary: NavDictionary;
-  initialCertificates: DisposalCertificate[];
   lang: Locale;
 }
 
-export function FinalDisposalClient({ dictionary, navDictionary, initialCertificates, lang }: FinalDisposalClientProps) {
+export function FinalDisposalClient({ dictionary, navDictionary, lang }: FinalDisposalClientProps) {
   const { role, isLoading: isAuthLoading } = useAuth();
   const { selectedCompany, isLoading: isCompanyLoading } = useCompany();
   const [certificates, setCertificates] = React.useState<DisposalCertificate[]>([]);
   const [isClient, setIsClient] = React.useState(false);
   const [isUploadDialogOpen, setUploadDialogOpen] = React.useState(false);
+  const [isLoadingData, setIsLoadingData] = React.useState(true);
+
 
   React.useEffect(() => {
     setIsClient(true);
   }, []);
-
+  
   React.useEffect(() => {
-    if (selectedCompany) {
-      const filteredCerts = initialCertificates.filter(cert => cert.companyId === selectedCompany.id);
-      setCertificates(filteredCerts);
-    } else {
-      setCertificates([]);
+    const fetchCertificates = async () => {
+      if (selectedCompany) {
+        setIsLoadingData(true);
+        const fetchedCerts = await getDisposalCertificates(selectedCompany.id);
+        setCertificates(fetchedCerts);
+        setIsLoadingData(false);
+      } else {
+        setCertificates([]);
+        setIsLoadingData(false);
+      }
+    };
+    
+    // Don't fetch until the company context is ready.
+    if (!isCompanyLoading) {
+      fetchCertificates();
     }
-  }, [selectedCompany, initialCertificates]);
+  }, [selectedCompany, isCompanyLoading]);
+
 
   const handleCertificateAdded = (newCertificate: DisposalCertificate) => {
-    // Add to the initial list to keep it updated without a full refetch
-    initialCertificates.push(newCertificate);
     setCertificates(prev => [newCertificate, ...prev].sort((a,b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()));
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(lang as Locale, {
+    return new Date(dateString).toLocaleDateString(lang, {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -59,6 +70,69 @@ export function FinalDisposalClient({ dictionary, navDictionary, initialCertific
   };
   
   const showAdminFeatures = isClient && !isAuthLoading && role === 'admin';
+  
+  const renderContent = () => {
+    if (isCompanyLoading || isLoadingData) {
+      return (
+        <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      );
+    }
+    
+    if (!selectedCompany) {
+      return (
+        <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
+          <div className="text-center">
+            <p className="text-muted-foreground">{dictionary.noCompanySelected}</p>
+          </div>
+        </div>
+      );
+    }
+    
+    if (certificates.length === 0) {
+      return (
+        <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
+          <div className="text-center">
+            <h3 className="text-2xl font-bold tracking-tight">
+              {dictionary.noCertificates.title}
+            </h3>
+            <p className="text-muted-foreground mt-2">
+              {dictionary.noCertificates.description}
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{dictionary.table.fileName}</TableHead>
+            <TableHead>{dictionary.table.uploadDate}</TableHead>
+            <TableHead className="text-right">{dictionary.table.actions}</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {certificates.map((cert) => (
+            <TableRow key={cert.id}>
+              <TableCell className="font-medium">{cert.fileName}</TableCell>
+              <TableCell>{formatDate(cert.uploadedAt)}</TableCell>
+              <TableCell className="text-right">
+                <Button asChild variant="outline" size="sm">
+                  <a href={cert.fileUrl} target="_blank" rel="noopener noreferrer" download={cert.fileName}>
+                    <Download className="mr-2 h-4 w-4" />
+                    {dictionary.table.download}
+                  </a>
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    );
+  };
 
   return (
     <>
@@ -82,54 +156,7 @@ export function FinalDisposalClient({ dictionary, navDictionary, initialCertific
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {isCompanyLoading ? (
-               <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
-                  <Loader2 className="h-8 w-8 animate-spin" />
-               </div>
-            ) : !selectedCompany ? (
-              <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
-                 <div className="text-center">
-                   <p className="text-muted-foreground">{dictionary.noCompanySelected}</p>
-                 </div>
-              </div>
-            ) : certificates.length === 0 ? (
-               <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
-                <div className="text-center">
-                  <h3 className="text-2xl font-bold tracking-tight">
-                    {dictionary.noCertificates.title}
-                  </h3>
-                  <p className="text-muted-foreground mt-2">
-                    {dictionary.noCertificates.description}
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{dictionary.table.fileName}</TableHead>
-                    <TableHead>{dictionary.table.uploadDate}</TableHead>
-                    <TableHead className="text-right">{dictionary.table.actions}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {certificates.map((cert) => (
-                    <TableRow key={cert.id}>
-                      <TableCell className="font-medium">{cert.fileName}</TableCell>
-                      <TableCell>{formatDate(cert.uploadedAt)}</TableCell>
-                      <TableCell className="text-right">
-                         <Button asChild variant="outline" size="sm">
-                            <a href={cert.fileUrl} target="_blank" rel="noopener noreferrer" download={cert.fileName}>
-                              <Download className="mr-2 h-4 w-4" />
-                              {dictionary.table.download}
-                            </a>
-                          </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
+             {renderContent()}
           </CardContent>
         </Card>
       </div>
