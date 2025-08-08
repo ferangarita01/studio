@@ -7,14 +7,23 @@
       }
     },
     "companies": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
       "$companyId": {
-        ".read": "auth != null && (root.child('users').child(auth.uid).child('companyId').val() == $companyId || root.child('users').child(auth.uid).child('role').val() == 'admin')",
-        ".write": "auth != null && (root.child('users').child(auth.uid).child('companyId').val() == $companyId || root.child('users').child(auth.uid).child('role').val() == 'admin')"
+        ".read": "auth != null && (root.child('users').child(auth.uid).child('assignedCompanyId').val() == $companyId || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        ".write": "auth != null && (root.child('users').child(auth.uid).child('assignedCompanyId').val() == $companyId || root.child('users').child(auth.uid).child('role').val() == 'admin')"
       }
     },
     "materials": {
       ".read": "auth != null",
       ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
+    },
+    "wasteLog": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "disposalEvents": {
+       ".read": "auth != null",
+       ".write": "auth != null"
     }
   }
 }

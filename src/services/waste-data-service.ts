@@ -75,15 +75,16 @@ export async function getCompanies(userId?: string, isAdmin: boolean = false): P
   const dbRef = ref(db, 'companies');
   let snapshot;
 
-  if (isAdmin && userId) {
-      const companiesQuery = query(dbRef, orderByChild('createdBy'), equalTo(userId));
-      snapshot = await get(companiesQuery);
+  if (isAdmin) {
+    // Admin gets all companies. This requires the rules to allow reads on the parent node.
+    snapshot = await get(dbRef);
   } else if (userId) {
-      const companiesQuery = query(dbRef, orderByChild('assignedUserUid'), equalTo(userId));
-      snapshot = await get(companiesQuery);
+    // Client gets only their assigned company.
+    const companiesQuery = query(dbRef, orderByChild('assignedUserUid'), equalTo(userId));
+    snapshot = await get(companiesQuery);
   } else {
-      // If not admin and no userId, there's nothing to fetch based on current rules
-      return [];
+    // If not admin and no userId, there's nothing to fetch based on current rules.
+    return [];
   }
 
   if (!snapshot.exists()) {
@@ -91,13 +92,7 @@ export async function getCompanies(userId?: string, isAdmin: boolean = false): P
   }
   
   const allCompanies: Company[] = snapshotToArray(snapshot);
-  
-  // The query already filters for the client, but for admin we get all, so we sort here
-  if (isAdmin) {
-      return allCompanies.sort((a, b) => a.name.localeCompare(b.name));
-  }
-  
-  return allCompanies;
+  return allCompanies.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function getCompanyById(companyId: string): Promise<Company | null> {
