@@ -48,10 +48,10 @@ const formSchema = (dictionary: Dictionary["logPage"]["addWasteDialog"]["validat
         required_error: "A date is required.", // This message can be translated if needed
     }),
     materialId: z.string({
-        required_error: dictionary.material.required,
+        required_error: dictionary?.material?.required || "Please select a material.",
     }),
-    quantity: z.coerce.number().min(0.1, { message: dictionary.quantity.min }),
-    serviceCost: z.coerce.number().min(0, { message: dictionary.serviceCost.min }),
+    quantity: z.coerce.number().min(0.1, { message: dictionary?.quantity?.min || "Quantity must be greater than 0." }),
+    serviceCost: z.coerce.number().min(0, { message: dictionary?.serviceCost?.min || "Service cost cannot be negative." }),
 });
 
 type FormSchema = z.infer<ReturnType<typeof formSchema>>;
