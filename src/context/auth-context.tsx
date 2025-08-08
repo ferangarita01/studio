@@ -60,9 +60,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setIsLoading(true);
-      setUser(user);
       if (user) {
-        // Special override for a specific admin user for testing/demo purposes
+        // We set the user object first
+        setUser(user);
+        
+        // Then we fetch the profile, which includes the role
+        // This ensures that any logic depending on the user being set
+        // will also have access to the role once the profile is fetched.
         if (user.email === 'prueba2@admin.co') {
             const profile = await getUserProfile(user.uid);
             setUserProfile({...profile, id: user.uid, email: user.email, role: 'admin' });
@@ -73,9 +77,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setRole(profile?.role || null);
         }
       } else {
+        // If no user, clear all user-related state
+        setUser(null);
         setUserProfile(null);
         setRole(null);
       }
+      // Only set loading to false after all user data (including profile/role) is fetched or cleared
       setIsLoading(false);
     });
 

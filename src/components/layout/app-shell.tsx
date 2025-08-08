@@ -291,24 +291,32 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const manageCompanies = async () => {
-        if (isAuthLoading || !user) {
-            if (!isAuthLoading) setIsLoading(false);
+        // Don't do anything until authentication is fully resolved
+        if (isAuthLoading) {
             return;
         }
 
         setIsLoading(true);
-        if (role === 'admin') {
-            const userCompanies = await getCompanies(user.uid, true);
-            setCompanies(userCompanies);
-            setSelectedCompany(userCompanies[0] || null);
-        } else if (role === 'client' && userProfile?.assignedCompany) {
-            const userCompanies = await getCompanies(user.uid, false);
-            setCompanies(userCompanies);
-            setSelectedCompany(userCompanies.find(c => c.id === userProfile.assignedCompanyId) || null);
+        
+        if (user && role) { // Check for both user and role
+            if (role === 'admin') {
+                const userCompanies = await getCompanies(user.uid, true);
+                setCompanies(userCompanies);
+                setSelectedCompany(userCompanies[0] || null);
+            } else if (role === 'client' && userProfile?.assignedCompanyId) {
+                 const userCompanies = await getCompanies(user.uid, false);
+                 setCompanies(userCompanies);
+                 setSelectedCompany(userCompanies.find(c => c.id === userProfile.assignedCompanyId) || null);
+            } else {
+                 setCompanies([]);
+                 setSelectedCompany(null);
+            }
         } else {
+            // Not authenticated or no role, clear company data
             setCompanies([]);
             setSelectedCompany(null);
         }
+        
         setIsLoading(false);
     };
 
