@@ -185,7 +185,7 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, e
                         name="date"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{dictionary.date.label}</FormLabel>
+                            <FormLabel>{dictionary?.date?.label || "Date"}</FormLabel>
                             <Popover>
                               <PopoverTrigger asChild>
                                 <FormControl>
@@ -199,7 +199,7 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, e
                                     {field.value ? (
                                       format(field.value, "PPP")
                                     ) : (
-                                      <span>{dictionary.date.placeholder}</span>
+                                      <span>{dictionary?.date?.placeholder || "Select a date"}</span>
                                     )}
                                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                   </Button>
@@ -223,11 +223,11 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, e
                         name="materialId"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{dictionary.material.label}</FormLabel>
+                            <FormLabel>{dictionary?.material?.label || "Material"}</FormLabel>
                              <Select onValueChange={field.onChange} defaultValue={field.value}>
                               <FormControl>
                                 <SelectTrigger>
-                                  <SelectValue placeholder={dictionary.material.selectPlaceholder} />
+                                  <SelectValue placeholder={dictionary?.material?.selectPlaceholder || "Select a material"} />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
@@ -247,12 +247,12 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, e
                         name="quantity"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{dictionary.quantity.label}</FormLabel>
+                            <FormLabel>{dictionary?.quantity?.label || "Quantity (kg)"}</FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
                                 step="0.1"
-                                placeholder={dictionary.quantity.placeholder}
+                                placeholder={dictionary?.quantity?.placeholder || "e.g., 25.5"}
                                 {...field}
                                 />
                             </FormControl>
@@ -265,12 +265,12 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, e
                         name="serviceCost"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{dictionary.serviceCost.label}</FormLabel>
+                            <FormLabel>{dictionary?.serviceCost?.label || "Service Cost ($)"}</FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
                                 step="0.01"
-                                placeholder={dictionary.serviceCost.placeholder}
+                                placeholder={dictionary?.serviceCost?.placeholder || "e.g., 5.00"}
                                 {...field}
                                 />
                             </FormControl>
