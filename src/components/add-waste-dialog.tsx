@@ -34,7 +34,7 @@ import type { Dictionary } from "@/lib/get-dictionary";
 import { addWasteEntry, getMaterials, updateWasteEntry } from "@/services/waste-data-service";
 import type { WasteEntry, Material } from "@/lib/types";
 import { useCompany } from "./layout/app-shell";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/context/auth-context";
 
 
@@ -43,6 +43,7 @@ const formSchema = (dictionary: Dictionary["logPage"]["addWasteDialog"]["validat
         required_error: dictionary.material.required,
     }),
     quantity: z.coerce.number().min(0.1, { message: dictionary.quantity.min }),
+    serviceCost: z.coerce.number().min(0, { message: dictionary.serviceCost.min }),
 });
 
 type FormSchema = z.infer<ReturnType<typeof formSchema>>;
@@ -68,8 +69,22 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, e
     defaultValues: {
       materialId: undefined,
       quantity: 0,
+      serviceCost: 0,
     },
   });
+
+  const materialId = form.watch("materialId");
+  const quantity = form.watch("quantity");
+
+  useEffect(() => {
+    if (materialId && quantity > 0 && !isEditMode) {
+      const selectedMaterial = materials.find(m => m.id === materialId);
+      if (selectedMaterial) {
+        const calculatedCost = (selectedMaterial.serviceCostPerKg || 0) * quantity;
+        form.setValue("serviceCost", calculatedCost, { shouldValidate: true });
+      }
+    }
+  }, [materialId, quantity, materials, form, isEditMode]);
   
   useEffect(() => {
     if (open) {
@@ -83,11 +98,13 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, e
         form.reset({
             materialId: entryToEdit.materialId,
             quantity: entryToEdit.quantity,
+            serviceCost: entryToEdit.serviceCost || 0,
         });
       } else {
         form.reset({
             materialId: undefined,
             quantity: 0,
+            serviceCost: 0,
         });
       }
     }
@@ -104,8 +121,7 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, e
 
     try {
         const price = selectedMaterial.pricePerKg || 0;
-        const serviceCost = (selectedMaterial.serviceCostPerKg || 0) * values.quantity;
-
+        
         const entryData = {
             companyId: selectedCompany.id,
             type: selectedMaterial.type,
@@ -114,7 +130,7 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, e
             quantity: values.quantity,
             date: isEditMode ? entryToEdit!.date : new Date(),
             price,
-            serviceCost,
+            serviceCost: values.serviceCost,
         }
 
         if (isEditMode) {
@@ -195,12 +211,30 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, e
                         name="quantity"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{dictionary.quantity}</FormLabel>
+                            <FormLabel>{dictionary.quantity.label}</FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
                                 step="0.1"
-                                placeholder={dictionary.quantityPlaceholder}
+                                placeholder={dictionary.quantity.placeholder}
+                                {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="serviceCost"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{dictionary.serviceCost.label}</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                step="0.01"
+                                placeholder={dictionary.serviceCost.placeholder}
                                 {...field}
                                 />
                             </FormControl>

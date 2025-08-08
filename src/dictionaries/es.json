@@ -412,8 +412,14 @@
         "label": "Material",
         "selectPlaceholder": "Seleccione un material"
       },
-      "quantity": "Cantidad (kg)",
-      "quantityPlaceholder": "ej., 25.5",
+      "quantity": {
+        "label": "Cantidad (kg)",
+        "placeholder": "ej., 25.5"
+      },
+      "serviceCost": {
+        "label": "Costo de Servicio ($)",
+        "placeholder": "ej., 5.00"
+      },
       "save": "Guardar Entrada",
       "update": "Actualizar Entrada",
       "cancel": "Cancelar",
@@ -433,6 +439,9 @@
         },
         "quantity": {
           "min": "La cantidad debe ser mayor que 0."
+        },
+        "serviceCost": {
+          "min": "El costo de servicio no puede ser negativo."
         }
       }
     },
