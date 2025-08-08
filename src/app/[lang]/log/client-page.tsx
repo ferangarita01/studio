@@ -290,3 +290,5 @@ export function LogClient({ dictionary, lang }: LogClientProps) {
     </>
   );
 }
+
+    

@@ -408,6 +408,10 @@
       "title": "Añadir Nueva Entrada de Residuos",
       "editTitle": "Editar Entrada de Residuos",
       "description": "Registre una nueva entrada de residuos. Haga clic en guardar cuando haya terminado.",
+      "date": {
+        "label": "Fecha",
+        "placeholder": "Seleccione una fecha"
+      },
       "material": {
         "label": "Material",
         "selectPlaceholder": "Seleccione un material"
@@ -734,3 +738,5 @@
     }
   }
 }
+
+    

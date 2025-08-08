@@ -36,9 +36,17 @@ import type { WasteEntry, Material } from "@/lib/types";
 import { useCompany } from "./layout/app-shell";
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/context/auth-context";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { Calendar } from "./ui/calendar";
 
 
 const formSchema = (dictionary: Dictionary["logPage"]["addWasteDialog"]["validation"]) => z.object({
+    date: z.date({
+        required_error: "A date is required.", // This message can be translated if needed
+    }),
     materialId: z.string({
         required_error: dictionary.material.required,
     }),
@@ -67,24 +75,12 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, e
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema(dictionary.validation)),
     defaultValues: {
+      date: new Date(),
       materialId: undefined,
       quantity: 0,
       serviceCost: 0,
     },
   });
-
-  const materialId = form.watch("materialId");
-  const quantity = form.watch("quantity");
-
-  useEffect(() => {
-    if (materialId && quantity > 0 && !isEditMode) {
-      const selectedMaterial = materials.find(m => m.id === materialId);
-      if (selectedMaterial) {
-        const calculatedCost = (selectedMaterial.serviceCostPerKg || 0) * quantity;
-        form.setValue("serviceCost", calculatedCost, { shouldValidate: true });
-      }
-    }
-  }, [materialId, quantity, materials, form, isEditMode]);
   
   useEffect(() => {
     if (open) {
@@ -96,12 +92,14 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, e
 
       if (isEditMode && entryToEdit) {
         form.reset({
+            date: entryToEdit.date,
             materialId: entryToEdit.materialId,
             quantity: entryToEdit.quantity,
             serviceCost: entryToEdit.serviceCost || 0,
         });
       } else {
         form.reset({
+            date: new Date(),
             materialId: undefined,
             quantity: 0,
             serviceCost: 0,
@@ -128,13 +126,13 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, e
             materialId: selectedMaterial.id,
             materialName: selectedMaterial.name,
             quantity: values.quantity,
-            date: isEditMode ? entryToEdit!.date : new Date(),
+            date: values.date,
             price,
             serviceCost: values.serviceCost,
         }
 
         if (isEditMode) {
-            const updatedEntry = { ...entryToEdit, ...entryData };
+            const updatedEntry = { ...entryToEdit!, ...entryData };
             await updateWasteEntry(updatedEntry, user.uid);
             onEntrySaved(updatedEntry);
             toast({
@@ -142,7 +140,7 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, e
                 description: dictionary.toast.update.description,
             });
         } else {
-            const newEntry = await addWasteEntry(entryData);
+            const newEntry = await addWasteEntry(entryData, user.uid);
             onEntrySaved(newEntry);
             toast({
                 title: dictionary.toast.add.title,
@@ -182,6 +180,44 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, e
                 </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
+                     <FormField
+                        control={form.control}
+                        name="date"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{dictionary.date.label}</FormLabel>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant={"outline"}
+                                    className={cn(
+                                      "w-full pl-3 text-left font-normal",
+                                      !field.value && "text-muted-foreground"
+                                    )}
+                                  >
+                                    {field.value ? (
+                                      format(field.value, "PPP")
+                                    ) : (
+                                      <span>{dictionary.date.placeholder}</span>
+                                    )}
+                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-0" align="start">
+                                <Calendar
+                                  mode="single"
+                                  selected={field.value}
+                                  onSelect={field.onChange}
+                                  initialFocus
+                                />
+                              </PopoverContent>
+                            </Popover>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     <FormField
                         control={form.control}
                         name="materialId"
@@ -253,3 +289,5 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, e
     </Dialog>
   );
 }
+
+    

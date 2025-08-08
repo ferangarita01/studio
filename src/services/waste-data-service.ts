@@ -279,7 +279,7 @@ export async function getWasteLog(companyId?: string): Promise<WasteEntry[]> {
     return [];
 }
 
-export async function addWasteEntry(entry: Omit<WasteEntry, 'id' | 'date'> & { date: Date }): Promise<WasteEntry> {
+export async function addWasteEntry(entry: Omit<WasteEntry, 'id'>, userId: string): Promise<WasteEntry> {
     const wasteLogRef = ref(db, 'wasteLog');
     const newEntryRef = push(wasteLogRef);
     
@@ -287,6 +287,7 @@ export async function addWasteEntry(entry: Omit<WasteEntry, 'id' | 'date'> & { d
     const entryToSave = {
         ...entry,
         date: entry.date.toISOString(),
+        createdBy: userId
     };
     
     await set(newEntryRef, entryToSave);
@@ -388,3 +389,5 @@ export async function uploadFile(file: File, path: string): Promise<string> {
     const downloadURL = await getDownloadURL(fileRef);
     return downloadURL;
 }
+
+    

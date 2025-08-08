@@ -408,6 +408,10 @@
       "title": "Add New Waste Entry",
       "editTitle": "Edit Waste Entry",
       "description": "Record a new waste entry. Click save when you're done.",
+      "date": {
+        "label": "Date",
+        "placeholder": "Select a date"
+      },
       "material": {
         "label": "Material",
         "selectPlaceholder": "Select a material"
@@ -734,3 +738,5 @@
     }
   }
 }
+
+    
