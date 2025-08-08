@@ -425,9 +425,9 @@ export const compressFileIfNeeded = async (file: File): Promise<File> => {
 };
 
 
-export async function getDisposalCertificates(companyId: string): Promise<DisposalCertificate[]> {
+export async function getDisposalCertificates(companyId?: string): Promise<DisposalCertificate[]> {
     const certificatesRef = ref(db, 'disposalCertificates');
-    const q = query(certificatesRef, orderByChild('companyId'), equalTo(companyId));
+    const q = companyId ? query(certificatesRef, orderByChild('companyId'), equalTo(companyId)) : certificatesRef;
     const snapshot = await get(q);
     if (snapshot.exists()) {
         const certs = snapshotToArray(snapshot);
@@ -495,7 +495,3 @@ export async function uploadFile(file: File, path: string): Promise<string> {
     const downloadURL = await getDownloadURL(fileRef);
     return downloadURL;
 }
-
-
-
-    

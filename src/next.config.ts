@@ -49,6 +49,19 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Authorization',
+            value: '', // This is a placeholder, the value will be set on the client
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

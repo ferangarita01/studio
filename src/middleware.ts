@@ -30,6 +30,19 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(`https://${newHost}${pathname}`, 301);
   }
 
+  // Set auth token from cookie to header for server components
+  const requestHeaders = new Headers(request.headers);
+  const idToken = request.cookies.get('firebaseIdToken')?.value;
+  if (idToken) {
+    requestHeaders.set('Authorization', `Bearer ${idToken}`);
+  }
+
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+
   // Ignore specific paths that should not be localized
   const publicFile = /\.(.*)$/;
   if (
@@ -38,7 +51,7 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/static') ||
     publicFile.test(pathname)
   ) {
-    return NextResponse.next();
+    return response;
   }
 
   // Check if there is any supported locale in the pathname
@@ -63,12 +76,10 @@ export function middleware(request: NextRequest) {
     );
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {
   // Matcher ignoring `/_next/` and `/api/`
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };
-
-    

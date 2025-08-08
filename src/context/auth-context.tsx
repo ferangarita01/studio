@@ -61,12 +61,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setIsLoading(true);
       if (user) {
-        // We set the user object first
         setUser(user);
         
-        // Then we fetch the profile, which includes the role
-        // This ensures that any logic depending on the user being set
-        // will also have access to the role once the profile is fetched.
+        const idToken = await user.getIdToken();
+        // This is a client-side only way to "forward" the token for server components
+        // A more robust solution might use cookies or a dedicated API route
+        document.cookie = `firebaseIdToken=${idToken};path=/;max-age=3600`;
+        
         if (user.email === 'prueba2@admin.co') {
             const profile = await getUserProfile(user.uid);
             setUserProfile({...profile, id: user.uid, email: user.email, role: 'admin' });
@@ -77,12 +78,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setRole(profile?.role || null);
         }
       } else {
-        // If no user, clear all user-related state
         setUser(null);
         setUserProfile(null);
         setRole(null);
+        document.cookie = 'firebaseIdToken=;path=/;max-age=0';
       }
-      // Only set loading to false after all user data (including profile/role) is fetched or cleared
       setIsLoading(false);
     });
 
@@ -157,4 +157,3 @@ export const useAuth = () => {
   }
   return context;
 };
-
