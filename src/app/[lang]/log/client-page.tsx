@@ -143,7 +143,7 @@ export function LogClient({ dictionary, lang }: LogClientProps) {
     if (amount === undefined) return "N/A";
     return new Intl.NumberFormat(lang, {
       style: "currency",
-      currency: "USD",
+      currency: "COP",
     }).format(amount);
   };
   

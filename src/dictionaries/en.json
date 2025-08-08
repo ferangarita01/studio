@@ -421,7 +421,7 @@
         "placeholder": "e.g., 25.5"
       },
       "serviceCost": {
-        "label": "Service Cost ($)",
+        "label": "Service Cost (COP)",
         "placeholder": "e.g., 5.00"
       },
       "save": "Save Entry",
@@ -607,9 +607,9 @@
       "namePlaceholder": "e.g., Aluminum Cans",
       "type": "Waste Type",
       "selectType": "Select a type",
-      "price": "Price per kg ($)",
+      "price": "Price per kg (COP)",
       "pricePlaceholder": "e.g., 1.20",
-      "serviceCost": "Service Cost per kg ($)",
+      "serviceCost": "Service Cost per kg (COP)",
       "serviceCostPlaceholder": "e.g., 0.10",
       "save": "Save Material",
        "cancel": "Cancel",

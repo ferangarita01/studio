@@ -25,7 +25,7 @@ export function PayPalButtonWrapper({ amount, description }: PayPalButtonProps) 
     }
 
     return (
-        <PayPalScriptProvider options={{ clientId: PAYPAL_CLIENT_ID, currency: "USD", intent: "capture" }}>
+        <PayPalScriptProvider options={{ clientId: PAYPAL_CLIENT_ID, currency: "COP", intent: "capture" }}>
             <div className="relative">
                 <PayPalButtons
                     style={{ layout: "horizontal", color: "blue", shape: "rect", label: "pay", tagline: false }}

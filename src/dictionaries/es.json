@@ -421,7 +421,7 @@
         "placeholder": "ej., 25.5"
       },
       "serviceCost": {
-        "label": "Costo de Servicio ($)",
+        "label": "Costo de Servicio (COP)",
         "placeholder": "ej., 5.00"
       },
       "save": "Guardar Entrada",
@@ -607,9 +607,9 @@
       "namePlaceholder": "ej., Latas de Aluminio",
       "type": "Tipo de Residuo",
       "selectType": "Selecciona un tipo",
-      "price": "Precio por kg ($)",
+      "price": "Precio por kg (COP)",
       "pricePlaceholder": "ej., 1.20",
-      "serviceCost": "Costo de Servicio por kg ($)",
+      "serviceCost": "Costo de Servicio por kg (COP)",
       "serviceCostPlaceholder": "ej., 0.10",
       "save": "Guardar Material",
       "cancel": "Cancelar",
