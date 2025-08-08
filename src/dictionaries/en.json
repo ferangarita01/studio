@@ -302,15 +302,15 @@
     "cards": {
       "totalWaste": {
         "title": "Total Waste This Month",
-        "change": "+15.2% from last month"
+        "change": "Since tracking began"
       },
       "recyclingRate": {
         "title": "Recycling Rate",
-        "change": "+5% from last month"
+        "change": "Since tracking began"
       },
       "income": {
-        "title": "Income from Recycling",
-        "description": "Total value from sold recyclables."
+        "title": "Net Income from Waste",
+        "description": "Total value from sold recyclables minus costs."
       },
       "upcomingDisposals": {
         "title": "Upcoming Disposals",
@@ -456,10 +456,10 @@
       "confirm": "Delete"
     },
     "toast": {
-        "delete": {
-            "title": "Entry Deleted",
-            "description": "The waste entry has been successfully deleted."
-        }
+      "delete": {
+        "title": "Entry Deleted",
+        "description": "The waste entry has been successfully deleted."
+      }
     }
   },
   "schedulePage": {

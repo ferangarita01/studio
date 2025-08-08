@@ -302,15 +302,15 @@
     "cards": {
       "totalWaste": {
         "title": "Residuos Totales Este Mes",
-        "change": "+15.2% desde el mes pasado"
+        "change": "Desde el inicio del seguimiento"
       },
       "recyclingRate": {
         "title": "Tasa de Reciclaje",
-        "change": "+5% desde el mes pasado"
+        "change": "Desde el inicio del seguimiento"
       },
       "income": {
-        "title": "Ingresos por Reciclaje",
-        "description": "Valor total de los reciclables vendidos."
+        "title": "Ingresos Netos por Residuos",
+        "description": "Valor total de reciclables vendidos menos costos."
       },
       "upcomingDisposals": {
         "title": "Próximas Eliminaciones",
@@ -456,10 +456,10 @@
       "confirm": "Eliminar"
     },
     "toast": {
-        "delete": {
-            "title": "Entrada Eliminada",
-            "description": "La entrada de residuos ha sido eliminada exitosamente."
-        }
+      "delete": {
+        "title": "Entrada Eliminada",
+        "description": "La entrada de residuos ha sido eliminada exitosamente."
+      }
     }
   },
   "schedulePage": {

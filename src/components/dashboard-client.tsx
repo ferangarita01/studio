@@ -198,7 +198,10 @@ export function DashboardPageContent({
   const totalRecycling = wasteLog.filter(e => e.type === 'Recycling').reduce((acc, entry) => acc + entry.quantity, 0);
   const recyclingRate = totalWaste > 0 ? (totalRecycling / totalWaste) * 100 : 0;
   
-  const totalIncome = wasteLog.filter(e => e.type === 'Recycling' && e.price).reduce((acc, entry) => acc + (entry.quantity * entry.price!), 0);
+  const totalIncome = wasteLog.reduce((acc, entry) => {
+    const entryValue = (entry.price || 0) * entry.quantity - (entry.serviceCost || 0);
+    return acc + entryValue;
+  }, 0);
 
 
   return (
@@ -372,3 +375,5 @@ export function DashboardPageContent({
     </div>
   );
 }
+
+    
