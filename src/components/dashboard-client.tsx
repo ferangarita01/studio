@@ -33,6 +33,7 @@ import { getWasteLog, getDisposalEvents } from "@/services/waste-data-service";
 import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
 import { UpgradePlanDialog } from "./upgrade-plan-dialog";
+import { useDictionaries } from "@/context/dictionary-context";
 
 const chartConfig = {
   quantity: {
@@ -109,6 +110,7 @@ export function DashboardPageContent({
 }: DashboardPageContentProps) {
   const { isAuthLoading, lang, role, userProfile } = useAuth();
   const { selectedCompany, isLoading: isCompanyContextLoading } = useCompany();
+  const fullDictionary = useDictionaries();
   
   const [wasteLog, setWasteLog] = React.useState<WasteEntry[]>([]);
   const [disposalEvents, setDisposalEvents] = React.useState<DisposalEvent[]>([]);
@@ -429,11 +431,11 @@ export function DashboardPageContent({
         </Card>
       </main>
     </div>
-    {dictionary.navigation.upgradeDialog && (
+    {fullDictionary?.navigation.upgradeDialog && (
       <UpgradePlanDialog
         open={isUpgradeDialogOpen}
         onOpenChange={setUpgradeDialogOpen}
-        dictionary={dictionary.navigation.upgradeDialog}
+        dictionary={fullDictionary.navigation.upgradeDialog}
         lang={lang}
       />
     )}
@@ -444,3 +446,4 @@ export function DashboardPageContent({
     
 
     
+
