@@ -87,7 +87,6 @@ export type ReportData = {
   companyId: string;
   totalCosts: number;
   totalIncome: number;
-...
   netResult: number;
   chartData: {
     name: string;
