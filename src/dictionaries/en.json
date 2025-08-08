@@ -545,6 +545,7 @@
       "name": "Material Name",
       "type": "Type",
       "pricePerKg": "Price / kg",
+      "serviceCostPerKg": "Service Cost / kg",
       "actions": "Actions",
       "openMenu": "Open menu",
       "edit": "Edit",
@@ -572,6 +573,8 @@
       "selectType": "Select a type",
       "price": "Price per kg ($)",
       "pricePlaceholder": "e.g., 1.20",
+      "serviceCost": "Service Cost per kg ($)",
+      "serviceCostPlaceholder": "e.g., 0.10",
       "save": "Save Material",
        "cancel": "Cancel",
       "types": {
@@ -589,6 +592,9 @@
         },
         "price": {
           "min": "Price cannot be negative."
+        },
+        "serviceCost": {
+          "min": "Service cost cannot be negative."
         }
       }
     },
