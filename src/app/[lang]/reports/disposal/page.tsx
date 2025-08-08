@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -16,8 +15,7 @@ import { cn } from '@/lib/utils';
 import type { Locale } from '@/i18n-config';
 
 export default function FinalDisposalPage() {
-  const dictionary = useDictionaries()?.navigation.links;
-  const pageDictionary = useDictionaries()?.reportsPage.finalDisposal;
+  const dictionary = useDictionaries();
   const { lang, role, isLoading: isAuthLoading } = useAuth();
   const { selectedCompany } = useCompany();
   const [certificates, setCertificates] = React.useState<DisposalCertificate[]>([]);
@@ -58,33 +56,45 @@ export default function FinalDisposalPage() {
   };
   
   const showAdminFeatures = isClient && !isAuthLoading && role === 'admin';
+  
+  // Safe access to dictionary
+  const pageDictionary = dictionary?.reportsPage?.finalDisposal;
+  const navDictionary = dictionary?.navigation?.links;
+
+  if (!pageDictionary || !navDictionary) {
+      return (
+         <div className="flex flex-1 items-center justify-center p-8">
+            <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      )
+  }
 
   return (
     <>
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
       <div className="flex items-center">
-        <h1 className="text-lg font-semibold md:text-2xl">{dictionary?.finalDisposal}</h1>
+        <h1 className="text-lg font-semibold md:text-2xl">{navDictionary.finalDisposal}</h1>
         <div className={cn("ml-auto", !showAdminFeatures && "hidden")}>
           <Button size="sm" className="h-8 gap-1" onClick={() => setUploadDialogOpen(true)}>
             <PlusCircle className="h-3.5 w-3.5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              {pageDictionary?.uploadButton}
+              {pageDictionary.uploadButton}
             </span>
           </Button>
         </div>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>{pageDictionary?.cardTitle}</CardTitle>
+          <CardTitle>{pageDictionary.cardTitle}</CardTitle>
           <CardDescription>
-            {pageDictionary?.cardDescription}
+            {pageDictionary.cardDescription}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {!selectedCompany ? (
             <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
                <div className="text-center">
-                 <p className="text-muted-foreground">{pageDictionary?.noCompanySelected}</p>
+                 <p className="text-muted-foreground">{pageDictionary.noCompanySelected}</p>
                </div>
             </div>
           ) : isLoading ? (
@@ -95,10 +105,10 @@ export default function FinalDisposalPage() {
              <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
               <div className="text-center">
                 <h3 className="text-2xl font-bold tracking-tight">
-                  {pageDictionary?.noCertificates.title}
+                  {pageDictionary.noCertificates.title}
                 </h3>
                 <p className="text-muted-foreground mt-2">
-                  {pageDictionary?.noCertificates.description}
+                  {pageDictionary.noCertificates.description}
                 </p>
               </div>
             </div>
@@ -106,9 +116,9 @@ export default function FinalDisposalPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{pageDictionary?.table.fileName}</TableHead>
-                  <TableHead>{pageDictionary?.table.uploadDate}</TableHead>
-                  <TableHead className="text-right">{pageDictionary?.table.actions}</TableHead>
+                  <TableHead>{pageDictionary.table.fileName}</TableHead>
+                  <TableHead>{pageDictionary.table.uploadDate}</TableHead>
+                  <TableHead className="text-right">{pageDictionary.table.actions}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -120,7 +130,7 @@ export default function FinalDisposalPage() {
                        <Button asChild variant="outline" size="sm">
                           <a href={cert.fileUrl} target="_blank" rel="noopener noreferrer" download={cert.fileName}>
                             <Download className="mr-2 h-4 w-4" />
-                            {pageDictionary?.table.download}
+                            {pageDictionary.table.download}
                           </a>
                         </Button>
                     </TableCell>
@@ -136,7 +146,7 @@ export default function FinalDisposalPage() {
         open={isUploadDialogOpen}
         onOpenChange={setUploadDialogOpen}
         onCertificateAdded={handleCertificateAdded}
-        dictionary={pageDictionary?.uploadDialog}
+        dictionary={pageDictionary.uploadDialog}
     />
     </>
   );

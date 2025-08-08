@@ -1,8 +1,7 @@
-
 "use client";
 
 import * as React from 'react';
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -57,12 +56,12 @@ export function UploadCertificateDialog({
   const [companies, setCompanies] = React.useState<Company[]>([]);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  const formSchema = z.object({
+  const formSchema = React.useMemo(() => z.object({
     companyId: z.string().min(1, { message: dictionary?.validation.company }),
     file: z.instanceof(File).refine(file => file.size > 0 && file.type === 'application/pdf', {
         message: dictionary?.validation.file
     })
-  });
+  }), [dictionary]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -73,9 +72,9 @@ export function UploadCertificateDialog({
   });
   
   React.useEffect(() => {
-    if (open) {
+    if (open && user) {
       const fetchCompanies = async () => {
-        const fetchedCompanies = await getCompanies(user?.uid, true);
+        const fetchedCompanies = await getCompanies(user.uid, true);
         setCompanies(fetchedCompanies);
       };
       fetchCompanies();
