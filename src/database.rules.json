@@ -1,33 +1,27 @@
 
 {
   "rules": {
-    ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+    ".read": "auth != null",
     "users": {
       "$userId": {
-        ".read": "$userId === auth.uid",
         ".write": "$userId === auth.uid"
       }
     },
     "companies": {
-      ".read": "auth != null",
       "$companyId": {
         ".write": "auth != null && (root.child('users').child(auth.uid).child('assignedCompanyId').val() == $companyId || root.child('users').child(auth.uid).child('role').val() == 'admin')"
       }
     },
     "materials": {
-      ".read": "auth != null",
       ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
     },
     "wasteLog": {
-      ".read": "auth != null",
       ".write": "auth != null"
     },
     "disposalEvents": {
-       ".read": "auth != null",
        ".write": "auth != null"
     },
     "disposalCertificates": {
-      ".read": "auth != null",
       ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
     }
   }

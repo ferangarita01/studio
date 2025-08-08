@@ -1,6 +1,5 @@
 
 
-
 // IMPORTANT: This service now uses Firebase Realtime Database.
 // You will need to set up Realtime Database in your Firebase project.
 import {
@@ -356,7 +355,75 @@ export async function addDisposalEvent(event: Omit<DisposalEvent, 'id'>): Promis
 }
 
 
-// --- Disposal Certificate Service Functions ---
+// --- Disposal Certificate & Upload Service Functions ---
+
+// Helper function to format file size
+const formatFileSize = (bytes: number) => {
+  if (bytes < 1024) return `${bytes} Bytes`;
+  if (bytes < 1048576) return `${(bytes / 1024).toFixed(2)} KB`;
+  return `${(bytes / 1048576).toFixed(2)} MB`;
+};
+
+// Helper function to compress images
+const compressImage = async (file: File, quality: number = 0.8): Promise<File> => {
+  return new Promise((resolve) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d')!;
+    const img = new Image();
+    
+    img.onload = () => {
+      const maxWidth = 1920;
+      const maxHeight = 1080;
+      let { width, height } = img;
+      
+      if (width > maxWidth || height > maxHeight) {
+        const ratio = Math.min(maxWidth / width, maxHeight / height);
+        width *= ratio;
+        height *= ratio;
+      }
+      
+      canvas.width = width;
+      canvas.height = height;
+      ctx.drawImage(img, 0, 0, width, height);
+      
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            const compressedFile = new File([blob], file.name, {
+              type: file.type,
+              lastModified: Date.now(),
+            });
+            resolve(compressedFile);
+          } else {
+            resolve(file); // Fallback
+          }
+        },
+        file.type,
+        quality
+      );
+    };
+    
+    img.onerror = () => resolve(file); // Fallback
+    img.src = URL.createObjectURL(file);
+  });
+};
+
+
+export const compressFileIfNeeded = async (file: File): Promise<File> => {
+  const MAX_SIZE_MB = 5;
+  if (file.size <= MAX_SIZE_MB * 1024 * 1024) return file;
+  
+  if (file.type === 'application/pdf') {
+    throw new Error(`PDF muy grande (${formatFileSize(file.size)}). Comprímelo manualmente usando herramientas online como SmallPDF o ILovePDF.`);
+  }
+  
+  if (file.type.startsWith('image/')) {
+    return await compressImage(file);
+  }
+  
+  return file;
+};
+
 
 export async function getDisposalCertificates(companyId: string): Promise<DisposalCertificate[]> {
     const certificatesRef = ref(db, 'disposalCertificates');
@@ -428,5 +495,3 @@ export async function uploadFile(file: File, path: string): Promise<string> {
     const downloadURL = await getDownloadURL(fileRef);
     return downloadURL;
 }
-
-    

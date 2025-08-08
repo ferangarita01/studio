@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import type { Dictionary } from '@/lib/get-dictionary';
-import { addDisposalCertificate, getCompanies } from "@/services/waste-data-service";
+import { addDisposalCertificate, getCompanies, compressFileIfNeeded } from "@/services/waste-data-service";
 import type { Company, DisposalCertificate } from "@/lib/types";
 import { useAuth } from "@/context/auth-context";
 import { Loader2 } from 'lucide-react';
@@ -90,23 +90,43 @@ export function UploadCertificateDialog({
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) return;
     setIsSubmitting(true);
+    
     try {
+      let fileToUpload = values.file[0];
+
+      // Step 1: Compress if needed
+      try {
+        fileToUpload = await compressFileIfNeeded(fileToUpload);
+      } catch (compressionError: any) {
+        toast({
+          title: "Archivo demasiado grande",
+          description: compressionError.message,
+          variant: "destructive",
+          duration: 15000, // Show for longer
+        });
+        setIsSubmitting(false);
+        return;
+      }
+      
+      // Step 2: Upload the (potentially compressed) file
       const newCertificate = await addDisposalCertificate(
         values.companyId,
-        values.file[0],
+        fileToUpload,
         user.uid
       );
+      
       onCertificateAdded(newCertificate);
       toast({
         title: dictionary.toast.success.title,
         description: dictionary.toast.success.description,
       });
       onOpenChange(false);
+
     } catch (error) {
       console.error("Failed to upload certificate:", error);
       toast({
         title: dictionary.toast.error.title,
-        description: dictionary.toast.error.description,
+        description: String(error) || dictionary.toast.error.description,
         variant: "destructive",
       });
     } finally {
