@@ -461,55 +461,44 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
 
     if (!isAuthenticated && !isPublicPage) {
       router.push(`/${lang}/landing`);
-    } else if (isAuthenticated && currentPath === '/login') {
-      router.push(`/${lang}`);
+    } else if (isAuthenticated) {
+      if (currentPath === '/login') {
+        router.push(`/${lang}`);
+      } else {
+        const findItem = (items: typeof allNavItems, path: string): (typeof allNavItems[number]) | undefined => {
+            for (const item of items) {
+                if ('subItems' in item) {
+                    const subItem = item.subItems.find(sub => path.startsWith(sub.href));
+                    if (subItem) return subItem as any;
+                }
+                if (item.href === path || (item.href !== '/' && path.startsWith(item.href) && item.href.length > 1)) {
+                    return item;
+                }
+            }
+            if (path === '/') return items.find(item => item.href === '/');
+            return undefined;
+        };
+
+        const currentItem = findItem(allNavItems, currentPath);
+        
+        if (currentItem) {
+            const isAuthorizedRole = role && currentItem.roles.includes(role);
+            const isPremiumFeature = 'plan' in currentItem && currentItem.plan === 'Premium';
+            const hasPremiumPlan = role === 'client' && userProfile?.plan === 'Premium';
+
+            if (!isAuthorizedRole || (isPremiumFeature && role === 'client' && !hasPremiumPlan)) {
+                 router.push(`/${lang}`);
+            }
+        }
+      }
     }
-  }, [isAuthenticated, isAuthLoading, currentPath, isPublicPage, router, lang, isClient]);
+  }, [isAuthenticated, isAuthLoading, currentPath, isPublicPage, router, lang, isClient, role, userProfile]);
+  
 
   const navItems = useMemo(() => {
     if (!role) return [];
     return allNavItems.filter(item => item.roles.includes(role));
   }, [role]);
-
-  const isAuthorizedForCurrentPath = useMemo(() => {
-      if (isAuthLoading || !role || isPublicPage) return true; // Assume authorized for public pages or while loading
-
-      const findItem = (items: typeof allNavItems, path: string): (typeof allNavItems[number]) | undefined => {
-          for (const item of items) {
-              if ('subItems' in item) {
-                  const subItem = item.subItems.find(sub => path.startsWith(sub.href));
-                  if (subItem) return subItem as any;
-              }
-              if (item.href === path || (item.href !== '/' && path.startsWith(item.href) && item.href.length > 1)) {
-                  return item;
-              }
-          }
-          if (path === '/') return items.find(item => item.href === '/');
-          return undefined;
-      };
-
-      const currentItem = findItem(allNavItems, currentPath);
-
-      if (!currentItem) return false;
-      if (!currentItem.roles.includes(role)) return false;
-
-      const isPremiumFeature = 'plan' in currentItem && currentItem.plan === 'Premium';
-      if (isPremiumFeature && role === 'client' && userProfile?.plan !== 'Premium') {
-          return false;
-      }
-      
-      return true;
-  }, [role, currentPath, isPublicPage, userProfile, isAuthLoading]);
-
-  // Authorization effect
-  useEffect(() => {
-      if (isAuthLoading || !isAuthenticated || isPublicPage) return;
-
-      if (!isAuthorizedForCurrentPath) {
-          router.push(`/${lang}`);
-      }
-  }, [isAuthenticated, isAuthorizedForCurrentPath, router, lang, isAuthLoading, isPublicPage]);
-
 
   const handlePremiumClick = (e: React.MouseEvent<HTMLAnchorElement>, item: { plan?: string }) => {
     const isPremiumFeature = item.plan === 'Premium';
@@ -630,15 +619,6 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
      return (
         <div className="flex h-screen w-full items-center justify-center"><div>Loading...</div></div>
      );
-  }
-
-
-   if (!isAuthorizedForCurrentPath) {
-    return (
-       <div className="flex h-screen w-full items-center justify-center">
-        <div>Redirecting...</div>
-      </div>
-    );
   }
   
   const navDictionary = dictionary.navigation;
