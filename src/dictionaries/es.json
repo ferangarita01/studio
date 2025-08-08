@@ -657,8 +657,6 @@
       "selectType": "Selecciona un tipo",
       "price": "Precio por kg (COP)",
       "pricePlaceholder": "ej., 1.20",
-      "serviceCost": "Costo de Servicio por kg (COP)",
-      "serviceCostPlaceholder": "ej., 0.10",
       "save": "Guardar Material",
       "cancel": "Cancelar",
       "types": {

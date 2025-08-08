@@ -63,24 +63,18 @@ export function MaterialDialog({ open, onOpenChange, dictionary, onSave, materia
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema(dictionary.validation)),
-    defaultValues: getDefaultValues(), // ✅ CAMBIO: Usar función que garantiza valores válidos
+    defaultValues: {
+      name: "",
+      type: undefined,
+      pricePerKg: 0,
+    },
   });
   
-  // ✅ FIX 2: useEffect mejorado con valores seguros
   useEffect(() => {
-    if (open) {
-      if (material) {
-        // Modo edición: cargar datos del material
-        form.reset({
-          name: material.name || "",
-          type: material.type || "Recycling", // ✅ CAMBIO: Nunca undefined
-          pricePerKg: material.pricePerKg || 0,
-          serviceCostPerKg: material.serviceCostPerKg || 0,
-        });
-      } else {
-        // Modo creación: usar valores por defecto
-        form.reset(getDefaultValues());
-      }
+    if (material) {
+      form.reset(material);
+    } else {
+      form.reset({ name: "", type: undefined, pricePerKg: 0, id: undefined });
     }
   }, [material, form, open]);
 
@@ -188,6 +182,19 @@ export function MaterialDialog({ open, onOpenChange, dictionary, onSave, materia
                         {...field}
                         value={field.value?.toString() || "0"} // ✅ PROTECCIÓN EXTRA para números
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="serviceCostPerKg"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{dictionary.serviceCost}</FormLabel>
+                    <FormControl>
+                      <Input type="number" step="0.01" placeholder={dictionary.serviceCostPlaceholder} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

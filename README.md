@@ -223,4 +223,4 @@ For technical support or questions:
 
 ---
 
-**Built with ❤️ for a sustainable future** 🌍
+**Built with ❤️ for a sustainable future** 🌍console.log("Server", JSON.stringify(someObject));
