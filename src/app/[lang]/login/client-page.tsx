@@ -75,7 +75,7 @@ const signUpFormSchema = (dictionary: Dictionary["loginPage"]["validation"]) => 
 
 const signUpDefaultValues = {
   fullName: "",
-  accountType: undefined,
+  accountType: "" as "company" | "individual" | "", // Use empty string for better controlled state
   companyName: "",
   taxId: "",
   idNumber: "",
@@ -231,7 +231,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                       render={({ field }) => (
                           <FormItem>
                               <FormLabel>{dictionary.labels.accountType}</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
+                              <Select onValueChange={field.onChange} value={field.value || ""} disabled={isSubmitting}>
                                   <FormControl>
                                       <SelectTrigger>
                                           <SelectValue placeholder={dictionary.labels.selectAccountType} />
