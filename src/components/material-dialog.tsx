@@ -53,24 +53,36 @@ interface MaterialDialogProps {
 }
 
 export function MaterialDialog({ open, onOpenChange, dictionary, onSave, material }: MaterialDialogProps) {
+  // ✅ FIX 1: Definir valores por defecto que NUNCA sean undefined
+  const getDefaultValues = () => ({
+    name: "",
+    type: "Recycling" as const, // ✅ CAMBIO: Usar valor válido en lugar de undefined
+    pricePerKg: 0,
+    serviceCostPerKg: 0,
+  });
+
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema(dictionary.validation)),
-    defaultValues: {
-      name: "",
-      type: undefined,
-      pricePerKg: 0,
-      serviceCostPerKg: 0,
-    },
+    defaultValues: getDefaultValues(), // ✅ CAMBIO: Usar función que garantiza valores válidos
   });
   
+  // ✅ FIX 2: useEffect mejorado con valores seguros
   useEffect(() => {
-    if (material) {
-      form.reset(material);
-    } else {
-      form.reset({ name: "", type: undefined, pricePerKg: 0, serviceCostPerKg: 0, id: undefined });
+    if (open) {
+      if (material) {
+        // Modo edición: cargar datos del material
+        form.reset({
+          name: material.name || "",
+          type: material.type || "Recycling", // ✅ CAMBIO: Nunca undefined
+          pricePerKg: material.pricePerKg || 0,
+          serviceCostPerKg: material.serviceCostPerKg || 0,
+        });
+      } else {
+        // Modo creación: usar valores por defecto
+        form.reset(getDefaultValues());
+      }
     }
   }, [material, form, open]);
-
 
   const onSubmit = (values: FormSchema) => {
     const materialData: Material = {
@@ -80,9 +92,10 @@ export function MaterialDialog({ open, onOpenChange, dictionary, onSave, materia
     onSave(materialData);
   };
 
+  // ✅ FIX 3: handleOpenChange mejorado con reset completo
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
-      form.reset();
+      form.reset(getDefaultValues()); // ✅ CAMBIO: Reset con valores específicos
     }
     onOpenChange(isOpen);
   };
@@ -106,7 +119,11 @@ export function MaterialDialog({ open, onOpenChange, dictionary, onSave, materia
                   <FormItem>
                     <FormLabel>{dictionary.name}</FormLabel>
                     <FormControl>
-                      <Input placeholder={dictionary.namePlaceholder} {...field} />
+                      <Input 
+                        placeholder={dictionary.namePlaceholder} 
+                        {...field}
+                        value={field.value || ""} // ✅ PROTECCIÓN EXTRA
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -118,7 +135,11 @@ export function MaterialDialog({ open, onOpenChange, dictionary, onSave, materia
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{dictionary.type}</FormLabel>
-                     <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    {/* ✅ FIX 4: CAMBIO CRÍTICO - usar value en lugar de defaultValue */}
+                    <Select 
+                      onValueChange={field.onChange} 
+                      value={field.value || "Recycling"} // ✅ CAMBIO: value + fallback
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder={dictionary.selectType} />
@@ -141,7 +162,13 @@ export function MaterialDialog({ open, onOpenChange, dictionary, onSave, materia
                   <FormItem>
                     <FormLabel>{dictionary.price}</FormLabel>
                     <FormControl>
-                      <Input type="number" step="0.01" placeholder={dictionary.pricePlaceholder} {...field} />
+                      <Input 
+                        type="number" 
+                        step="0.01" 
+                        placeholder={dictionary.pricePlaceholder} 
+                        {...field}
+                        value={field.value?.toString() || "0"} // ✅ PROTECCIÓN EXTRA para números
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -154,7 +181,13 @@ export function MaterialDialog({ open, onOpenChange, dictionary, onSave, materia
                   <FormItem>
                     <FormLabel>{dictionary.serviceCost}</FormLabel>
                     <FormControl>
-                      <Input type="number" step="0.01" placeholder={dictionary.serviceCostPlaceholder} {...field} />
+                      <Input 
+                        type="number" 
+                        step="0.01" 
+                        placeholder={dictionary.serviceCostPlaceholder} 
+                        {...field}
+                        value={field.value?.toString() || "0"} // ✅ PROTECCIÓN EXTRA para números
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

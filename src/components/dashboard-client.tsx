@@ -4,6 +4,8 @@
 import * as React from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { Activity, CalendarIcon, Trash2, Recycle, Loader2, DollarSign } from "lucide-react";
+import { format as formatDateFns, getMonth, getYear } from 'date-fns';
+import { enUS, es } from 'date-fns/locale';
 
 import {
   Card,
@@ -25,7 +27,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import type { DisposalEvent, WasteEntry } from "@/lib/types";
 import type { Dictionary } from "@/lib/get-dictionary";
 import { useCompany } from "./layout/app-shell";
-import { getWasteChartData, getWasteLog, getDisposalEvents } from "@/services/waste-data-service";
+import { getWasteLog, getDisposalEvents } from "@/services/waste-data-service";
 import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
 
@@ -44,6 +46,10 @@ const chartConfig = {
   general: {
     label: "General",
     color: "hsl(var(--chart-3))",
+  },
+  hazardous: {
+    label: "Hazardous",
+    color: "hsl(var(--destructive))",
   },
 };
 
@@ -98,10 +104,9 @@ function WelcomeMessage({ dictionary }: { dictionary: Dictionary["dashboard"]["w
 export function DashboardPageContent({
   dictionary,
 }: DashboardPageContentProps) {
-  const { isAuthLoading } = useAuth();
+  const { isAuthLoading, lang } = useAuth();
   const { selectedCompany, isLoading: isCompanyContextLoading } = useCompany();
   
-  const [wasteDataAll, setWasteDataAll] = React.useState<Record<string, any[]>>({});
   const [wasteLog, setWasteLog] = React.useState<WasteEntry[]>([]);
   const [disposalEvents, setDisposalEvents] = React.useState<DisposalEvent[]>([]);
   const [isDataLoading, setIsDataLoading] = React.useState(true);
@@ -118,12 +123,10 @@ export function DashboardPageContent({
         return;
       }
       setIsDataLoading(true);
-      const [wasteData, log, events] = await Promise.all([
-        getWasteChartData(),
+      const [log, events] = await Promise.all([
         getWasteLog(selectedCompany.id),
         getDisposalEvents(selectedCompany.id),
       ]);
-      setWasteDataAll(wasteData);
       setWasteLog(log);
       setDisposalEvents(events);
       setIsDataLoading(false);
@@ -137,7 +140,7 @@ export function DashboardPageContent({
   }, [selectedCompany, isCompanyContextLoading]);
   
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat(undefined, {
+    return new Intl.DateTimeFormat(lang, {
       month: 'long',
       day: 'numeric',
       year: 'numeric'
@@ -145,7 +148,7 @@ export function DashboardPageContent({
   }
   
   const formatShortDate = (date: Date) => {
-     return new Intl.DateTimeFormat(undefined, {
+     return new Intl.DateTimeFormat(lang, {
       month: 'long',
       day: 'numeric'
     }).format(new Date(date));
@@ -158,6 +161,41 @@ export function DashboardPageContent({
       maximumFractionDigits: 0,
     }).format(amount);
   };
+  
+  const wasteDataForChart = React.useMemo(() => {
+    if (!wasteLog.length) return [];
+    
+    const dateLocale = lang === 'es' ? es : enUS;
+
+    const monthlyData = wasteLog.reduce((acc, entry) => {
+      const year = getYear(entry.date);
+      const month = getMonth(entry.date);
+      const key = `${year}-${month}`;
+      const monthName = formatDateFns(entry.date, 'MMMM', { locale: dateLocale });
+      
+      if (!acc[key]) {
+        acc[key] = { 
+            month: monthName, 
+            year, 
+            monthNum: month,
+            recycling: 0, 
+            organic: 0, 
+            general: 0, 
+            hazardous: 0 
+        };
+      }
+      
+      const typeKey = entry.type.toLowerCase() as keyof typeof acc[typeof key];
+      if(typeKey in acc[key]){
+         acc[key][typeKey] += entry.quantity;
+      }
+
+      return acc;
+    }, {} as Record<string, { month: string; year: number; monthNum: number; recycling: number; organic: number; general: number; hazardous: number }>);
+    
+    return Object.values(monthlyData).sort((a,b) => (a.year - b.year) || (a.monthNum - b.monthNum));
+
+  }, [wasteLog, lang]);
 
   const renderLoadingState = () => (
       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -191,7 +229,6 @@ export function DashboardPageContent({
       return renderLoadingState();
   }
 
-  const wasteData = selectedCompany ? wasteDataAll[selectedCompany.id] || [] : [];
   const upcomingDisposals = disposalEvents.filter(d => (d.status === 'Scheduled' || d.status === 'Ongoing'));
 
   const totalWaste = wasteLog.reduce((acc, entry) => acc + entry.quantity, 0);
@@ -284,7 +321,7 @@ export function DashboardPageContent({
             </CardHeader>
             <CardContent>
               <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
-                <BarChart data={wasteData} accessibilityLayer>
+                <BarChart data={wasteDataForChart} accessibilityLayer>
                   <CartesianGrid vertical={false} />
                   <XAxis
                     dataKey="month"
@@ -296,8 +333,9 @@ export function DashboardPageContent({
                   <YAxis />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Bar dataKey="recycling" stackId="a" fill="var(--color-recycling)" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="organic" stackId="a" fill="var(--color-organic)" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="general" stackId="a" fill="var(--color-general)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="organic" stackId="a" fill="var(--color-organic)" radius={[0, 0, 0, 0]} />
+                  <Bar dataKey="general" stackId="a" fill="var(--color-general)" radius={[0, 0, 0, 0]} />
+                  <Bar dataKey="hazardous" stackId="a" fill="var(--color-hazardous)" radius={[0, 0, 0, 0]} />
                 </BarChart>
               </ChartContainer>
             </CardContent>
@@ -375,5 +413,7 @@ export function DashboardPageContent({
     </div>
   );
 }
+
+    
 
     
