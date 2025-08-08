@@ -1,4 +1,5 @@
 
+
 {
   "navigation": {
     "title": "WasteWise",
@@ -543,6 +544,46 @@
       "monthly": "Mensual"
     },
     "downloadPdf": "Descargar PDF",
+    "finalDisposal": {
+      "cardTitle": "Certificados de Disposición Final",
+      "cardDescription": "Aquí podrá visualizar y descargar los certificados de disposición final de sus residuos.",
+      "uploadButton": "Subir Certificado",
+      "noCompanySelected": "Por favor, seleccione una empresa para ver sus certificados.",
+      "noCertificates": {
+        "title": "No hay certificados disponibles",
+        "description": "Cuando se suban los certificados para esta empresa, aparecerán aquí."
+      },
+      "table": {
+        "fileName": "Nombre del Archivo",
+        "uploadDate": "Fecha de Subida",
+        "actions": "Acciones",
+        "download": "Descargar"
+      },
+      "uploadDialog": {
+        "title": "Subir Nuevo Certificado",
+        "description": "Seleccione una empresa y el archivo PDF del certificado para subirlo.",
+        "companyLabel": "Empresa",
+        "companyPlaceholder": "Seleccione una empresa",
+        "fileLabel": "Archivo del Certificado (PDF)",
+        "filePlaceholder": "Ningún archivo seleccionado",
+        "cancel": "Cancelar",
+        "upload": "Subir",
+        "toast": {
+          "success": {
+            "title": "Certificado Subido",
+            "description": "El archivo se ha subido y registrado correctamente."
+          },
+          "error": {
+            "title": "Error al Subir",
+            "description": "No se pudo subir el archivo. Por favor, inténtelo de nuevo."
+          }
+        },
+        "validation": {
+          "company": "Por favor, seleccione una empresa.",
+          "file": "Por favor, seleccione un archivo PDF."
+        }
+      }
+    },
     "reportView": {
       "cards": {
         "collectionCosts": {

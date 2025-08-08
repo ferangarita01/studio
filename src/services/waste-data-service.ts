@@ -1,5 +1,6 @@
 
 
+
 // IMPORTANT: This service now uses Firebase Realtime Database.
 // You will need to set up Realtime Database in your Firebase project.
 import {
@@ -17,7 +18,7 @@ import {
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/lib/firebase";
 import { wasteData, weeklyReportData, monthlyReportData } from "@/lib/data";
-import type { WasteEntry, Material, DisposalEvent, ReportData, Company, UserRole, UserProfile, PlanType } from "@/lib/types";
+import type { WasteEntry, Material, DisposalEvent, ReportData, Company, UserRole, UserProfile, PlanType, DisposalCertificate } from "@/lib/types";
 
 // Helper to convert snapshot to array
 const snapshotToArray = (snapshot: any) => {
@@ -353,6 +354,44 @@ export async function addDisposalEvent(event: Omit<DisposalEvent, 'id'>): Promis
     
     return { id: newEventRef.key!, ...event };
 }
+
+
+// --- Disposal Certificate Service Functions ---
+
+export async function getDisposalCertificates(companyId: string): Promise<DisposalCertificate[]> {
+    const certificatesRef = ref(db, 'disposalCertificates');
+    const q = query(certificatesRef, orderByChild('companyId'), equalTo(companyId));
+    const snapshot = await get(q);
+    if (snapshot.exists()) {
+        const certs = snapshotToArray(snapshot);
+        return certs.sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime());
+    }
+    return [];
+}
+
+export async function addDisposalCertificate(companyId: string, file: File, userId: string): Promise<DisposalCertificate> {
+    // 1. Upload file to storage
+    const filePath = `disposal-certificates/${companyId}/${new Date().getTime()}-${file.name}`;
+    const fileRef = storageRef(storage, filePath);
+    await uploadBytes(fileRef, file);
+    const fileUrl = await getDownloadURL(fileRef);
+
+    // 2. Create entry in database
+    const certificateData = {
+        companyId,
+        fileName: file.name,
+        fileUrl,
+        uploadedAt: new Date().toISOString(),
+        uploadedBy: userId,
+    };
+
+    const certificatesRef = ref(db, 'disposalCertificates');
+    const newCertificateRef = push(certificatesRef);
+    await set(newCertificateRef, certificateData);
+
+    return { id: newCertificateRef.key!, ...certificateData };
+}
+
 
 
 // --- Mocked Data for Reports and Chart (can be migrated to Cloud Functions later) ---

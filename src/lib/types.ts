@@ -1,4 +1,5 @@
 
+
 export type WasteType = "Recycling" | "Organic" | "General" | "Hazardous";
 export type UserRole = "admin" | "client";
 export type AccountType = "company" | "individual";
@@ -95,4 +96,12 @@ export type ReportData = {
     income: number;
   }[];
   transactions: FinancialTransaction[];
+};
+
+export type DisposalCertificate = {
+  id: string;
+  companyId: string;
+  fileName: string;
+  fileUrl: string;
+  uploadedAt: string; // ISO 8601 string
 };

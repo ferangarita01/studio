@@ -1,4 +1,5 @@
 
+
 {
   "navigation": {
     "title": "WasteWise",
@@ -543,6 +544,46 @@
       "monthly": "Monthly"
     },
     "downloadPdf": "Download PDF",
+    "finalDisposal": {
+      "cardTitle": "Final Disposal Certificates",
+      "cardDescription": "Here you can view and download the final disposal certificates for your waste.",
+      "uploadButton": "Upload Certificate",
+      "noCompanySelected": "Please select a company to view its certificates.",
+      "noCertificates": {
+        "title": "No certificates available",
+        "description": "When certificates are uploaded for this company, they will appear here."
+      },
+      "table": {
+        "fileName": "File Name",
+        "uploadDate": "Upload Date",
+        "actions": "Actions",
+        "download": "Download"
+      },
+      "uploadDialog": {
+        "title": "Upload New Certificate",
+        "description": "Select a company and the PDF certificate file to upload.",
+        "companyLabel": "Company",
+        "companyPlaceholder": "Select a company",
+        "fileLabel": "Certificate File (PDF)",
+        "filePlaceholder": "No file selected",
+        "cancel": "Cancel",
+        "upload": "Upload",
+        "toast": {
+          "success": {
+            "title": "Certificate Uploaded",
+            "description": "The file has been uploaded and recorded successfully."
+          },
+          "error": {
+            "title": "Upload Error",
+            "description": "Could not upload the file. Please try again."
+          }
+        },
+        "validation": {
+          "company": "Please select a company.",
+          "file": "Please select a PDF file."
+        }
+      }
+    },
     "reportView": {
       "cards": {
         "collectionCosts": {
