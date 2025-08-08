@@ -38,11 +38,21 @@ import { Loader2 } from 'lucide-react';
 
 type UploadDialogDictionary = Dictionary["reportsPage"]["finalDisposal"]["uploadDialog"];
 
+const getFormSchema = (dictionary: UploadDialogDictionary) => z.object({
+  companyId: z.string().min(1, { message: dictionary.validation.company }),
+  file: z.instanceof(FileList).refine(files => files?.length === 1, {
+    message: dictionary.validation.file
+  }).refine(files => files?.[0]?.type === 'application/pdf', {
+    message: dictionary.validation.file
+  }),
+});
+
+
 interface UploadCertificateDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCertificateAdded: (certificate: DisposalCertificate) => void;
-  dictionary: UploadDialogDictionary | undefined;
+  dictionary: UploadDialogDictionary;
 }
 
 export function UploadCertificateDialog({
@@ -55,19 +65,14 @@ export function UploadCertificateDialog({
   const { user } = useAuth();
   const [companies, setCompanies] = React.useState<Company[]>([]);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-
-  const formSchema = React.useMemo(() => z.object({
-    companyId: z.string().min(1, { message: dictionary?.validation.company }),
-    file: z.instanceof(File).refine(file => file.size > 0 && file.type === 'application/pdf', {
-        message: dictionary?.validation.file
-    })
-  }), [dictionary]);
+  
+  const formSchema = getFormSchema(dictionary);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-        companyId: undefined,
-        file: undefined
+      companyId: undefined,
+      file: undefined,
     },
   });
   
@@ -88,26 +93,28 @@ export function UploadCertificateDialog({
     try {
       const newCertificate = await addDisposalCertificate(
         values.companyId,
-        values.file,
+        values.file[0],
         user.uid
       );
       onCertificateAdded(newCertificate);
       toast({
-        title: dictionary?.toast.success.title,
-        description: dictionary?.toast.success.description,
+        title: dictionary.toast.success.title,
+        description: dictionary.toast.success.description,
       });
       onOpenChange(false);
     } catch (error) {
       console.error("Failed to upload certificate:", error);
       toast({
-        title: dictionary?.toast.error.title,
-        description: dictionary?.toast.error.description,
+        title: dictionary.toast.error.title,
+        description: dictionary.toast.error.description,
         variant: "destructive",
       });
     } finally {
         setIsSubmitting(false);
     }
   };
+  
+  const fileRef = form.register("file");
 
   if (!dictionary) return null;
 
@@ -148,19 +155,14 @@ export function UploadCertificateDialog({
               <FormField
                 control={form.control}
                 name="file"
-                render={({ field: { onChange, value, ...rest } }) => (
+                render={({ field }) => (
                     <FormItem>
                         <FormLabel>{dictionary.fileLabel}</FormLabel>
                         <FormControl>
                             <Input 
                                 type="file" 
                                 accept="application/pdf"
-                                onChange={(e) => {
-                                    if(e.target.files?.[0]) {
-                                        onChange(e.target.files[0]);
-                                    }
-                                }}
-                                {...rest}
+                                {...fileRef}
                             />
                         </FormControl>
                         <FormMessage />
