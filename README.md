@@ -1,4 +1,4 @@
-# WasteWise 🌱
+# WasteWise.space 🌱
 
 **WasteWise** is a comprehensive waste management platform designed to help companies track, optimize, and report their waste disposal activities. Built with sustainability at its core, the platform combines advanced waste tracking with AI-powered optimization recommendations to reduce environmental impact and costs.
 
