@@ -70,25 +70,25 @@
       "cta": "Calcula tu Potencial de Ingresos"
     },
     "valueProposition": {
-      "title": "Breakdown de la Oportunidad",
+      "title": "Convierte el problema de los residuos en ingresos para tu empresa",
       "stats": {
-        "stat1": "$2.1 billones perdidos anualmente en Colombia",
-        "stat2": "Solo 13% de residuos se aprovechan actualmente",
-        "stat3": "Tu empresa puede ser parte del 13% que gana dinero"
+        "stat1": "$2.1 billones se pierden cada año en Colombia",
+        "stat2": "Solo 13% de los residuos se aprovechan hoy",
+        "stat3": "Tu empresa puede estar en el 13% que gana dinero, o mejorarlo"
       },
       "from": {
-        "title": "DE ESTO:",
-        "item1": "Costos de recolección",
-        "item2": "Multas por incumplir",
-        "item3": "Procesos manuales",
+        "title": "Antes",
+        "item1": "Costos de recolección elevados",
+        "item2": "Multas por incumplimiento",
+        "item3": "Procesos manuales lentos",
         "item4": "Desperdicio total"
       },
       "to": {
-        "title": "A ESTO:",
-        "item1": "Ingresos por venta",
-        "item2": "Certificaciones verdes",
-        "item3": "Automatización IA",
-        "item4": "Aprovechamiento 85%"
+        "title": "Después",
+        "item1": "Ingresos adicionales por venta de residuos",
+        "item2": "Certificaciones verdes y reputación positiva",
+        "item3": "Procesos automáticos con IA",
+        "item4": "Aprovechamiento de hasta 85%"
       }
     },
     "useCases": {

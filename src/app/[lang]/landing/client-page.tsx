@@ -77,46 +77,72 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                     </div>
                 </section>
 
-                <section className="py-16 sm:py-24 bg-muted/50">
-                    <div className="container-responsive">
-                        <div className="text-center mb-12">
-                            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{d.valueProposition.title}</h2>
-                             <div className="mt-6 flex flex-col md:flex-row items-center justify-center gap-y-4 gap-x-8 text-muted-foreground text-center">
-                                <p className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" aria-hidden="true" /> {d.valueProposition.stats.stat1}</p>
-                                <p className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" aria-hidden="true" /> {d.valueProposition.stats.stat2}</p>
-                                <p className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" aria-hidden="true" /> {d.valueProposition.stats.stat3}</p>
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                            <Card className="p-6 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
-                                <CardHeader className="p-0 mb-4">
-                                    <CardTitle className="text-xl text-red-800 dark:text-red-300">{d.valueProposition.from.title}</CardTitle>
-                                </CardHeader>
-                                <CardContent className="p-0">
-                                    <ul className="space-y-2 text-muted-foreground">
-                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" aria-hidden="true" /><span>{d.valueProposition.from.item1}</span></li>
-                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" aria-hidden="true" /><span>{d.valueProposition.from.item2}</span></li>
-                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" aria-hidden="true" /><span>{d.valueProposition.from.item3}</span></li>
-                                        <li className="flex items-start gap-2"><XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" aria-hidden="true" /><span>{d.valueProposition.from.item4}</span></li>
-                                    </ul>
-                                </CardContent>
-                            </Card>
-                            <Card className="p-6 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
-                                <CardHeader className="p-0 mb-4">
-                                    <CardTitle className="text-xl text-green-800 dark:text-green-300">{d.valueProposition.to.title}</CardTitle>
-                                </CardHeader>
-                                <CardContent className="p-0">
-                                    <ul className="space-y-2 text-muted-foreground">
-                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" aria-hidden="true" /><span>{d.valueProposition.to.item1}</span></li>
-                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" aria-hidden="true" /><span>{d.valueProposition.to.item2}</span></li>
-                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" aria-hidden="true" /><span>{d.valueProposition.to.item3}</span></li>
-                                        <li className="flex items-start gap-2"><CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" aria-hidden="true" /><span>{d.valueProposition.to.item4}</span></li>
-                                    </ul>
-                                </CardContent>
-                            </Card>
-                        </div>
+                <section className="bg-slate-900 text-white py-16">
+                  <div className="max-w-6xl mx-auto px-4 text-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v12m0 0l-3-3m3 3l3-3M4 21h16" />
+                      </svg>
+                      <h2 className="text-3xl font-bold sm:text-4xl">
+                        {d.valueProposition.title}
+                      </h2>
                     </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-8">
+                      <div className="flex items-center gap-3">
+                        <span className="text-green-400 text-2xl">✔</span>
+                        <p>{d.valueProposition.stats.stat1}</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-green-400 text-2xl">✔</span>
+                        <p>{d.valueProposition.stats.stat2}</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-green-400 text-2xl">✔</span>
+                        <p>{d.valueProposition.stats.stat3}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+                      <div className="bg-red-900/40 border border-red-700 rounded-lg p-6">
+                        <h3 className="text-red-400 font-semibold text-xl mb-4">{d.valueProposition.from.title}</h3>
+                        <ul className="space-y-3">
+                          <li className="flex items-center gap-2">
+                            <span className="text-red-400">✖</span> {d.valueProposition.from.item1}
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-red-400">✖</span> {d.valueProposition.from.item2}
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-red-400">✖</span> {d.valueProposition.from.item3}
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-red-400">✖</span> {d.valueProposition.from.item4}
+                          </li>
+                        </ul>
+                      </div>
+
+                      <div className="bg-green-900/40 border border-green-700 rounded-lg p-6">
+                        <h3 className="text-green-400 font-semibold text-xl mb-4">{d.valueProposition.to.title}</h3>
+                        <ul className="space-y-3">
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400">✔</span> {d.valueProposition.to.item1}
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400">✔</span> {d.valueProposition.to.item2}
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400">✔</span> {d.valueProposition.to.item3}
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400">✔</span> {d.valueProposition.to.item4}
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                 </section>
+
 
                 <section id="use-cases" className="py-16 sm:py-24">
                     <div className="container-responsive">

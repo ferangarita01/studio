@@ -70,25 +70,25 @@
       "cta": "Calculate Your Income Potential"
     },
     "valueProposition": {
-      "title": "Breakdown of the Opportunity",
+      "title": "Turn the waste problem into revenue for your company",
       "stats": {
-        "stat1": "$2.1 billion lost annually in Colombia",
-        "stat2": "Only 13% of waste is currently utilized",
-        "stat3": "Your company can be part of the 13% that earns money"
+        "stat1": "$2.1 billion are lost each year in Colombia",
+        "stat2": "Only 13% of waste is used today",
+        "stat3": "Your company can be in the 13% that makes money, or improve it"
       },
       "from": {
-        "title": "FROM THIS:",
-        "item1": "Collection costs",
+        "title": "Before",
+        "item1": "High collection costs",
         "item2": "Fines for non-compliance",
-        "item3": "Manual processes",
+        "item3": "Slow manual processes",
         "item4": "Total waste"
       },
       "to": {
-        "title": "TO THIS:",
-        "item1": "Income from sales",
-        "item2": "Green certifications",
-        "item3": "AI automation",
-        "item4": "85% utilization"
+        "title": "After",
+        "item1": "Additional income from waste sales",
+        "item2": "Green certifications and positive reputation",
+        "item3": "Automatic processes with AI",
+        "item4": "Up to 85% utilization"
       }
     },
     "useCases": {
@@ -197,7 +197,7 @@
         "features": [
           "Everything in Free, plus:",
           "AI Agent Support",
-          "Legal Compliance (PMIRS)",
+          "Legal Compliance PMIRS",
           "Carbon Footprint Measurement",
           "Carbon Footprint Offsetting",
           "Free Collection from 500kg",
