@@ -5,7 +5,7 @@ import { i18n } from '@/i18n-config';
 import { match as matchLocale } from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
 
-function getLocale(request: NextRequest): string | undefined {
+function getLocale(request: NextRequest): string {
   const negotiatorHeaders: Record<string, string> = {};
   request.headers.forEach((value, key) => (negotiatorHeaders[key] = value));
 
@@ -16,7 +16,11 @@ function getLocale(request: NextRequest): string | undefined {
   const languages = new Negotiator({ headers: negotiatorHeaders }).languages().filter(l => l !== '*');
   const defaultLocale = i18n.defaultLocale;
 
-  return matchLocale(languages, locales, defaultLocale);
+  try {
+    return matchLocale(languages, locales, defaultLocale);
+  } catch (e) {
+    return defaultLocale;
+  }
 }
 
 export function middleware(request: NextRequest) {
@@ -63,14 +67,15 @@ export function middleware(request: NextRequest) {
   if (pathnameIsMissingLocale) {
     const locale = getLocale(request);
 
-    // If the root is accessed, redirect to the landing page of the detected locale.
+    // If the root is accessed, redirect to the default landing page.
+    // This is crucial for bots and crawlers.
     if (pathname === '/') {
        return NextResponse.redirect(
-        new URL(`/${locale}/landing`, request.url)
+        new URL(`/${i18n.defaultLocale}/landing`, request.url)
       );
     }
 
-    // For other paths, prepend the locale.
+    // For other paths, prepend the detected locale.
     return NextResponse.redirect(
       new URL(`/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`, request.url)
     );
