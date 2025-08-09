@@ -21,7 +21,6 @@ import { useAuth, AuthProvider } from "@/context/auth-context";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Loader2, ArrowLeft } from "lucide-react";
 import { FirebaseError } from "firebase/auth"; // Import FirebaseError from firebase/auth
-import type { Dictionary } from "@/lib/get-dictionary";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { DictionariesProvider } from "@/context/dictionary-context";
@@ -29,6 +28,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { UserProfile } from "@/lib/types";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormField, FormItem, FormControl, FormLabel, FormMessage } from "@/components/ui/form";
+import type { Dictionary } from "@/lib/get-dictionary";
 import { cn } from "@/lib/utils";
 const loginFormSchema = (dictionary: Dictionary["loginPage"]["validation"]) => z.object({
   email: z.string().email({ message: dictionary.email }),
@@ -142,7 +142,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
     setIsSubmitting(true);
     try {
       if (isSignUp) {
-        // Type assertion to inform TypeScript that data conforms to signUpFormSchema
+        // Type assertion to inform TypeScript that data conforms to signUpFormSchema based on isSignUp flag
         const signUpData = data as z.infer<typeof signUpFormSchema>;
         const profileData: Omit<UserProfile, 'id' | 'role' | 'email'> = {
             fullName: signUpData.fullName,
@@ -154,11 +154,11 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
             address: signUpData.address || "",
             city: signUpData.city || "",
             country: signUpData.country || "",
-            phone: data.phone || "",
-        };
+            phone: signUpData.phone || "",
+          };
         await signUp(data.email, data.password, profileData);
       } else {
-        await login(data.email, data.password);
+         await login((data as z.infer<typeof loginFormSchema>).email, (data as z.infer<typeof loginFormSchema>).password);
       }
     } catch (err: any) {
       if (err instanceof FirebaseError && err.code === 'auth/email-already-in-use') {
@@ -181,13 +181,14 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   }
   
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4 relative">
-       <Button asChild variant="outline" className="absolute top-4 left-4">
-        <Link href={`/${lang}/landing`}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          {dictionary.backButton}
-        </Link>
-      </Button>
+    <>
+      <div className="flex min-h-screen items-center justify-center bg-background p-4 relative">
+         <Link href={`/${lang}/landing`} passHref>
+            <Button variant="ghost" className="absolute top-4 left-4">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              {dictionary.backButton}
+            </Button>
+         </Link>
       <Card className="mx-auto w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl">{isSignUp ? dictionary.signUp : dictionary.title}</CardTitle>
@@ -196,8 +197,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <Form {...form}><form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               {isSignUp && (
                 <div className={cn("space-y-4", !isSignUp && "hidden")}>
                   <FormField
@@ -237,7 +237,8 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                   />
                  
                   {accountType === 'company' && (
-                     <FormField
+                   <>
+                    <FormField
                         control={form.control}
                         name="companyName"
                         render={({ field }) => (
@@ -263,9 +264,10 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                             </FormItem>
                         )}
                     />
+                   </>
                   )}
-
                   {accountType === 'individual' && (
+                   <>
                      <FormField
                         control={form.control}
                         name="idNumber"
@@ -279,7 +281,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                             </FormItem>
                         )}
                     />
-                  )}
+                   </>)}
 
                   <FormField
                       control={form.control}
@@ -294,7 +296,8 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                           </FormItem>
                       )}
                   />
-                  <FormField
+                 
+                    <FormField
                       control={form.control}
                       name="address"
                       render={({ field }) => (
@@ -307,7 +310,8 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                           </FormItem>
                       )}
                   />
-                  <div className=\"grid grid-cols-2 gap-4\">\
+                  <div className="grid grid-cols-2 gap-4">
+                    
                        <FormField
                           control={form.control}
                           name="city"
@@ -349,7 +353,6 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                       )}
                   />
                 </div>
-                </div>
 
                 <FormField
                     control={form.control}
@@ -369,7 +372,8 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                     control={form.control}
                     name="password"
                     render={({ field }) => (
-                        <FormItem>
+                       
+                        <FormItem> 
                              <div className="flex items-center">
                                 <FormLabel>{dictionary.password}</FormLabel>
                                 <div className={cn(isSignUp && "hidden")}>
@@ -390,7 +394,8 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                 />
 
                 {isSignUp && (
-                  <FormField
+                 
+                  <FormField 
                       control={form.control}
                       name="terms"
                       render={({ field }) => (
@@ -412,7 +417,6 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                           </FormItem>
                       )}
                   />
-                </div>
                 )}
 
                 {error && (
@@ -435,12 +439,12 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
             </Button>
           </div>
         </CardContent>
-      </Card>
-    </div>
+      </Card></div>
+   </>
   );
 }
 
-
+// Wrap the LoginPageContent with necessary providers
 export function LoginClient({ dictionary }: { dictionary: Dictionary }) {
   return (<ThemeProvider attribute="class"
       defaultTheme="system"

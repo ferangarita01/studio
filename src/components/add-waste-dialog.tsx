@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -297,5 +296,3 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, e
     </Dialog>
   );
 }
-
-    

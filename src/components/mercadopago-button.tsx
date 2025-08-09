@@ -1,5 +1,5 @@
 
-"use client";
+"use client"; // This is a client component 
 
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 import { useToast } from "@/hooks/use-toast";
@@ -8,7 +8,7 @@ import { updateUserPlan } from "@/services/waste-data-service";
 import { useState, useEffect } from 'react';
 import { Skeleton } from './ui/skeleton';
 
-const MERCADOPAGO_PUBLIC_KEY = process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY;
+const MERCADOPAGO_PUBLIC_KEY = process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY || "";
 // IMPORTANT: This is a TEST access token for the sandbox environment.
 // Replace with a secure backend call for production.
 const MERCADOPAGO_TEST_ACCESS_TOKEN = "TEST-8514800378495098-073117-91a54776110f03225674c10702672522-1943640243";
@@ -25,11 +25,21 @@ export function MercadoPagoButtonWrapper({ amount, description }: MercadoPagoBut
     const [isLoading, setIsLoading] = useState(true);
     const [isClient, setIsClient] = useState(false);
 
+    // State to hold the Mercado Pago SDK instance
+    const [mp, setMp] = useState<any>(null);
+
     useEffect(() => {
         setIsClient(true);
         if (MERCADOPAGO_PUBLIC_KEY && MERCADOPAGO_PUBLIC_KEY !== "YOUR_PUBLIC_KEY_HERE") {
-            initMercadoPago(MERCADOPAGO_PUBLIC_KEY, { locale: 'es-CO' });
+            try {
+                const mpInstance = new (window as any).MercadoPago(MERCADOPAGO_PUBLIC_KEY, { locale: 'es-CO' });
+                setMp(mpInstance);
+            } catch (error) {
+                console.error("Failed to initialize Mercado Pago SDK:", error);
+            }
         }
+        // Ensure the script is loaded
+        // The script tag is likely in your _document.js or layout.tsx
     }, []);
 
     const createPreference = async () => {
@@ -86,9 +96,20 @@ export function MercadoPagoButtonWrapper({ amount, description }: MercadoPagoBut
         }
     };
     
+    // Create preference when component is client-side and user is available
     useEffect(() => {
         if (isClient && user) {
             createPreference();
+        }
+    }, [isClient, user]);
+
+    // Render the Wallet brick when preferenceId and SDK are ready
+    useEffect(() => {
+        if (preferenceId && mp) {
+            const bricksBuilder = mp.bricks();
+            bricksBuilder.create('wallet', 'walletBrick_container', {
+                initialization: { preferenceId: preferenceId },
+            });
         }
     }, [isClient, user]);
 
@@ -98,6 +119,7 @@ export function MercadoPagoButtonWrapper({ amount, description }: MercadoPagoBut
         const status = urlParams.get('mp_status');
         if (status === 'success' && user) {
             updateUserPlan(user.uid, 'Premium').then(() => {
+                // Refresh user profile to reflect the plan change
                 refreshUserProfile();
                  toast({
                     title: "Pago Exitoso y Plan Actualizado!",
@@ -139,31 +161,7 @@ export function MercadoPagoButtonWrapper({ amount, description }: MercadoPagoBut
     }
     
     return (
-        <div id="wallet_container">
-             <Wallet
-                initialization={{
-                    preferenceId: preferenceId,
-                    redirectMode: 'modal'
-                }}
-                customization={{
-                    texts: {
-                        valueProp: 'smart_option',
-                    },
-                }}
-                onSubmit={() => {
-                     if (!user) {
-                        toast({ title: "Error", description: "Debes iniciar sesión para completar la compra.", variant: "destructive" });
-                        return Promise.reject();
-                    }
-                    
-                    toast({
-                        title: "Procesando tu pago",
-                        description: "Serás redirigido a Mercado Pago para completar la transacción.",
-                    });
-
-                    return Promise.resolve();
-                }}
-             />
+        <div id="walletBrick_container">
         </div>
     );
 }
