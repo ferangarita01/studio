@@ -88,16 +88,9 @@ const allNavItems = [
     { href: '/', icon: LayoutDashboard, labelKey: 'dashboard', roles: ['admin', 'client'] },
     { href: '/analyzer', icon: BrainCircuit, labelKey: 'aiAgent', roles: ['admin', 'client'], plan: 'Premium' },
     { href: '/log', icon: Trash2, labelKey: 'log', roles: ['admin', 'client'] },
+    { href: '/reports/disposal', icon: FileText, labelKey: 'finalDisposal', roles: ['admin', 'client'] },
     { href: '/schedule', icon: Calendar, labelKey: 'collections', roles: ['admin', 'client'] },
-    {
-      labelKey: 'reports',
-      icon: FileText,
-      roles: ['admin', 'client'],
-      subItems: [
-        { href: '/reports', labelKey: 'financialReports', roles: ['admin', 'client'] },
-        { href: '/reports/disposal', labelKey: 'finalDisposal', roles: ['admin', 'client'] }
-      ]
-    },
+    { href: '/reports', icon: FileText, labelKey: 'reports', roles: ['admin', 'client'] },
     { href: '/materials', icon: Package, labelKey: 'prices', roles: ['admin', 'client'] },
     { href: '/companies', icon: Users, labelKey: 'companies', roles: ['admin'] },
     { href: '/compliance', icon: Gavel, labelKey: 'compliance', roles: ['admin', 'client'], plan: 'Premium' },
@@ -468,7 +461,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
         const findItem = (items: typeof allNavItems, path: string): (typeof allNavItems[number]) | undefined => {
             for (const item of items) {
                 if ('subItems' in item) {
-                    const subItem = item.subItems.find(sub => path.startsWith(sub.href));
+                    const subItem = (item as any).subItems.find((sub: any) => path.startsWith(sub.href));
                     if (subItem) return subItem as any;
                 }
                 if (item.href === path || (item.href !== '/' && path.startsWith(item.href) && item.href.length > 1)) {
@@ -535,7 +528,8 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
               const label = navDictionary.links[item.labelKey as keyof typeof navDictionary.links];
 
               if ('subItems' in item) {
-                const isActive = item.subItems.some(sub => pathname.startsWith(getHref(sub.href)));
+                const subItems = (item as any).subItems;
+                const isActive = subItems.some((sub:any) => pathname.startsWith(getHref(sub.href)));
                 return (
                   <Collapsible key={item.labelKey} defaultOpen={isActive}>
                     <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&[data-state=open]>svg]:rotate-180">
@@ -546,7 +540,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                       <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
                     </CollapsibleTrigger>
                     <CollapsibleContent className="space-y-1 py-1 pl-7">
-                      {item.subItems.map(subItem => {
+                      {subItems.map((subItem:any) => {
                         if (!subItem.roles.includes(role!)) return null;
                         const subHref = getHref(subItem.href);
                         const subLabel = navDictionary.links[subItem.labelKey as keyof typeof navDictionary.links];
