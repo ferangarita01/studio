@@ -50,7 +50,7 @@
     "jspdf": "^2.5.1",
     "lucide-react": "^0.475.0",
     "negotiator": "^0.6.3",
-    "next": "15.3.3",
+    "next": "^15.3.3",
     "next-themes": "^0.3.0",
     "patch-package": "^8.0.0",
     "react": "^18.3.1",
@@ -66,7 +66,7 @@
   },
   "devDependencies": {
     "@types/negotiator": "^0.6.3",
-    "@types/node": "^20",
+    "@types/node": "^20.19.10",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "genkit-cli": "^1.13.0",
