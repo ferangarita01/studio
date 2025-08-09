@@ -1,5 +1,4 @@
 
-
 {
   "navigation": {
     "title": "WasteWise",
@@ -181,9 +180,11 @@
         "cta": "Get Started Free",
         "features": [
           "1 Company Profile",
-          "Waste Log & Tracking",
           "Basic Reporting",
-          "Community Support"
+          "1 Free Final Disposal Certificate",
+          "Free Collection from 3 Tons",
+          "Standard Collection Scheduling",
+          "Generate Income with Recycling"
         ]
       },
       "professional": {
@@ -196,9 +197,12 @@
         "features": [
           "Everything in Free, plus:",
           "AI Agent Support",
-          "Legal Compliance",
-          "API",
-          "Support"
+          "Legal Compliance (PMIRS)",
+          "Carbon Footprint Measurement",
+          "Carbon Footprint Offsetting",
+          "Free Collection from 500kg",
+          "Priority Scheduling",
+          "Priority Support"
         ]
       },
       "enterprise": {
@@ -209,10 +213,13 @@
         "cta": "Contact Sales",
         "features": [
           "Everything in Premium, plus:",
+          "Custom Integrations",
           "Unlimited Company Profiles",
           "Legal Compliance Module",
-          "Dedicated Account Manager",
-          "Custom Integrations"
+          "GHG Inventories",
+          "GHG Reporting System",
+          "Reporting frameworks (CDP, TCFD, etc.)",
+          "Automatic generation of ISO 14064-1:2018 reports"
         ]
       }
     }

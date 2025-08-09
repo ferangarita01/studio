@@ -1,5 +1,4 @@
 
-
 {
   "navigation": {
     "title": "WasteWise",
@@ -181,9 +180,11 @@
         "cta": "Empezar Gratis",
         "features": [
           "1 Perfil de Empresa",
-          "Registro y Seguimiento de Residuos",
           "Informes Básicos",
-          "Soporte Comunitario"
+          "1 Certificado de Disposición Final gratis",
+          "Recolección Gratuita desde 3 Toneladas",
+          "Agendamiento de recolección Normal",
+          "Genera Ingresos con reciclaje"
         ]
       },
       "professional": {
@@ -196,9 +197,12 @@
         "features": [
           "Todo en el plan Gratis, más:",
           "Soporte de Agente IA",
-          "Cumplimiento Legal",
-          "API",
-          "Soporte"
+          "Cumplimiento Legal PMIRS",
+          "Medición de Huella de Carbono",
+          "Compensa tu huella de Carbono",
+          "Recolección Gratuita desde 500Kg",
+          "Agendamiento Prioritario",
+          "Soporte Prioritario"
         ]
       },
       "enterprise": {
@@ -209,10 +213,13 @@
         "cta": "Contactar a Ventas",
         "features": [
           "Todo en el plan Premium, más:",
+          "Integraciones Personalizadas",
           "Perfiles de Empresa Ilimitados",
           "Módulo de Cumplimiento Legal",
-          "Gestor de Cuenta Dedicado",
-          "Integraciones Personalizadas"
+          "Inventarios de GEI",
+          "Sistema GHG Reporting",
+          "Marcos de reporte (CDP, TCFD, etc.)",
+          "Generación automática de reportes ISO 14064-1:2018"
         ]
       }
     }
