@@ -12,46 +12,57 @@ const inter = Inter({
   variable: '--font-sans',
 })
 
-const APP_NAME = "WasteWise";
-const APP_DESCRIPTION = "WasteWise is a business and event waste management platform by EcoCircle, designed to track and manage waste generation for companies, festivals, and concerts.";
+const SEO_CONFIG = {
+  en: {
+    title: "WasteWise: Digital Recycling & Waste Collection Platform | Smart Scrap Metal Solutions Colombia",
+    description: "Leading recycling and waste collection company in Colombia. Digital platform that automatically turns scrap into revenue. Smart waste management with AI. Request a free demo!",
+    keywords: ["recycling Colombia", "waste collection", "digital scrap yard", "business waste management", "WasteWise", "scrap metal purchase", "sale of recyclable materials"]
+  },
+  es: {
+    title: "WasteWise: Plataforma Digital de Reciclaje y Recolección de Residuos | Chatarrería Inteligente Colombia",
+    description: "Empresa líder en reciclaje y recolección de residuos en Colombia. Plataforma digital que convierte chatarra en ingresos automáticamente. Gestión inteligente de residuos con IA. ¡Solicita demo gratis!",
+    keywords: ["reciclaje Colombia", "recolección residuos", "chatarrería digital", "gestión residuos empresarial", "WasteWise", "compra chatarra", "venta materiales reciclables"]
+  }
+}
 
 export async function generateMetadata({ params: p }: { params: { lang: Locale } }): Promise<Metadata> {
   const params = await Promise.resolve(p);
   const lang = params.lang;
-  const dictionary = await getDictionary(lang);
+  const seo = SEO_CONFIG[lang];
   
   return {
-    applicationName: APP_NAME,
+    applicationName: "WasteWise",
     title: {
-      default: APP_NAME,
-      template: `%s | ${APP_NAME}`,
+      default: seo.title,
+      template: `%s | WasteWise`,
     },
-    description: APP_DESCRIPTION,
+    description: seo.description,
+    keywords: seo.keywords,
     manifest: `/${lang}/manifest.json`,
     appleWebApp: {
       capable: true,
       statusBarStyle: "default",
-      title: APP_NAME,
+      title: "WasteWise",
     },
     formatDetection: {
       telephone: false,
     },
     openGraph: {
       type: "website",
-      siteName: APP_NAME,
+      siteName: "WasteWise",
       title: {
-        default: APP_NAME,
-        template: `%s | ${APP_NAME}`,
+        default: seo.title,
+        template: `%s | WasteWise`,
       },
-      description: APP_DESCRIPTION,
+      description: seo.description,
     },
     twitter: {
       card: "summary",
       title: {
-        default: APP_NAME,
-        template: `%s | ${APP_NAME}`,
+        default: seo.title,
+        template: `%s | WasteWise`,
       },
-      description: APP_DESCRIPTION,
+      description: seo.description,
     },
   };
 }
@@ -83,5 +94,3 @@ export default async function RootLayout({
     </html>
   );
 }
-
-    
