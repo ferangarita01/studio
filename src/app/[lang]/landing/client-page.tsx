@@ -15,6 +15,7 @@ import type { Dictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import Image from "next/image";
 import { PublicHeader } from "@/components/public-header";
+import { OportunidadSection } from "@/components/oportunidad-section";
 
 const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
     <div className="flex flex-col items-center p-6 text-center">
@@ -77,72 +78,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                     </div>
                 </section>
 
-                <section className="bg-slate-900 text-white py-16">
-                  <div className="max-w-6xl mx-auto px-4 text-center">
-                    <div className="flex flex-col items-center gap-3">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v12m0 0l-3-3m3 3l3-3M4 21h16" />
-                      </svg>
-                      <h2 className="text-3xl font-bold sm:text-4xl">
-                        {d.valueProposition.title}
-                      </h2>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-8">
-                      <div className="flex items-center gap-3">
-                        <span className="text-green-400 text-2xl">✔</span>
-                        <p>{d.valueProposition.stats.stat1}</p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-green-400 text-2xl">✔</span>
-                        <p>{d.valueProposition.stats.stat2}</p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-green-400 text-2xl">✔</span>
-                        <p>{d.valueProposition.stats.stat3}</p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
-                      <div className="bg-red-900/40 border border-red-700 rounded-lg p-6">
-                        <h3 className="text-red-400 font-semibold text-xl mb-4">{d.valueProposition.from.title}</h3>
-                        <ul className="space-y-3">
-                          <li className="flex items-center gap-2">
-                            <span className="text-red-400">✖</span> {d.valueProposition.from.item1}
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span className="text-red-400">✖</span> {d.valueProposition.from.item2}
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span className="text-red-400">✖</span> {d.valueProposition.from.item3}
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span className="text-red-400">✖</span> {d.valueProposition.from.item4}
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div className="bg-green-900/40 border border-green-700 rounded-lg p-6">
-                        <h3 className="text-green-400 font-semibold text-xl mb-4">{d.valueProposition.to.title}</h3>
-                        <ul className="space-y-3">
-                          <li className="flex items-center gap-2">
-                            <span className="text-green-400">✔</span> {d.valueProposition.to.item1}
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span className="text-green-400">✔</span> {d.valueProposition.to.item2}
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span className="text-green-400">✔</span> {d.valueProposition.to.item3}
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span className="text-green-400">✔</span> {d.valueProposition.to.item4}
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-
+                <OportunidadSection dictionary={d.valueProposition} />
 
                 <section id="use-cases" className="py-16 sm:py-24">
                     <div className="container-responsive">
