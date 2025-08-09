@@ -22,7 +22,7 @@
        ".write": "auth != null"
     },
     "disposalCertificates": {
-      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
+      ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() == 'admin' || (newData.child('companyId').val() == root.child('users').child(auth.uid).child('assignedCompanyId').val()))"
     }
   }
 }
