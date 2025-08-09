@@ -50,17 +50,22 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
 
 export async function getUsers(role?: UserRole): Promise<UserProfile[]> {
   const usersRef = ref(db, 'users');
-  const snapshot = await get(usersRef);
+  let usersQuery = query(usersRef);
+
+  if (role) {
+    // If a role is specified, query for users with that role
+    usersQuery = query(usersRef, orderByChild('role'), equalTo(role));
+  }
+  
+  const snapshot = await get(usersQuery);
+
   if (!snapshot.exists()) {
     return [];
   }
-  const allUsers: UserProfile[] = snapshotToArray(snapshot);
+
+  const users: UserProfile[] = snapshotToArray(snapshot);
   
-  if (role) {
-    return allUsers.filter(user => user.role === role);
-  }
-  
-  return allUsers;
+  return users;
 }
 
 export async function updateUserPlan(userId: string, plan: PlanType): Promise<void> {
