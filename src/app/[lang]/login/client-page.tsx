@@ -20,7 +20,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth, AuthProvider } from "@/context/auth-context";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Loader2, ArrowLeft } from "lucide-react";
-import { FirebaseError } from "firebase/app";
+import { FirebaseError } from "firebase/auth"; // Import FirebaseError from firebase/auth
 import type { Dictionary } from "@/lib/get-dictionary";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
@@ -30,7 +30,6 @@ import type { UserProfile } from "@/lib/types";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormField, FormItem, FormControl, FormLabel, FormMessage } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
-import { GoogleReCaptchaProvider, useGoogleReCaptcha } from "react-google-recaptcha-v3";
 const loginFormSchema = (dictionary: Dictionary["loginPage"]["validation"]) => z.object({
   email: z.string().email({ message: dictionary.email }),
   password: z.string().min(1, { message: dictionary.password }),
@@ -88,6 +87,8 @@ const signUpDefaultValues = {
   terms: false,
 };
 
+type FormData = z.infer<typeof loginFormSchema> | z.infer<typeof signUpFormSchema>;
+
 const loginDefaultValues = {
   email: "",
   password: "",
@@ -102,12 +103,11 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const validationDictionary = dictionary.validation; 
-  const { executeRecaptcha } = useGoogleReCaptcha();
-  
+
   const currentSchema = useMemo(() => {
     return isSignUp ? signUpFormSchema(validationDictionary) : loginFormSchema(validationDictionary);
   }, [isSignUp, validationDictionary]);
-
+ 
   const form = useForm({
     resolver: zodResolver(currentSchema),
     defaultValues: isSignUp ? signUpDefaultValues : loginDefaultValues
@@ -136,24 +136,24 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
     }
   }, [isAuthenticated, router, lang]);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: FormData) => {
     setError("");
 
     setIsSubmitting(true);
     try {
-
-
       if (isSignUp) {
+        // Type assertion to inform TypeScript that data conforms to signUpFormSchema
+        const signUpData = data as z.infer<typeof signUpFormSchema>;
         const profileData: Omit<UserProfile, 'id' | 'role' | 'email'> = {
-            fullName: data.fullName,
-            accountType: data.accountType,
-            companyName: data.companyName || "",
-            taxId: data.taxId || "",
-            idNumber: data.idNumber || "",
-            jobTitle: data.jobTitle || "",
-            address: data.address || "",
-            city: data.city || "",
-            country: data.country || "",
+            fullName: signUpData.fullName,
+            accountType: signUpData.accountType,
+            companyName: signUpData.companyName || "",
+            taxId: signUpData.taxId || "",
+            idNumber: signUpData.idNumber || "",
+            jobTitle: signUpData.jobTitle || "",
+            address: signUpData.address || "",
+            city: signUpData.city || "",
+            country: signUpData.country || "",
             phone: data.phone || "",
         };
         await signUp(data.email, data.password, profileData);
@@ -198,6 +198,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {isSignUp && (
                 <div className={cn("space-y-4", !isSignUp && "hidden")}>
                   <FormField
                       control={form.control}
@@ -235,7 +236,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                       )}
                   />
                  
-                  <div className={cn("space-y-4", accountType !== 'company' && "hidden")}>
+                  {accountType === 'company' && (
                      <FormField
                         control={form.control}
                         name="companyName"
@@ -262,9 +263,9 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                             </FormItem>
                         )}
                     />
-                  </div>
+                  )}
 
-                  <div className={cn("space-y-4", accountType !== 'individual' && "hidden")}>
+                  {accountType === 'individual' && (
                      <FormField
                         control={form.control}
                         name="idNumber"
@@ -278,9 +279,9 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                             </FormItem>
                         )}
                     />
-                  </div>
+                  )}
 
-                   <FormField
+                  <FormField
                       control={form.control}
                       name="jobTitle"
                       render={({ field }) => (
@@ -293,7 +294,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                           </FormItem>
                       )}
                   />
-                   <FormField
+                  <FormField
                       control={form.control}
                       name="address"
                       render={({ field }) => (
@@ -306,7 +307,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                           </FormItem>
                       )}
                   />
-                   <div className="grid grid-cols-2 gap-4">
+                  <div className=\"grid grid-cols-2 gap-4\">\
                        <FormField
                           control={form.control}
                           name="city"
@@ -333,7 +334,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                               </FormItem>
                           )}
                       />
-                  </div>
+                 </div>
                    <FormField
                       control={form.control}
                       name="phone"
@@ -347,6 +348,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                           </FormItem>
                       )}
                   />
+                </div>
                 </div>
 
                 <FormField
@@ -387,7 +389,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                     )}
                 />
 
-                <div className={cn(!isSignUp && "hidden")}>
+                {isSignUp && (
                   <FormField
                       control={form.control}
                       name="terms"
@@ -411,6 +413,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                       )}
                   />
                 </div>
+                )}
 
                 {error && (
                   <Alert variant="destructive">
