@@ -19,7 +19,7 @@ export default function ProfilePage() {
     }
   }, [user, isAuthLoading, router, lang]);
 
-  if (isAuthLoading || !user || !dictionary) {
+  if (isAuthLoading || !user || !dictionary?.profilePage) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
