@@ -5,16 +5,18 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { 
-  getAuth, 
   onAuthStateChanged, 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword,
   signOut,
-  User
+  User,
+  GoogleAuthProvider,
+  signInWithPopup,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import type { UserProfile } from "@/lib/types";
-import { getUserProfile, createUserProfile, addCompany as addCompanyService } from "@/services/waste-data-service";
+import { getUserProfile, createUserProfile, addCompany as addCompanyService, updateUserProfile } from "@/services/waste-data-service";
 import type { Locale } from "@/i18n-config";
 
 
@@ -28,12 +30,17 @@ interface AuthContextType {
   userProfile: UserProfile | null;
   login: (email:string, pass:string) => Promise<any>;
   logout: () => void;
-  signUp: (email:string, pass:string, profileData: Omit<UserProfile, 'id' | 'role' | 'email'>) => Promise<any>;
+  signUp: (email:string, pass:string, profileData: Partial<UserProfile>) => Promise<any>;
+  signInWithGoogle: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
+  updateProfile: (data: Partial<UserProfile>) => Promise<void>;
   refreshUserProfile: () => Promise<void>;
   lang: Locale;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const googleProvider = new GoogleAuthProvider();
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -57,78 +64,72 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [user]);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setIsLoading(true);
-      if (user) {
+  const handleUser = useCallback(async (user: User | null) => {
+    if (user) {
         setUser(user);
-        
-        const idToken = await user.getIdToken();
-        // This is a client-side only way to "forward" the token for server components
-        // A more robust solution might use cookies or a dedicated API route
-        document.cookie = `firebaseIdToken=${idToken};path=/;max-age=3600`;
-        
-        if (user.email === 'prueba2@admin.co') {
-            const profile = await getUserProfile(user.uid);
-            setUserProfile({...profile, id: user.uid, email: user.email, role: 'admin' });
-            setRole('admin');
-        } else {
-            const profile = await getUserProfile(user.uid);
-            setUserProfile(profile);
-            setRole(profile?.role || null);
-        }
-      } else {
+        const profile = await getUserProfile(user.uid);
+        setUserProfile(profile);
+        setRole(profile?.role || null);
+    } else {
         setUser(null);
         setUserProfile(null);
         setRole(null);
-        document.cookie = 'firebaseIdToken=;path=/;max-age=0';
-      }
-      setIsLoading(false);
-    });
-
-    return () => unsubscribe();
+    }
+    setIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, handleUser);
+    return () => unsubscribe();
+  }, [handleUser]);
 
 
   const login = async (email: string, password: string):Promise<any> => {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    // onAuthStateChanged will handle fetching the profile and setting the role
-    return userCredential;
+    return signInWithEmailAndPassword(auth, email, password);
   };
 
-  const signUp = async (email: string, password: string, profileData: Omit<UserProfile, 'id' | 'role' | 'email'>):Promise<any> => {
-    try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const newUser = userCredential.user;
-        if (newUser) {
-          
-          let assignedCompanyId: string | undefined = undefined;
+  const signUp = async (email: string, password: string, profileData: Partial<UserProfile>):Promise<any> => {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const newUser = userCredential.user;
+    
+    await createUserProfile(newUser.uid, { 
+      email: newUser.email!,
+      role: 'client',
+      fullName: profileData.fullName || newUser.displayName || "New User",
+      plan: 'Free',
+    });
 
-          // If the account type is company, create the company and get its ID
-          if (profileData.accountType === 'company' && profileData.companyName) {
-            const newCompany = await addCompanyService(profileData.companyName, newUser.uid, newUser.uid);
-            assignedCompanyId = newCompany.id;
-          }
+    return userCredential;
+  };
+  
+  const signInWithGoogle = async () => {
+    const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
 
-          // Create a user profile in the database with the 'client' role
-          await createUserProfile(newUser.uid, { 
-            email: newUser.email!, 
+    // Check if user exists in our DB, if not, create them
+    const profile = await getUserProfile(user.uid);
+    if (!profile) {
+        await createUserProfile(user.uid, {
+            email: user.email!,
             role: 'client',
-            ...profileData,
+            fullName: user.displayName || 'Google User',
             plan: 'Free',
-            assignedCompanyId: assignedCompanyId, // Add the assigned company ID
-          });
-        }
-        // onAuthStateChanged will handle setting the new user and profile
-        return userCredential;
-    } catch (err) {
-        throw err;
+        });
     }
+  };
+
+  const resetPassword = async (email: string) => {
+    await sendPasswordResetEmail(auth, email);
+  };
+
+  const updateProfile = async (data: Partial<UserProfile>) => {
+    if (!user) throw new Error("User not authenticated");
+    await updateUserProfile(user.uid, data);
+    await refreshUserProfile(); // Refresh local state
   };
 
   const logout = useCallback(async () => {
     await signOut(auth);
-    // state will be cleared by onAuthStateChanged
     router.push(`/${lang}/landing`);
   }, [router, lang]);
 
@@ -140,6 +141,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         login, 
         logout, 
         signUp,
+        signInWithGoogle,
+        resetPassword,
+        updateProfile,
         role, 
         userProfile,
         refreshUserProfile,
@@ -157,3 +161,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
+    

@@ -26,6 +26,7 @@ import {
   Gavel,
   ChevronDown,
   Users,
+  User as UserIcon,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -68,6 +69,8 @@ import { Toaster } from "../ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 import { WhatsAppButton } from "../whatsapp-button";
 import { UpgradePlanDialog } from "../upgrade-plan-dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 
 const ClientOnlyToaster = dynamic(() => import('@/components/ui/toaster').then(mod => mod.Toaster), {
   ssr: false,
@@ -94,37 +97,9 @@ const allNavItems = [
     { href: '/materials', icon: Package, labelKey: 'prices', roles: ['admin', 'client'] },
     { href: '/companies', icon: Users, labelKey: 'companies', roles: ['admin'] },
     { href: '/compliance', icon: Gavel, labelKey: 'compliance', roles: ['admin', 'client'], plan: 'Premium' },
+    { href: '/profile', icon: UserIcon, labelKey: 'profile', roles: ['admin', 'client'] },
 ] as const;
 
-
-function ThemeToggle() {
-  const { setTheme } = useTheme();
-  const dictionary = useDictionaries()?.navigation.themeToggle;
-  if (!dictionary) return null;
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">{dictionary.toggle}</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
-          {dictionary.light}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          {dictionary.dark}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          {dictionary.system}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
 
 function LanguageToggle() {
     const pathname = usePathname()
@@ -416,6 +391,61 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
+function UserMenu() {
+    const { logout, user, userProfile } = useAuth();
+    const dictionary = useDictionaries()?.navigation;
+    const { setTheme } = useTheme();
+
+    if (!user || !dictionary) return null;
+
+    const getInitials = (name: string) => {
+        return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    }
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-8 w-8">
+                        <AvatarImage src={user.photoURL || undefined} alt={userProfile?.fullName || 'User'} />
+                        <AvatarFallback>{userProfile?.fullName ? getInitials(userProfile.fullName) : 'U'}</AvatarFallback>
+                    </Avatar>
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuItem className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium leading-none">{userProfile?.fullName}</p>
+                        <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                    </div>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={logout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>{dictionary.logout}</span>
+                </DropdownMenuItem>
+                 <DropdownMenuSeparator />
+                 <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                       <Button variant="ghost" size="sm" className="w-full justify-start gap-2 font-normal">
+                          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                          <span>{dictionary.themeToggle.toggle}</span>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => setTheme("light")}>{dictionary.themeToggle.light}</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setTheme("dark")}>{dictionary.themeToggle.dark}</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setTheme("system")}>{dictionary.themeToggle.system}</DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+
+            </DropdownMenuContent>
+        </DropdownMenu>
+    )
+}
+
+
 function AppShellContent({ children, lang }: { children: React.ReactNode, lang: string }) {
   const NavSkeleton = () => (
      <div className="grid items-start gap-2 px-2 text-sm font-medium lg:px-4">
@@ -444,7 +474,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   const currentPath = `/${pathname.split('/').slice(2).join('/')}`;
 
   const isPublicPage = useMemo(() => {
-    const publicPaths = ['/login', '/landing', '/asorecifuentes', '/pricing', '/embed/impact'];
+    const publicPaths = ['/login', '/landing', '/asorecifuentes', '/pricing', '/embed/impact', '/welcome'];
     return publicPaths.some(p => currentPath.startsWith(p));
   }, [currentPath]);
 
@@ -627,12 +657,6 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
             <div className="flex-1 overflow-y-auto py-2">
                <NavContent />
             </div>
-             <div className="mt-auto p-4 border-t">
-                 <Button size="sm" variant="ghost" onClick={logout} className="w-full justify-start gap-2">
-                    <LogOut className="h-4 w-4"/>
-                    <span>{navDictionary.logout}</span>
-                  </Button>
-              </div>
           </div>
         </div>
         <div className="flex flex-col">
@@ -655,12 +679,6 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                  <div className="flex-1 overflow-y-auto py-2">
                     <NavContent />
                  </div>
-                 <div className="mt-auto p-4 border-t" onClick={() => setMobileMenuOpen(false)}>
-                   <Button size="sm" variant="ghost" onClick={logout} className="w-full justify-start gap-2">
-                      <LogOut className="h-4 w-4"/>
-                      <span>{navDictionary.logout}</span>
-                    </Button>
-                </div>
               </SheetContent>
             </Sheet>
             <div className="w-full flex-1 md:hidden">
@@ -668,7 +686,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
             </div>
             <div className="ml-auto flex items-center gap-2">
               <LanguageToggle />
-              <ThemeToggle />
+              <UserMenu />
             </div>
           </header>
           <main className="flex flex-1 flex-col overflow-auto bg-background/50 relative">
@@ -721,10 +739,5 @@ export function AppShell({ children, lang, dictionary }: { children: React.React
     </ThemeProvider>
    )
 }
-
-
-
-
-
 
     

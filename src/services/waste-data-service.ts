@@ -48,6 +48,11 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
     return null;
 }
 
+export async function updateUserProfile(uid: string, data: Partial<UserProfile>): Promise<void> {
+    const userRef = ref(db, `users/${uid}`);
+    await update(userRef, data);
+}
+
 export async function getUsers(role?: UserRole): Promise<UserProfile[]> {
   const usersRef = ref(db, 'users');
   let usersQuery = query(usersRef);
@@ -500,3 +505,5 @@ export async function uploadFile(file: File, path: string): Promise<string> {
     const downloadURL = await getDownloadURL(fileRef);
     return downloadURL;
 }
+
+    

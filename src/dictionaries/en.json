@@ -12,7 +12,8 @@
       "finalDisposal": "Final Disposal",
       "prices": "Prices",
       "compliance": "Legal Compliance",
-      "companies": "Companies"
+      "companies": "Companies",
+      "profile": "Profile"
     },
     "themeToggle": {
       "toggle": "Toggle theme",
@@ -232,13 +233,21 @@
     "forgotPassword": "Forgot your password?",
     "loginButton": "Login",
     "backButton": "Back",
-    "loginAsAdmin": "Login as Admin",
-    "loginAsClient": "Login as Client",
-    "loginWithGoogle": "Login with Google",
+    "loginWithGoogle": "Continue with Google",
+    "orContinueWith": "Or continue with",
     "noAccount": "Don't have an account?",
     "hasAccount": "Already have an account?",
     "signUp": "Sign up",
-    "signUpDescription": "Create a new client account.",
+    "signUpDescription": "Create a new account.",
+    "resetPasswordDialog": {
+        "title": "Reset Password",
+        "description": "Enter your email and we'll send you a link to reset your password.",
+        "emailPlaceholder": "name@example.com",
+        "cancel": "Cancel",
+        "submit": "Send Reset Link",
+        "success": "Password reset link sent! Check your inbox.",
+        "error": "Failed to send reset link. Please try again."
+    },
     "labels": {
       "fullName": "Full Name",
       "companyName": "Company Name",
@@ -258,14 +267,63 @@
     },
     "validation": {
       "fullName": "Full name must be at least 2 characters.",
-      "companyName": "Company name is required and must be at least 2 characters.",
-      "accountType": "Please select an account type.",
-      "taxId": "Tax ID is required for companies.",
-      "idNumber": "Identification number is required for individuals.",
       "email": "Invalid email address.",
+      "emailInUse": "This email is already in use. Try logging in.",
       "password": "Password must be at least 6 characters long.",
       "terms": "You must accept the terms and conditions."
     }
+  },
+   "welcomePage": {
+    "title": "Welcome to WasteWise, {name}!",
+    "subtitle": "Let's finish setting up your profile.",
+    "accountTypeLabel": "How will you be using WasteWise?",
+    "accountTypeIndividual": "As an Individual",
+    "accountTypeCompany": "For a Company",
+    "companyNameLabel": "Company Name",
+    "companyNamePlaceholder": "e.g., Acme Corporation",
+    "taxIdLabel": "Company Tax ID (NIT)",
+    "taxIdPlaceholder": "e.g., 900.123.456-7",
+    "idNumberLabel": "Personal ID Number (Cédula)",
+    "idNumberPlaceholder": "e.g., 1234567890",
+    "finishButton": "Finish Setup",
+    "toastSuccess": "Profile updated successfully!",
+    "toastError": "Failed to update profile.",
+    "validation": {
+        "accountType": "Please select an account type.",
+        "companyName": "Company name is required.",
+        "taxId": "Tax ID is required for companies.",
+        "idNumber": "ID number is required for individuals."
+    }
+  },
+  "profilePage": {
+    "title": "My Profile",
+    "description": "Update your personal information and preferences.",
+    "personalInfo": {
+        "title": "Personal Information",
+        "description": "Manage your personal details.",
+        "fullNameLabel": "Full Name",
+        "emailLabel": "Email (cannot be changed)",
+        "phoneLabel": "Phone Number",
+        "jobTitleLabel": "Job Title"
+    },
+    "companyInfo": {
+        "title": "Company Information",
+        "description": "Manage your company's details.",
+        "accountTypeLabel": "Account Type",
+        "companyNameLabel": "Company Name",
+        "taxIdLabel": "Tax ID (NIT)",
+        "idNumberLabel": "Personal ID Number (Cédula)"
+    },
+    "addressInfo": {
+        "title": "Address",
+        "description": "Update your location.",
+        "addressLabel": "Address",
+        "cityLabel": "City",
+        "countryLabel": "Country"
+    },
+    "saveButton": "Save Changes",
+    "toastSuccess": "Profile updated successfully!",
+    "toastError": "Failed to update profile."
   },
   "dashboard": {
     "title": "Dashboard",
@@ -786,3 +844,5 @@
     }
   }
 }
+
+    
