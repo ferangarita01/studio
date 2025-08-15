@@ -74,7 +74,7 @@ export function UploadCertificateDialog({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      companyId: undefined,
+      companyId: "",
       file: undefined,
     },
   });
@@ -94,6 +94,8 @@ export function UploadCertificateDialog({
     
     let fileToUpload = values.file[0];
     
+    setIsSubmitting(true);
+
     try {
       fileToUpload = await compressFileIfNeeded(fileToUpload);
     } catch (compressionError: any) {
@@ -102,10 +104,9 @@ export function UploadCertificateDialog({
         description: compressionError.message,
         variant: "destructive",
       });
+      setIsSubmitting(false);
       return;
     }
-    
-    setIsSubmitting(true);
     
     const filePath = `certificates/${values.companyId}/${Date.now()}-${fileToUpload.name}`;
     const fileRef = storageRef(storage, filePath);
@@ -113,8 +114,7 @@ export function UploadCertificateDialog({
 
     uploadTask.on('state_changed',
       (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log(`Upload is ${progress}% done`);
+        // Optional: handle progress updates
       },
       (error) => {
         console.error("Upload failed:", error);
@@ -157,7 +157,7 @@ export function UploadCertificateDialog({
   
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
-        form.reset();
+        form.reset({ companyId: "", file: undefined });
     }
     onOpenChange(isOpen);
   };
@@ -203,7 +203,7 @@ export function UploadCertificateDialog({
               <FormField
                 control={form.control}
                 name="file"
-                render={({ field }) => (
+                render={() => (
                     <FormItem>
                         <FormLabel>{dictionary.fileLabel}</FormLabel>
                         <FormControl>
