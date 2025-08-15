@@ -24,6 +24,10 @@
     "disposalEvents": {
        ".read": "auth != null",
        ".write": "auth != null"
+    },
+    "disposalCertificates": {
+       ".read": "auth != null",
+       ".write": "auth != null"
     }
   }
 }
