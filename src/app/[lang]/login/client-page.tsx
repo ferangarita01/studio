@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -16,12 +15,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form"; // ✅ FIXED: Import Form component
 import { useAuth } from "@/context/auth-context";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Loader2, ArrowLeft } from "lucide-react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { DictionariesProvider } from "@/context/dictionary-context";
+import { AuthProvider } from "@/context/auth-context"; // ✅ FIXED: Import AuthProvider
 import type { Dictionary } from "@/lib/get-dictionary";
 import { PasswordResetDialog } from "@/components/password-reset-dialog";
 import { cn } from "@/lib/utils";
@@ -35,32 +36,54 @@ const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     </svg>
 );
 
+// ✅ FIXED: Proper Zod schema definitions with correct typing
+const createLoginSchema = (dictionary: Dictionary["loginPage"]["validation"]) => {
+  return z.object({
+    email: z.string()
+      .min(1, { message: dictionary.email })
+      .email({ message: dictionary.email }),
+    password: z.string()
+      .min(1, { message: dictionary.password }),
+  });
+};
 
-const loginFormSchema = (dictionary: Dictionary["loginPage"]["validation"]) => z.object({
-  email: z.string().email({ message: dictionary.email }),
-  password: z.string().min(1, { message: dictionary.password }),
-});
+const createSignUpSchema = (dictionary: Dictionary["loginPage"]["validation"]) => {
+  return z.object({
+    fullName: z.string()
+      .min(2, { message: dictionary.fullName }),
+    email: z.string()
+      .min(1, { message: dictionary.email })
+      .email({ message: dictionary.email }),
+    password: z.string()
+      .min(6, { message: dictionary.password }),
+    terms: z.boolean()
+      .refine(val => val === true, {
+        message: dictionary.terms,
+      }),
+  });
+};
 
-const signUpFormSchema = (dictionary: Dictionary["loginPage"]["validation"]) => z.object({
-  fullName: z.string().min(2, dictionary.fullName),
-  email: z.string().email({ message: dictionary.email }),
-  password: z.string().min(6, { message: dictionary.password }),
-  terms: z.boolean().refine(val => val === true, {
-    message: dictionary.terms,
-  }),
-});
+// ✅ FIXED: Proper type definitions
+type LoginFormData = {
+  email: string;
+  password: string;
+};
 
+type SignUpFormData = {
+  fullName: string;
+  email: string;
+  password: string;
+  terms: boolean;
+};
 
-const signUpDefaultValues = {
+const signUpDefaultValues: SignUpFormData = {
   fullName: "",
   email: "",
   password: "",
   terms: false,
 };
 
-type FormData = z.infer<typeof loginFormSchema> | z.infer<typeof signUpFormSchema>;
-
-const loginDefaultValues = {
+const loginDefaultValues: LoginFormData = {
   email: "",
   password: "",
 };
@@ -76,20 +99,31 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   const [isResetPasswordOpen, setResetPasswordOpen] = useState(false);
   const validationDictionary = dictionary.validation; 
 
-  const currentSchema = useMemo(() => {
-    return isSignUp ? signUpFormSchema(validationDictionary) : loginFormSchema(validationDictionary);
-  }, [isSignUp, validationDictionary]);
- 
-  const form = useForm({
-    resolver: zodResolver(currentSchema),
-    defaultValues: isSignUp ? signUpDefaultValues : loginDefaultValues
+  // ✅ FIXED: Proper schema creation using the functions
+  const loginSchema = useMemo(() => createLoginSchema(validationDictionary), [validationDictionary]);
+  const signUpSchema = useMemo(() => createSignUpSchema(validationDictionary), [validationDictionary]);
+
+  // ✅ FIXED: Separate forms for login and signup with proper typing
+  const loginForm = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: loginDefaultValues
   });
+
+  const signUpForm = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: signUpDefaultValues
+  });
+
+  // Get the current form based on the mode
+  const currentForm = isSignUp ? signUpForm : loginForm;
   
   const toggleForm = useCallback(() => {
     const newIsSignUp = !isSignUp;
     setIsSignUp(newIsSignUp);
     setError('');
-    form.reset(newIsSignUp ? signUpDefaultValues : loginDefaultValues, {
+    
+    // Reset both forms
+    loginForm.reset(loginDefaultValues, {
       keepValues: false,
       keepErrors: false,
       keepDirty: false,
@@ -97,8 +131,16 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
       keepIsValid: false,
       keepSubmitCount: false,
     });
-  }, [isSignUp, form]);
-
+    
+    signUpForm.reset(signUpDefaultValues, {
+      keepValues: false,
+      keepErrors: false,
+      keepDirty: false,
+      keepTouched: false,
+      keepIsValid: false,
+      keepSubmitCount: false,
+    });
+  }, [isSignUp, loginForm, signUpForm]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -120,17 +162,25 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
     }
   }
 
-  const onSubmit = async (data: FormData) => {
+  // ✅ FIXED: Proper submit handlers with correct typing
+  const handleLoginSubmit = async (data: LoginFormData) => {
     setError("");
-
     setIsSubmitting(true);
     try {
-      if (isSignUp) {
-        const signUpData = data as z.infer<typeof signUpFormSchema>;
-        await signUp(signUpData.email, signUpData.password, { fullName: signUpData.fullName });
-      } else {
-         await login((data as z.infer<typeof loginFormSchema>).email, (data as z.infer<typeof loginFormSchema>).password);
-      }
+      await login(data.email, data.password);
+    } catch (err: any) {
+      const message = err.message || "An unexpected error occurred.";
+      setError(message.replace('Firebase: ','').replace('Error ', ''));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSignUpSubmit = async (data: SignUpFormData) => {
+    setError("");
+    setIsSubmitting(true);
+    try {
+      await signUp(data.email, data.password, { fullName: data.fullName });
     } catch (err: any) {
       if (err.code === 'auth/email-already-in-use') {
          setError(dictionary.validation.emailInUse);
@@ -188,79 +238,185 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                     </span>
                 </div>
             </div>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                {isSignUp && (
-                  <div className={cn("space-y-4", !isSignUp && "hidden")}>
-                    <Controller
-                        control={form.control}
-                        name="fullName"
-                        render={({ field }) => (
-                            <Input {...field} disabled={isSubmitting} placeholder={dictionary.labels.fullName} />
+
+            {/* ✅ FIXED: Conditional forms with proper typing */}
+            {isSignUp ? (
+              /* SignUp Form */
+              <Form {...signUpForm}>
+                <form onSubmit={signUpForm.handleSubmit(handleSignUpSubmit)} className="space-y-4">
+                  {/* Full Name Field */}
+                  <Controller
+                    control={signUpForm.control}
+                    name="fullName"
+                    render={({ field, fieldState }) => (
+                      <div className="space-y-2">
+                        <Input 
+                          {...field} 
+                          disabled={isSubmitting} 
+                          placeholder={dictionary.labels.fullName}
+                          className={fieldState.error ? "border-red-500" : ""}
+                        />
+                        {fieldState.error && (
+                          <p className="text-sm text-red-600">{fieldState.error.message}</p>
                         )}
-                    />
-                  </div>
-                )}
-
-                <Controller
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <Input type="email" placeholder={dictionary.email} {...field} disabled={isSubmitting} />
-                  )}
-                />
-
-                <Controller
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                      <div className="relative">
-                        <Input type="password" placeholder={dictionary.password} {...field} disabled={isSubmitting} />
-                         <div className={cn("absolute -top-3 right-0", isSignUp && "hidden")}>
-                            <Button type="button" variant="link" size="sm" className="h-auto p-0 text-xs" onClick={() => setResetPasswordOpen(true)}>
-                                {dictionary.forgotPassword}
-                            </Button>
-                        </div>
                       </div>
-                  )}
-                />
-
-                {isSignUp && (
-                  <Controller 
-                    control={form.control}
-                    name="terms"
-                    render={({ field }) => (
-                        <div className="flex items-start space-x-2">
-                            <input
-                            type="checkbox"
-                            id="terms"
-                            checked={field.value}
-                            onChange={field.onChange}
-                            disabled={isSubmitting}
-                            className="mt-1"
-                            />
-                            <label htmlFor="terms" className="text-xs text-muted-foreground">
-                                {dictionary.labels.acceptTerms}{" "}
-                                <Link href="#" className="underline">{dictionary.labels.termsAndConditions}</Link>.
-                            </label>
-                        </div>
                     )}
                   />
-                )}
 
-                {error && (
-                  <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>Action Failed</AlertTitle>
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
-                )}
-                <Button type="submit" className="w-full" disabled={isSubmitting}>
-                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {isSignUp ? dictionary.signUp : dictionary.loginButton}
-                </Button>
-              </form>
-            </Form>
+                  {/* Email Field */}
+                  <Controller
+                    control={signUpForm.control}
+                    name="email"
+                    render={({ field, fieldState }) => (
+                      <div className="space-y-2">
+                        <Input 
+                          type="email" 
+                          placeholder={dictionary.email} 
+                          {...field} 
+                          disabled={isSubmitting}
+                          className={fieldState.error ? "border-red-500" : ""}
+                        />
+                        {fieldState.error && (
+                          <p className="text-sm text-red-600">{fieldState.error.message}</p>
+                        )}
+                      </div>
+                    )}
+                  />
+
+                  {/* Password Field */}
+                  <Controller
+                    control={signUpForm.control}
+                    name="password"
+                    render={({ field, fieldState }) => (
+                      <div className="space-y-2">
+                        <Input 
+                          type="password" 
+                          placeholder={dictionary.password} 
+                          {...field} 
+                          disabled={isSubmitting}
+                          className={fieldState.error ? "border-red-500" : ""}
+                        />
+                        {fieldState.error && (
+                          <p className="text-sm text-red-600">{fieldState.error.message}</p>
+                        )}
+                      </div>
+                    )}
+                  />
+
+                  {/* Terms Checkbox */}
+                  <Controller 
+                    control={signUpForm.control}
+                    name="terms"
+                    render={({ field, fieldState }) => (
+                      <div className="space-y-2">
+                        <div className="flex items-start space-x-2">
+                          <input
+                            type="checkbox"
+                            id="terms"
+                            checked={field.value} // ✅ FIXED: Proper boolean handling
+                            onChange={(e) => field.onChange(e.target.checked)} // ✅ FIXED: Proper boolean handling
+                            disabled={isSubmitting}
+                            className="mt-1"
+                          />
+                          <label htmlFor="terms" className="text-xs text-muted-foreground">
+                            {dictionary.labels.acceptTerms}{" "}
+                            <Link href="#" className="underline">{dictionary.labels.termsAndConditions}</Link>.
+                          </label>
+                        </div>
+                        {fieldState.error && (
+                          <p className="text-sm text-red-600">{fieldState.error.message}</p>
+                        )}
+                      </div>
+                    )}
+                  />
+
+                  {error && (
+                    <Alert variant="destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertTitle>Action Failed</AlertTitle>
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
+
+                  <Button type="submit" className="w-full" disabled={isSubmitting}>
+                    {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {dictionary.signUp}
+                  </Button>
+                </form>
+              </Form>
+            ) : (
+              /* Login Form */
+              <Form {...loginForm}>
+                <form onSubmit={loginForm.handleSubmit(handleLoginSubmit)} className="space-y-4">
+                  {/* Email Field */}
+                  <Controller
+                    control={loginForm.control}
+                    name="email"
+                    render={({ field, fieldState }) => (
+                      <div className="space-y-2">
+                        <Input 
+                          type="email" 
+                          placeholder={dictionary.email} 
+                          {...field} 
+                          disabled={isSubmitting}
+                          className={fieldState.error ? "border-red-500" : ""}
+                        />
+                        {fieldState.error && (
+                          <p className="text-sm text-red-600">{fieldState.error.message}</p>
+                        )}
+                      </div>
+                    )}
+                  />
+
+                  {/* Password Field */}
+                  <Controller
+                    control={loginForm.control}
+                    name="password"
+                    render={({ field, fieldState }) => (
+                      <div className="space-y-2">
+                        <div className="relative">
+                          <Input 
+                            type="password" 
+                            placeholder={dictionary.password} 
+                            {...field} 
+                            disabled={isSubmitting}
+                            className={fieldState.error ? "border-red-500" : ""}
+                          />
+                          <div className="absolute -top-3 right-0">
+                            <Button 
+                              type="button" 
+                              variant="link" 
+                              size="sm" 
+                              className="h-auto p-0 text-xs" 
+                              onClick={() => setResetPasswordOpen(true)}
+                            >
+                              {dictionary.forgotPassword}
+                            </Button>
+                          </div>
+                        </div>
+                        {fieldState.error && (
+                          <p className="text-sm text-red-600">{fieldState.error.message}</p>
+                        )}
+                      </div>
+                    )}
+                  />
+
+                  {error && (
+                    <Alert variant="destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertTitle>Action Failed</AlertTitle>
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
+
+                  <Button type="submit" className="w-full" disabled={isSubmitting}>
+                    {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {dictionary.loginButton}
+                  </Button>
+                </form>
+              </Form>
+            )}
+
             <div className="mt-4 text-center text-sm">
               {isSignUp ? dictionary.hasAccount : dictionary.noAccount}{" "}
               <Button variant="link" className="p-0 h-auto" onClick={toggleForm}>
@@ -280,14 +436,16 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
 }
 
 export function LoginClient({ dictionary }: { dictionary: Dictionary }) {
-  return (<ThemeProvider attribute="class"
+  return (
+    <ThemeProvider attribute="class"
       defaultTheme="system"
       enableSystem
       disableTransitionOnChange
     >
       <Toaster />
       <DictionariesProvider dictionary={dictionary}>
-        <AuthProvider><LoginPageContent dictionary={dictionary.loginPage} />
+        <AuthProvider>
+          <LoginPageContent dictionary={dictionary.loginPage} />
         </AuthProvider>
       </DictionariesProvider>
     </ThemeProvider>

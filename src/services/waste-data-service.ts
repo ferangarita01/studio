@@ -18,6 +18,7 @@ import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "fire
 import { db, storage } from "@/lib/firebase";
 import { wasteData, weeklyReportData, monthlyReportData } from "@/lib/data";
 import type { WasteEntry, Material, DisposalEvent, ReportData, Company, UserRole, UserProfile, PlanType, DisposalCertificate } from "@/lib/types";
+import { string } from "zod";
 
 // Helper to convert snapshot to array
 const snapshotToArray = (snapshot: any) => {
@@ -127,8 +128,8 @@ export async function addCompany(name: string, userId: string, assignedUserId?: 
     logoUrl: `https://placehold.co/100x100.png?text=${name.charAt(0)}`,
     coverImageUrl: 'https://space.gov.ae/app_themes/lg21016/images/Sustainability%20Development%20Goals.png',
     plan: 'Free' as PlanType,
-    planStartDate: null,
-    planExpiryDate: null,
+    planStartDate: undefined,
+    planExpiryDate: undefined,
   };
   const companiesRef = ref(db, 'companies');
   const newCompanyRef = push(companiesRef);
