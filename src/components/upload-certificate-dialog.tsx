@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import * as React from 'react';
@@ -32,7 +33,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import type { Dictionary } from '@/lib/get-dictionary';
-import { getCompanies, compressFileIfNeeded, addDisposalCertificate } from '@/services/waste-data-service';
+import { getCompanies, addDisposalCertificate } from '@/services/waste-data-service';
 import type { Company, DisposalCertificate } from "@/lib/types";
 import { useAuth } from "@/context/auth-context";
 import { Loader2 } from 'lucide-react';
@@ -50,6 +51,7 @@ const getFormSchema = (dictionary: UploadDialogDictionary) => z.object({
   }),
 });
 
+const MAX_PDF_SIZE_MB = 10;
 
 interface UploadCertificateDialogProps {
   open: boolean;
@@ -94,19 +96,18 @@ export function UploadCertificateDialog({
     
     let fileToUpload = values.file[0];
     
-    setIsSubmitting(true);
-
-    try {
-      fileToUpload = await compressFileIfNeeded(fileToUpload);
-    } catch (compressionError: any) {
+    // Client-side validation for PDF size
+    if (fileToUpload.size > MAX_PDF_SIZE_MB * 1024 * 1024) {
       toast({
-        title: dictionary.toast.error.title,
-        description: compressionError.message,
+        title: "Archivo PDF Demasiado Grande",
+        description: `El archivo debe ser menor a ${MAX_PDF_SIZE_MB} MB. Por favor, comprímelo usando una herramienta online como SmallPDF o ILovePDF antes de subirlo.`,
         variant: "destructive",
+        duration: 9000,
       });
-      setIsSubmitting(false);
       return;
     }
+    
+    setIsSubmitting(true);
     
     const filePath = `certificates/${values.companyId}/${Date.now()}-${fileToUpload.name}`;
     const fileRef = storageRef(storage, filePath);
