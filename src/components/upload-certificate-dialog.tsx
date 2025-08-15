@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import type { Dictionary } from '@/lib/get-dictionary';
-import { getCompanies, compressFileIfNeeded, addDisposalCertificate } from "@/services/waste-data-service";
+import { getCompanies, compressFileIfNeeded, addDisposalCertificate } from '@/services/waste-data-service';
 import type { Company, DisposalCertificate } from "@/lib/types";
 import { useAuth } from "@/context/auth-context";
 import { Loader2 } from 'lucide-react';
@@ -69,7 +69,7 @@ export function UploadCertificateDialog({
   const [companies, setCompanies] = React.useState<Company[]>([]);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   
-  const formSchema = getFormSchema(dictionary);
+  const formSchema = React.useMemo(() => getFormSchema(dictionary), [dictionary]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

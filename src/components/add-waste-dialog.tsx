@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -136,10 +137,10 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, e
             date: values.date,
             price,
             serviceCost: values.serviceCost,
-        }
+        };
 
         if (isEditMode) {
-            const updatedEntry = { ...entryToEdit!, ...entryData };
+            const updatedEntry = { ...entryToEdit!, ...newEntryData };
             await updateWasteEntry(updatedEntry, user.uid);
             onEntrySaved(updatedEntry);
             toast({
@@ -147,7 +148,7 @@ export function AddWasteDialog({ open, onOpenChange, dictionary, onEntrySaved, e
                 description: dictionary.toast.update.description,
             });
         } else {
-            const newEntry = await addWasteEntry(entryData, user.uid);
+            const newEntry = await addWasteEntry(newEntryData, user.uid);
             onEntrySaved(newEntry);
             toast({
                 title: dictionary.toast.add.title,
