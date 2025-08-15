@@ -110,7 +110,8 @@ export function UploadCertificateDialog({
     
     const filePath = `certificates/${values.companyId}/${Date.now()}-${fileToUpload.name}`;
     const fileRef = storageRef(storage, filePath);
-    const uploadTask = uploadBytesResumable(fileRef, fileToUpload);
+    const metadata = { contentType: fileToUpload.type };
+    const uploadTask = uploadBytesResumable(fileRef, fileToUpload, metadata);
 
     uploadTask.on('state_changed',
       (snapshot) => {
