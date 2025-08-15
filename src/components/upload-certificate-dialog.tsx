@@ -86,12 +86,11 @@ export function UploadCertificateDialog({
         setCompanies(fetchedCompanies);
       };
       fetchCompanies();
-      form.reset();
     }
-  }, [open, user, form]);
+  }, [open, user]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!user) return;
+    if (!user || !values.file || values.file.length === 0) return;
     
     let fileToUpload = values.file[0];
     
@@ -156,12 +155,19 @@ export function UploadCertificateDialog({
     );
   };
   
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+        form.reset();
+    }
+    onOpenChange(isOpen);
+  };
+  
   const fileRef = form.register("file");
 
   if (!dictionary) return null;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
