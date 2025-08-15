@@ -619,7 +619,7 @@
         "download": "Descargar"
       },
       "uploadDialog": {
-        "title": "Añadir Certificado por Enlace",
+        "title": "Añadir Nuevo Certificado por Enlace",
         "description": "Primero, suba su PDF a un servicio público (como Google Drive), luego pegue el enlace aquí.",
         "companyLabel": "Empresa",
         "companyPlaceholder": "Seleccione una empresa",
