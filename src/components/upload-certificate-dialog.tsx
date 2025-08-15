@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from 'react';
@@ -31,10 +32,12 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import type { Dictionary } from '@/lib/get-dictionary';
-import { addDisposalCertificate, getCompanies, compressFileIfNeeded } from "@/services/waste-data-service";
+import { getCompanies, compressFileIfNeeded, addDisposalCertificate } from "@/services/waste-data-service";
 import type { Company, DisposalCertificate } from "@/lib/types";
 import { useAuth } from "@/context/auth-context";
 import { Loader2 } from 'lucide-react';
+import { ref as storageRef, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage } from '@/lib/firebase';
 
 type UploadDialogDictionary = Dictionary["reportsPage"]["finalDisposal"]["uploadDialog"];
 
@@ -89,49 +92,68 @@ export function UploadCertificateDialog({
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) return;
-    setIsSubmitting(true);
+    
+    let fileToUpload = values.file[0];
     
     try {
-      let fileToUpload = values.file[0];
-
-      // Step 1: Compress if needed
-      try {
-        fileToUpload = await compressFileIfNeeded(fileToUpload);
-      } catch (compressionError: any) {
-        toast({
-          title: "Archivo demasiado grande",
-          description: compressionError.message,
-          variant: "destructive",
-          duration: 15000, // Show for longer
-        });
-        setIsSubmitting(false);
-        return;
-      }
-      
-      // Step 2: Upload the (potentially compressed) file
-      const newCertificate = await addDisposalCertificate(
-        values.companyId,
-        fileToUpload,
-        user.uid
-      );
-      
-      onCertificateAdded(newCertificate);
-      toast({
-        title: dictionary.toast.success.title,
-        description: dictionary.toast.success.description,
-      });
-      onOpenChange(false);
-
-    } catch (error) {
-      console.error("Failed to upload certificate:", error);
+      fileToUpload = await compressFileIfNeeded(fileToUpload);
+    } catch (compressionError: any) {
       toast({
         title: dictionary.toast.error.title,
-        description: String(error) || dictionary.toast.error.description,
+        description: compressionError.message,
         variant: "destructive",
       });
-    } finally {
-        setIsSubmitting(false);
+      return;
     }
+    
+    setIsSubmitting(true);
+    
+    const filePath = `certificates/${values.companyId}/${Date.now()}-${fileToUpload.name}`;
+    const fileRef = storageRef(storage, filePath);
+    const uploadTask = uploadBytesResumable(fileRef, fileToUpload);
+
+    uploadTask.on('state_changed',
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log(`Upload is ${progress}% done`);
+      },
+      (error) => {
+        console.error("Upload failed:", error);
+        toast({
+          title: dictionary.toast.error.title,
+          description: error.message || dictionary.toast.error.description,
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+      },
+      async () => {
+        try {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          const newCertificate = await addDisposalCertificate(
+            values.companyId,
+            fileToUpload.name,
+            downloadURL,
+            user.uid
+          );
+          
+          onCertificateAdded(newCertificate);
+          toast({
+            title: dictionary.toast.success.title,
+            description: dictionary.toast.success.description,
+          });
+          onOpenChange(false);
+        } catch (dbError) {
+           console.error("Failed to save certificate record:", dbError);
+           toast({
+            title: dictionary.toast.error.title,
+            description: "File uploaded, but failed to save record. Please contact support.",
+            variant: "destructive",
+          });
+        } finally {
+            setIsSubmitting(false);
+        }
+      }
+    );
   };
   
   const fileRef = form.register("file");

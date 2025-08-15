@@ -23,4 +23,8 @@ const db = getDatabase(app);
 const auth = getAuth(app);
 const storage = getStorage(app);
 
+// Increase the maximum time for retrying uploads to 10 minutes (600,000 milliseconds)
+storage.maxUploadRetryTime = 600000;
+
+
 export { db, auth, app, storage };
