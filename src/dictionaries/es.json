@@ -626,7 +626,7 @@
         "fileNameLabel": "Nombre del Certificado",
         "fileNamePlaceholder": "Ej: Cumplimiento Q3 2024",
         "fileUrlLabel": "URL Pública del PDF",
-        "fileUrlPlaceholder": "https://...",
+        "fileUrlPlaceholder": "https://drive.google.com/file/d/...",
         "cancel": "Cancelar",
         "upload": "Guardar Certificado",
         "toast": {
@@ -712,6 +712,8 @@
       "selectType": "Selecciona un tipo",
       "price": "Precio por kg (COP)",
       "pricePlaceholder": "ej., 1.20",
+      "serviceCost": "Costo de Servicio por kg (COP)",
+      "serviceCostPlaceholder": "ej., 0.10",
       "save": "Guardar Material",
       "cancel": "Cancelar",
       "types": {

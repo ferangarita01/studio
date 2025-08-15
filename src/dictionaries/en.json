@@ -632,7 +632,7 @@
         "fileNameLabel": "Certificate Name",
         "fileNamePlaceholder": "e.g., Q3 2024 Compliance",
         "fileUrlLabel": "Public URL to PDF",
-        "fileUrlPlaceholder": "https://...",
+        "fileUrlPlaceholder": "https://drive.google.com/file/d/...",
         "cancel": "Cancel",
         "upload": "Save Certificate",
         "toast": {

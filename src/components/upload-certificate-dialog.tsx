@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import * as React from 'react';
@@ -36,7 +35,7 @@ import type { Dictionary } from '@/lib/get-dictionary';
 import { getCompanies, addDisposalCertificate } from '@/services/waste-data-service';
 import type { Company, DisposalCertificate } from "@/lib/types";
 import { useAuth } from "@/context/auth-context";
-import { Loader2 } from 'lucide-react';
+import { Loader2, X, UploadCloud } from 'lucide-react';
 import { useCompany } from './layout/app-shell';
 
 type UploadDialogDictionary = Dictionary["reportsPage"]["finalDisposal"]["uploadDialog"];
@@ -117,7 +116,7 @@ export function UploadCertificateDialog({
         console.error("Failed to save certificate record:", dbError);
         toast({
         title: dictionary.toast.error.title,
-        description: "Failed to save the certificate link. Please try again.",
+        description: dictionary.toast.error.description,
         variant: "destructive",
         });
     } finally {
@@ -209,10 +208,11 @@ export function UploadCertificateDialog({
             </div>
             <DialogFooter>
               <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+                <X className="mr-2 h-4 w-4" />
                 {dictionary.cancel}
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UploadCloud className="mr-2 h-4 w-4" />}
                 {dictionary.upload}
               </Button>
             </DialogFooter>
