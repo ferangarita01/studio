@@ -428,12 +428,3 @@ export async function getWasteChartData() {
       }, 300);
     });
 }
-
-
-// --- File Upload Service ---
-export async function uploadFile(file: File, path: string): Promise<string> {
-    const fileRef = storageRef(storage, path);
-    await uploadBytes(fileRef, file);
-    const downloadURL = await getDownloadURL(fileRef);
-    return downloadURL;
-}

@@ -611,12 +611,12 @@
     "downloadPdf": "Download PDF",
     "finalDisposal": {
       "cardTitle": "Final Disposal Certificates",
-      "cardDescription": "Here you can view and download the final disposal certificates for your waste.",
-      "uploadButton": "Upload Certificate",
+      "cardDescription": "View and download your company's final disposal certificates.",
+      "uploadButton": "Add New Certificate",
       "noCompanySelected": "Please select a company to view its certificates.",
       "noCertificates": {
         "title": "No certificates available",
-        "description": "When certificates are uploaded for this company, they will appear here."
+        "description": "When certificates are added for this company, they will appear here."
       },
       "table": {
         "fileName": "File Name",
@@ -625,27 +625,30 @@
         "download": "Download"
       },
       "uploadDialog": {
-        "title": "Upload New Certificate",
-        "description": "Select a company and the PDF certificate file to upload.",
+        "title": "Add New Certificate by Link",
+        "description": "First, upload your PDF to a public service (like Google Drive), then paste the link here.",
         "companyLabel": "Company",
         "companyPlaceholder": "Select a company",
-        "fileLabel": "Certificate File (PDF)",
-        "filePlaceholder": "No file selected",
+        "fileNameLabel": "Certificate Name",
+        "fileNamePlaceholder": "e.g., Q3 2024 Compliance",
+        "fileUrlLabel": "Public URL to PDF",
+        "fileUrlPlaceholder": "https://...",
         "cancel": "Cancel",
-        "upload": "Upload",
+        "upload": "Save Certificate",
         "toast": {
           "success": {
-            "title": "Certificate Uploaded",
-            "description": "The file has been uploaded and recorded successfully."
+            "title": "Certificate Saved",
+            "description": "The certificate link has been successfully saved."
           },
           "error": {
-            "title": "Upload Error",
-            "description": "Could not upload the file. Please try again."
+            "title": "Save Error",
+            "description": "Could not save the link. Please check the URL and try again."
           }
         },
         "validation": {
           "company": "Please select a company.",
-          "file": "Please select a PDF file."
+          "fileUrl": "Please enter a valid public URL.",
+          "fileName": "Please enter a name for the certificate."
         }
       }
     },
@@ -844,5 +847,3 @@
     }
   }
 }
-
-    

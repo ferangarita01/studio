@@ -605,12 +605,12 @@
     "downloadPdf": "Descargar PDF",
     "finalDisposal": {
       "cardTitle": "Certificados de Disposición Final",
-      "cardDescription": "Aquí podrá visualizar y descargar los certificados de disposición final de sus residuos.",
-      "uploadButton": "Subir Certificado",
+      "cardDescription": "Vea y descargue los certificados de disposición final de su empresa.",
+      "uploadButton": "Añadir Nuevo Certificado",
       "noCompanySelected": "Por favor, seleccione una empresa para ver sus certificados.",
       "noCertificates": {
         "title": "No hay certificados disponibles",
-        "description": "Cuando se suban los certificados para esta empresa, aparecerán aquí."
+        "description": "Cuando se añadan certificados para esta empresa, aparecerán aquí."
       },
       "table": {
         "fileName": "Nombre del Archivo",
@@ -619,27 +619,30 @@
         "download": "Descargar"
       },
       "uploadDialog": {
-        "title": "Subir Nuevo Certificado",
-        "description": "Seleccione una empresa y el archivo PDF del certificado para subirlo.",
+        "title": "Añadir Certificado por Enlace",
+        "description": "Primero, suba su PDF a un servicio público (como Google Drive), luego pegue el enlace aquí.",
         "companyLabel": "Empresa",
         "companyPlaceholder": "Seleccione una empresa",
-        "fileLabel": "Archivo del Certificado (PDF)",
-        "filePlaceholder": "Ningún archivo seleccionado",
+        "fileNameLabel": "Nombre del Certificado",
+        "fileNamePlaceholder": "Ej: Cumplimiento Q3 2024",
+        "fileUrlLabel": "URL Pública del PDF",
+        "fileUrlPlaceholder": "https://...",
         "cancel": "Cancelar",
-        "upload": "Subir",
+        "upload": "Guardar Certificado",
         "toast": {
           "success": {
-            "title": "Certificado Subido",
-            "description": "El archivo se ha subido y registrado correctamente."
+            "title": "Certificado Guardado",
+            "description": "El enlace del certificado se ha guardado correctamente."
           },
           "error": {
-            "title": "Error al Subir",
-            "description": "No se pudo subir el archivo. Por favor, inténtelo de nuevo."
+            "title": "Error al Guardar",
+            "description": "No se pudo guardar el enlace. Por favor, verifique la URL e intente de nuevo."
           }
         },
         "validation": {
           "company": "Por favor, seleccione una empresa.",
-          "file": "Por favor, seleccione un archivo PDF."
+          "fileUrl": "Por favor, ingrese una URL pública válida.",
+          "fileName": "Por favor, ingrese un nombre para el certificado."
         }
       }
     },
@@ -836,5 +839,3 @@
     }
   }
 }
-
-    

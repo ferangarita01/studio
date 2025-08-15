@@ -37,21 +37,16 @@ import { getCompanies, addDisposalCertificate } from '@/services/waste-data-serv
 import type { Company, DisposalCertificate } from "@/lib/types";
 import { useAuth } from "@/context/auth-context";
 import { Loader2 } from 'lucide-react';
-import { ref as storageRef, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { storage } from '@/lib/firebase';
+import { useCompany } from './layout/app-shell';
 
 type UploadDialogDictionary = Dictionary["reportsPage"]["finalDisposal"]["uploadDialog"];
 
 const getFormSchema = (dictionary: UploadDialogDictionary) => z.object({
   companyId: z.string().min(1, { message: dictionary.validation.company }),
-  file: z.instanceof(FileList).refine(files => files?.length === 1, {
-    message: dictionary.validation.file
-  }).refine(files => files?.[0]?.type === 'application/pdf', {
-    message: dictionary.validation.file
-  }),
+  fileUrl: z.string().url({ message: dictionary.validation.fileUrl }),
+  fileName: z.string().min(1, { message: dictionary.validation.fileName }),
 });
 
-const MAX_PDF_SIZE_MB = 10;
 
 interface UploadCertificateDialogProps {
   open: boolean;
@@ -67,7 +62,8 @@ export function UploadCertificateDialog({
   dictionary
 }: UploadCertificateDialogProps) {
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, role } = useAuth();
+  const { selectedCompany } = useCompany();
   const [companies, setCompanies] = React.useState<Company[]>([]);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   
@@ -77,100 +73,70 @@ export function UploadCertificateDialog({
     resolver: zodResolver(formSchema),
     defaultValues: {
       companyId: "",
-      file: undefined,
+      fileUrl: "",
+      fileName: "",
     },
   });
   
   React.useEffect(() => {
     if (open && user) {
-      const fetchCompanies = async () => {
-        const fetchedCompanies = await getCompanies(user.uid, true);
-        setCompanies(fetchedCompanies);
-      };
-      fetchCompanies();
+      if (role === 'admin') {
+        const fetchCompanies = async () => {
+          const fetchedCompanies = await getCompanies(user.uid, true);
+          setCompanies(fetchedCompanies);
+        };
+        fetchCompanies();
+      }
+      // Set the company from context if it exists
+      if (selectedCompany) {
+        form.setValue('companyId', selectedCompany.id);
+      }
     }
-  }, [open, user]);
+  }, [open, user, role, selectedCompany, form]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!user || !values.file || values.file.length === 0) return;
-    
-    let fileToUpload = values.file[0];
-    
-    // Client-side validation for PDF size
-    if (fileToUpload.size > MAX_PDF_SIZE_MB * 1024 * 1024) {
-      toast({
-        title: "Archivo PDF Demasiado Grande",
-        description: `El archivo debe ser menor a ${MAX_PDF_SIZE_MB} MB. Por favor, comprímelo usando una herramienta online como SmallPDF o ILovePDF antes de subirlo.`,
-        variant: "destructive",
-        duration: 9000,
-      });
-      return;
-    }
+    if (!user) return;
     
     setIsSubmitting(true);
     
-    const filePath = `certificates/${values.companyId}/${Date.now()}-${fileToUpload.name}`;
-    const fileRef = storageRef(storage, filePath);
-    const metadata = { contentType: fileToUpload.type };
-    const uploadTask = uploadBytesResumable(fileRef, fileToUpload, metadata);
-
-    uploadTask.on('state_changed',
-      (snapshot) => {
-        // Optional: handle progress updates
-      },
-      (error) => {
-        console.error("Upload failed:", error);
-        toast({
-          title: dictionary.toast.error.title,
-          description: error.message || dictionary.toast.error.description,
-          variant: "destructive",
-        });
-        setIsSubmitting(false);
-      },
-      async () => {
-        try {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          const newCertificate = await addDisposalCertificate(
+    try {
+        const newCertificate = await addDisposalCertificate(
             values.companyId,
-            fileToUpload.name,
-            downloadURL,
+            values.fileName,
+            values.fileUrl,
             user.uid
-          );
-          
-          onCertificateAdded(newCertificate);
-          toast({
+        );
+        
+        onCertificateAdded(newCertificate);
+        toast({
             title: dictionary.toast.success.title,
             description: dictionary.toast.success.description,
-          });
-          onOpenChange(false);
-        } catch (dbError) {
-           console.error("Failed to save certificate record:", dbError);
-           toast({
-            title: dictionary.toast.error.title,
-            description: "File uploaded, but failed to save record. Please contact support.",
-            variant: "destructive",
-          });
-        } finally {
-            setIsSubmitting(false);
-        }
-      }
-    );
+        });
+        onOpenChange(false);
+    } catch (dbError) {
+        console.error("Failed to save certificate record:", dbError);
+        toast({
+        title: dictionary.toast.error.title,
+        description: "Failed to save the certificate link. Please try again.",
+        variant: "destructive",
+        });
+    } finally {
+        setIsSubmitting(false);
+    }
   };
   
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
-        form.reset({ companyId: "", file: undefined });
+        form.reset({ companyId: "", fileUrl: "", fileName: "" });
     }
     onOpenChange(isOpen);
   };
-  
-  const fileRef = form.register("file");
 
   if (!dictionary) return null;
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-md">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <DialogHeader>
@@ -184,35 +150,56 @@ export function UploadCertificateDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{dictionary.companyLabel}</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value} disabled={role === 'client'}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder={dictionary.companyPlaceholder} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {companies.map((company) => (
-                          <SelectItem key={company.id} value={company.id}>
-                            {company.name}
-                          </SelectItem>
-                        ))}
+                        {role === 'admin' ? (
+                          companies.map((company) => (
+                            <SelectItem key={company.id} value={company.id}>
+                              {company.name}
+                            </SelectItem>
+                          ))
+                        ) : selectedCompany ? (
+                           <SelectItem value={selectedCompany.id}>
+                              {selectedCompany.name}
+                            </SelectItem>
+                        ): null}
                       </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <FormField
+               <FormField
                 control={form.control}
-                name="file"
-                render={() => (
+                name="fileName"
+                render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{dictionary.fileLabel}</FormLabel>
+                        <FormLabel>{dictionary.fileNameLabel}</FormLabel>
                         <FormControl>
                             <Input 
-                                type="file" 
-                                accept="application/pdf"
-                                {...fileRef}
+                                placeholder={dictionary.fileNamePlaceholder}
+                                {...field}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+               />
+               <FormField
+                control={form.control}
+                name="fileUrl"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>{dictionary.fileUrlLabel}</FormLabel>
+                        <FormControl>
+                            <Input 
+                                placeholder={dictionary.fileUrlPlaceholder}
+                                {...field}
                             />
                         </FormControl>
                         <FormMessage />
