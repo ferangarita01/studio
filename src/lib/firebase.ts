@@ -3,7 +3,6 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
-import { setMaxUploadRetryTime } from "firebase/storage";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -25,6 +24,7 @@ const auth = getAuth(app);
 const storage = getStorage(app);
 
 // Increase the maximum time for retrying uploads to 10 minutes (600,000 milliseconds)
+// @ts-ignore - This property is not in the default type definitions but is supported by the SDK.
 storage.maxUploadRetryTime = 600000;
 
 
