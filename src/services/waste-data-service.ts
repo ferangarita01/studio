@@ -447,21 +447,27 @@ export async function getDisposalCertificates(companyId?: string): Promise<Dispo
     return [];
 }
 
-export async function addDisposalCertificate(companyId: string, fileName: string, fileUrl: string, userId: string): Promise<DisposalCertificate> {
-    const certificateData = {
-        companyId,
-        fileName,
-        fileUrl,
-        uploadedAt: new Date().toISOString(),
-        uploadedBy: userId,
-    };
+export async function addDisposalCertificate(
+  companyId: string,
+  fileName: string,
+  fileUrl: string,
+  userId: string
+): Promise<DisposalCertificate> {
+  const certificateData = {
+    companyId,
+    fileName,
+    fileUrl,
+    uploadedAt: new Date().toISOString(),
+    uploadedBy: userId,
+  };
 
-    const certificatesRef = ref(db, 'disposalCertificates');
-    const newCertificateRef = push(certificatesRef);
-    await set(newCertificateRef, certificateData);
+  const certificatesRef = ref(db, 'disposalCertificates');
+  const newCertificateRef = push(certificatesRef);
+  await set(newCertificateRef, certificateData);
 
-    return { id: newCertificateRef.key!, ...certificateData };
+  return { id: newCertificateRef.key!, ...certificateData };
 }
+
 
 
 

@@ -24,8 +24,8 @@ const auth = getAuth(app);
 const storage = getStorage(app);
 
 // Increase the maximum time for retrying uploads to 10 minutes (600,000 milliseconds)
-// @ts-ignore - This property is not in the default type definitions but is supported by the SDK.
-storage.maxUploadRetryTime = 600000;
+// Use `as any` to avoid TypeScript complaining about the property not being in the type definition.
+(storage as any).maxUploadRetryTime = 600000;
 
 
 export { db, auth, app, storage };
