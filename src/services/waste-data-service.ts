@@ -120,20 +120,18 @@ export async function getCompanyById(companyId: string): Promise<Company | null>
 
 
 export async function addCompany(name: string, userId: string, assignedUserId?: string): Promise<Company> {
-  const companyData = { 
+  const companyData: Partial<Company> = { 
     name, 
     createdBy: userId,
     assignedUserUid: assignedUserId,
     logoUrl: `https://placehold.co/100x100.png?text=${name.charAt(0)}`,
     coverImageUrl: 'https://space.gov.ae/app_themes/lg21016/images/Sustainability%20Development%20Goals.png',
     plan: 'Free' as PlanType,
-    planStartDate: undefined,
-    planExpiryDate: undefined,
   };
   const companiesRef = ref(db, 'companies');
   const newCompanyRef = push(companiesRef);
   await set(newCompanyRef, companyData);
-  return { id: newCompanyRef.key!, ...companyData };
+  return { id: newCompanyRef.key!, ...companyData } as Company;
 }
 
 export async function updateCompany(companyId: string, data: Partial<Company>): Promise<void> {
