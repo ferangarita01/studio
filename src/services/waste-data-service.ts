@@ -367,6 +367,12 @@ export async function addDisposalEvent(event: Omit<DisposalEvent, 'id'>): Promis
 
 
 // --- Disposal Certificate & Upload Service Functions ---
+export async function uploadFile(file: File, path: string): Promise<string> {
+    const fileRef = storageRef(storage, path);
+    await uploadBytes(fileRef, file);
+    const downloadURL = await getDownloadURL(fileRef);
+    return downloadURL;
+}
 
 export async function getDisposalCertificates(companyId?: string): Promise<DisposalCertificate[]> {
     const certificatesRef = ref(db, 'disposalCertificates');
