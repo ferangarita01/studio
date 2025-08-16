@@ -82,26 +82,22 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
   const loginSchema = useMemo(() => createLoginSchema(validationDictionary), [validationDictionary]);
   const signUpSchema = useMemo(() => createSignUpSchema(validationDictionary), [validationDictionary]);
 
-  const signUpDefaultValues: SignUpFormData = {
-    fullName: "",
-    email: "",
-    password: "",
-    terms: false,
-  };
-
-  const loginDefaultValues: LoginFormData = {
-    email: "",
-    password: "",
-  };
+  const signUpForm = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      fullName: "",
+      email: "",
+      password: "",
+      terms: false,
+    },
+  });
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    defaultValues: loginDefaultValues
-  });
-
-  const signUpForm = useForm<SignUpFormData>({
-    resolver: zodResolver(signUpSchema),
-    defaultValues: signUpDefaultValues
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   const toggleForm = useCallback(() => {
@@ -167,6 +163,137 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
     )
   }
   
+  const LoginForm = () => (
+    <Form {...loginForm}>
+      <form onSubmit={loginForm.handleSubmit(handleLoginSubmit)} className="space-y-4">
+        <FormField
+          control={loginForm.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input type="email" placeholder={dictionary.email} {...field} disabled={isSubmitting} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={loginForm.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <div className="relative">
+                <FormControl>
+                  <Input type="password" placeholder={dictionary.password} {...field} disabled={isSubmitting} />
+                </FormControl>
+                <div className="absolute -top-3 right-0">
+                  <Button
+                    type="button"
+                    variant="link"
+                    size="sm"
+                    className="h-auto p-0 text-xs"
+                    onClick={() => setResetPasswordOpen(true)}
+                  >
+                    {dictionary.forgotPassword}
+                  </Button>
+                </div>
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Action Failed</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {dictionary.loginButton}
+        </Button>
+      </form>
+    </Form>
+  );
+
+  const SignUpForm = () => (
+    <Form {...signUpForm}>
+      <form onSubmit={signUpForm.handleSubmit(handleSignUpSubmit)} className="space-y-4">
+        <FormField
+          control={signUpForm.control}
+          name="fullName"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input placeholder={dictionary.labels.fullName} {...field} disabled={isSubmitting} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={signUpForm.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input type="email" placeholder={dictionary.email} {...field} disabled={isSubmitting} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={signUpForm.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input type="password" placeholder={dictionary.password} {...field} disabled={isSubmitting} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={signUpForm.control}
+          name="terms"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                  disabled={isSubmitting}
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel className="text-xs text-muted-foreground">
+                  {dictionary.labels.acceptTerms}{" "}
+                  <Link href="#" className="underline">{dictionary.labels.termsAndConditions}</Link>.
+                </FormLabel>
+                <FormMessage />
+              </div>
+            </FormItem>
+          )}
+        />
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Action Failed</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {dictionary.signUp}
+        </Button>
+      </form>
+    </Form>
+  );
+
   return (
     <>
       <div className="flex min-h-screen items-center justify-center bg-background p-4 relative">
@@ -205,141 +332,7 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
                 </div>
             </div>
 
-            {isSignUp ? (
-              /* SignUp Form */
-              <Form {...signUpForm}>
-                <form onSubmit={signUpForm.handleSubmit(handleSignUpSubmit)} className="space-y-4">
-                   <FormField
-                    control={signUpForm.control}
-                    name="fullName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input placeholder={dictionary.labels.fullName} {...field} disabled={isSubmitting} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={signUpForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input type="email" placeholder={dictionary.email} {...field} disabled={isSubmitting} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                   <FormField
-                    control={signUpForm.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input type="password" placeholder={dictionary.password} {...field} disabled={isSubmitting} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={signUpForm.control}
-                    name="terms"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                            disabled={isSubmitting}
-                          />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                           <FormLabel className="text-xs text-muted-foreground">
-                            {dictionary.labels.acceptTerms}{" "}
-                            <Link href="#" className="underline">{dictionary.labels.termsAndConditions}</Link>.
-                          </FormLabel>
-                          <FormMessage />
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-
-                  {error && (
-                    <Alert variant="destructive">
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertTitle>Action Failed</AlertTitle>
-                      <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                  )}
-
-                  <Button type="submit" className="w-full" disabled={isSubmitting}>
-                    {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {dictionary.signUp}
-                  </Button>
-                </form>
-              </Form>
-            ) : (
-              /* Login Form */
-              <Form {...loginForm}>
-                <form onSubmit={loginForm.handleSubmit(handleLoginSubmit)} className="space-y-4">
-                  <FormField
-                    control={loginForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input type="email" placeholder={dictionary.email} {...field} disabled={isSubmitting} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={loginForm.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                         <div className="relative">
-                            <FormControl>
-                              <Input type="password" placeholder={dictionary.password} {...field} disabled={isSubmitting} />
-                            </FormControl>
-                            <div className="absolute -top-3 right-0">
-                                <Button 
-                                type="button" 
-                                variant="link" 
-                                size="sm" 
-                                className="h-auto p-0 text-xs" 
-                                onClick={() => setResetPasswordOpen(true)}
-                                >
-                                {dictionary.forgotPassword}
-                                </Button>
-                            </div>
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {error && (
-                    <Alert variant="destructive">
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertTitle>Action Failed</AlertTitle>
-                      <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                  )}
-
-                  <Button type="submit" className="w-full" disabled={isSubmitting}>
-                    {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {dictionary.loginButton}
-                  </Button>
-                </form>
-              </Form>
-            )}
+            {isSignUp ? <SignUpForm /> : <LoginForm />}
 
             <div className="mt-4 text-center text-sm">
               {isSignUp ? dictionary.hasAccount : dictionary.noAccount}{" "}
@@ -375,5 +368,3 @@ export function LoginClient({ dictionary }: { dictionary: Dictionary }) {
     </ThemeProvider>
   )
 }
-
-    
