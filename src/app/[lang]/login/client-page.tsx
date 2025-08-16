@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -142,18 +143,19 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
     });
   }, [isSignUp, loginForm, signUpForm]);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.push(`/${lang}/welcome`);
-    }
-  }, [isAuthenticated, router, lang]);
+  // Redirection is now handled centrally by the AppShell
+  // useEffect(() => {
+  //   if (isAuthenticated) {
+  //     router.push(`/${lang}/welcome`);
+  //   }
+  // }, [isAuthenticated, router, lang]);
 
   const handleGoogleSignIn = async () => {
     setError("");
     setIsSubmitting(true);
     try {
         await signInWithGoogle();
-        // Redirect will be handled by the useEffect
+        // Redirect will be handled by the main AppShell component
     } catch(err: any) {
         const message = err.message || "An unexpected error occurred.";
         setError(message.replace('Firebase: ','').replace('Error ', ''));

@@ -115,6 +115,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             fullName: user.displayName || 'Google User',
             plan: 'Free',
         });
+        // Important: manually refetch profile for the new user
+        // This ensures the AppShell has the correct userProfile state right after creation.
+        const newProfile = await getUserProfile(user.uid);
+        setUserProfile(newProfile);
+        setRole(newProfile?.role || null);
     }
   };
 

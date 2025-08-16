@@ -474,7 +474,8 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   const currentPath = `/${pathname.split('/').slice(2).join('/')}`;
 
   const isPublicPage = useMemo(() => {
-    const publicPaths = ['/login', '/landing', '/asorecifuentes', '/pricing', '/embed/impact', '/welcome'];
+    const publicPaths = ['/login', '/landing', '/asorecifuentes', '/pricing', '/embed/impact'];
+    // Welcome page is not public, it requires auth
     return publicPaths.some(p => currentPath.startsWith(p));
   }, [currentPath]);
 
@@ -482,37 +483,52 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   useEffect(() => {
     if (isAuthLoading || !isClient) return;
 
+    // 1. Not authenticated: if not on a public page, redirect to landing
     if (!isAuthenticated && !isPublicPage) {
       router.push(`/${lang}/landing`);
-    } else if (isAuthenticated) {
-      if (currentPath === '/login') {
-        router.push(`/${lang}`);
-      } else {
-        const findItem = (items: typeof allNavItems, path: string): (typeof allNavItems[number]) | undefined => {
-            for (const item of items) {
-                if ('subItems' in item) {
-                    const subItem = (item as any).subItems.find((sub: any) => path.startsWith(sub.href));
-                    if (subItem) return subItem as any;
-                }
-                if (item.href === path || (item.href !== '/' && path.startsWith(item.href) && item.href.length > 1)) {
-                    return item;
-                }
-            }
-            if (path === '/') return items.find(item => item.href === '/');
-            return undefined;
-        };
+      return;
+    }
+    
+    // 2. Authenticated: handle redirects for authenticated users
+    if (isAuthenticated) {
+      const isOnWelcomePage = currentPath.startsWith('/welcome');
+      const hasCompletedProfile = !!userProfile?.accountType;
 
-        const currentItem = findItem(allNavItems, currentPath);
-        
-        if (currentItem) {
-            const isAuthorizedRole = role && currentItem.roles.includes(role);
-            const isPremiumFeature = 'plan' in currentItem && currentItem.plan === 'Premium';
-            const hasPremiumPlan = role === 'client' && userProfile?.plan === 'Premium';
-
-            if (!isAuthorizedRole || (isPremiumFeature && role === 'client' && !hasPremiumPlan)) {
-                 router.push(`/${lang}`);
-            }
+      // If profile is not complete, redirect to /welcome, unless already there
+      if (!hasCompletedProfile) {
+        if (!isOnWelcomePage) {
+          router.push(`/${lang}/welcome`);
         }
+        return;
+      }
+
+      // If profile IS complete, but user is on /welcome or /login, redirect to dashboard
+      if (hasCompletedProfile && (isOnWelcomePage || currentPath.startsWith('/login'))) {
+          router.push(`/${lang}`);
+          return;
+      }
+      
+      // Check for role/plan authorization for the current page
+      const findItem = (items: typeof allNavItems, path: string): (typeof allNavItems[number]) | undefined => {
+          for (const item of items) {
+              if (item.href === path || (item.href !== '/' && path.startsWith(item.href) && item.href.length > 1)) {
+                  return item;
+              }
+          }
+          if (path === '/') return items.find(item => item.href === '/');
+          return undefined;
+      };
+
+      const currentItem = findItem(allNavItems, currentPath);
+      
+      if (currentItem) {
+          const isAuthorizedRole = role && currentItem.roles.includes(role);
+          const isPremiumFeature = 'plan' in currentItem && currentItem.plan === 'Premium';
+          const hasPremiumPlan = role === 'client' && userProfile?.plan === 'Premium';
+
+          if (!isAuthorizedRole || (isPremiumFeature && role === 'client' && !hasPremiumPlan)) {
+               router.push(`/${lang}`);
+          }
       }
     }
   }, [isAuthenticated, isAuthLoading, currentPath, isPublicPage, router, lang, isClient, role, userProfile]);
