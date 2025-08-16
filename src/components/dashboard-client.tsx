@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import * as React from "react";
@@ -146,12 +147,13 @@ export function DashboardPageContent({
     }
   }, [selectedCompany, isCompanyContextLoading]);
   
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat(lang, {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
-    }).format(new Date(date));
+  const formatDate = (date: Date, options?: Intl.DateTimeFormatOptions) => {
+    const defaultOptions: Intl.DateTimeFormatOptions = {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+    };
+    return new Intl.DateTimeFormat(lang, { ...defaultOptions, ...options }).format(new Date(date));
   }
   
   const formatShortDate = (date: Date) => {
@@ -377,7 +379,7 @@ export function DashboardPageContent({
                         {disposal.wasteTypes.join(', ')} {dictionary.disposals.pickup}
                       </p>
                        <p className="text-sm text-muted-foreground">
-                          {formatDate(disposal.date)}
+                          {formatDate(disposal.date, { hour: 'numeric', minute: 'numeric', hour12: true })}
                       </p>
                       <Badge variant="secondary">{dictionary.disposals.status[disposal.status as keyof typeof dictionary.disposals.status]}</Badge>
                     </div>
@@ -449,5 +451,7 @@ export function DashboardPageContent({
 
 
 
+
+    
 
     
