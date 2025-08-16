@@ -38,7 +38,6 @@ export async function generateMetadata({ params: p }: { params: { lang: Locale }
     },
     description: seo.description,
     keywords: seo.keywords,
-    manifest: `/${lang}/manifest.json`,
     appleWebApp: {
       capable: true,
       statusBarStyle: "default",
