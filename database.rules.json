@@ -1,3 +1,4 @@
+
 {
   "rules": {
     "users": {
@@ -8,6 +9,7 @@
     },
     "companies": {
       ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      ".indexOn": "assignedUserUid",
       "$companyId": {
         ".read": "auth != null && (root.child('users').child(auth.uid).child('assignedCompanyId').val() == $companyId || root.child('users').child(auth.uid).child('role').val() == 'admin')",
         ".write": "auth != null && (root.child('users').child(auth.uid).child('assignedCompanyId').val() == $companyId || root.child('users').child(auth.uid).child('role').val() == 'admin')"
