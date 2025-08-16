@@ -67,7 +67,7 @@ const welcomeFormSchema = (dictionary: any) =>
   );
 
 export function WelcomeClient({ dictionary }: { dictionary: Dictionary['welcomePage'] }) {
-  const { user, userProfile, updateProfile, lang } = useAuth();
+  const { user, userProfile, updateProfile, refreshUserProfile, lang } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -101,6 +101,9 @@ export function WelcomeClient({ dictionary }: { dictionary: Dictionary['welcomeP
       }
 
       await updateProfile(profileUpdate);
+      
+      // Refresh the user profile and company context BEFORE redirecting
+      await refreshUserProfile();
       
       toast({ title: dictionary.toastSuccess });
       router.push(`/${lang}`);
@@ -201,5 +204,3 @@ export function WelcomeClient({ dictionary }: { dictionary: Dictionary['welcomeP
     </div>
   );
 }
-
-    
