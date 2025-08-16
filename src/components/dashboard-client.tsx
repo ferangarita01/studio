@@ -4,7 +4,7 @@
 
 import * as React from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { Activity, CalendarIcon, Trash2, Recycle, Loader2, DollarSign, CheckCircle2, TrendingUp, AlertCircle } from "lucide-react";
+import { Activity, CalendarDays, Trash2, Recycle, Loader2, DollarSign, CheckCircle2, TrendingUp, AlertCircle } from "lucide-react";
 import { format as formatDateFns, getMonth, getYear } from 'date-fns';
 import { enUS, es } from 'date-fns/locale';
 import Link from "next/link";
@@ -393,7 +393,7 @@ export function DashboardPageContent({
                 ))
               ) : (
                  <div className="text-center py-8">
-                  <Calendar className="mx-auto h-12 w-12 text-muted-foreground/50" />
+                  <CalendarDays className="mx-auto h-12 w-12 text-muted-foreground/50" />
                   <p className="mt-2 text-sm text-muted-foreground">
                     No upcoming disposals.
                   </p>
@@ -414,3 +414,4 @@ export function DashboardPageContent({
     </>
   );
 }
+
