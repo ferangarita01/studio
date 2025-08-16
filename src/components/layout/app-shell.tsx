@@ -29,7 +29,8 @@ import {
   User as UserIcon,
   Bell,
   Settings,
-  Loader2
+  Loader2,
+  CalendarDays
 } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -60,6 +61,7 @@ import {
   getCompanyById,
   deleteCompany as deleteCompanyService,
   updateCompany as updateCompanyService,
+  updateUserPlan,
   assignUserToCompany as assignUserToCompanyService,
   getUsers
 } from "@/services/waste-data-service";
@@ -97,7 +99,7 @@ const allNavItems = [
     { href: '/analyzer', icon: BrainCircuit, labelKey: 'aiAgent', roles: ['admin', 'client'], plan: 'Premium' },
     { href: '/log', icon: Trash2, labelKey: 'log', roles: ['admin', 'client'] },
     { href: '/reports/disposal', icon: FileText, labelKey: 'finalDisposal', roles: ['admin', 'client'] },
-    { href: '/schedule', icon: Calendar, labelKey: 'collections', roles: ['admin', 'client'] },
+    { href: '/schedule', icon: CalendarDays, labelKey: 'collections', roles: ['admin', 'client'] },
     { href: '/reports', icon: FileText, labelKey: 'reports', roles: ['admin', 'client'] },
     { href: '/materials', icon: Package, labelKey: 'prices', roles: ['admin', 'client'] },
     { href: '/companies', icon: Users, labelKey: 'companies', roles: ['admin'] },
@@ -357,10 +359,20 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
 
   const handleUpdateCompany = useCallback(async (companyId: string, data: Partial<Company>) => {
     try {
+      // First, update the company details in the database
       await updateCompanyService(companyId, data);
+
+      // If the plan was changed, update the assigned user's plan as well
+      const companyToUpdate = companies.find(c => c.id === companyId);
+      if (data.plan && companyToUpdate?.assignedUserUid) {
+        await updateUserPlan(companyToUpdate.assignedUserUid, data.plan);
+      }
+      
+      // Update the local state for immediate UI feedback
       setCompanies(prevCompanies => prevCompanies.map(c => 
         c.id === companyId ? { ...c, ...data } : c
       ));
+      
       toast({
         title: dictionary?.toast.update.title,
         description: dictionary?.toast.update.description,
@@ -372,7 +384,7 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
         variant: "destructive"
       });
     }
-  }, [toast, dictionary]);
+  }, [toast, dictionary, companies]);
 
 
   const companyContextValue = useMemo(() => ({

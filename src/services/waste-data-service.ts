@@ -137,12 +137,6 @@ export async function addCompany(name: string, userId: string, assignedUserId?: 
 export async function updateCompany(companyId: string, data: Partial<Company>): Promise<void> {
     const companyRef = ref(db, `companies/${companyId}`);
     await update(companyRef, data);
-
-    // If the plan is updated, propagate it to the assigned user
-    if (data.plan && data.assignedUserUid) {
-      const userRef = ref(db, `users/${data.assignedUserUid}`);
-      await update(userRef, { plan: data.plan });
-    }
 }
 
 export async function updateCompanyCoverImage(companyId: string, imageUrl: string): Promise<void> {
@@ -431,5 +425,3 @@ export async function getWasteChartData() {
       }, 300);
     });
 }
-
-    
