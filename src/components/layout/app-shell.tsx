@@ -27,6 +27,9 @@ import {
   ChevronDown,
   Users,
   User as UserIcon,
+  Bell,
+  Settings,
+  Loader2
 } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -80,9 +83,11 @@ const Logo = () => {
   const dictionary = useDictionaries()?.navigation;
   if (!dictionary) return null;
   return (
-    <Link href="/" className="flex items-center gap-2 font-semibold text-primary">
-      <Recycle className="h-6 w-6" />
-      <span className="text-lg">{dictionary.title}</span>
+    <Link href="/" className="flex items-center gap-3">
+        <div className="rounded-lg bg-gradient-to-r from-emerald-500 to-blue-600 p-2">
+            <Recycle className="h-6 w-6 text-white" />
+        </div>
+        <h1 className="text-xl font-bold">{dictionary.title}</h1>
     </Link>
   );
 };
@@ -394,7 +399,7 @@ function CompanyProvider({ children }: { children: React.ReactNode }) {
 function UserMenu() {
     const { logout, user, userProfile } = useAuth();
     const dictionary = useDictionaries()?.navigation;
-    const { setTheme } = useTheme();
+    const { theme, setTheme } = useTheme();
 
     if (!user || !dictionary) return null;
 
@@ -405,11 +410,12 @@ function UserMenu() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                 <Button variant="ghost" className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
                         <AvatarImage src={user.photoURL || undefined} alt={userProfile?.fullName || 'User'} />
                         <AvatarFallback>{userProfile?.fullName ? getInitials(userProfile.fullName) : 'U'}</AvatarFallback>
                     </Avatar>
+                    <ChevronDown className="h-4 w-4" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -425,21 +431,10 @@ function UserMenu() {
                     <span>{dictionary.logout}</span>
                 </DropdownMenuItem>
                  <DropdownMenuSeparator />
-                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                       <Button variant="ghost" size="sm" className="w-full justify-start gap-2 font-normal">
-                          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                          <span>{dictionary.themeToggle.toggle}</span>
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => setTheme("light")}>{dictionary.themeToggle.light}</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setTheme("dark")}>{dictionary.themeToggle.dark}</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setTheme("system")}>{dictionary.themeToggle.system}</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-
+                 <DropdownMenuItem onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+                    {theme === 'dark' ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
+                    <span>{theme === 'dark' ? dictionary.themeToggle.light : dictionary.themeToggle.dark}</span>
+                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     )
@@ -448,11 +443,8 @@ function UserMenu() {
 
 function AppShellContent({ children, lang }: { children: React.ReactNode, lang: string }) {
   const NavSkeleton = () => (
-     <div className="grid items-start gap-2 px-2 text-sm font-medium lg:px-4">
-        <div className="p-2">
-            <Skeleton className="h-9 w-full" />
-        </div>
-        {[...Array(5)].map((_, i) => (
+     <div className="space-y-2 p-4">
+        {[...Array(6)].map((_, i) => (
              <Skeleton key={i} className="h-10 w-full" />
         ))}
      </div>
@@ -466,6 +458,8 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isUpgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const { theme, setTheme } = useTheme();
+
 
   useEffect(() => {
     setIsClient(true);
@@ -475,7 +469,6 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
 
   const isPublicPage = useMemo(() => {
     const publicPaths = ['/login', '/landing', '/asorecifuentes', '/pricing', '/embed/impact'];
-    // Welcome page is not public, it requires auth
     return publicPaths.some(p => currentPath.startsWith(p));
   }, [currentPath]);
 
@@ -483,18 +476,15 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   useEffect(() => {
     if (isAuthLoading || !isClient) return;
 
-    // 1. Not authenticated: if not on a public page, redirect to landing
     if (!isAuthenticated && !isPublicPage) {
       router.push(`/${lang}/landing`);
       return;
     }
     
-    // 2. Authenticated: handle redirects for authenticated users
     if (isAuthenticated) {
       const isOnWelcomePage = currentPath.startsWith('/welcome');
       const hasCompletedProfile = !!userProfile?.accountType;
 
-      // If profile is not complete, redirect to /welcome, unless already there
       if (!hasCompletedProfile) {
         if (!isOnWelcomePage) {
           router.push(`/${lang}/welcome`);
@@ -502,13 +492,11 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
         return;
       }
 
-      // If profile IS complete, but user is on /welcome or /login, redirect to dashboard
       if (hasCompletedProfile && (isOnWelcomePage || currentPath.startsWith('/login'))) {
           router.push(`/${lang}`);
           return;
       }
       
-      // Check for role/plan authorization for the current page
       const findItem = (items: typeof allNavItems, path: string): (typeof allNavItems[number]) | undefined => {
           for (const item of items) {
               if (item.href === path || (item.href !== '/' && path.startsWith(item.href) && item.href.length > 1)) {
@@ -565,88 +553,44 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     const navDictionary = dictionary.navigation;
 
     return (
-      <div>
-        <div className="p-2">
-          <CompanySwitcher />
-        </div>
-        <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-          {navItems.map((item) => {
-              const label = navDictionary.links[item.labelKey as keyof typeof navDictionary.links];
+      <nav className="space-y-2">
+        {navItems.map((item) => {
+          const label = navDictionary.links[item.labelKey as keyof typeof navDictionary.links];
+          const href = getHref(item.href);
+          const isActive = item.href === '/' ? pathname === href : pathname.startsWith(href);
 
-              if ('subItems' in item) {
-                const subItems = (item as any).subItems;
-                const isActive = subItems.some((sub:any) => pathname.startsWith(getHref(sub.href)));
-                return (
-                  <Collapsible key={item.labelKey} defaultOpen={isActive}>
-                    <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&[data-state=open]>svg]:rotate-180">
-                      <div className="flex items-center gap-3">
-                        <item.icon className="h-4 w-4" />
-                        <span>{label}</span>
-                      </div>
-                      <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="space-y-1 py-1 pl-7">
-                      {subItems.map((subItem:any) => {
-                        if (!subItem.roles.includes(role!)) return null;
-                        const subHref = getHref(subItem.href);
-                        const subLabel = navDictionary.links[subItem.labelKey as keyof typeof navDictionary.links];
-                        const isSubActive = pathname === subHref;
-                        return (
-                          <Link
-                            key={subItem.labelKey}
-                            href={subHref}
-                            className={cn(
-                              "flex items-center gap-3 rounded-md px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                              isSubActive && "bg-muted text-primary"
-                            )}
-                            onClick={(e) => handlePremiumClick(e, subItem)}
-                          >
-                            <span>{subLabel}</span>
-                            {subItem.plan === 'Premium' && (
-                              <Badge variant="outline" className="ml-auto flex items-center gap-1 border-yellow-500/50 text-yellow-500 text-xs px-2">
-                                {navDictionary.premium}
-                              </Badge>
-                            )}
-                          </Link>
-                        );
-                      })}
-                    </CollapsibleContent>
-                  </Collapsible>
-                );
-              }
-
-              const href = getHref(item.href);
-              const isActive = pathname === href || (item.href !== '/' && pathname.startsWith(href) && item.href.length > 1);
-              return (
-                <Link
-                  key={item.labelKey}
-                  href={href}
-                  onClick={(e) => handlePremiumClick(e, item)}
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                    isActive && "bg-muted text-primary",
-                  )}
-                >
-                  <item.icon className="h-4 w-4" />
-                  <span>{label}</span>
-                  {item.plan === 'Premium' && (
-                    <Badge variant="outline" className="ml-auto flex items-center gap-1 border-yellow-500/50 text-yellow-500 text-xs px-2">
-                      {navDictionary.premium}
-                    </Badge>
-                  )}
-                </Link>
-              );
-            })
-          }
-        </nav>
-      </div>
+          return (
+             <Link
+                key={item.labelKey}
+                href={href}
+                onClick={(e) => handlePremiumClick(e, item)}
+                className={cn(
+                  "flex items-center justify-between px-4 py-3 rounded-lg cursor-pointer transition-all duration-200",
+                  isActive 
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <item.icon className="h-5 w-5" />
+                  <span className="font-medium">{label}</span>
+                </div>
+                {item.plan === 'Premium' && (
+                  <span className="px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
+                    {navDictionary.premium}
+                  </span>
+                )}
+              </Link>
+          );
+        })}
+      </nav>
     );
   };
   
-  if (!isClient || isAuthLoading || !dictionary) {
+  if (!isClient || !dictionary) {
     return (
         <div className="flex h-screen w-full items-center justify-center">
-            <div>Loading...</div>
+            <Loader2 className="h-8 w-8 animate-spin" />
         </div>
     );
   }
@@ -655,28 +599,28 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     return <>{children}</>;
   }
 
-  if (!isAuthenticated) {
+  if (isAuthLoading || !isAuthenticated) {
      return (
-        <div className="flex h-screen w-full items-center justify-center"><div>Loading...</div></div>
+        <div className="flex h-screen w-full items-center justify-center">
+             <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
      );
   }
   
   const navDictionary = dictionary.navigation;
 
   return (
-      <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-        <div className="hidden border-r bg-muted/40 md:block">
-          <div className="flex h-full max-h-screen flex-col">
-            <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+      <div className="grid min-h-screen w-full md:grid-cols-[256px_1fr]">
+        <aside className="hidden md:block border-r bg-card p-4">
+          <div className="flex flex-col gap-8">
+            <div className="px-4">
               <Logo />
             </div>
-            <div className="flex-1 overflow-y-auto py-2">
-               <NavContent />
-            </div>
+            <NavContent />
           </div>
-        </div>
+        </aside>
         <div className="flex flex-col">
-          <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+          <header className="flex h-16 items-center gap-4 border-b bg-card px-6">
             <Sheet open={isMobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button
@@ -688,37 +632,27 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                   <span className="sr-only">Toggle navigation menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="flex flex-col p-0">
-                 <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-                    <Logo />
-                 </div>
-                 <div className="flex-1 overflow-y-auto py-2">
+              <SheetContent side="left" className="flex flex-col p-4 w-full max-w-sm">
+                 <Logo />
+                 <div className="mt-8 flex-1">
                     <NavContent />
                  </div>
               </SheetContent>
             </Sheet>
-            <div className="w-full flex-1 md:hidden">
-              <span className="font-semibold">{navDictionary.title}</span>
-            </div>
+            
             <div className="ml-auto flex items-center gap-2">
+                <Button variant="ghost" size="icon">
+                    <Bell className="h-5 w-5" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+                    {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                </Button>
               <LanguageToggle />
               <UserMenu />
             </div>
           </header>
-          <main className="flex flex-1 flex-col overflow-auto bg-background/50 relative">
-            <div className="absolute inset-0 z-[-1]">
-                <Image
-                    src="https://space.gov.ae/app_themes/lg21016/images/Sustainability%20Development%20Goals.png"
-                    alt="Abstract background representing recycling and data"
-                    fill
-                    priority
-                    className="object-cover opacity-5 blur-sm"
-                    data-ai-hint="sustainability goals"
-                />
-            </div>
-            <div className="relative z-10">
-                {children}
-            </div>
+          <main className="flex-1 overflow-auto bg-background p-6">
+            {children}
           </main>
         </div>
         <WhatsAppButton />
@@ -738,7 +672,7 @@ export function AppShell({ children, lang, dictionary }: { children: React.React
    return (
     <ThemeProvider
         attribute="class"
-        defaultTheme="system"
+        defaultTheme="dark"
         enableSystem
         disableTransitionOnChange
     >
@@ -755,5 +689,3 @@ export function AppShell({ children, lang, dictionary }: { children: React.React
     </ThemeProvider>
    )
 }
-
-    

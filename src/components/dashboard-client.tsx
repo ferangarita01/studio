@@ -4,7 +4,7 @@
 
 import * as React from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { Activity, CalendarIcon, Trash2, Recycle, Loader2, DollarSign } from "lucide-react";
+import { Activity, CalendarIcon, Trash2, Recycle, Loader2, DollarSign, CheckCircle2, TrendingUp, AlertCircle } from "lucide-react";
 import { format as formatDateFns, getMonth, getYear } from 'date-fns';
 import { enUS, es } from 'date-fns/locale';
 import Link from "next/link";
@@ -35,6 +35,7 @@ import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
 import { UpgradePlanDialog } from "./upgrade-plan-dialog";
 import { useDictionaries } from "@/context/dictionary-context";
+import { useTheme } from "next-themes";
 
 const chartConfig = {
   quantity: {
@@ -61,6 +62,53 @@ const chartConfig = {
 interface DashboardPageContentProps {
   dictionary: Dictionary["dashboard"];
 }
+
+const StatCard = ({ title, value, subtitle, trend, icon: Icon, color = "blue", onClick }: { title: string, value: string, subtitle: string, trend?: string, icon: React.ElementType, color?: string, onClick?: (e: React.MouseEvent) => void }) => {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
+
+    const colorClasses: Record<string, string> = {
+      blue: 'text-blue-500',
+      green: 'text-emerald-500',
+      orange: 'text-orange-500',
+      purple: 'text-purple-500',
+      red: 'text-red-500'
+    };
+    
+    const cardContent = (
+         <div className="h-full bg-card border-border rounded-xl border p-6 transition-all duration-200 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-white/5">
+            <div className="flex items-start justify-between">
+            <div className="flex-1">
+                <p className="text-sm font-medium text-muted-foreground">
+                {title}
+                </p>
+                <p className="mt-2 text-3xl font-bold tracking-tight">
+                {value}
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground/80">
+                {subtitle}
+                </p>
+            </div>
+            <div className="rounded-lg p-3 bg-muted">
+                <Icon className={cn("h-6 w-6", colorClasses[color] || 'text-blue-500')} />
+            </div>
+            </div>
+            {trend && (
+            <div className="mt-4 flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-emerald-500" />
+                <span className="text-sm text-emerald-500 font-medium">{trend}</span>
+            </div>
+            )}
+        </div>
+    );
+
+    if (onClick) {
+        return <div onClick={onClick} className="cursor-pointer h-full">{cardContent}</div>;
+    }
+
+    return cardContent;
+};
+
 
 function WelcomeMessage({ dictionary }: { dictionary: Dictionary["dashboard"]["welcome"] }) {
   const { role } = useAuth();
@@ -156,13 +204,6 @@ export function DashboardPageContent({
     return new Intl.DateTimeFormat(lang, { ...defaultOptions, ...options }).format(new Date(date));
   }
   
-  const formatShortDate = (date: Date) => {
-     return new Intl.DateTimeFormat(lang, {
-      month: 'long',
-      day: 'numeric'
-    }).format(new Date(date));
-  }
-  
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
@@ -218,9 +259,6 @@ export function DashboardPageContent({
 
   const renderLoadingState = () => (
       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-          <div className="flex items-center">
-            <h1 className="text-lg font-semibold md:text-2xl">{dictionary?.title || "Dashboard"}</h1>
-          </div>
           <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
@@ -234,9 +272,6 @@ export function DashboardPageContent({
   if (!selectedCompany) {
      return (
        <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-          <div className="flex items-center">
-            <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
-          </div>
           <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
             <WelcomeMessage dictionary={dictionary.welcome} />
           </div>
@@ -262,79 +297,47 @@ export function DashboardPageContent({
 
   return (
     <>
-    <div className="flex w-full flex-col">
-      <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-        <div className="flex items-center">
-          <h1 className="text-lg font-semibold md:text-2xl">{dictionary.title}</h1>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {dictionary.cards.totalWaste.title}
-              </CardTitle>
-              <Trash2 className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalWaste.toFixed(2)} kg</div>
-              <p className="text-xs text-muted-foreground">
-                {dictionary.cards.totalWaste.change}
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{dictionary.cards.recyclingRate.title}</CardTitle>
-              <Recycle className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{recyclingRate.toFixed(1)}%</div>
-              <p className="text-xs text-muted-foreground">
-                {dictionary.cards.recyclingRate.change}
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{dictionary.cards.income.title}</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{formatCurrency(totalIncome)}</div>
-              <p className="text-xs text-muted-foreground">
-                {dictionary.cards.income.description}
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{dictionary.cards.upcomingDisposals.title}</CardTitle>
-              <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{upcomingDisposals.length}</div>
-              <p className="text-xs text-muted-foreground">
-                {dictionary.cards.upcomingDisposals.next}
-              </p>
-            </CardContent>
-          </Card>
-          <Link href={`/${lang}/compliance`} onClick={handlePremiumFeatureClick}>
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{dictionary.cards.complianceStatus.title}</CardTitle>
-                <Activity className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                <div className="text-2xl font-bold text-primary">{dictionary.cards.complianceStatus.status}</div>
-                <p className="text-xs text-muted-foreground">
-                    {dictionary.cards.complianceStatus.detail}
-                </p>
-                </CardContent>
-            </Card>
-          </Link>
-        </div>
-        <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
-          <Card className="xl:col-span-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+        <StatCard
+          title={dictionary.cards.totalWaste.title}
+          value={`${totalWaste.toFixed(2)} kg`}
+          subtitle={dictionary.cards.totalWaste.change}
+          icon={Trash2}
+          color="blue"
+        />
+        <StatCard
+          title={dictionary.cards.recyclingRate.title}
+          value={`${recyclingRate.toFixed(1)}%`}
+          subtitle={dictionary.cards.recyclingRate.change}
+          icon={Recycle}
+          color="green"
+        />
+        <StatCard
+          title={dictionary.cards.income.title}
+          value={formatCurrency(totalIncome)}
+          subtitle={dictionary.cards.income.description}
+          icon={DollarSign}
+          color="green"
+        />
+        <StatCard
+          title={dictionary.cards.upcomingDisposals.title}
+          value={upcomingDisposals.length.toString()}
+          subtitle={dictionary.cards.upcomingDisposals.next}
+          icon={AlertCircle}
+          color="orange"
+        />
+        <StatCard
+            title={dictionary.cards.complianceStatus.title}
+            value={dictionary.cards.complianceStatus.status}
+            subtitle={dictionary.cards.complianceStatus.detail}
+            icon={CheckCircle2}
+            color="green"
+            onClick={(e) => handlePremiumFeatureClick(e)}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle>{dictionary.wasteOverview.title}</CardTitle>
               <CardDescription>
@@ -362,6 +365,7 @@ export function DashboardPageContent({
               </ChartContainer>
             </CardContent>
           </Card>
+          
           <Card>
             <CardHeader>
               <CardTitle>{dictionary.disposals.title}</CardTitle>
@@ -369,89 +373,44 @@ export function DashboardPageContent({
                 {dictionary.disposals.description}
               </CardDescription>
             </CardHeader>
-            <CardContent className="grid gap-4">
+            <CardContent className="space-y-4">
               {upcomingDisposals.length > 0 ? (
                 upcomingDisposals.slice(0, 4).map((disposal) => (
-                  <div key={disposal.id} className="grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
-                    <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
-                    <div className="grid gap-1">
-                      <p className="font-medium">
-                        {disposal.wasteTypes.join(', ')} {dictionary.disposals.pickup}
-                      </p>
-                       <p className="text-sm text-muted-foreground">
+                    <div key={disposal.id} className="flex items-start gap-4 p-4 rounded-lg bg-primary/10 border border-primary/20">
+                      <div className="flex-shrink-0">
+                        <div className="w-3 h-3 rounded-full bg-primary mt-2"></div>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-primary-dark dark:text-primary-light">{disposal.wasteTypes.join(', ')} {dictionary.disposals.pickup}</h4>
+                        <p className="text-sm text-muted-foreground mt-1">
                           {formatDate(disposal.date, { hour: 'numeric', minute: 'numeric', hour12: true })}
-                      </p>
-                      <Badge variant="secondary">{dictionary.disposals.status[disposal.status as keyof typeof dictionary.disposals.status]}</Badge>
+                        </p>
+                         <Badge variant="secondary" className="mt-2">
+                            {dictionary.disposals.status[disposal.status as keyof typeof dictionary.disposals.status]}
+                        </Badge>
+                      </div>
                     </div>
-                  </div>
                 ))
               ) : (
-                <p className="text-sm text-muted-foreground">No upcoming disposals.</p>
+                 <div className="text-center py-8">
+                  <Calendar className="mx-auto h-12 w-12 text-muted-foreground/50" />
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    No upcoming disposals.
+                  </p>
+                </div>
               )}
             </CardContent>
           </Card>
-        </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>{dictionary.recentEntries.title}</CardTitle>
-            <CardDescription>
-              {dictionary.recentEntries.description}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-             <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{dictionary.recentEntries.table.date}</TableHead>
-                    <TableHead>{dictionary.recentEntries.table.type}</TableHead>
-                    <TableHead className="text-right">{dictionary.recentEntries.table.quantity}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {wasteLog.length > 0 ? (
-                    wasteLog.slice(0, 5).map((entry: WasteEntry) => (
-                      <TableRow key={entry.id}>
-                        <TableCell>
-                          {formatShortDate(entry.date)}
-                        </TableCell>
-                        <TableCell>{entry.type}</TableCell>
-                        <TableCell className="text-right">{entry.quantity.toFixed(2)} kg</TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={3} className="h-24 text-center">
-                        No recent entries.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
-      </main>
-    </div>
-    {fullDictionary?.navigation.upgradeDialog && (
-      <UpgradePlanDialog
-        open={isUpgradeDialogOpen}
-        onOpenChange={setUpgradeDialogOpen}
-        dictionary={fullDictionary.navigation.upgradeDialog}
-        lang={lang}
-      />
-    )}
+      </div>
+
+      {fullDictionary?.navigation.upgradeDialog && (
+        <UpgradePlanDialog
+          open={isUpgradeDialogOpen}
+          onOpenChange={setUpgradeDialogOpen}
+          dictionary={fullDictionary.navigation.upgradeDialog}
+          lang={lang}
+        />
+      )}
     </>
   );
 }
-
-    
-
-    
-
-
-
-
-    
-
-    
