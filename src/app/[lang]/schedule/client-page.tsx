@@ -234,9 +234,9 @@ export function ScheduleClient({ dictionary, lang }: ScheduleClientProps) {
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6">
+          <div className="bg-white dark:bg-card rounded-xl shadow-sm border border-gray-200 p-4 md:p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2 capitalize">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2 capitalize">
                 <CalendarIcon className="h-5 w-5 text-primary" />
                 {format(currentMonth, "MMMM yyyy", { locale: dateLocale })}
               </h2>
@@ -286,7 +286,7 @@ export function ScheduleClient({ dictionary, lang }: ScheduleClientProps) {
               })}
             </div>
 
-            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs">
+            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-teal-600 dark:text-teal-400 font-medium">
               <div className="flex items-center gap-1.5">
                 <div className="w-3 h-3 bg-accent/50 rounded border border-gray-300"></div>
                 <span>Hoy</span>
