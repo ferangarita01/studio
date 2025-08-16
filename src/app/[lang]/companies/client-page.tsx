@@ -72,13 +72,16 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
   }, []);
 
   const fetchClients = useCallback(async () => {
+    // This now fetches ALL users with the 'client' role.
     const fetchedClients = await getUsers('client');
     setClients(fetchedClients);
   }, []);
 
   useEffect(() => {
-    fetchClients();
-  }, [fetchClients]);
+    if (role === 'admin') {
+      fetchClients();
+    }
+  }, [role, fetchClients]);
 
   const onAssign = async (companyId: string, userId: string | null) => {
       await handleAssignUser(companyId, userId);
@@ -210,3 +213,5 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
     </>
   );
 }
+
+    

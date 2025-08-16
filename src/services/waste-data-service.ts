@@ -1,5 +1,4 @@
 
-
 // IMPORTANT: This service now uses Firebase Realtime Database.
 // You will need to set up Realtime Database in your Firebase project.
 import {
@@ -56,21 +55,22 @@ export async function updateUserProfile(uid: string, data: Partial<UserProfile>)
 
 export async function getUsers(role?: UserRole): Promise<UserProfile[]> {
   const usersRef = ref(db, 'users');
-  // Fetch all users, then filter by role on the client side.
-  // This is less efficient but necessary to allow admins to see and re-assign already assigned clients.
-  const snapshot = await get(usersRef);
+  let usersQuery = query(usersRef);
+
+  if (role) {
+    // This query is more efficient as it filters on the database side.
+    // It requires an index on the 'role' field in your Firebase Realtime Database rules.
+    // e.g., { "rules": { "users": { ".indexOn": "role" } } }
+    usersQuery = query(usersRef, orderByChild('role'), equalTo(role));
+  }
+  
+  const snapshot = await get(usersQuery);
 
   if (!snapshot.exists()) {
     return [];
   }
 
-  const allUsers: UserProfile[] = snapshotToArray(snapshot);
-
-  if (role) {
-      return allUsers.filter(user => user.role === role);
-  }
-  
-  return allUsers;
+  return snapshotToArray(snapshot);
 }
 
 export async function updateUserPlan(userId: string, plan: PlanType): Promise<void> {
