@@ -8,16 +8,13 @@ type ValuePropositionDict = Dictionary["landingPage"]["valueProposition"];
 export function OportunidadSection({ dictionary }: { dictionary: ValuePropositionDict }) {
   const stats = [
     { 
-      value: dictionary.stats.stat1.split(" se")[0], // Simple split for demonstration
-      label: "se" + dictionary.stats.stat1.split(" se")[1]
+      label: dictionary.stats.stat1
     },
     { 
-      value: dictionary.stats.stat2.split(" de")[0],
-      label: "de" + dictionary.stats.stat2.split(" de")[1]
+      label: dictionary.stats.stat2
     },
     { 
-      value: dictionary.stats.stat3.split(" puede")[0],
-      label: "puede" + dictionary.stats.stat3.split(" puede")[1]
+      label: dictionary.stats.stat3
     }
   ];
 
@@ -59,9 +56,6 @@ export function OportunidadSection({ dictionary }: { dictionary: ValuePropositio
                 <CheckCircle2 className="w-6 h-6 text-violet-400" />
               </div>
               <div className="text-xl md:text-2xl font-bold text-white mb-2">
-                {stat.value}
-              </div>
-              <div className="text-sm md:text-base text-slate-300">
                 {stat.label}
               </div>
             </div>
