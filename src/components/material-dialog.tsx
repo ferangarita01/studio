@@ -6,7 +6,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -22,77 +21,72 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { Material, WasteType } from "@/lib/types";
+import type { Dictionary } from "@/lib/get-dictionary";
 
-type MaterialType = "Recycling" | "Organic" | "General" | "Hazardous";
-
-interface Material {
-  id?: string;
-  name: string;
-  type: MaterialType;
-  pricePerKg: number;
-  serviceCostPerKg: number;
-}
 
 // ✅ Esquema Zod
 const formSchema = (validation: any) =>
   z.object({
-    name: z.string().min(1, validation.required),
+    name: z.string().min(1, validation?.name?.min || "Name is required"),
     type: z.enum(["Recycling", "Organic", "General", "Hazardous"], {
-      errorMap: () => ({ message: validation.required }),
+      errorMap: () => ({ message: validation?.type?.required || "Type is required" }),
     }),
-    pricePerKg: z.coerce.number().min(0, validation.minValue),
-    serviceCostPerKg: z.coerce.number().min(0, validation.minValue),
+    pricePerKg: z.coerce.number().min(0, validation?.price?.min || "Price must be positive"),
+    serviceCostPerKg: z.coerce.number().min(0, validation?.serviceCost?.min || "Service cost must be positive"),
   });
+  
 
 interface MaterialDialogProps {
-  dictionary: any;
-  onSave: (material: Material) => void;
-  material?: Material;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  dictionary: Dictionary["materialsPage"]["materialDialog"];
+  onSave: (material: Omit<Material, 'id'> & { id?: string }) => void;
+  material: Material | null;
 }
 
-export function MaterialDialog({ dictionary, onSave, material }: MaterialDialogProps) {
-  const getDefaultValues = (): Material => ({
-    name: "",
-    type: "Recycling",
-    pricePerKg: 0,
-    serviceCostPerKg: 0,
-  });
+export function MaterialDialog({ open, onOpenChange, dictionary, onSave, material }: MaterialDialogProps) {
+  
+  const defaultValues = React.useMemo(() => ({
+    name: material?.name || "",
+    type: material?.type || "Recycling",
+    pricePerKg: material?.pricePerKg || 0,
+    serviceCostPerKg: material?.serviceCostPerKg || 0,
+  }), [material]);
 
-  const form = useForm<Material>({
+  const form = useForm<z.infer<ReturnType<typeof formSchema>>>({
     resolver: zodResolver(formSchema(dictionary.validation)),
-    defaultValues: getDefaultValues(),
+    defaultValues,
   });
 
-  const [open, setOpen] = React.useState(false);
+  React.useEffect(() => {
+    form.reset(defaultValues);
+  }, [defaultValues, form]);
 
-  const handleOpenChange = (state: boolean) => {
-    setOpen(state);
-    if (!state) {
-      form.reset(getDefaultValues());
-    } else if (material) {
-      form.reset({
-        ...getDefaultValues(),
-        ...material,
-      });
-    }
+
+  const onSubmit = (data: z.infer<ReturnType<typeof formSchema>>) => {
+    const dataToSave = material ? { ...data, id: material.id } : data;
+    onSave(dataToSave);
   };
-
-  const onSubmit = (data: Material) => {
-    onSave(data);
-    handleOpenChange(false);
+  
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+        form.reset({
+            name: "",
+            type: "Recycling",
+            pricePerKg: 0,
+            serviceCostPerKg: 0,
+        });
+    }
+    onOpenChange(isOpen);
   };
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button variant="default">
-          {material ? dictionary.editMaterial : dictionary.addMaterial}
-        </Button>
-      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {material ? dictionary.editMaterial : dictionary.addMaterial}
+            {material ? dictionary.editTitle : dictionary.addTitle}
           </DialogTitle>
         </DialogHeader>
 
@@ -126,13 +120,12 @@ export function MaterialDialog({ dictionary, onSave, material }: MaterialDialogP
                       onValueChange={field.onChange}
                     >
                       <SelectTrigger>
-                        <SelectValue />
+                        <SelectValue placeholder={dictionary.selectType} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Recycling">{dictionary.recycling}</SelectItem>
-                        <SelectItem value="Organic">{dictionary.organic}</SelectItem>
-                        <SelectItem value="General">{dictionary.general}</SelectItem>
-                        <SelectItem value="Hazardous">{dictionary.hazardous}</SelectItem>
+                        {Object.keys(dictionary.types).map((key) => (
+                           <SelectItem key={key} value={key}>{dictionary.types[key as keyof typeof dictionary.types]}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </FormControl>
@@ -147,13 +140,13 @@ export function MaterialDialog({ dictionary, onSave, material }: MaterialDialogP
               name="pricePerKg"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{dictionary.pricePerKg}</FormLabel>
+                  <FormLabel>{dictionary.price}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       step="0.01"
-                      value={field.value.toString()}
-                      onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                      placeholder={dictionary.pricePlaceholder}
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -167,13 +160,13 @@ export function MaterialDialog({ dictionary, onSave, material }: MaterialDialogP
               name="serviceCostPerKg"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{dictionary.serviceCostPerKg}</FormLabel>
+                  <FormLabel>{dictionary.serviceCost}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       step="0.01"
-                      value={field.value.toString()}
-                      onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                      placeholder={dictionary.serviceCostPlaceholder}
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
