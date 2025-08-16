@@ -103,7 +103,7 @@ export function ScheduleClient({ dictionary, lang }: ScheduleClientProps) {
   
   const colStartClasses = ["", "col-start-2", "col-start-3", "col-start-4", "col-start-5", "col-start-6", "col-start-7"];
   
-  const showAdminFeatures = !isAuthLoading && role === 'admin';
+  const canRequestCollection = !isAuthLoading && (role === 'admin' || role === 'client');
 
   if (isLoading || isAuthLoading) {
       return (
@@ -139,7 +139,7 @@ export function ScheduleClient({ dictionary, lang }: ScheduleClientProps) {
                 {lang === 'es' ? `${dayCollections.length} recolección(es) programada(s)` : `${dayCollections.length} collection(s) scheduled`}
               </p>
             </div>
-            {showAdminFeatures && (
+            {canRequestCollection && (
               <Button 
                 onClick={() => setRequestDialogOpen(true)}
                 className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-200 mt-4 sm:mt-0"
@@ -156,7 +156,7 @@ export function ScheduleClient({ dictionary, lang }: ScheduleClientProps) {
             <div className="text-center py-12">
               <Truck className="h-12 w-12 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-500 mb-4">No collections scheduled for this day</p>
-              {showAdminFeatures && (
+              {canRequestCollection && (
                  <Button 
                     onClick={() => setRequestDialogOpen(true)}
                     variant="outline"
@@ -203,7 +203,7 @@ export function ScheduleClient({ dictionary, lang }: ScheduleClientProps) {
                             </div>
                           </div>
                           
-                          {showAdminFeatures && (
+                          {role === 'admin' && (
                             <div className="flex gap-1">
                               <Button variant="ghost" size="icon" className="h-8 w-8">
                                 <Edit className="h-4 w-4" />
@@ -305,7 +305,7 @@ export function ScheduleClient({ dictionary, lang }: ScheduleClientProps) {
           <DayDetails />
         </div>
         
-        {showAdminFeatures && (
+        {canRequestCollection && (
           <RequestCollectionDialog
             open={isRequestDialogOpen}
             onOpenChange={setRequestDialogOpen}
@@ -317,5 +317,3 @@ export function ScheduleClient({ dictionary, lang }: ScheduleClientProps) {
     </div>
   );
 }
-
-    
