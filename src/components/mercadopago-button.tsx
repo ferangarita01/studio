@@ -1,167 +1,242 @@
-
-"use client"; // This is a client component 
+"use client";
 
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/auth-context";
-import { updateUserPlan } from "@/services/waste-data-service";
+import { updateUserPlan, type PlanType } from "@/services/waste-data-service";
 import { useState, useEffect } from 'react';
 import { Skeleton } from './ui/skeleton';
+import { Button } from './ui/button';
+import { AlertCircle, CreditCard } from 'lucide-react';
 
-const MERCADOPAGO_PUBLIC_KEY = process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY || "";
-// IMPORTANT: This is a TEST access token for the sandbox environment.
-// Replace with a secure backend call for production.
-const MERCADOPAGO_TEST_ACCESS_TOKEN = "TEST-8514800378495098-073117-91a54776110f03225674c10702672522-1943640243";
+const MERCADOPAGO_PUBLIC_KEY = process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY;
 
 interface MercadoPagoButtonProps {
     amount: number;
     description: string;
+    planType?: PlanType;
+    onSuccess?: () => void;
+    onError?: (error: string) => void;
 }
 
-export function MercadoPagoButtonWrapper({ amount, description }: MercadoPagoButtonProps) {
+export function MercadoPagoButtonWrapper({ 
+    amount, 
+    description, 
+    planType = 'Premium' as PlanType,
+    onSuccess,
+    onError 
+}: MercadoPagoButtonProps) {
     const { toast } = useToast();
     const { user, refreshUserProfile } = useAuth();
     const [preferenceId, setPreferenceId] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [isClient, setIsClient] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [isInitialized, setIsInitialized] = useState(false);
 
-    // State to hold the Mercado Pago SDK instance
-    const [mp, setMp] = useState<any>(null);
-
+    // Initialize MercadoPago SDK
     useEffect(() => {
         setIsClient(true);
         if (MERCADOPAGO_PUBLIC_KEY && MERCADOPAGO_PUBLIC_KEY !== "YOUR_PUBLIC_KEY_HERE") {
             try {
-                const mpInstance = new (window as any).MercadoPago(MERCADOPAGO_PUBLIC_KEY, { locale: 'es-CO' });
-                setMp(mpInstance);
+                initMercadoPago(MERCADOPAGO_PUBLIC_KEY, {
+                    locale: 'es-CO'
+                });
+                setIsInitialized(true);
             } catch (error) {
                 console.error("Failed to initialize Mercado Pago SDK:", error);
+                setError("Error al inicializar MercadoPago");
             }
+        } else {
+            setError("MercadoPago no está configurado correctamente");
         }
-        // Ensure the script is loaded
-        // The script tag is likely in your _document.js or layout.tsx
     }, []);
 
+    // Create preference through your secure backend
     const createPreference = async () => {
-        if (!user) return;
+        if (!user) {
+            setError("Usuario no autenticado");
+            return;
+        }
+
         setIsLoading(true);
+        setError(null);
+
         try {
-            // This would typically be a call to your own backend server
-            // to create the preference securely.
-            // For this example, we are using a TEST access token on the client-side
-            // for demonstration purposes in a sandbox environment.
-            // DO NOT use a production access token here.
-            const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
+            const response = await fetch('/api/mercadopago/create-preference', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${MERCADOPAGO_TEST_ACCESS_TOKEN}`
                 },
                 body: JSON.stringify({
-                    items: [
-                        {
-                            title: description,
-                            quantity: 1,
-                            unit_price: amount,
-                            currency_id: 'COP'
-                        }
-                    ],
-                    back_urls: {
-                        success: window.location.href.split('?')[0] + '?mp_status=success',
-                        failure: window.location.href.split('?')[0] + '?mp_status=failure',
-                        pending: window.location.href.split('?')[0] + '?mp_status=pending'
-                    },
-                    auto_return: 'approved'
+                    amount,
+                    description,
+                    userId: user.uid,
+                    planType,
+                    userEmail: user.email || '',
                 })
             });
+
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
+
             const data = await response.json();
-            if (data.id) {
-                setPreferenceId(data.id);
+            
+            if (data.preferenceId) {
+                setPreferenceId(data.preferenceId);
             } else {
-                 toast({
-                    title: "Error con Mercado Pago",
-                    description: "No se pudo crear la preferencia de pago.",
-                    variant: "destructive",
-                });
+                throw new Error(data.error || "No se pudo crear la preferencia");
             }
         } catch (error) {
             console.error("Error creating preference:", error);
+            const errorMessage = error instanceof Error ? error.message : "Error desconocido";
+            setError(errorMessage);
+            onError?.(errorMessage);
             toast({
                 title: "Error con Mercado Pago",
-                description: "No se pudo conectar con el servicio.",
+                description: "No se pudo inicializar el pago. Inténtalo nuevamente.",
                 variant: "destructive",
             });
         } finally {
             setIsLoading(false);
         }
     };
-    
-    // Create preference when component is client-side and user is available
-    useEffect(() => {
-        if (isClient && user) {
-            createPreference();
-        }
-    }, [isClient, user]);
 
-    // Render the Wallet brick when preferenceId and SDK are ready
+    // Handle payment status from URL parameters
     useEffect(() => {
-        if (preferenceId && mp) {
-            const bricksBuilder = mp.bricks();
-            bricksBuilder.create('wallet', 'walletBrick_container', {
-                initialization: { preferenceId: preferenceId },
-            });
-        }
-    }, [isClient, user]);
+        if (!isClient || !user) return;
 
-    // Handle payment status feedback from redirect
-    useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
-        const status = urlParams.get('mp_status');
-        if (status === 'success' && user) {
-            updateUserPlan(user.uid, 'Premium').then(() => {
-                // Refresh user profile to reflect the plan change
-                refreshUserProfile();
-                 toast({
-                    title: "Pago Exitoso y Plan Actualizado!",
-                    description: `¡Gracias! Ahora tienes el plan Premium.`,
-                });
-            });
-        } else if (status === 'failure') {
-             toast({
-                title: "Pago Fallido",
-                description: "El pago no pudo ser procesado. Por favor, inténtalo de nuevo.",
+        const status = urlParams.get('collection_status');
+        const paymentId = urlParams.get('payment_id');
+        const externalReference = urlParams.get('external_reference');
+
+        if (status && paymentId) {
+            handlePaymentResult(status, paymentId, externalReference);
+            // Clean URL parameters
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    }, [isClient, user]);
+
+    const handlePaymentResult = async (status: string, paymentId: string, externalReference: string | null) => {
+        try {
+            switch (status) {
+                case 'approved':
+                    await updateUserPlan(user!.uid, planType);
+                    await refreshUserProfile();
+                    toast({
+                        title: "¡Pago Exitoso!",
+                        description: `Tu plan ${planType} ha sido activado correctamente.`,
+                    });
+                    onSuccess?.();
+                    break;
+                
+                case 'pending':
+                    toast({
+                        title: "Pago Pendiente",
+                        description: "Tu pago está siendo procesado. Te notificaremos cuando se complete.",
+                        variant: "default",
+                    });
+                    break;
+                
+                case 'rejected':
+                case 'failure':
+                    toast({
+                        title: "Pago Rechazado",
+                        description: "El pago no pudo ser procesado. Verifica tus datos e inténtalo nuevamente.",
+                        variant: "destructive",
+                    });
+                    onError?.("Pago rechazado");
+                    break;
+                
+                default:
+                    console.warn("Status de pago desconocido:", status);
+            }
+        } catch (error) {
+            console.error("Error handling payment result:", error);
+            toast({
+                title: "Error",
+                description: "Hubo un problema al procesar el resultado del pago.",
                 variant: "destructive",
             });
         }
-    }, [user]);
+    };
 
-
-    if (!isClient) {
-        return <Skeleton className="h-10 w-full" />;
-    }
-    
-    if (!MERCADOPAGO_PUBLIC_KEY || MERCADOPAGO_PUBLIC_KEY === "YOUR_PUBLIC_KEY_HERE" || !MERCADOPAGO_TEST_ACCESS_TOKEN) {
+    // Loading state
+    if (!isClient || isLoading) {
         return (
-            <div className="text-destructive text-center p-2 text-xs rounded-md bg-destructive/10">
-                Mercado Pago no está configurado.
+            <div className="space-y-3">
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-8 w-3/4 mx-auto" />
             </div>
         );
-    }
-    
-    if (isLoading) {
-        return <Skeleton className="h-10 w-full" />;
     }
 
-    if (!preferenceId) {
-         return (
-            <div className="text-destructive text-center p-2 text-xs rounded-md bg-destructive/10">
-                Error al inicializar el pago.
+    // Error state
+    if (error || !MERCADOPAGO_PUBLIC_KEY || !isInitialized) {
+        return (
+            <div className="flex items-center gap-2 text-destructive text-center p-4 text-sm rounded-md bg-destructive/10 border border-destructive/20">
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <div>
+                    <p className="font-medium">Error de configuración</p>
+                    <p className="text-xs opacity-80">
+                        {error || "MercadoPago no está configurado correctamente"}
+                    </p>
+                </div>
             </div>
         );
     }
-    
+
+    // Show create payment button if no preference yet
+    if (!preferenceId) {
+        return (
+            <Button 
+                onClick={createPreference}
+                disabled={isLoading || !user}
+                className="w-full h-12 text-base font-medium"
+                size="lg"
+            >
+                <CreditCard className="h-4 w-4 mr-2" />
+                {isLoading ? "Inicializando pago..." : "Proceder al Pago"}
+            </Button>
+        );
+    }
+
+    // Render MercadoPago Wallet
     return (
-        <div id="walletBrick_container">
+        <div className="space-y-4">
+            <div className="text-center text-sm text-muted-foreground">
+                Completa tu pago de forma segura
+            </div>
+            <Wallet
+                initialization={{ 
+                    preferenceId: preferenceId,
+                    redirectMode: 'self'
+                }}
+                customization={{
+                    visual: {
+                        buttonBackground: 'default',
+                        borderRadius: '8px',
+                    }
+                }}
+                onReady={() => {
+                    console.log('MercadoPago Wallet ready');
+                }}
+                onSubmit={async () => {
+                    // Optional: Add pre-submit logic here
+                    console.log('Payment submitted');
+                }}
+                onError={(error) => {
+                    console.error('MercadoPago Wallet Error:', error);
+                    toast({
+                        title: "Error en el pago",
+                        description: "Hubo un problema con el procesador de pagos. Inténtalo nuevamente.",
+                        variant: "destructive",
+                    });
+                    onError?.("Error en el widget de pago");
+                }}
+            />
         </div>
     );
 }

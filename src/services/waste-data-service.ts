@@ -78,7 +78,6 @@ export async function updateUserPlan(userId: string, plan: PlanType): Promise<vo
   await update(userRef, { plan });
 }
 
-
 // --- Company Service Functions ---
 
 export async function getCompanies(userId?: string, isAdmin: boolean = false): Promise<Company[]> {
