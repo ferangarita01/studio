@@ -65,21 +65,8 @@ const createSignUpSchema = (dictionary: Dictionary["loginPage"]["validation"]) =
   });
 };
 
-type LoginFormData = z.infer<typeof createLoginSchema>;
-type SignUpFormData = z.infer<typeof createSignUpSchema>;
-
-
-const signUpDefaultValues: SignUpFormData = {
-  fullName: "",
-  email: "",
-  password: "",
-  terms: false,
-};
-
-const loginDefaultValues: LoginFormData = {
-  email: "",
-  password: "",
-};
+type LoginFormData = z.infer<ReturnType<typeof createLoginSchema>>;
+type SignUpFormData = z.infer<ReturnType<typeof createSignUpSchema>>;
 
 function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] }) {
   const { login, signUp, signInWithGoogle, isLoading: isAuthLoading, isAuthenticated } = useAuth();
@@ -94,6 +81,18 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
 
   const loginSchema = useMemo(() => createLoginSchema(validationDictionary), [validationDictionary]);
   const signUpSchema = useMemo(() => createSignUpSchema(validationDictionary), [validationDictionary]);
+
+  const signUpDefaultValues: SignUpFormData = {
+    fullName: "",
+    email: "",
+    password: "",
+    terms: false,
+  };
+
+  const loginDefaultValues: LoginFormData = {
+    email: "",
+    password: "",
+  };
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -376,3 +375,5 @@ export function LoginClient({ dictionary }: { dictionary: Dictionary }) {
     </ThemeProvider>
   )
 }
+
+    
