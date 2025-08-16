@@ -27,6 +27,7 @@ import { AuthProvider } from "@/context/auth-context"; // ✅ FIXED: Import Auth
 import type { Dictionary } from "@/lib/get-dictionary";
 import { PasswordResetDialog } from "@/components/password-reset-dialog";
 import { cn } from "@/lib/utils";
+import { signInWithGoogleRedirect } from "@/lib/firebase";
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px" {...props}>
@@ -157,8 +158,12 @@ function LoginPageContent({ dictionary }: { dictionary: Dictionary["loginPage"] 
         await signInWithGoogle();
         // Redirect will be handled by the main AppShell component
     } catch(err: any) {
-        const message = err.message || "An unexpected error occurred.";
-        setError(message.replace('Firebase: ','').replace('Error ', ''));
+        if (err.code === 'auth/popup-blocked') {
+            await signInWithGoogleRedirect();
+        } else {
+            const message = err.message || "An unexpected error occurred.";
+            setError(message.replace('Firebase: ','').replace('Error ', ''));
+        }
     } finally {
         setIsSubmitting(false);
     }
