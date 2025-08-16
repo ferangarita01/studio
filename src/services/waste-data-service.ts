@@ -56,22 +56,21 @@ export async function updateUserProfile(uid: string, data: Partial<UserProfile>)
 
 export async function getUsers(role?: UserRole): Promise<UserProfile[]> {
   const usersRef = ref(db, 'users');
-  let usersQuery = query(usersRef);
-
-  if (role) {
-    // If a role is specified, query for users with that role
-    usersQuery = query(usersRef, orderByChild('role'), equalTo(role));
-  }
-  
-  const snapshot = await get(usersQuery);
+  // Fetch all users, then filter by role on the client side.
+  // This is less efficient but necessary to allow admins to see and re-assign already assigned clients.
+  const snapshot = await get(usersRef);
 
   if (!snapshot.exists()) {
     return [];
   }
 
-  const users: UserProfile[] = snapshotToArray(snapshot);
+  const allUsers: UserProfile[] = snapshotToArray(snapshot);
+
+  if (role) {
+      return allUsers.filter(user => user.role === role);
+  }
   
-  return users;
+  return allUsers;
 }
 
 export async function updateUserPlan(userId: string, plan: PlanType): Promise<void> {
@@ -434,3 +433,5 @@ export async function getWasteChartData() {
       }, 300);
     });
 }
+
+    
