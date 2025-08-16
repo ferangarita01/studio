@@ -85,6 +85,8 @@ export function RequestCollectionDialog({
   });
 
   const onSubmit = async (values: FormSchema) => {
+    if (!selectedCompany) return;
+
     const [hours, minutes] = values.time.split(':').map(Number);
     const collectionDate = new Date(values.date);
     collectionDate.setHours(hours, minutes);
