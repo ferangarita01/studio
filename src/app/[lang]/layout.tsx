@@ -6,6 +6,7 @@ import type { Locale } from '@/i18n-config';
 import { AppShell } from '@/components/layout/app-shell';
 import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
+import Script from 'next/script';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -84,7 +85,9 @@ export default async function RootLayout({
 
   return (
     <html lang={lang} suppressHydrationWarning>
-      <head />
+      <head>
+         <Script src="https://sdk.mercadopago.com/js/v2" strategy="beforeInteractive" />
+      </head>
       <body className={cn("font-sans antialiased", inter.variable)} suppressHydrationWarning>
           <AppShell lang={lang} dictionary={dictionary}>
             {children}
