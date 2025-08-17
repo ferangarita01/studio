@@ -399,12 +399,17 @@ export async function addDisposalCertificate(
 // --- GHG / Carbon Footprint Service ---
 
 export async function getEmissionFactors(): Promise<EmissionFactor[]> {
-    const factorsRef = ref(db, 'factors');
-    const snapshot = await get(factorsRef);
-    if (snapshot.exists()) {
-        return snapshotToArray(snapshot);
+    try {
+        const factorsRef = ref(db, 'factors');
+        const snapshot = await get(factorsRef);
+        if (snapshot.exists()) {
+            return snapshotToArray(snapshot);
+        }
+        return [];
+    } catch (error) {
+        console.error('Error fetching emission factors:', error);
+        throw error;
     }
-    return [];
 }
 
 export async function getValorizedResidues(userId: string): Promise<ValorizedResidue[]> {
