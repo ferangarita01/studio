@@ -105,3 +105,24 @@ export type DisposalCertificate = {
   fileUrl: string;
   uploadedAt: string; // ISO 8601 string
 };
+
+export type EmissionFactor = {
+    id: string;
+    category: string;
+    subcategory: string;
+    factor: number;
+    unit: string;
+    source: string;
+    region: string;
+    scope?: number;
+};
+
+export type ValorizedResidue = {
+    id: string;
+    userId: string;
+    type: string;
+    quantity: number;
+    unit: string;
+    date: Date;
+    emissionsAvoided: number; // kgCO2e
+};

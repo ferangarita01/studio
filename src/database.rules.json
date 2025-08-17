@@ -4,7 +4,11 @@
     "users": {
       "$userId": {
         ".read": "$userId === auth.uid",
-        ".write": "$userId === auth.uid"
+        ".write": "$userId === auth.uid",
+        "residues": {
+          ".read": "$userId === auth.uid",
+          ".write": "$userId === auth.uid"
+        }
       }
     },
     "companies": {
@@ -16,6 +20,10 @@
       }
     },
     "materials": {
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
+    },
+    "factors": {
       ".read": "auth != null",
       ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
     },

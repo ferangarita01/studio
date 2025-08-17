@@ -16,7 +16,7 @@ import {
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/lib/firebase";
 import { wasteData, weeklyReportData, monthlyReportData } from "@/lib/data";
-import type { WasteEntry, Material, DisposalEvent, ReportData, Company, UserRole, UserProfile, PlanType, DisposalCertificate } from "@/lib/types";
+import type { WasteEntry, Material, DisposalEvent, ReportData, Company, UserRole, UserProfile, PlanType, DisposalCertificate, EmissionFactor, ValorizedResidue } from "@/lib/types";
 import { string } from "zod";
 
 // Helper to convert snapshot to array
@@ -396,7 +396,36 @@ export async function addDisposalCertificate(
   return { id: newCertificateRef.key!, ...certificateData };
 }
 
+// --- GHG / Carbon Footprint Service ---
 
+export async function getEmissionFactors(): Promise<EmissionFactor[]> {
+    const factorsRef = ref(db, 'factors');
+    const snapshot = await get(factorsRef);
+    if (snapshot.exists()) {
+        return snapshotToArray(snapshot);
+    }
+    return [];
+}
+
+export async function getValorizedResidues(userId: string): Promise<ValorizedResidue[]> {
+    const residuesRef = ref(db, `users/${userId}/residues`);
+    const snapshot = await get(residuesRef);
+    if (snapshot.exists()) {
+        return snapshotToArray(snapshot).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    }
+    return [];
+}
+
+export async function addValorizedResidue(userId: string, data: Omit<ValorizedResidue, 'id'>): Promise<ValorizedResidue> {
+    const residuesRef = ref(db, `users/${userId}/residues`);
+    const newResidueRef = push(residuesRef);
+    const dataToSave = {
+        ...data,
+        date: data.date.toISOString(),
+    }
+    await set(newResidueRef, dataToSave);
+    return { id: newResidueRef.key!, ...data };
+}
 
 
 // --- Mocked Data for Reports and Chart (can be migrated to Cloud Functions later) ---

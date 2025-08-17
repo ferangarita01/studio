@@ -11,7 +11,7 @@
       "financialReports": "Reportes Financieros",
       "finalDisposal": "Disposición Final",
       "prices": "Precios",
-      "compliance": "Cumplimiento Legal",
+      "compliance": "Reporte GEI",
       "companies": "Empresas",
       "profile": "Perfil"
     },
@@ -906,31 +906,82 @@
     }
   },
   "compliancePage": {
-    "title": "Centro de Cumplimiento Legal",
-    "description": "Supervise y gestione su estado de cumplimiento ambiental.",
-    "main": {
-        "title": "Resumen de Cumplimiento",
-        "description": "Manténgase al día con todos los requisitos legales y la documentación.",
-        "content": "Esta sección proporciona herramientas e información para ayudar a su empresa a cumplir con las regulaciones ambientales locales y nacionales. Realice un seguimiento de los plazos, acceda a los documentos necesarios y prepárese para las auditorías para garantizar el cumplimiento total."
+    "title": "Sistema de Reporte GEI",
+    "description": "Gestiona tu inventario de gases de efecto invernadero según estándares internacionales.",
+    "reportingSystem": {
+        "title": "Sistema de Reporte GEI",
+        "subtitle": "ISO 14064-1:2018 y GHG Protocol Corporate Standard"
     },
-    "cards": {
-        "regulations": {
-            "title": "Base de Datos de Regulaciones",
-            "description": "Acceda a un repositorio de leyes y regulaciones ambientales relevantes."
-        },
-        "reports": {
-            "title": "Informes de Cumplimiento",
-            "description": "Genere y presente los informes de cumplimiento necesarios directamente desde la plataforma."
-        },
-        "audits": {
-            "title": "Preparación para Auditorías",
-            "description": "Utilice nuestras listas de verificación y herramientas para prepararse para las próximas auditorías ambientales."
+    "tabs": {
+        "database": "Base de Datos de Factores",
+        "valorizedResidues": "Residuos Valorizados",
+        "reports": "Generador de Reportes"
+    },
+    "database": {
+        "title": "Factores de Emisión",
+        "searchPlaceholder": "Buscar factores...",
+        "factor": "Factor",
+        "unit": "Unidad",
+        "region": "Región",
+        "source": "Fuente",
+        "noResults": "No se encontraron factores de emisión con ese criterio."
+    },
+    "valorized": {
+        "title": "Mis Residuos Valorizados",
+        "description": "Registra los materiales que has reciclado para calcular tus emisiones evitadas.",
+        "addButton": "Añadir Residuo",
+        "listTitle": "Residuos Registrados",
+        "noResidues": "Aún no has registrado ningún residuo valorizado.",
+        "avoided": "evitadas",
+        "totalAvoided": {
+            "title": "Total de Emisiones Evitadas",
+            "description": "Suma de todas las emisiones de CO2e evitadas gracias al reciclaje."
         }
     },
-    "admin": {
-      "addRegulation": "Añadir Nueva Regulación",
-      "editContent": "Editar Contenido",
-      "manage": "Gestionar"
+    "reports": {
+        "title": "Generador de Reportes",
+        "description": "Configura y genera tu reporte de inventario GEI.",
+        "standardLabel": "Estándar de Reporte",
+        "orgInfoLabel": "Información de la Organización",
+        "orgNamePlaceholder": "Nombre de la organización",
+        "periodPlaceholder": "Período de reporte (ej: 2024)",
+        "limitLabel": "Límite Organizacional",
+        "limits": {
+            "operational": "Control Operacional",
+            "financial": "Control Financiero",
+            "equity": "Participación Accionaria"
+        },
+        "previewTitle": "Vista Previa del Reporte",
+        "generateButton": "Generar Reporte"
+    },
+    "scope": "Alcance"
+  },
+  "valorizedResidueDialog": {
+    "title": "Añadir Residuo Valorizado",
+    "description": "Selecciona el material e ingresa la cantidad para calcular las emisiones evitadas.",
+    "date": {
+        "label": "Fecha",
+        "placeholder": "Selecciona una fecha"
+    },
+    "material": {
+        "label": "Material / Residuo",
+        "placeholder": "Selecciona un material"
+    },
+    "quantity": {
+        "label": "Cantidad (unidad según material)",
+        "placeholder": "Ej: 150.5"
+    },
+    "emissionsResult": "Emisiones evitadas con esta acción:",
+    "save": "Guardar Registro",
+    "cancel": "Cancelar",
+    "toast": {
+        "title": "Residuo Registrado",
+        "description": "El residuo valorizado se ha guardado correctamente."
+    },
+    "validation": {
+        "date": "La fecha es obligatoria.",
+        "material": "Por favor, selecciona un material.",
+        "quantity": "La cantidad debe ser mayor que 0."
     }
   },
   "companiesPage": {
@@ -998,4 +1049,3 @@
     }
   }
 }
-    
