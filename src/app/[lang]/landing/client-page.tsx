@@ -134,7 +134,7 @@ const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, titl
     </div>
 );
 
-const ROICalculator = ({ dictionary }: { dictionary: Dictionary["landingPage"] }) => {
+const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPage"], lang: Locale }) => {
     const [values, setValues] = useState({
         wasteVolume: 50,
         costPerTon: 80,
@@ -392,7 +392,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                     </div>
                 </section>
                 
-                <ROICalculator dictionary={d} />
+                <ROICalculator dictionary={d} lang={lang} />
                 
                 <section id="demo" className="mt-20">
                     <div className="container-responsive">
