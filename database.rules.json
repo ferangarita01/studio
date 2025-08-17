@@ -1,34 +1,52 @@
 {
-  "rules": {
-    "users": {
-      "$userId": {
-        ".read": "$userId === auth.uid",
-        ".write": "$userId === auth.uid"
-      }
-    },
-    "companies": {
-      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
-      ".indexOn": "assignedUserUid",
-      "$companyId": {
-        ".read": "auth != null && (root.child('users').child(auth.uid).child('assignedCompanyId').val() == $companyId || root.child('users').child(auth.uid).child('role').val() == 'admin')",
-        ".write": "auth != null && (root.child('users').child(auth.uid).child('assignedCompanyId').val() == $companyId || root.child('users').child(auth.uid).child('role').val() == 'admin')"
-      }
-    },
-    "materials": {
-      ".read": "auth != null",
-      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
-    },
-    "wasteLog": {
-      ".read": "auth != null",
-      ".write": "auth != null"
-    },
-    "disposalEvents": {
-       ".read": "auth != null",
-       ".write": "auth != null"
-    },
-    "disposalCertificates": {
-       ".read": "auth != null",
-       ".write": "auth != null"
-    }
-  }
+ "rules": {
+   ".read": false,
+   ".write": false,
+   
+   "users": {
+     ".read": "auth != null",
+     ".write": "auth != null",
+     ".indexOn": ["companyId", "role", "email"],
+     "$userId": {
+       ".read": "auth != null && ($userId === auth.uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+       ".write": "auth != null && ($userId === auth.uid || root.child('users').child(auth.uid).child('role').val() == 'admin')"
+     }
+   },
+   
+   "companies": {
+     ".read": "auth != null",
+     ".write": "auth != null",
+     ".indexOn": ["name", "createdBy", "assignedUserUid"]
+   },
+   
+   "materials": {
+     ".read": "auth != null",
+     ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+     ".indexOn": ["name", "type"]
+   },
+   
+   "factors": {
+     ".read": "auth != null",
+     ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+     ".indexOn": ["materialType", "category", "scope"]
+   },
+   
+   "wasteLog": {
+     ".read": "auth != null",
+     ".write": "auth != null",
+     ".indexOn": ["companyId", "createdBy", "timestamp"]
+   },
+   
+   "disposalEvents": {
+     ".read": "auth != null", 
+     ".write": "auth != null",
+     ".indexOn": ["companyId", "createdBy", "timestamp"]
+   },
+   
+   "disposalCertificates": {
+     ".read": "auth != null",
+     ".write": "auth != null",
+     ".indexOn": ["companyId", "uploadedBy", "uploadedAt"]
+   }
+ }
 }
