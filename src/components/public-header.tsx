@@ -84,7 +84,7 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
                         <a href="#use-cases" onClick={(e) => handleScroll(e, 'use-cases')} className="text-slate-300 hover:text-white transition-colors text-sm font-medium">Use Cases</a>
                         <a href="#features" onClick={(e) => handleScroll(e, 'features')} className="text-slate-300 hover:text-white transition-colors text-sm font-medium">Features</a>
                         <a href="#roi" onClick={(e) => handleScroll(e, 'roi')} className="text-slate-300 hover:text-white transition-colors text-sm font-medium">ROI</a>
-                        <a href="#pricing" onClick={(e) => handleScroll(e, 'pricing')} className="text-slate-300 hover:text-white transition-colors text-sm font-medium">Pricing</a>
+                        <Link href={`/${lang}/pricing`} className="text-slate-300 hover:text-white transition-colors text-sm font-medium">Pricing</Link>
                     </nav>
                     <div className="flex items-center gap-3">
                        <LanguageToggle dictionary={dictionary.navigation.languageToggle} lang={lang} />
