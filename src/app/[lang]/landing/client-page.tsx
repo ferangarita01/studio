@@ -35,7 +35,8 @@ import {
   Info,
   Truck,
   Banknote,
-  Percent
+  Percent,
+  Globe
 } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import type { Dictionary } from "@/lib/get-dictionary";
@@ -134,8 +135,8 @@ const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, titl
     </div>
 );
 
-const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPage"], lang: Locale }) => {
-    const d = dictionary.roiCalculator;
+const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPage"]["roiCalculator"], lang: Locale }) => {
+    const d = dictionary;
     const [values, setValues] = useState({
         wasteVolume: 50,
         costPerTon: 80,
@@ -167,11 +168,6 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
             const total = avoided + income;
 
             setRoi({ avoidedDisposal: avoided, recyclingIncome: income, totalRoi: total });
-
-            if (chartInstance.current && chartInstance.current.canvas?.ownerDocument) {
-                chartInstance.current.data.datasets[0].data = [avoided, income];
-                chartInstance.current.update();
-            }
         };
         recalc();
     }, [values]);
@@ -211,6 +207,16 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
             }
         }
         
+        // This effect hook handles the update of chart data.
+        const updateChart = () => {
+             if (chartInstance.current && chartInstance.current.canvas?.ownerDocument) {
+                chartInstance.current.data.datasets[0].data = [roi.avoidedDisposal, roi.recyclingIncome];
+                chartInstance.current.update();
+            }
+        }
+        updateChart();
+
+        // This effect hook handles the cleanup of the chart instance.
         return () => {
             if (chartInstance.current) {
                 chartInstance.current.destroy();
@@ -218,6 +224,7 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
             }
         };
     }, [roi.avoidedDisposal, roi.recyclingIncome, d.legend.avoided, d.legend.income]);
+
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
@@ -314,6 +321,13 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
 export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, lang: Locale }) {
     const d = dictionary.landingPage;
     
+    const featureIcons = [
+        <Bot key="one" className="h-6 w-6 text-emerald-300" />,
+        <FileBarChart key="two" className="h-6 w-6 text-blue-300" />,
+        <ClipboardCheck key="three" className="h-6 w-6 text-amber-300" />,
+        <ShieldCheck key="four" className="h-6 w-6 text-purple-300" />
+    ];
+
     return (
         <div className="flex flex-col min-h-screen bg-[#0B1020] text-slate-200">
             <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10">
@@ -384,15 +398,19 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                             <p className="mt-3 text-slate-300">{d.features.subtitle}</p>
                         </div>
                         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                           <FeatureCard icon={<Bot className="h-6 w-6 text-emerald-300" />} title={d.features.one.title} description={d.features.one.description} />
-                           <FeatureCard icon={<FileBarChart className="h-6 w-6 text-blue-300" />} title={d.features.two.title} description={d.features.two.description} />
-                           <FeatureCard icon={<ClipboardCheck className="h-6 w-6 text-amber-300" />} title={d.features.three.title} description={d.features.three.description} />
-                           <FeatureCard icon={<ShieldCheck className="h-6 w-6 text-purple-300" />} title={d.features.four.title} description={d.features.four.description} />
+                           {Object.values(d.features).map((feature, index) => (
+                             <FeatureCard 
+                                key={index}
+                                icon={featureIcons[index]} 
+                                title={feature.title} 
+                                description={feature.description} 
+                             />
+                           ))}
                         </div>
                     </div>
                 </section>
                 
-                <ROICalculator dictionary={d} lang={lang} />
+                <ROICalculator dictionary={d.roiCalculator} lang={lang} />
                 
                 <section id="demo" className="mt-20">
                     <div className="container-responsive">
