@@ -71,25 +71,39 @@
       "cta": "Calculate Your Income Potential"
     },
     "valueProposition": {
-      "title": "Turn the waste problem into revenue for your company",
+      "title": "From Cost Center to Profit Generator",
+      "subtitle": "Modernize your waste operations with automated classification, compliant traceability, and monetization.",
+      "cta": "See How It Works",
       "stats": {
-        "stat1": "$2.1 billion are lost each year in Colombia",
-        "stat2": "Only 13% of waste is used today",
-        "stat3": "Your company can be in the 13% that makes money, or improve it"
+        "stat1": {
+          "title": "Cost Leakage",
+          "value": "$2.1B lost yearly",
+          "subtitle": "Colombia—avoidable in disposal inefficiencies"
+        },
+        "stat2": {
+          "title": "Utilization",
+          "value": "Only 13% used today",
+          "subtitle": "Recovery rate is far below potential"
+        },
+        "stat3": {
+          "title": "Opportunity",
+          "value": "Be in the top 13%",
+          "subtitle": "Turn compliance into profit with AI"
+        }
       },
       "from": {
         "title": "Before",
-        "item1": "High collection costs",
-        "item2": "Fines for non-compliance",
-        "item3": "Slow manual processes",
-        "item4": "Total waste"
+        "item1": "High collection and disposal costs",
+        "item2": "Fines and risk from non-compliance",
+        "item3": "Slow manual record keeping",
+        "item4": "Low reuse and wasted resources"
       },
       "to": {
         "title": "After",
-        "item1": "Additional income from waste sales",
-        "item2": "Green certifications and positive reputation",
-        "item3": "Automatic processes with AI",
-        "item4": "Up to 85% utilization"
+        "item1": "New income from recyclable materials",
+        "item2": "Green certifications and stronger reputation",
+        "item3": "Automated classification and logging",
+        "item4": "Utilization up to 85% with AI routing"
       }
     },
     "useCases": {
@@ -138,15 +152,47 @@
       "three": {
         "title": "Automated Logging",
         "description": "Easily log waste entries, track materials, and schedule pickups with our streamlined interface."
+      },
+      "four": {
+        "title": "Regulatory Ready",
+        "description": "Built-in checks to prevent fines and ensure compliance by design."
       }
+    },
+    "roiCalculator": {
+      "title": "Estimate Your Monthly ROI",
+      "subtitle": "Enter a few numbers to see potential savings and new income from recyclables.",
+      "labels": {
+        "wasteVolume": "Monthly Waste Volume (tons)",
+        "disposalCost": "Disposal Cost per Ton ($)",
+        "recyclableRate": "Recyclable Rate (%)",
+        "recoveryPrice": "Recovery Price per Ton ($)"
+      },
+      "results": {
+        "avoidedDisposal": "Avoided Disposal",
+        "recyclingIncome": "Recycling Income",
+        "totalRoi": "Total Monthly ROI"
+      },
+      "cta": "Get a Custom Plan",
+      "disclaimer": "Estimates only. Actual results vary by stream and region.",
+      "breakdownTitle": "ROI Breakdown",
+      "breakdownSubtitle": "See how savings and income contribute to your total.",
+      "legend": {
+        "avoided": "Avoided Disposal",
+        "income": "Recycling Income"
+      },
+      "info": "Assumes internal logistics are constant and excludes secondary benefits like certification credits and brand uplift."
     },
     "cta": {
       "title": "Ready to Transform Your Waste Management?",
-      "subtitle": "Join WasteWise today and take the first step towards a more sustainable and profitable future.",
-      "button": "Request a Custom Demo"
+      "subtitle": "Join leading teams turning sustainability into measurable financial results.",
+      "button": "Request a Custom Demo",
+      "buttonSecondary": "Explore Features"
     },
     "footer": {
-      "rights": "All rights reserved by EcoCircle S.A.S. E.S.P.",
+      "copyright": "© 2024 WasteWise. All rights reserved.",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "contact": "Contact",
       "madeWith": "WasteWise is a registered trademark of Ecocircle"
     }
   },
