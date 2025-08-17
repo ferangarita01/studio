@@ -979,9 +979,9 @@
           "description": "The valorized residue has been saved successfully."
       },
       "validation": {
-          "date": "A date is required.",
-          "material": "Please select a material.",
-          "quantity": "Quantity must be greater than 0."
+        "date": "Please select a date",
+        "material": "Please select a material",
+        "quantity": "Please enter a valid quantity"
       }
   },
   "companiesPage": {

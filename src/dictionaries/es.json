@@ -979,9 +979,9 @@
         "description": "El residuo valorizado se ha guardado correctamente."
     },
     "validation": {
-        "date": "La fecha es obligatoria.",
-        "material": "Por favor, selecciona un material.",
-        "quantity": "La cantidad debe ser mayor que 0."
+        "date": "Por favor selecciona una fecha",
+        "material": "Por favor selecciona un material",
+        "quantity": "Por favor ingresa una cantidad válida"
     }
   },
   "companiesPage": {
