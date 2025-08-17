@@ -49,6 +49,7 @@ import Image from "next/image";
 import { PublicHeader } from "@/components/public-header";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, DoughnutController } from 'chart.js';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 ChartJS.register(ArcElement, Tooltip, Legend, DoughnutController);
 
@@ -429,11 +430,13 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         </div>
                         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                            {Object.values(d.features).map((feature: any, index: number) => (
-                             <div key={index} className="rounded-2xl p-5 bg-[#0B1020] ring-1 ring-white/10">
-                                {featureIcons[index]}
-                                <h3 className="mt-4 text-lg font-semibold tracking-tight text-white">{feature.title}</h3>
-                                <p className="mt-2 text-sm text-slate-300">{feature.description}</p>
-                             </div>
+                             'title' in feature && (
+                               <div key={index} className="rounded-2xl p-5 bg-[#0B1020] ring-1 ring-white/10">
+                                  {featureIcons[index]}
+                                  <h3 className="mt-4 text-lg font-semibold tracking-tight text-white">{feature.title}</h3>
+                                  <p className="mt-2 text-sm text-slate-300">{feature.description}</p>
+                               </div>
+                             )
                            ))}
                         </div>
                     </div>
@@ -538,3 +541,5 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
+
+    
