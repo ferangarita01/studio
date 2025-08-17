@@ -46,6 +46,12 @@ const nextConfig: NextConfig = {
         hostname: 'cdn.durable.co',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
