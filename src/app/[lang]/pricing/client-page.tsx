@@ -162,7 +162,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, lang, isPopular, isYear
         
         {isPopular && (
           <p className="text-xs text-white/50">
-             {isYearly ? dictionary.billing.premiumYearly : dictionary.billing.premiumMonthly}
+             {isYearly ? dictionary.billing.noteYearly : dictionary.billing.noteMonthly}
           </p>
         )}
 
@@ -209,7 +209,7 @@ export function PricingClient({ dictionary, lang }: { dictionary: Dictionary, la
             
             {/* Header */}
             <header className="relative overflow-hidden pt-16">
-                 <Image src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1920&auto=format&fit=crop" alt="" fill className="pointer-events-none select-none absolute inset-0 h-full w-full object-cover opacity-[0.15]" />
+                 <Image src="https://firebasestorage.googleapis.com/v0/b/wastewise-hdbhk.firebasestorage.app/o/ai-generated-8255296_1280.jpg?alt=media&token=67211fe6-5525-4a0a-93b3-6d25b0b8311c" alt="Fondo abstracto de naturaleza y tecnología" fill className="pointer-events-none select-none absolute inset-0 h-full w-full object-cover opacity-[0.15]" />
                  <div className="absolute inset-0 bg-gradient-to-b from-white/[0.04] via-transparent to-transparent"></div>
                  <section className="relative">
                     <div className="mx-auto max-w-3xl px-6 pb-10 pt-8 sm:pt-14 text-center">
@@ -341,3 +341,5 @@ export function PricingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
+
+    
