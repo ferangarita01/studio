@@ -96,7 +96,7 @@ export function RequestCollectionDialog({
         date: collectionDate,
         wasteTypes: values.wasteTypes as WasteType[],
         status: 'Scheduled' as const,
-        instructions: values.instructions,
+        instructions: values.instructions || '',
     };
 
     try {
