@@ -185,7 +185,7 @@
         "title": "Site Manager",
         "problem": "Fines for improper management of debris and construction waste.",
         "solution": "Compliance module for construction regulations and certified management of construction waste.",
-        "results": "Zero fines for non-compliance and reuse of 25% of waste as backfill material."
+        "results": "Cero multas por incumplimiento y reutilización del 25% de los residuos como material de relleno."
       }
     },
     "features": {
@@ -1049,3 +1049,5 @@
     }
   }
 }
+
+    
