@@ -341,7 +341,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
             <main className="relative pt-28 sm:pt-32">
                 <section className="relative">
                     <div className="absolute inset-0 -z-10 overflow-hidden rounded-b-[2rem]">
-                        <Image src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1974&auto=format&fit=crop" alt="Earth from space, sustainability" layout="fill" objectFit="cover" className="opacity-30" />
+                        <Image src="https://www.garrigues.com/sites/default/files/noticias/img/20220428_economia-circular_1000x500.jpg" alt="Earth from space, sustainability" layout="fill" objectFit="cover" className="opacity-30" />
                         <div className="absolute inset-0 bg-gradient-to-b from-[#0B1020]/40 via-[#0B1020]/60 to-[#0B1020]"></div>
                     </div>
                     <div className="container-responsive">
