@@ -96,6 +96,7 @@ const Logo = () => {
 
 const allNavItems = [
     { href: '/', icon: LayoutDashboard, labelKey: 'dashboard', roles: ['admin', 'client'] },
+    { href: '/compliance', icon: Gavel, labelKey: 'compliance', roles: ['admin', 'client'], plan: 'Premium' },
     { href: '/analyzer', icon: BrainCircuit, labelKey: 'aiAgent', roles: ['admin', 'client'], plan: 'Premium' },
     { href: '/log', icon: Trash2, labelKey: 'log', roles: ['admin', 'client'] },
     { href: '/reports/disposal', icon: FileText, labelKey: 'finalDisposal', roles: ['admin', 'client'] },
@@ -103,7 +104,6 @@ const allNavItems = [
     { href: '/reports', icon: FileText, labelKey: 'reports', roles: ['admin', 'client'] },
     { href: '/materials', icon: Package, labelKey: 'prices', roles: ['admin', 'client'] },
     { href: '/companies', icon: Users, labelKey: 'companies', roles: ['admin'] },
-    { href: '/compliance', icon: Gavel, labelKey: 'compliance', roles: ['admin', 'client'], plan: 'Premium' },
     { href: '/profile', icon: UserIcon, labelKey: 'profile', roles: ['admin', 'client'] },
 ] as const;
 
