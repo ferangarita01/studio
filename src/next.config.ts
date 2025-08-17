@@ -25,13 +25,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'www.paypal.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'space.gov.ae',
+        hostname: 'cdn.pixabay.com',
         port: '',
         pathname: '/**',
       },
@@ -43,24 +37,23 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'space.gov.ae',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'cdn.durable.co',
         port: '',
         pathname: '/**',
       },
-    ],
-  },
-  async headers() {
-    return [
       {
-        source: '/:path*',
-        headers: [
-          {
-            key: 'Authorization',
-            value: '', // This is a placeholder, the value will be set on the client
-          },
-        ],
-      },
-    ];
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        port: '',
+        pathname: '/**',
+      }
+    ],
   },
 };
 
