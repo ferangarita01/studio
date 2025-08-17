@@ -176,6 +176,9 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
         if (chartRef.current) {
             const ctx = chartRef.current.getContext('2d');
             if (ctx) {
+                if (chartInstance.current) {
+                    chartInstance.current.destroy();
+                }
                 chartInstance.current = new ChartJS(ctx, {
                     type: 'doughnut',
                     data: {
@@ -398,7 +401,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                             <p className="mt-3 text-slate-300">{d.features.subtitle}</p>
                         </div>
                         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                           {Object.values(d.features).map((feature, index) => (
+                           {Object.values(d.features).map((feature: any, index: number) => (
                              <FeatureCard 
                                 key={index}
                                 icon={featureIcons[index]} 
@@ -453,3 +456,5 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
+
+    
