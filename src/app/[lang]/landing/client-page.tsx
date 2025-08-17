@@ -167,7 +167,7 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
 
             setRoi({ avoidedDisposal: avoided, recyclingIncome: income, totalRoi: total });
 
-            if (chartInstance.current) {
+            if (chartInstance.current && chartInstance.current.canvas?.ownerDocument) {
                 chartInstance.current.data.datasets[0].data = [avoided, income];
                 chartInstance.current.update();
             }
@@ -177,9 +177,6 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
 
     useEffect(() => {
         if (chartRef.current) {
-            if (chartInstance.current) {
-                chartInstance.current.destroy();
-            }
             const ctx = chartRef.current.getContext('2d');
             if (ctx) {
                 chartInstance.current = new ChartJS(ctx, {
@@ -212,9 +209,11 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                 });
             }
         }
+        
         return () => {
             if (chartInstance.current) {
                 chartInstance.current.destroy();
+                chartInstance.current = null;
             }
         };
     }, [roi.avoidedDisposal, roi.recyclingIncome]);
