@@ -62,15 +62,13 @@
       "nav": {
         "useCases": "Casos de Uso",
         "features": "Funcionalidades",
-        "roi": "ROI",
         "pricing": "Precios"
       }
     },
     "hero": {
       "title": "Convierte tus Residuos en Ingresos Automáticamente",
       "subtitle": "Optimiza el reciclaje con IA, asegura el cumplimiento normativo y desbloquea nuevos ingresos de tus flujos de residuos, sin cambiar tus operaciones diarias.",
-      "cta": "Calcula tu Potencial de Ingresos",
-      "seeHow": "Ver Cómo Funciona"
+      "cta": "Calcula tu Potencial de Ingresos"
     },
     "valueProposition": {
       "title": "De Centro de Costos a Generador de Ganancias",
@@ -113,44 +111,98 @@
       "subtitle": "Configurado para tu sector. Rápido de implementar. Resultados claros y medibles.",
       "companies": {
         "title": "Para Empresas",
-        "description": "Reduce costos operativos hasta un 40% y genera $30k–$100k en ingresos anuales."
+        "description": "Reduce costos operativos y genera nuevos ingresos."
       },
       "schools": {
         "title": "Para Colegios",
-        "description": "Cumple con las regulaciones automáticamente y financia iniciativas educativas."
+        "description": "Cumple normativas y financia programas educativos."
       },
       "events": {
         "title": "Para Eventos",
-        "description": "Optimiza la limpieza en un 60% y aumenta los puntajes de sostenibilidad."
+        "description": "Optimiza la limpieza y mejora la imagen de sostenibilidad."
       },
       "universities": {
         "title": "Para Universidades",
-        "description": "Crea una cultura de sostenibilidad y financia investigación con el valor recuperado."
+        "description": "Fomenta la cultura de sostenibilidad y genera recursos."
       },
       "recyclers": {
         "title": "Para Recicladores",
-        "description": "Mejora la logística de recolección y eleva las tasas de recuperación de material."
+        "description": "Mejora la logística y eleva las tasas de recuperación."
       },
       "construction": {
         "title": "Para Construcción",
-        "description": "Gestiona los residuos de obra de manera eficiente y mantente en cumplimiento."
+        "description": "Gestiona residuos de obra y cumple con la normativa."
+      }
+    },
+    "caseStudies": {
+      "title": "Caso de Éxito",
+      "problem": "Problema",
+      "solution": "Solución",
+      "results": "Resultados",
+      "companies": {
+        "sector": "Empresas",
+        "manager": "Ana Torres",
+        "title": "Gerente de Operaciones",
+        "problem": "Altos costos de disposición y falta de trazabilidad de sus residuos peligrosos.",
+        "solution": "Implementación de logística inversa y valoración de residuos con WasteWise.",
+        "results": "Reducción del 40% en costos de disposición y generación de $80k/año en ingresos por venta de reciclables."
+      },
+      "schools": {
+        "sector": "Colegios",
+        "manager": "Carlos Vives",
+        "title": "Rector",
+        "problem": "Dificultad para cumplir con las normativas de reciclaje y educar a los estudiantes.",
+        "solution": "Programa educativo y de recolección automatizado con incentivos para estudiantes.",
+        "results": "Cumplimiento normativo del 100% y fondos generados para nuevos programas educativos."
+      },
+      "events": {
+        "sector": "Eventos Masivos",
+        "manager": "Sofia Vergara",
+        "title": "Productora de Eventos",
+        "problem": "Manejo ineficiente de grandes volúmenes de residuos post-evento y alto costo de limpieza.",
+        "solution": "Optimización de puntos de acopio y recolección programada con análisis predictivo de IA.",
+        "results": "60% de reducción en tiempo y costos de limpieza, y certificación de evento sostenible."
+      },
+      "universities": {
+        "sector": "Universidades",
+        "manager": "Juanes",
+        "title": "Decano de Sostenibilidad",
+        "problem": "Baja participación en programas de reciclaje y altos costos de gestión de residuos del campus.",
+        "solution": "Sistema de incentivos gamificado para estudiantes y optimización de rutas de recolección internas.",
+        "results": "Aumento del 200% en la tasa de reciclaje y generación de $50k/año para becas e investigación."
+      },
+      "recyclers": {
+        "sector": "Empresas Recicladoras",
+        "manager": "J Balvin",
+        "title": "Jefe de Logística",
+        "problem": "Rutas de recolección ineficientes y baja calidad del material recuperado.",
+        "solution": "Plataforma de optimización de rutas con IA y sistema de clasificación en origen.",
+        "results": "30% de reducción en costos de combustible y aumento del 15% en el valor del material recuperado."
+      },
+      "construction": {
+        "sector": "Construcción",
+        "manager": "Maluma",
+        "title": "Director de Obra",
+        "problem": "Multas por manejo inadecuado de escombros y residuos de construcción.",
+        "solution": "Módulo de cumplimiento para normativas de construcción y gestión certificada de residuos de obra.",
+        "results": "Cero multas por incumplimiento y reutilización del 25% de los residuos como material de relleno."
       }
     },
     "features": {
       "one": {
         "title": "Análisis con IA",
-        "description": "Identifica oportunidades de reducción y optimiza flujos automáticamente."
+        "description": "Aprovecha la inteligencia artificial para identificar oportunidades de reducción y optimizar tus flujos de residuos."
       },
       "two": {
         "title": "Reportes Detallados",
-        "description": "Informes financieros y ambientales que los auditores adoran."
+        "description": "Genera informes financieros y ambientales completos para seguir tu progreso y cumplir con la normativa."
       },
       "three": {
         "title": "Registro Automatizado",
-        "description": "Rastrea entradas, programa recogidas y mantén la trazabilidad."
+        "description": "Registra fácilmente las entradas de residuos, rastrea materiales y programa recogidas con nuestra interfaz simplificada."
       },
       "four": {
-        "title": "Listo para Regulación",
+        "title": "Listo para la Regulación",
         "description": "Chequeos integrados para prevenir multas y asegurar el cumplimiento por diseño."
       }
     },
@@ -241,8 +293,8 @@
           { "text": "Informes Básicos" },
           { "text": "1 Certificado de Disposición Final gratis" },
           { "text": "Recolección Gratuita desde 3 Toneladas" },
-          { "text": "Agendamiento de recolección Normal" },
-          { "text": "Genera Ingresos con reciclaje" }
+          { "text": "Agendamiento Normal" },
+          { "text": "Genera ingresos con reciclaje" }
         ]
       },
       "professional": {

@@ -111,31 +111,81 @@
       "subtitle": "Discover how WasteWise adapts to your specific industry to maximize your results.",
       "companies": {
         "title": "For Companies",
-        "description": "Reduce operating costs by 40% and generate $30K-100K in annual revenue."
+        "description": "Reduce operating costs and generate new revenue."
       },
       "schools": {
         "title": "For Schools",
-        "description": "Automatically meet regulations and generate funds for educational programs."
+        "description": "Meet regulations and fund educational programs."
       },
       "events": {
         "title": "For Events",
-        "description": "Optimize cleanup by 60% and enhance your sustainability image."
+        "description": "Optimize cleanup and enhance sustainability image."
       },
       "universities": {
         "title": "For Universities",
-        "description": "Foster a culture of sustainability and generate resources for research and scholarships."
+        "description": "Foster sustainability culture and generate resources."
       },
       "recyclers": {
-        "title": "For Recycling Companies",
-        "description": "Optimize collection logistics and increase the material recovery rate."
+        "title": "For Recyclers",
+        "description": "Improve logistics and elevate recovery rates."
       },
       "construction": {
         "title": "For Construction",
-        "description": "Efficiently manage construction waste, complying with environmental regulations."
+        "description": "Manage construction waste and stay compliant."
+      }
+    },
+    "caseStudies": {
+      "title": "Success Story",
+      "problem": "Problem",
+      "solution": "Solution",
+      "results": "Results",
+      "companies": {
+        "sector": "Companies",
+        "manager": "Ana Torres",
+        "title": "Operations Manager",
+        "problem": "High disposal costs and lack of traceability for their hazardous waste.",
+        "solution": "Implementation of reverse logistics and waste valorization with WasteWise.",
+        "results": "40% reduction in disposal costs and generation of $80k/year in revenue from recyclable sales."
       },
-      "factories": {
-        "title": "For Factories",
-        "description": "Reduce waste, identify reuse opportunities, and lower disposal costs."
+      "schools": {
+        "sector": "Schools",
+        "manager": "Carlos Vives",
+        "title": "Principal",
+        "problem": "Difficulty complying with recycling regulations and educating students.",
+        "solution": "Automated collection and educational program with student incentives.",
+        "results": "100% regulatory compliance and funds generated for new educational programs."
+      },
+      "events": {
+        "sector": "Massive Events",
+        "manager": "Sofia Vergara",
+        "title": "Event Producer",
+        "problem": "Inefficient management of large volumes of post-event waste and high cleanup costs.",
+        "solution": "Optimization of collection points and scheduled collection with AI predictive analysis.",
+        "results": "60% reduction in cleanup time and costs, and sustainable event certification."
+      },
+      "universities": {
+        "sector": "Universities",
+        "manager": "Juanes",
+        "title": "Dean of Sustainability",
+        "problem": "Low participation in recycling programs and high campus waste management costs.",
+        "solution": "Gamified incentive system for students and optimization of internal collection routes.",
+        "results": "200% increase in recycling rate and generation of $50k/year for scholarships and research."
+      },
+      "recyclers": {
+        "sector": "Recycling Companies",
+        "manager": "J Balvin",
+        "title": "Logistics Manager",
+        "problem": "Inefficient collection routes and low quality of recovered material.",
+        "solution": "AI-powered route optimization platform and source-separation system.",
+        "results": "30% reduction in fuel costs and 15% increase in the value of recovered material."
+      },
+      "construction": {
+        "sector": "Construction",
+        "manager": "Maluma",
+        "title": "Site Manager",
+        "problem": "Fines for improper management of debris and construction waste.",
+        "solution": "Compliance module for construction regulations and certified management of construction waste.",
+        "results": "Zero fines for non-compliance and reuse of 25% of waste as backfill material."
       }
     },
     "features": {
@@ -948,5 +998,4 @@
     }
   }
 }
-
     

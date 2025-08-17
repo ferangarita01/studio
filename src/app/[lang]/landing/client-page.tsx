@@ -36,7 +36,11 @@ import {
   Truck,
   Banknote,
   Percent,
-  Globe
+  Globe,
+  Briefcase,
+  AlertOctagon,
+  Lightbulb,
+  TrendingUp as TrendingUpIcon
 } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import type { Dictionary } from "@/lib/get-dictionary";
@@ -44,6 +48,7 @@ import type { Locale } from "@/i18n-config";
 import Image from "next/image";
 import { PublicHeader } from "@/components/public-header";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, DoughnutController } from 'chart.js';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 ChartJS.register(ArcElement, Tooltip, Legend, DoughnutController);
 
@@ -114,26 +119,6 @@ const BeforeAfterCard = ({
     </div>
   );
 };
-
-const UseCaseCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
-    <div className="rounded-2xl p-5 ring-1 ring-white/10 bg-white/5 hover:bg-white/7.5 transition">
-        <div className="flex items-center gap-3">
-             <span className="h-10 w-10 inline-flex items-center justify-center rounded-xl bg-emerald-500/15 ring-1 ring-emerald-300/20">
-                {icon}
-            </span>
-            <h3 className="font-semibold tracking-tight text-white">{title}</h3>
-        </div>
-        <p className="mt-3 text-sm text-slate-300">{description}</p>
-    </div>
-);
-
-const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
-    <div className="rounded-2xl p-5 bg-[#0B1020] ring-1 ring-white/10">
-        {icon}
-        <h3 className="mt-4 text-lg font-semibold tracking-tight text-white">{title}</h3>
-        <p className="mt-2 text-sm text-slate-300">{description}</p>
-    </div>
-);
 
 const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPage"]["roiCalculator"], lang: Locale }) => {
     const d = dictionary;
@@ -323,6 +308,34 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
 
 export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, lang: Locale }) {
     const d = dictionary.landingPage;
+    const [selectedUseCase, setSelectedUseCase] = useState<any | null>(null);
+
+    const useCases = [
+      {
+        icon: <Building2 className="h-5 w-5 text-emerald-300" />,
+        key: 'companies',
+      },
+      {
+        icon: <GraduationCap className="h-5 w-5 text-blue-300" />,
+        key: 'schools',
+      },
+      {
+        icon: <Ticket className="h-5 w-5 text-indigo-300" />,
+        key: 'events',
+      },
+      {
+        icon: <Library className="h-5 w-5 text-purple-300" />,
+        key: 'universities',
+      },
+      {
+        icon: <Recycle className="h-5 w-5 text-emerald-300" />,
+        key: 'recyclers',
+      },
+      {
+        icon: <Hammer className="h-5 w-5 text-amber-300" />,
+        key: 'construction',
+      },
+    ];
     
     const featureIcons = [
         <Bot key="one" className="h-6 w-6 text-emerald-300" />,
@@ -344,7 +357,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
             <main className="relative pt-28 sm:pt-32">
                 <section className="relative">
                     <div className="absolute inset-0 -z-10 overflow-hidden rounded-b-[2rem]">
-                        <Image src="https://firebasestorage.googleapis.com/v0/b/wastewise-hdbhk.firebasestorage.app/o/img.jpg?alt=media&token=ad081ca2-8ba5-4309-9d71-b5d409d1e07d" alt="Earth from space, sustainability" layout="fill" objectFit="cover" className="opacity-30" />
+                        <Image src="https://firebasestorage.googleapis.com/v0/b/wastewise-hdbhk.firebasestorage.app/o/img.jpg?alt=media&token=ad081ca2-8ba5-4309-9d71-b5d409d1e07d" alt="Earth from space, sustainability" layout="fill" objectFit="cover" className="opacity-30" data-ai-hint="earth space sustainability" />
                         <div className="absolute inset-0 bg-gradient-to-b from-[#0B1020]/40 via-[#0B1020]/60 to-[#0B1020]"></div>
                     </div>
                     <div className="container-responsive">
@@ -385,12 +398,26 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         <p className="mt-3 text-slate-300">{d.useCases.subtitle}</p>
                     </div>
                     <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                        <UseCaseCard icon={<Building2 className="h-5 w-5 text-emerald-300" />} title={d.useCases.companies.title} description={d.useCases.companies.description} />
-                        <UseCaseCard icon={<GraduationCap className="h-5 w-5 text-blue-300" />} title={d.useCases.schools.title} description={d.useCases.schools.description} />
-                        <UseCaseCard icon={<Ticket className="h-5 w-5 text-indigo-300" />} title={d.useCases.events.title} description={d.useCases.events.description} />
-                        <UseCaseCard icon={<Library className="h-5 w-5 text-purple-300" />} title={d.useCases.universities.title} description={d.useCases.universities.description} />
-                        <UseCaseCard icon={<Recycle className="h-5 w-5 text-emerald-300" />} title={d.useCases.recyclers.title} description={d.useCases.recyclers.description} />
-                        <UseCaseCard icon={<Hammer className="h-5 w-5 text-amber-300" />} title={d.useCases.construction.title} description={d.useCases.construction.description} />
+                       {useCases.map((useCase, index) => {
+                          const caseData = d.useCases[useCase.key as keyof typeof d.useCases];
+                          const caseStudy = d.caseStudies[useCase.key as keyof typeof d.caseStudies];
+                          return (
+                            <div
+                                key={index}
+                                role="button"
+                                onClick={() => setSelectedUseCase(caseStudy)}
+                                className="rounded-2xl p-5 ring-1 ring-white/10 bg-white/5 hover:bg-white/7.5 transition cursor-pointer"
+                              >
+                                <div className="flex items-center gap-3">
+                                     <span className="h-10 w-10 inline-flex items-center justify-center rounded-xl bg-emerald-500/15 ring-1 ring-emerald-300/20">
+                                        {useCase.icon}
+                                    </span>
+                                    <h3 className="font-semibold tracking-tight text-white">{caseData.title}</h3>
+                                </div>
+                                <p className="mt-3 text-sm text-slate-300">{caseData.description}</p>
+                            </div>
+                          )
+                        })}
                     </div>
                 </section>
 
@@ -402,12 +429,11 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         </div>
                         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                            {Object.values(d.features).map((feature: any, index: number) => (
-                             <FeatureCard 
-                                key={index}
-                                icon={featureIcons[index]} 
-                                title={feature.title} 
-                                description={feature.description} 
-                             />
+                             <div key={index} className="rounded-2xl p-5 bg-[#0B1020] ring-1 ring-white/10">
+                                {featureIcons[index]}
+                                <h3 className="mt-4 text-lg font-semibold tracking-tight text-white">{feature.title}</h3>
+                                <p className="mt-2 text-sm text-slate-300">{feature.description}</p>
+                             </div>
                            ))}
                         </div>
                     </div>
@@ -418,7 +444,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                 <section id="demo" className="mt-20">
                     <div className="container-responsive">
                         <div className="relative overflow-hidden rounded-3xl p-8 sm:p-12 ring-1 ring-white/10 bg-gradient-to-br from-[#0B1020] to-slate-900">
-                             <Image src="https://images.unsplash.com/photo-1621619856624-42fd193a0661?w=1080&q=80" alt="Minimal 3D render background" layout="fill" objectFit="cover" className="absolute inset-0 opacity-10 -z-10" />
+                             <Image src="https://images.unsplash.com/photo-1621619856624-42fd193a0661?w=1080&q=80" alt="Minimal 3D render background" layout="fill" objectFit="cover" className="absolute inset-0 opacity-10 -z-10" data-ai-hint="abstract background" />
                              <div className="max-w-2xl">
                                 <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white">{d.cta.title}</h2>
                                 <p className="mt-3 text-slate-300">{d.cta.subtitle}</p>
@@ -453,8 +479,62 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                     </div>
                 </div>
             </footer>
+             <Dialog open={!!selectedUseCase} onOpenChange={() => setSelectedUseCase(null)}>
+                <DialogContent className="max-w-2xl bg-[#0F172A]/80 backdrop-blur-lg border-white/10 text-white">
+                  {selectedUseCase && (
+                    <>
+                      <DialogHeader>
+                        <DialogTitle className="text-2xl text-white">
+                          {dictionary.landingPage.caseStudies.title}: {selectedUseCase.sector}
+                        </DialogTitle>
+                      </DialogHeader>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
+                        <div className="flex flex-col items-center text-center p-4 rounded-lg bg-black/20">
+                          <Image 
+                            src={`https://placehold.co/100x100.png`} 
+                            alt={`${selectedUseCase.sector} logo`}
+                            width={80} 
+                            height={80}
+                            className="rounded-full mb-4 ring-2 ring-white/10"
+                            data-ai-hint="company logo"
+                          />
+                          <p className="font-semibold text-white">{selectedUseCase.manager}</p>
+                          <p className="text-sm text-slate-400">{selectedUseCase.title}</p>
+                        </div>
+                        <div className="space-y-4">
+                          <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0 mt-1">
+                                <AlertOctagon className="h-5 w-5 text-amber-400" />
+                            </div>
+                            <div>
+                                <h4 className="font-semibold text-amber-400">{dictionary.landingPage.caseStudies.problem}</h4>
+                                <p className="text-sm text-slate-300">{selectedUseCase.problem}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0 mt-1">
+                                <Lightbulb className="h-5 w-5 text-blue-400" />
+                            </div>
+                            <div>
+                                <h4 className="font-semibold text-blue-400">{dictionary.landingPage.caseStudies.solution}</h4>
+                                <p className="text-sm text-slate-300">{selectedUseCase.solution}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0 mt-1">
+                               <TrendingUpIcon className="h-5 w-5 text-emerald-400" />
+                            </div>
+                            <div>
+                                <h4 className="font-semibold text-emerald-400">{dictionary.landingPage.caseStudies.results}</h4>
+                                <p className="text-sm text-slate-300">{selectedUseCase.results}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
-
-    
