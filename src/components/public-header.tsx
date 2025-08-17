@@ -13,7 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
 import { Skeleton } from "./ui/skeleton";
@@ -42,14 +42,6 @@ function LanguageToggle({ dictionary, lang }: { dictionary: Dictionary["navigati
     );
 }
 
-const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
-    e.preventDefault();
-    const targetElement = document.getElementById(targetId);
-    if (targetElement) {
-        targetElement.scrollIntoView({ behavior: 'smooth' });
-    }
-};
-
 interface PublicHeaderProps {
     dictionary: Dictionary;
     lang: Locale;
@@ -60,6 +52,8 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
     const { isAuthenticated, isLoading } = useAuth();
     const [isClient, setIsClient] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const pathname = usePathname();
+    const router = useRouter();
 
     useEffect(() => {
         setIsClient(true);
@@ -69,6 +63,20 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+        e.preventDefault();
+        const targetPath = `/${lang}/landing`;
+        
+        if (pathname !== targetPath) {
+            router.push(`${targetPath}#${targetId}`);
+        } else {
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    };
 
     return (
         <header className={cn("fixed top-0 inset-x-0 z-50 transition-all", isScrolled && 'backdrop-blur bg-[#0B1020]/70 ring-1 ring-white/10')}>
@@ -100,7 +108,7 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
                                 <Link href={`/${lang}/login`}>{d.header.login}</Link>
                             </Button>
                             <Button asChild className="bg-gradient-to-br from-emerald-500 via-emerald-600 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 hover:opacity-95 transition h-auto rounded-lg">
-                                <Link href="#demo"><Sparkles /><span>{d.header.getStarted}</span></Link>
+                                <Link href={`/${lang}/landing#demo`}><Sparkles /><span>{d.header.getStarted}</span></Link>
                             </Button>
                            </>
                        )}
