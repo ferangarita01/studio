@@ -58,70 +58,82 @@
     "header": {
       "title": "WasteWise",
       "login": "Iniciar Sesión",
-      "getStarted": "Solicitar Demo Personalizada",
+      "getStarted": "Solicitar Demo",
       "nav": {
         "useCases": "Casos de Uso",
-        "features": "Características",
+        "features": "Funcionalidades",
+        "roi": "ROI",
         "pricing": "Precios"
       }
     },
     "hero": {
       "title": "Convierte tus Residuos en Ingresos Automáticamente",
-      "subtitle": "Optimiza el reciclaje con IA, asegura el cumplimiento normativo y genera Ingresos adicionales para tu empresa, festival o concierto.",
-      "cta": "Calcula tu Potencial de Ingresos"
+      "subtitle": "Optimiza el reciclaje con IA, asegura el cumplimiento normativo y desbloquea nuevos ingresos de tus flujos de residuos, sin cambiar tus operaciones diarias.",
+      "cta": "Calcula tu Potencial de Ingresos",
+      "seeHow": "Ver Cómo Funciona"
     },
     "valueProposition": {
-      "title": "Convierte el problema de los residuos en ingresos para tu empresa",
+      "title": "De Centro de Costos a Generador de Ganancias",
+      "subtitle": "Moderniza tus operaciones de residuos con clasificación automatizada, trazabilidad conforme a la ley y monetización.",
+      "cta": "Ver Cómo Funciona",
       "stats": {
-        "stat1": "$2.1 billones se pierden cada año en Colombia",
-        "stat2": "Solo 13% de los residuos se aprovechan hoy",
-        "stat3": "Tu empresa puede estar en el 13% que gana dinero, o mejorarlo"
+        "stat1": {
+          "title": "Fuga de Costos",
+          "value": "$2.1B perdidos al año",
+          "subtitle": "Colombia—evitable en ineficiencias de disposición"
+        },
+        "stat2": {
+          "title": "Utilización",
+          "value": "Solo 13% usado hoy",
+          "subtitle": "La tasa de recuperación está muy por debajo del potencial"
+        },
+        "stat3": {
+          "title": "Oportunidad",
+          "value": "Estar en el 13% superior",
+          "subtitle": "Convierte el cumplimiento en ganancias con IA"
+        }
       },
       "from": {
         "title": "Antes",
-        "item1": "Costos de recolección elevados",
-        "item2": "Multas por incumplimiento",
-        "item3": "Procesos manuales lentos",
-        "item4": "Desperdicio total"
+        "item1": "Altos costos de recolección y disposición",
+        "item2": "Multas y riesgos por incumplimiento",
+        "item3": "Registros manuales lentos",
+        "item4": "Baja reutilización y recursos desperdiciados"
       },
       "to": {
         "title": "Después",
-        "item1": "Ingresos adicionales por venta de residuos",
-        "item2": "Certificaciones verdes y reputación positiva",
-        "item3": "Procesos automáticos con IA",
-        "item4": "Aprovechamiento de hasta 85%"
+        "item1": "Nuevos ingresos por materiales reciclables",
+        "item2": "Certificaciones verdes y reputación sólida",
+        "item3": "Clasificación y registro automatizados",
+        "item4": "Aprovechamiento de hasta el 85% con enrutamiento IA"
       }
     },
     "useCases": {
       "title": "Una Solución para Cada Necesidad",
-      "subtitle": "Descubre cómo WasteWise se adapta a tu sector específico para maximizar tus resultados.",
+      "subtitle": "Configurado para tu sector. Rápido de implementar. Resultados claros y medibles.",
       "companies": {
         "title": "Para Empresas",
-        "description": "Reduce costos operativos en 40% y genera ingresos de $30K-100K anuales."
+        "description": "Reduce costos operativos hasta un 40% y genera $30k–$100k en ingresos anuales."
       },
       "schools": {
         "title": "Para Colegios",
-        "description": "Cumple normativas automáticamente y genera fondos para programas educativos."
+        "description": "Cumple con las regulaciones automáticamente y financia iniciativas educativas."
       },
       "events": {
         "title": "Para Eventos",
-        "description": "Optimiza la limpieza en un 60% y mejora tu imagen de sostenibilidad."
+        "description": "Optimiza la limpieza en un 60% y aumenta los puntajes de sostenibilidad."
       },
       "universities": {
         "title": "Para Universidades",
-        "description": "Fomenta una cultura de sostenibilidad y genera recursos para investigación y becas."
+        "description": "Crea una cultura de sostenibilidad y financia investigación con el valor recuperado."
       },
       "recyclers": {
-        "title": "Para Recicladoras",
-        "description": "Optimiza la logística de recolección y aumenta la tasa de recuperación de materiales."
+        "title": "Para Recicladores",
+        "description": "Mejora la logística de recolección y eleva las tasas de recuperación de material."
       },
       "construction": {
-        "title": "Para Constructoras",
-        "description": "Gestiona los residuos de obra de forma eficiente, cumpliendo con la normativa ambiental."
-      },
-      "factories": {
-        "title": "Para Fábricas",
-        "description": "Reduce mermas, identifica oportunidades de reutilización y disminuye costos de disposición."
+        "title": "Para Construcción",
+        "description": "Gestiona los residuos de obra de manera eficiente y mantente en cumplimiento."
       }
     },
     "features": {
@@ -129,24 +141,56 @@
       "subtitle": "Desde el registro automatizado hasta análisis con IA, nuestra plataforma simplifica cada aspecto de la gestión de residuos.",
       "one": {
         "title": "Análisis con IA",
-        "description": "Aprovecha la inteligencia artificial para identificar oportunidades de reducción y optimizar tus flujos de residuos."
+        "description": "Identifica oportunidades de reducción y optimiza flujos automáticamente."
       },
       "two": {
         "title": "Reportes Detallados",
-        "description": "Genera informes financieros y ambientales completos para seguir tu progreso y mantener el cumplimiento."
+        "description": "Informes financieros y ambientales que los auditores adoran."
       },
       "three": {
         "title": "Registro Automatizado",
-        "description": "Registra fácilmente entradas de residuos, sigue materiales y programa recogidas con nuestra interfaz simplificada."
+        "description": "Rastrea entradas, programa recogidas y mantén la trazabilidad."
+      },
+      "four": {
+        "title": "Listo para Regulación",
+        "description": "Chequeos integrados para prevenir multas y asegurar el cumplimiento por diseño."
       }
+    },
+    "roiCalculator": {
+      "title": "Estima tu ROI Mensual",
+      "subtitle": "Ingresa algunos datos para ver los ahorros potenciales y los nuevos ingresos de los reciclables.",
+      "labels": {
+        "wasteVolume": "Volumen de Residuos Mensual (ton)",
+        "disposalCost": "Costo de Disposición por Ton ($)",
+        "recyclableRate": "Tasa de Reciclables (%)",
+        "recoveryPrice": "Precio de Recuperación por Ton ($)"
+      },
+      "results": {
+        "avoidedDisposal": "Disposición Evitada",
+        "recyclingIncome": "Ingreso por Reciclaje",
+        "totalRoi": "ROI Mensual Total"
+      },
+      "cta": "Obtener un Plan Personalizado",
+      "disclaimer": "Estimaciones solamente. Los resultados reales varían por flujo y región.",
+      "breakdownTitle": "Desglose del ROI",
+      "breakdownSubtitle": "Observa cómo los ahorros e ingresos contribuyen a tu total.",
+      "legend": {
+        "avoided": "Disposición Evitada",
+        "income": "Ingreso por Reciclaje"
+      },
+      "info": "Asume que la logística interna es constante y excluye beneficios secundarios como créditos de certificación y mejora de marca."
     },
     "cta": {
       "title": "¿Listo para Transformar tu Gestión de Residuos?",
-      "subtitle": "Únete a WasteWise hoy y da el primer paso hacia un futuro más sostenible y rentable.",
-      "button": "Solicitar Demo Personalizada"
+      "subtitle": "Únete a los equipos líderes que convierten la sostenibilidad en resultados financieros medibles.",
+      "button": "Solicitar una Demo Personalizada",
+      "buttonSecondary": "Explorar Funcionalidades"
     },
     "footer": {
-      "rights": "Todos los derechos son de EcoCircle S.A.S. E.S.P.",
+      "copyright": "© 2024 WasteWise. Todos los derechos reservados.",
+      "privacy": "Privacidad",
+      "terms": "Términos",
+      "contact": "Contacto",
       "madeWith": "WasteWise es una marca registrada de Ecocircle"
     }
   },
@@ -287,7 +331,13 @@
     "idNumberPlaceholder": "Ej: 1234567890",
     "finishButton": "Finalizar Configuración",
     "toastSuccess": "¡Perfil actualizado con éxito!",
-    "toastError": "No se pudo actualizar el perfil."
+    "toastError": "No se pudo actualizar el perfil.",
+    "validation": {
+        "accountType": "Por favor, seleccione un tipo de cuenta.",
+        "companyName": "El nombre de la empresa es obligatorio.",
+        "taxId": "El NIT es obligatorio para las empresas.",
+        "idNumber": "El número de identificación es obligatorio para personas."
+    }
   },
    "profilePage": {
     "title": "Mi Perfil",
@@ -814,7 +864,7 @@
       "plans": {
         "Free": "Gratis",
         "Premium": "Premium",
-        "Personalizado": "Personalizado"
+        "Custom": "Personalizado"
       },
       "cancel": "Cancelar",
       "update": "Actualizar"

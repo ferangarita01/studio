@@ -135,6 +135,7 @@ const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, titl
 );
 
 const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPage"], lang: Locale }) => {
+    const d = dictionary.roiCalculator;
     const [values, setValues] = useState({
         wasteVolume: 50,
         costPerTon: 80,
@@ -182,7 +183,7 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                 chartInstance.current = new ChartJS(ctx, {
                     type: 'doughnut',
                     data: {
-                        labels: ['Avoided Disposal', 'Recycling Income'],
+                        labels: [d.legend.avoided, d.legend.income],
                         datasets: [{
                             data: [roi.avoidedDisposal, roi.recyclingIncome],
                             backgroundColor: ['#34d399', '#60a5fa'],
@@ -216,7 +217,7 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                 chartInstance.current = null;
             }
         };
-    }, [roi.avoidedDisposal, roi.recyclingIncome]);
+    }, [roi.avoidedDisposal, roi.recyclingIncome, d.legend.avoided, d.legend.income]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
@@ -226,17 +227,17 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
     return (
         <section id="roi" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-20">
             <div className="mx-auto max-w-3xl text-center">
-                <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white">Estimate Your Monthly ROI</h2>
-                <p className="mt-3 text-slate-300">Enter a few numbers to see potential savings and new income from recyclables.</p>
+                <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white">{d.title}</h2>
+                <p className="mt-3 text-slate-300">{d.subtitle}</p>
             </div>
             <div className="mt-10 grid grid-cols-1 lg:grid-cols-5 gap-6">
                 <div className="lg:col-span-3 rounded-2xl p-6 ring-1 ring-white/10 bg-white/5">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {[
-                            { id: 'wasteVolume', label: 'Monthly Waste Volume (tons)', icon: Truck, value: values.wasteVolume },
-                            { id: 'costPerTon', label: 'Disposal Cost per Ton ($)', icon: Banknote, value: values.costPerTon },
-                            { id: 'recycleRate', label: 'Recyclable Rate (%)', icon: Percent, value: values.recycleRate },
-                            { id: 'recoveryPrice', label: 'Recovery Price per Ton ($)', icon: Coins, value: values.recoveryPrice },
+                            { id: 'wasteVolume', label: d.labels.wasteVolume, icon: Truck, value: values.wasteVolume },
+                            { id: 'costPerTon', label: d.labels.disposalCost, icon: Banknote, value: values.costPerTon },
+                            { id: 'recycleRate', label: d.labels.recyclableRate, icon: Percent, value: values.recycleRate },
+                            { id: 'recoveryPrice', label: d.labels.recoveryPrice, icon: Coins, value: values.recoveryPrice },
                         ].map(field => (
                             <label key={field.id} className="block">
                                 <span className="text-sm text-slate-300">{field.label}</span>
@@ -256,42 +257,42 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                     </div>
                     <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="rounded-xl bg-[#0B1020] ring-1 ring-white/10 p-4">
-                            <div className="text-xs text-slate-400">Avoided Disposal</div>
+                            <div className="text-xs text-slate-400">{d.results.avoidedDisposal}</div>
                             <div className="mt-1 text-xl font-semibold tracking-tight text-emerald-300">{formatCurrency(roi.avoidedDisposal)}</div>
                         </div>
                         <div className="rounded-xl bg-[#0B1020] ring-1 ring-white/10 p-4">
-                            <div className="text-xs text-slate-400">Recycling Income</div>
+                            <div className="text-xs text-slate-400">{d.results.recyclingIncome}</div>
                             <div className="mt-1 text-xl font-semibold tracking-tight text-blue-300">{formatCurrency(roi.recyclingIncome)}</div>
                         </div>
                         <div className="rounded-xl bg-[#0B1020] ring-1 ring-white/10 p-4">
-                            <div className="text-xs text-slate-400">Total Monthly ROI</div>
+                            <div className="text-xs text-slate-400">{d.results.totalRoi}</div>
                             <div className="mt-1 text-xl font-semibold tracking-tight text-white">{formatCurrency(roi.totalRoi)}</div>
                         </div>
                     </div>
                      <div className="mt-6 flex items-center gap-3">
                         <Button asChild className="bg-gradient-to-br from-emerald-500 via-emerald-600 to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 hover:opacity-95 transition">
-                           <Link href={`/${lang}/login`}><Handshake className="h-4 w-4" /><span>Get a Custom Plan</span></Link>
+                           <Link href={`/${lang}/login`}><Handshake className="h-4 w-4" /><span>{d.cta}</span></Link>
                         </Button>
-                        <p className="text-xs text-slate-400">Estimates only. Actual results vary by stream and region.</p>
+                        <p className="text-xs text-slate-400">{d.disclaimer}</p>
                     </div>
                 </div>
                 <div className="lg:col-span-2 rounded-2xl p-6 ring-1 ring-white/10 bg-white/5">
-                    <h3 className="text-lg font-semibold tracking-tight text-white">ROI Breakdown</h3>
-                    <p className="mt-1 text-sm text-slate-300">See how savings and income contribute to your total.</p>
+                    <h3 className="text-lg font-semibold tracking-tight text-white">{d.breakdownTitle}</h3>
+                    <p className="mt-1 text-sm text-slate-300">{d.breakdownSubtitle}</p>
                     <div className="mt-6">
                         <div className="relative h-64"><canvas ref={chartRef}></canvas></div>
                         <div className="mt-6 grid grid-cols-2 gap-4">
                             <div className="flex items-center gap-3">
                                 <span className="h-3 w-3 rounded-full bg-emerald-400"></span>
                                 <div>
-                                    <div className="text-sm text-slate-300">Avoided Disposal</div>
+                                    <div className="text-sm text-slate-300">{d.legend.avoided}</div>
                                     <div className="text-sm font-medium text-slate-200">{formatCurrency(roi.avoidedDisposal)}</div>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
                                 <span className="h-3 w-3 rounded-full bg-blue-400"></span>
                                 <div>
-                                    <div className="text-sm text-slate-300">Recycling Income</div>
+                                    <div className="text-sm text-slate-300">{d.legend.income}</div>
                                     <div className="text-sm font-medium text-slate-200">{formatCurrency(roi.recyclingIncome)}</div>
                                 </div>
                             </div>
@@ -299,7 +300,7 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                         <div className="mt-6 rounded-xl bg-[#0B1020] ring-1 ring-white/10 p-4">
                             <div className="flex items-start gap-3">
                                 <Info className="h-5 w-5 text-slate-400 mt-0.5 flex-shrink-0" />
-                                <p className="text-sm text-slate-300">Assumes internal logistics are constant and excludes secondary benefits like certification credits and brand uplift.</p>
+                                <p className="text-sm text-slate-300">{d.info}</p>
                             </div>
                         </div>
                     </div>
@@ -335,16 +336,16 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                             <p className="mt-5 text-base sm:text-lg text-slate-300">{d.hero.subtitle}</p>
                              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
                                  <Button asChild className="bg-gradient-to-br from-emerald-500 via-emerald-600 to-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 hover:opacity-95 transition h-auto rounded-xl">
-                                    <Link href="#roi"><Calculator /><span>Calculate Your Income Potential</span></Link>
+                                    <Link href="#roi"><Calculator /><span>{d.hero.cta}</span></Link>
                                  </Button>
                                  <Button asChild variant="outline" className="px-5 py-3 text-sm font-medium text-slate-200 ring-1 ring-white/10 hover:bg-white/5 transition h-auto rounded-xl bg-transparent border-white/10">
-                                     <Link href="#how"><PlayCircle /><span>See How It Works</span></Link>
+                                     <Link href="#how"><PlayCircle /><span>{d.valueProposition.cta}</span></Link>
                                  </Button>
                             </div>
                              <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                 <StatCard icon={<TrendingDown className="h-4 w-4" />} title="Cost Leakage" value="$2.1B lost yearly" subtitle="Colombia—avoidable in disposal" />
-                                 <StatCard icon={<PieChart className="h-4 w-4" />} title="Utilization" value="Only 13% used today" subtitle="Recovery rate is far below potential" />
-                                 <StatCard icon={<Target className="h-4 w-4" />} title="Opportunity" value="Be in the top 13%" subtitle="Turn compliance into profit with AI" />
+                                 <StatCard icon={<TrendingDown className="h-4 w-4" />} title={d.valueProposition.stats.stat1.title} value={d.valueProposition.stats.stat1.value} subtitle={d.valueProposition.stats.stat1.subtitle} />
+                                 <StatCard icon={<PieChart className="h-4 w-4" />} title={d.valueProposition.stats.stat2.title} value={d.valueProposition.stats.stat2.value} subtitle={d.valueProposition.stats.stat2.subtitle} />
+                                 <StatCard icon={<Target className="h-4 w-4" />} title={d.valueProposition.stats.stat3.title} value={d.valueProposition.stats.stat3.value} subtitle={d.valueProposition.stats.stat3.subtitle} />
                             </div>
                         </div>
                     </div>
@@ -352,8 +353,8 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                 
                  <section id="how" className="container-responsive mt-20">
                     <div className="mx-auto max-w-3xl text-center">
-                        <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white">From Cost Center to Profit Generator</h2>
-                        <p className="mt-3 text-slate-300">Modernize your waste operations with automated classification, compliant traceability, and monetization.</p>
+                        <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white">{d.valueProposition.title}</h2>
+                        <p className="mt-3 text-slate-300">{d.valueProposition.subtitle}</p>
                     </div>
                     <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-6">
                        <BeforeAfterCard isAfter={false} dictionary={d.valueProposition} />
@@ -380,13 +381,13 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                     <div className="container-responsive py-16">
                         <div className="mx-auto max-w-3xl text-center">
                             <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white">{d.features.title}</h2>
-                            <p className="mt-3 text-slate-300">From automated logging to AI insights—streamlined, auditable, and ready to scale.</p>
+                            <p className="mt-3 text-slate-300">{d.features.subtitle}</p>
                         </div>
                         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                            <FeatureCard icon={<Bot className="h-6 w-6 text-emerald-300" />} title={d.features.one.title} description={d.features.one.description} />
                            <FeatureCard icon={<FileBarChart className="h-6 w-6 text-blue-300" />} title={d.features.two.title} description={d.features.two.description} />
                            <FeatureCard icon={<ClipboardCheck className="h-6 w-6 text-amber-300" />} title={d.features.three.title} description={d.features.three.description} />
-                           <FeatureCard icon={<ShieldCheck className="h-6 w-6 text-purple-300" />} title="Regulatory Ready" description="Built-in checks to prevent fines and ensure compliance by design." />
+                           <FeatureCard icon={<ShieldCheck className="h-6 w-6 text-purple-300" />} title={d.features.four.title} description={d.features.four.description} />
                         </div>
                     </div>
                 </section>
@@ -405,7 +406,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                                       <Link href={`/${lang}/login`}><CalendarCheck /><span>{d.cta.button}</span></Link>
                                    </Button>
                                     <Button asChild variant="outline" className="px-5 py-3 text-sm font-medium text-slate-200 ring-1 ring-white/10 hover:bg-white/5 transition h-auto rounded-xl bg-transparent border-white/10">
-                                       <Link href="#features"><ListChecks /><span>Explore Features</span></Link>
+                                       <Link href="#features"><ListChecks /><span>{d.cta.buttonSecondary}</span></Link>
                                     </Button>
                                 </div>
                             </div>
@@ -421,12 +422,12 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-blue-600 ring-1 ring-inset ring-white/20">
                                 <Recycle className="h-4 w-4 text-white" />
                             </span>
-                            <span className="text-slate-300 text-sm">© 2024 WasteWise. All rights reserved.</span>
+                            <span className="text-slate-300 text-sm">{d.footer.copyright}</span>
                         </div>
                         <div className="flex items-center gap-5 text-sm">
-                            <Link href="#" className="text-slate-300 hover:text-white">Privacy</Link>
-                            <Link href="#" className="text-slate-300 hover:text-white">Terms</Link>
-                            <Link href="#" className="text-slate-300 hover:text-white">Contact</Link>
+                            <Link href="#" className="text-slate-300 hover:text-white">{d.footer.privacy}</Link>
+                            <Link href="#" className="text-slate-300 hover:text-white">{d.footer.terms}</Link>
+                            <Link href="#" className="text-slate-300 hover:text-white">{d.footer.contact}</Link>
                         </div>
                     </div>
                 </div>
