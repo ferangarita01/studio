@@ -137,8 +137,6 @@
       }
     },
     "features": {
-      "title": "Todo lo que Necesitas para un Cumplimiento Inteligente",
-      "subtitle": "Desde el registro automatizado hasta análisis con IA, nuestra plataforma simplifica cada aspecto de la gestión de residuos.",
       "one": {
         "title": "Análisis con IA",
         "description": "Identifica oportunidades de reducción y optimiza flujos automáticamente."
@@ -213,59 +211,116 @@
     }
   },
   "pricingPage": {
-    "title": "Precios Simples y Transparentes",
+    "tag": "Planes",
+    "title": "Precios simples y transparentes",
     "subtitle": "Elige el plan adecuado para tu negocio. Sin comisiones ocultas, nunca.",
     "yourCurrentPlan": "Tu Plan Actual",
+    "billing": {
+      "monthly": "Mensual",
+      "yearly": "Anual",
+      "save": "Ahorra 20% con anual",
+      "noteMonthly": "Mostrando precios por mes",
+      "noteYearly": "Mostrando precios por mes (facturación anual)",
+      "month": "mes",
+      "year": "año",
+      "premiumMonthly": "Facturación mensual. Con anual: $79/mes",
+      "premiumYearly": "Facturación anual activa: $79/mes"
+    },
     "plans": {
       "basic": {
         "name": "Gratis",
-        "price": "$0",
-        "period": "por mes",
-        "description": "Perfecto para individuos y pequeños equipos que empiezan a gestionar sus residuos.",
-        "cta": "Empezar Gratis",
+        "tag": "Emprende",
+        "price": {
+          "monthly": 0,
+          "yearly": 0
+        },
+        "description": "Perfecto para individuos y equipos pequeños que empiezan a gestionar sus residuos.",
+        "cta": "Empezar gratis",
         "features": [
-          "1 Perfil de Empresa",
-          "Informes Básicos",
-          "1 Certificado de Disposición Final gratis",
-          "Recolección Gratuita desde 3 Toneladas",
-          "Agendamiento de recolección Normal",
-          "Genera Ingresos con reciclaje"
+          { "text": "1 Perfil de Empresa" },
+          { "text": "Informes Básicos" },
+          { "text": "1 Certificado de Disposición Final gratis" },
+          { "text": "Recolección Gratuita desde 3 Toneladas" },
+          { "text": "Agendamiento de recolección Normal" },
+          { "text": "Genera Ingresos con reciclaje" }
         ]
       },
       "professional": {
         "name": "Premium",
-        "price": "$99",
-        "period": "por mes",
-        "description": "Para empresas en crecimiento que necesitan más control y análisis detallados.",
+        "tag": "Escala",
+        "price": {
+          "monthly": 99,
+          "yearly": 79
+        },
         "popular": "Más Popular",
+        "description": "Para empresas en crecimiento que necesitan más control y análisis detallados.",
         "cta": "Empezar con Premium",
         "features": [
-          "Todo en el plan Gratis, más:",
-          "Soporte de Agente IA",
-          "Cumplimiento Legal PMIRS",
-          "Medición de Huella de Carbono",
-          "Compensa tu huella de Carbono",
-          "Recolección Gratuita desde 500Kg",
-          "Agendamiento Prioritario",
-          "Soporte Prioritario"
+          { "text": "Todo en el plan Gratis, más:" },
+          { "icon": "bot", "text": "Soporte de Agente IA" },
+          { "icon": "shield-check", "text": "Cumplimiento Legal PMIRS" },
+          { "icon": "leaf", "text": "Medición de Huella de Carbono" },
+          { "icon": "sprout", "text": "Compensa tu huella de Carbono" },
+          { "icon": "truck", "text": "Recolección Gratuita desde 500Kg" },
+          { "icon": "zap", "text": "Agendamiento Prioritario" },
+          { "icon": "life-buoy", "text": "Soporte Prioritario" }
         ]
       },
       "enterprise": {
         "name": "Personalizado",
-        "price": "Contacto",
-        "period": "anual",
+        "tag": "Enterprise",
+        "price": {
+          "monthly": "Contacto",
+          "yearly": "Contacto"
+        },
         "description": "Soluciones a medida para operaciones a gran escala y necesidades complejas de cumplimiento.",
         "cta": "Contactar a Ventas",
+        "note": "Incluye onboarding, SSO y acuerdos de seguridad.",
         "features": [
-          "Todo en el plan Premium, más:",
-          "Integraciones Personalizadas",
-          "Perfiles de Empresa Ilimitados",
-          "Módulo de Cumplimiento Legal",
-          "Inventarios de GEI",
-          "Sistema GHG Reporting",
-          "Marcos de reporte (CDP, TCFD, etc.)",
-          "Generación automática de reportes ISO 14064-1:2018"
+          { "text": "Todo en Premium, más:" },
+          { "icon": "workflow", "text": "Integraciones Personalizadas" },
+          { "icon": "building-2", "text": "Perfiles de Empresa Ilimitados" },
+          { "icon": "scale", "text": "Módulo de Cumplimiento Legal" },
+          { "icon": "captions", "text": "Inventarios de GEI" },
+          { "icon": "bar-chart-3", "text": "Sistema GHG Reporting" },
+          { "icon": "layers", "text": "Marcos de reporte (CDP, TCFD, etc.)" },
+          { "icon": "file-check-2", "text": "Generación automática de reportes ISO 14064-1:2018" }
         ]
+      }
+    },
+    "comparison": {
+      "title": "Comparativa rápida",
+      "subtitle": "Lo esencial de cada plan en una línea.",
+      "basic": {
+        "title": "Gratis",
+        "description": "Empezar sin riesgo. Métricas básicas y operación manual guiada."
+      },
+      "professional": {
+        "title": "Premium",
+        "description": "Automatización con IA, cumplimiento operativo y priorización logística."
+      },
+      "enterprise": {
+        "title": "Personalizado",
+        "description": "Gobierno de datos, auditoría, integraciones y seguridad empresarial."
+      }
+    },
+    "faq": {
+      "title": "Preguntas frecuentes",
+      "q1": {
+        "question": "¿Cómo funciona la facturación anual?",
+        "answer": "Pagas 12 meses por adelantado y obtienes 20% de descuento. El precio mostrado es por mes, facturado una vez al año."
+      },
+      "q2": {
+        "question": "¿Qué métodos de pago aceptan?",
+        "answer": "Tarjetas, transferencia y órdenes de compra en planes empresariales."
+      },
+      "q3": {
+        "question": "¿Puedo cambiar de plan en cualquier momento?",
+        "answer": "Sí. Los cambios se prorratean automáticamente y no interrumpen el servicio."
+      },
+      "q4": {
+        "question": "¿Incluyen contratos y DPA?",
+        "answer": "Sí, disponibles desde el plan Personalizado junto a acuerdos de seguridad y SLA."
       }
     }
   },
@@ -891,5 +946,4 @@
     }
   }
 }
-
     

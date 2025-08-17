@@ -139,8 +139,6 @@
       }
     },
     "features": {
-      "title": "Everything You Need for Smart Compliance",
-      "subtitle": "From automated logging to AI-powered insights, our platform simplifies every aspect of waste management.",
       "one": {
         "title": "AI-Powered Analysis",
         "description": "Leverage artificial intelligence to identify reduction opportunities and optimize your waste streams."
@@ -215,59 +213,116 @@
     }
   },
   "pricingPage": {
+    "tag": "Plans",
     "title": "Simple, Transparent Pricing",
     "subtitle": "Choose the plan that's right for your business. No hidden fees, ever.",
     "yourCurrentPlan": "Your Current Plan",
+    "billing": {
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "save": "Save 20% with yearly",
+      "noteMonthly": "Showing prices per month",
+      "noteYearly": "Showing prices per month (billed annually)",
+      "month": "mo",
+      "year": "yr",
+      "premiumMonthly": "Billed monthly. With yearly: $79/mo",
+      "premiumYearly": "Yearly billing active: $79/mo"
+    },
     "plans": {
       "basic": {
         "name": "Free",
-        "price": "$0",
-        "period": "per month",
+        "tag": "Start",
+        "price": {
+          "monthly": 0,
+          "yearly": 0
+        },
         "description": "Perfect for individuals and small teams getting started with waste management.",
         "cta": "Get Started Free",
         "features": [
-          "1 Company Profile",
-          "Basic Reporting",
-          "1 Free Final Disposal Certificate",
-          "Free Collection from 3 Tons",
-          "Standard Collection Scheduling",
-          "Generate Income with Recycling"
+          { "text": "1 Company Profile" },
+          { "text": "Basic Reporting" },
+          { "text": "1 Free Final Disposal Certificate" },
+          { "text": "Free Collection from 3 Tons" },
+          { "text": "Standard Collection Scheduling" },
+          { "text": "Generate Income with Recycling" }
         ]
       },
       "professional": {
         "name": "Premium",
-        "price": "$99",
-        "period": "per month",
-        "description": "For growing businesses that need more control and deeper insights.",
+        "tag": "Scale",
+        "price": {
+          "monthly": 99,
+          "yearly": 79
+        },
         "popular": "Most Popular",
+        "description": "For growing businesses that need more control and deeper insights.",
         "cta": "Start with Premium",
         "features": [
-          "Everything in Free, plus:",
-          "AI Agent Support",
-          "Legal Compliance PMIRS",
-          "Carbon Footprint Measurement",
-          "Carbon Footprint Offsetting",
-          "Free Collection from 500kg",
-          "Priority Scheduling",
-          "Priority Support"
+          { "text": "Everything in Free, plus:" },
+          { "icon": "bot", "text": "AI Agent Support" },
+          { "icon": "shield-check", "text": "Legal Compliance PMIRS" },
+          { "icon": "leaf", "text": "Carbon Footprint Measurement" },
+          { "icon": "sprout", "text": "Offset your footprint" },
+          { "icon": "truck", "text": "Free Collection from 500kg" },
+          { "icon": "zap", "text": "Priority Scheduling" },
+          { "icon": "life-buoy", "text": "Priority Support" }
         ]
       },
       "enterprise": {
         "name": "Custom",
-        "price": "Contact",
-        "period": "annually",
+        "tag": "Enterprise",
+        "price": {
+          "monthly": "Contact",
+          "yearly": "Contact"
+        },
         "description": "Tailored solutions for large-scale operations and complex compliance needs.",
         "cta": "Contact Sales",
+        "note": "Includes onboarding, SSO, and security agreements.",
         "features": [
-          "Everything in Premium, plus:",
-          "Custom Integrations",
-          "Unlimited Company Profiles",
-          "Legal Compliance Module",
-          "GHG Inventories",
-          "GHG Reporting System",
-          "Reporting frameworks (CDP, TCFD, etc.)",
-          "Automatic generation of ISO 14064-1:2018 reports"
+          { "text": "Everything in Premium, plus:" },
+          { "icon": "workflow", "text": "Custom Integrations" },
+          { "icon": "building-2", "text": "Unlimited Company Profiles" },
+          { "icon": "scale", "text": "Legal Compliance Module" },
+          { "icon": "captions", "text": "GHG Inventories" },
+          { "icon": "bar-chart-3", "text": "GHG Reporting System" },
+          { "icon": "layers", "text": "Reporting frameworks (CDP, TCFD, etc.)" },
+          { "icon": "file-check-2", "text": "Automatic generation of ISO 14064-1:2018 reports" }
         ]
+      }
+    },
+    "comparison": {
+      "title": "Quick Comparison",
+      "subtitle": "The essentials of each plan at a glance.",
+      "basic": {
+        "title": "Free",
+        "description": "Start risk-free. Basic metrics and guided manual operation."
+      },
+      "professional": {
+        "title": "Premium",
+        "description": "AI-powered automation, operational compliance, and logistics prioritization."
+      },
+      "enterprise": {
+        "title": "Custom",
+        "description": "Data governance, auditing, integrations, and enterprise security."
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": {
+        "question": "How does annual billing work?",
+        "answer": "You pay for 12 months upfront and get a 20% discount. The price shown is per month, billed once a year."
+      },
+      "q2": {
+        "question": "What payment methods do you accept?",
+        "answer": "Cards, bank transfers, and purchase orders for enterprise plans."
+      },
+      "q3": {
+        "question": "Can I change plans at any time?",
+        "answer": "Yes. Changes are prorated automatically and do not interrupt service."
+      },
+      "q4": {
+        "question": "Do you include contracts and DPAs?",
+        "answer": "Yes, available from the Custom plan along with security and SLA agreements."
       }
     }
   },
