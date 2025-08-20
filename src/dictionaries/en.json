@@ -212,10 +212,10 @@
       "title": "Estimate Your Monthly Net Income",
       "subtitle": "See potential income after service costs. Adjust contamination to see its impact.",
       "labels": {
-        "wasteVolume": "Monthly Waste Volume (tons)",
-        "disposalCost": "Final Disposal Cost per Ton ($)",
+        "wasteVolume": "Monthly Waste Volume (Kg)",
+        "disposalCost": "Final Disposal Cost per Kg ($)",
         "contaminationRate": "Contamination Rate",
-        "salePrice": "Avg. Sale Price per Ton ($)",
+        "salePrice": "Avg. Sale Price per Kg ($)",
         "carbonFootprint": "Carbon Footprint Avoided (Kg CO₂e)"
       },
       "results": {
@@ -1058,4 +1058,5 @@
     
 
     
+
 
