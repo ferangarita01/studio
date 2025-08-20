@@ -213,7 +213,7 @@
       "subtitle": "Descubre tu potencial de ingresos después de costos del servicio. Ajusta la contaminación para ver su impacto.",
       "labels": {
         "wasteVolume": "Volumen de Residuos Mensual (Kg)",
-        "disposalCost": "Costo Disposición Final por Kg (COP)",
+        "disposalCost": "Costo Disposición Final / Kg (COP)",
         "contaminationRate": "Porcentaje de Contaminación",
         "salePrice": "Precio Venta Promedio por Kg (COP)",
         "carbonFootprint": "Huella de Carbono Evitada (Kg CO₂e)"
@@ -1054,9 +1054,3 @@
     }
   }
 }
-
-    
-
-    
-
-
