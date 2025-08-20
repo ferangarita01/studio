@@ -66,72 +66,74 @@
       }
     },
     "hero": {
-      "title": "Convierte tus Residuos en Ingresos Automáticamente",
-      "subtitle": "Optimiza el reciclaje con IA, asegura el cumplimiento normativo y desbloquea nuevos ingresos de tus flujos de residuos, sin cambiar tus operaciones diarias.",
-      "cta": "Calcula tu Potencial de Ingresos"
+      "title": "Transforma tus Residuos en Ingresos para tu Empresa Colombiana",
+      "subtitle": "Convierte los costos de gestión de residuos en ganancias reales. Obtén certificados ambientales, cumple la normativa y genera ingresos adicionales",
+      "cta": "Descubre tu Potencial de Ingresos"
     },
     "valueProposition": {
-      "title": "De Centro de Costos a Generador de Ganancias",
-      "subtitle": "Moderniza tus operaciones de residuos con clasificación automatizada, trazabilidad conforme a la ley y monetización.",
-      "cta": "Ver Cómo Funciona",
+      "title": "Convierte Gastos en Ganancias con WasteWise",
+      "subtitle": "Transforma tu gestión de residuos en una fuente de ingresos certificada, cumpliendo toda la normativa ambiental colombiana.",
+      "cta": "Ver Demo Gratuita",
       "stats": {
         "stat1": {
           "title": "Fuga de Costos",
-          "value": "$2.1B perdidos al año",
+          "value": "Miles de millones perdidos en Colombia",
           "subtitle": "Colombia—evitable en ineficiencias de disposición"
         },
         "stat2": {
           "title": "Utilización",
-          "value": "Solo 13% usado hoy",
+          "value": "Solo 8% de empresas colombianas lo usan",
           "subtitle": "La tasa de recuperación está muy por debajo del potencial"
         },
         "stat3": {
           "title": "Oportunidad",
-          "value": "Estar en el 13% superior",
+          "value": "Únete al 8% de empresas innovadoras",
           "subtitle": "Convierte el cumplimiento en ganancias con IA"
         }
       },
       "from": {
         "title": "Antes",
         "item1": "Altos costos de recolección y disposición",
-        "item2": "Multas y riesgos por incumplimiento",
-        "item3": "Registros manuales lentos",
-        "item4": "Baja reutilización y recursos desperdiciados"
+        "item2": "Multas por incumplimiento normativo colombiano",
+        "item3": "Residuos considerados solo gastos",
+        "item4": "Falta de certificaciones ambientales",
+        "item5": "Sin estrategia de sostenibilidad"
       },
       "to": {
         "title": "Después",
-        "item1": "Nuevos ingresos por materiales reciclables",
-        "item2": "Certificaciones verdes y reputación sólida",
-        "item3": "Clasificación y registro automatizados",
-        "item4": "Aprovechamiento de hasta el 85% con enrutamiento IA"
+        "item1": "Nuevos ingresos por reciclaje certificado",
+        "item2": "Cumplimiento total de normativa colombiana",
+        "item3": "Certificaciones verdes para licitaciones",
+        "item4": "Estrategias personalizadas con IA",
+        "item5": "Reducción de hasta 60% en costos ambientales"
       }
     },
     "useCases": {
       "title": "Una Solución para Cada Necesidad",
-      "subtitle": "Configurado para tu sector. Rápido de implementar. Resultados claros y medibles.",
+      "subtitle": "Diseñado específicamente para empresas colombianas en crecimiento",
       "companies": {
         "title": "Para Empresas",
-        "description": "Reduce costos operativos y genera nuevos ingresos."
+        "description": "Ideal para empresas manufactureras, comerciales y de servicios que buscan optimizar costos y cumplir normativa ambiental."
       },
       "schools": {
         "title": "Para Colegios",
-        "description": "Cumple normativas y financia programas educativos."
+        "description": "Programas educativos de reciclaje que generan ingresos para instituciones educativas colombianas."
       },
       "events": {
         "title": "Para Eventos",
-        "description": "Optimiza la limpieza y mejora la imagen de sostenibilidad."
+        "description": "Gestión integral de residuos para eventos, cumpliendo estándares ambientales y generando certificaciones."
       },
       "universities": {
         "title": "Para Universidades",
-        "description": "Fomenta la cultura de sostenibilidad y genera recursos."
+        "description": "Soluciones sostenibles que reducen costos operativos y mejoran el perfil ambiental institucional."
       },
       "recyclers": {
         "title": "Para Recicladores",
-        "description": "Mejora la logística y eleva las tasas de recuperación."
+        "description": "Conectamos recicladores locales con empresas, creando una red eficiente de economía circular."
       },
       "construction": {
         "title": "Para Construcción",
-        "description": "Gestiona residuos de obra y cumple con la normativa."
+        "description": "Gestión especializada de residuos de construcción, cumpliendo normativa colombiana y reduciendo costos."
       }
     },
     "caseStudies": {
@@ -190,51 +192,51 @@
     },
     "features": {
       "one": {
-        "title": "Análisis con IA",
-        "description": "Aprovecha la inteligencia artificial para identificar oportunidades de reducción y optimizar tus flujos de residuos."
+        "title": "Diagnóstico Inteligente",
+        "description": "Nuestra IA analiza tus residuos y identifica oportunidades de ingresos específicas para el mercado colombiano."
       },
       "two": {
-        "title": "Reportes Detallados",
-        "description": "Genera informes financieros y ambientales completos para seguir tu progreso y cumplir con la normativa."
+        "title": "Certificaciones Oficiales",
+        "description": "Genera reportes que cumplen toda la normativa ambiental colombiana, ideales para licitaciones públicas."
       },
       "three": {
-        "title": "Registro Automatizado",
-        "description": "Registra fácilmente las entradas de residuos, rastrea materiales y programa recogidas con nuestra interfaz simplificada."
+        "title": "Cumplimiento Garantizado",
+        "description": "Automatiza el registro ante autoridades ambientales colombianas, evitando multas y sanciones."
       },
       "four": {
-        "title": "Listo para la Regulación",
-        "description": "Chequeos integrados para prevenir multas y asegurar el cumplimiento por diseño."
+        "title": "100% Legal en Colombia",
+        "description": "Cumplimos toda la regulación ambiental colombiana actual y nos mantenemos actualizados con los cambios."
       }
     },
     "roiCalculator": {
-      "title": "Estima tu ROI Mensual",
-      "subtitle": "Ingresa algunos datos para ver los ahorros potenciales y los nuevos ingresos de los reciclables.",
+      "title": "Calcula tu Ahorro e Ingresos Mensuales",
+      "subtitle": "Descubre cuánto puedes ahorrar y ganar gestionando mejor tus residuos",
       "labels": {
-        "wasteVolume": "Volumen de Residuos Mensual (ton)",
-        "disposalCost": "Costo de Disposición por Ton ($)",
-        "recyclableRate": "Tasa de Reciclables (%)",
-        "recoveryPrice": "Precio de Recuperación por Ton ($)"
+        "wasteVolume": "Volumen de Residuos Mensual (Ton)",
+        "disposalCost": "Costo actual de disposición (COP)",
+        "employees": "Empleados en tu empresa",
+        "sector": "Sector de tu empresa"
       },
       "results": {
-        "avoidedDisposal": "Disposición Evitada",
+        "avoidedDisposal": "Ahorro por Disposición",
         "recyclingIncome": "Ingreso por Reciclaje",
-        "totalRoi": "ROI Mensual Total"
+        "totalRoi": "Potencial Mensual Total"
       },
-      "cta": "Obtener un Plan Personalizado",
-      "disclaimer": "Estimaciones solamente. Los resultados reales varían por flujo y región.",
-      "breakdownTitle": "Desglose del ROI",
-      "breakdownSubtitle": "Observa cómo los ahorros e ingresos contribuyen a tu total.",
+      "cta": "Ver mi Potencial de Ingresos",
+      "disclaimer": "Estimaciones basadas en promedios del sector. Los resultados reales pueden variar.",
+      "breakdownTitle": "Desglose del Potencial",
+      "breakdownSubtitle": "Cómo se componen tus ahorros e ingresos potenciales.",
       "legend": {
-        "avoided": "Disposición Evitada",
+        "avoided": "Ahorro por Disposición",
         "income": "Ingreso por Reciclaje"
       },
-      "info": "Asume que la logística interna es constante y excluye beneficios secundarios como créditos de certificación y mejora de marca."
+      "info": "El cálculo excluye beneficios secundarios como créditos por certificaciones y mejora de la imagen de marca."
     },
     "cta": {
-      "title": "¿Listo para Transformar tu Gestión de Residuos?",
-      "subtitle": "Únete a los equipos líderes que convierten la sostenibilidad en resultados financieros medibles.",
-      "button": "Solicitar una Demo Personalizada",
-      "buttonSecondary": "Explorar Funcionalidades"
+      "title": "¿Listo para Rentabilizar tu Gestión de Residuos?",
+      "subtitle": "Únete a las empresas colombianas que ya están convirtiendo sus residuos en ingresos sostenibles.",
+      "button": "Solicita Demo Personalizada",
+      "buttonSecondary": "Habla con un Especialista"
     },
     "footer": {
       "copyright": "© 2024 WasteWise. Todos los derechos reservados.",
@@ -1049,5 +1051,3 @@
     }
   }
 }
-
-    

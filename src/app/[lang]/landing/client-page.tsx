@@ -40,7 +40,10 @@ import {
   Briefcase,
   AlertOctagon,
   Lightbulb,
-  TrendingUp as TrendingUpIcon
+  TrendingUp as TrendingUpIcon,
+  HardHat,
+  Users,
+  Building
 } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import type { Dictionary } from "@/lib/get-dictionary";
@@ -50,6 +53,8 @@ import { PublicHeader } from "@/components/public-header";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, DoughnutController } from 'chart.js';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 ChartJS.register(ArcElement, Tooltip, Legend, DoughnutController);
 
@@ -78,12 +83,14 @@ const BeforeAfterCard = ({
         { icon: BadgeCheck, text: d.item2 },
         { icon: Bot, text: d.item3 },
         { icon: Gauge, text: d.item4 },
+        { icon: CheckCircle2, text: d.item5 },
       ]
     : [
         { icon: AlertTriangle, text: d.item1 },
         { icon: FileWarning, text: d.item2 },
         { icon: Clock, text: d.item3 },
         { icon: Trash2, text: d.item4 },
+        { icon: XCircle, text: d.item5 },
       ];
   const colors = isAfter
     ? {
@@ -125,9 +132,9 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
     const d = dictionary;
     const [values, setValues] = useState({
         wasteVolume: 50,
-        costPerTon: 80,
-        recycleRate: 40,
-        recoveryPrice: 120,
+        disposalCost: 150000,
+        employees: 100,
+        sector: "manufacturing",
     });
 
     const [roi, setRoi] = useState({
@@ -139,18 +146,23 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
     const chartRef = useRef<HTMLCanvasElement>(null);
     const chartInstance = useRef<ChartJS | null>(null);
 
-    const formatCurrency = (n: number) => '$' + n.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    const formatCurrency = (n: number) => '$' + n.toLocaleString('es-CO', { maximumFractionDigits: 0 });
 
     useEffect(() => {
         const recalc = () => {
-            const volume = values.wasteVolume;
-            const cost = values.costPerTon;
-            const rate = Math.min(100, Math.max(0, values.recycleRate)) / 100;
-            const price = values.recoveryPrice;
+            const { wasteVolume, disposalCost, employees, sector } = values;
+            
+            // Simplified logic: more employees/certain sectors produce more recyclables
+            let recyclableRate = 0.4; // Base rate
+            if (sector === 'manufacturing') recyclableRate = 0.6;
+            if (sector === 'services') recyclableRate = 0.3;
+            if (employees > 500) recyclableRate += 0.1;
 
-            const recyclableTons = volume * rate;
-            const avoided = recyclableTons * cost;
-            const income = recyclableTons * price;
+            const recyclableTons = wasteVolume * recyclableRate;
+            const recoveryPricePerTon = 250000; // Average recovery price
+
+            const avoided = recyclableTons * disposalCost;
+            const income = recyclableTons * recoveryPricePerTon;
             const total = avoided + income;
 
             setRoi({ avoidedDisposal: avoided, recyclingIncome: income, totalRoi: total });
@@ -188,6 +200,18 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                                 padding: 12,
                                 titleColor: '#e2e8f0',
                                 bodyColor: '#e2e8f0',
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed !== null) {
+                                            label += formatCurrency(context.parsed);
+                                        }
+                                        return label;
+                                    }
+                                }
                             }
                         },
                         cutout: '64%'
@@ -196,7 +220,6 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
             }
         }
         
-        // This effect hook handles the update of chart data.
         const updateChart = () => {
              if (chartInstance.current && chartInstance.current.canvas?.ownerDocument) {
                 chartInstance.current.data.datasets[0].data = [roi.avoidedDisposal, roi.recyclingIncome];
@@ -205,7 +228,6 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
         }
         updateChart();
 
-        // This effect hook handles the cleanup of the chart instance.
         return () => {
             if (chartInstance.current) {
                 chartInstance.current.destroy();
@@ -219,6 +241,10 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
         const { id, value } = e.target;
         setValues(prev => ({ ...prev, [id]: Number(value) }));
     };
+
+    const handleSelectChange = (value: string) => {
+        setValues(prev => ({ ...prev, sector: value }));
+    }
     
     return (
         <section id="roi" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-20">
@@ -230,26 +256,42 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                 <div className="lg:col-span-3 rounded-2xl p-6 ring-1 ring-white/10 bg-white/5">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {[
-                            { id: 'wasteVolume', label: d.labels.wasteVolume, icon: Truck, value: values.wasteVolume },
-                            { id: 'costPerTon', label: d.labels.disposalCost, icon: Banknote, value: values.costPerTon },
-                            { id: 'recycleRate', label: d.labels.recyclableRate, icon: Percent, value: values.recycleRate },
-                            { id: 'recoveryPrice', label: d.labels.recoveryPrice, icon: Coins, value: values.recoveryPrice },
+                            { id: 'wasteVolume', label: d.labels.wasteVolume, icon: Trash2, value: values.wasteVolume, type: 'number' },
+                            { id: 'disposalCost', label: d.labels.disposalCost, icon: Banknote, value: values.disposalCost, type: 'number' },
+                            { id: 'employees', label: d.labels.employees, icon: Users, value: values.employees, type: 'number' },
                         ].map(field => (
                             <label key={field.id} className="block">
                                 <span className="text-sm text-slate-300">{field.label}</span>
                                 <div className="mt-2 flex items-center gap-2 rounded-xl bg-[#0B1020] ring-1 ring-white/10 px-3">
                                     <field.icon className="h-4 w-4 text-slate-400" />
-                                    <input
+                                    <Input
                                         id={field.id}
                                         type="number"
                                         min="0"
                                         value={field.value}
                                         onChange={handleInputChange}
-                                        className="w-full bg-transparent py-3 outline-none text-slate-200 placeholder-slate-500"
+                                        className="w-full bg-transparent py-3 outline-none text-slate-200 placeholder-slate-500 border-none"
                                     />
                                 </div>
                             </label>
                         ))}
+                         <label key="sector" className="block">
+                            <span className="text-sm text-slate-300">{d.labels.sector}</span>
+                             <div className="mt-2">
+                                <Select onValueChange={handleSelectChange} defaultValue={values.sector}>
+                                    <SelectTrigger className="w-full bg-[#0B1020] ring-1 ring-white/10 border-none text-slate-200">
+                                        <SelectValue placeholder="Seleccione un sector" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-[#0F172A]/95 backdrop-blur-lg border-white/10 text-white">
+                                        <SelectItem value="manufacturing">Manufactura</SelectItem>
+                                        <SelectItem value="services">Servicios</SelectItem>
+                                        <SelectItem value="retail">Comercio</SelectItem>
+                                        <SelectItem value="construction">Construcción</SelectItem>
+                                        <SelectItem value="other">Otro</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </label>
                     </div>
                     <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="rounded-xl bg-[#0B1020] ring-1 ring-white/10 p-4">
@@ -266,8 +308,8 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                         </div>
                     </div>
                      <div className="mt-6 flex items-center gap-3">
-                        <Button asChild className="bg-gradient-to-br from-emerald-500 via-emerald-600 to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 hover:opacity-95 transition">
-                           <Link href={`/${lang}/login`}><Handshake className="h-4 w-4" /><span>{d.cta}</span></Link>
+                        <Button className="bg-gradient-to-br from-emerald-500 via-emerald-600 to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 hover:opacity-95 transition">
+                           <Handshake className="h-4 w-4" /><span>{d.cta}</span>
                         </Button>
                         <p className="text-xs text-slate-400">{d.disclaimer}</p>
                     </div>
@@ -313,7 +355,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
 
     const useCases = [
       {
-        icon: <Building2 className="h-5 w-5 text-emerald-300" />,
+        icon: <Building className="h-5 w-5 text-emerald-300" />,
         key: 'companies',
       },
       {
@@ -333,7 +375,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
         key: 'recyclers',
       },
       {
-        icon: <Hammer className="h-5 w-5 text-amber-300" />,
+        icon: <HardHat className="h-5 w-5 text-amber-300" />,
         key: 'construction',
       },
     ];
@@ -367,10 +409,10 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                             <p className="mt-5 text-base sm:text-lg text-slate-300">{d.hero.subtitle}</p>
                              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
                                  <Button asChild className="bg-gradient-to-br from-emerald-500 via-emerald-600 to-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 hover:opacity-95 transition h-auto rounded-xl">
-                                    <Link href="#roi"><Calculator /><span>{d.hero.cta}</span></Link>
+                                    <a href="#roi"><Calculator /><span>{d.hero.cta}</span></a>
                                  </Button>
                                  <Button asChild variant="outline" className="px-5 py-3 text-sm font-medium text-slate-200 ring-1 ring-white/10 hover:bg-white/5 transition h-auto rounded-xl bg-transparent border-white/10">
-                                     <Link href="#how"><PlayCircle /><span>{d.valueProposition.cta}</span></Link>
+                                     <a href="#how"><PlayCircle /><span>{d.valueProposition.cta}</span></a>
                                  </Button>
                             </div>
                              <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -541,5 +583,3 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
-
-    
