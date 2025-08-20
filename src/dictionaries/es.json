@@ -214,8 +214,6 @@
       "labels": {
         "wasteVolume": "Volumen de Residuos Mensual (Ton)",
         "disposalCost": "Costo Disposición Final por Ton (COP)",
-        "employees": "Número de Empleados",
-        "sector": "Sector de tu Empresa",
         "contaminationRate": "Porcentaje de Contaminación",
         "salePrice": "Precio Venta Promedio por Ton (COP)"
       },

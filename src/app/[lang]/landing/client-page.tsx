@@ -138,8 +138,6 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
         wasteVolume: 50,
         disposalCost: 150000,
         contaminationRate: 15,
-        employees: 100,
-        sector: "manufacturing",
         salePrice: 250000,
     });
 
@@ -248,10 +246,6 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
     const handleSliderChange = (value: number[]) => {
         setValues(prev => ({...prev, contaminationRate: value[0]}));
     }
-
-    const handleSelectChange = (value: string) => {
-        setValues(prev => ({ ...prev, sector: value }));
-    }
     
     return (
         <section id="roi" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-20">
@@ -265,7 +259,6 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                         {[
                             { id: 'wasteVolume', label: d.labels.wasteVolume, icon: Trash2, value: values.wasteVolume },
                             { id: 'disposalCost', label: d.labels.disposalCost, icon: Banknote, value: values.disposalCost },
-                            { id: 'employees', label: d.labels.employees, icon: Users, value: values.employees },
                             { id: 'salePrice', label: d.labels.salePrice, icon: Coins, value: values.salePrice },
                         ].map(field => (
                             <div key={field.id}>
@@ -283,23 +276,6 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                                 </div>
                             </div>
                         ))}
-                         <div>
-                            <Label htmlFor="sector" className="text-sm text-slate-300">{d.labels.sector}</Label>
-                             <div className="mt-2">
-                                <Select onValueChange={handleSelectChange} defaultValue={values.sector}>
-                                    <SelectTrigger className="w-full bg-[#0B1020] ring-1 ring-white/10 border-none text-slate-200">
-                                        <SelectValue placeholder="Seleccione un sector" />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-[#0F172A]/95 backdrop-blur-lg border-white/10 text-white">
-                                        <SelectItem value="manufacturing">Manufactura</SelectItem>
-                                        <SelectItem value="services">Servicios</SelectItem>
-                                        <SelectItem value="retail">Comercio</SelectItem>
-                                        <SelectItem value="construction">Construcción</SelectItem>
-                                        <SelectItem value="other">Otro</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
                     </div>
                      <div className="mt-4">
                         <Label htmlFor="contaminationRate" className="text-sm text-slate-300">{d.labels.contaminationRate} ({values.contaminationRate}%)</Label>
@@ -607,3 +583,4 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
     
 
     
+

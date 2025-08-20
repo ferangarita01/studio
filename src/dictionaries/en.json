@@ -212,8 +212,6 @@
       "labels": {
         "wasteVolume": "Monthly Waste Volume (tons)",
         "disposalCost": "Final Disposal Cost per Ton ($)",
-        "employees": "Number of Employees",
-        "sector": "Your Industry Sector",
         "contaminationRate": "Contamination Rate",
         "salePrice": "Avg. Sale Price per Ton ($)"
       },
