@@ -43,7 +43,8 @@ import {
   TrendingUp as TrendingUpIcon,
   HardHat,
   Users,
-  Building
+  Building,
+  ArrowRight
 } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import type { Dictionary } from "@/lib/get-dictionary";
@@ -136,15 +137,18 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
     const [values, setValues] = useState({
         wasteVolume: 50,
         disposalCost: 150000,
-        contaminationRate: 15, // Porcentaje de contaminación
+        contaminationRate: 15,
         employees: 100,
         sector: "manufacturing",
+        salePrice: 250000,
     });
 
     const [roi, setRoi] = useState({
         grossIncome: 0,
-        serviceCost: 0,
+        disposalCost: 0,
         netIncome: 0,
+        recyclableRate: 0,
+        avoidedDisposalCost: 0
     });
 
     const chartRef = useRef<HTMLCanvasElement>(null);
@@ -154,9 +158,9 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
 
     useEffect(() => {
         const recalc = () => {
-            const { wasteVolume, disposalCost, employees, sector, contaminationRate } = values;
+            const { wasteVolume, disposalCost, employees, sector, contaminationRate, salePrice } = values;
             
-            // Tasa de reciclabilidad estimada
+            // 1. Tasa de reciclabilidad estimada
             let recyclableRate = 0.4;
             if (sector === 'manufacturing') recyclableRate = 0.6;
             if (sector === 'services') recyclableRate = 0.3;
@@ -164,22 +168,28 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
 
             const totalRecyclableTons = wasteVolume * recyclableRate;
             
-            // Descontar contaminación
+            // 2. Descontar contaminación
             const usableRecyclableTons = totalRecyclableTons * (1 - contaminationRate / 100);
 
-            // Precio de compra (lo que WasteWise paga)
-            const recoveryPricePerTon = 250000;
+            // 3. Ingreso por venta de material usable
+            const gross = usableRecyclableTons * salePrice;
 
-            // 1. Ingreso por venta de material usable
-            const gross = usableRecyclableTons * recoveryPricePerTon;
-
-            // 2. Costo del servicio (lo que el cliente paga a WasteWise)
-            const service = wasteVolume * disposalCost;
+            // 4. Costo del servicio (Costo por Disposición Final)
+            const cost = wasteVolume * disposalCost;
             
-            // 3. Ingreso Neto
-            const net = gross - service;
+            // 5. Beneficio Neto
+            const net = gross - cost;
 
-            setRoi({ grossIncome: gross, serviceCost: service, netIncome: net });
+            // 6. Ahorro por disposición evitada
+            const avoidedCost = totalRecyclableTons * disposalCost;
+
+            setRoi({ 
+                grossIncome: gross, 
+                disposalCost: cost, 
+                netIncome: net,
+                recyclableRate: recyclableRate * 100,
+                avoidedDisposalCost: avoidedCost
+            });
         };
         recalc();
     }, [values]);
@@ -196,7 +206,7 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                     data: {
                         labels: [d.legend.income, d.legend.cost],
                         datasets: [{
-                            data: [roi.grossIncome, roi.serviceCost],
+                            data: [roi.grossIncome, roi.disposalCost],
                             backgroundColor: ['#34d399', '#f87171'],
                             borderColor: ['#134e4a', '#7f1d1d'],
                             borderWidth: 1
@@ -229,7 +239,7 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
 
     useEffect(() => {
         if (chartInstance.current) {
-            chartInstance.current.data.datasets[0].data = [roi.grossIncome, roi.serviceCost];
+            chartInstance.current.data.datasets[0].data = [roi.grossIncome, roi.disposalCost];
             chartInstance.current.update();
         }
     }, [roi]);
@@ -261,6 +271,7 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                             { id: 'wasteVolume', label: d.labels.wasteVolume, icon: Trash2, value: values.wasteVolume },
                             { id: 'disposalCost', label: d.labels.disposalCost, icon: Banknote, value: values.disposalCost },
                             { id: 'employees', label: d.labels.employees, icon: Users, value: values.employees },
+                            { id: 'salePrice', label: d.labels.salePrice, icon: Coins, value: values.salePrice },
                         ].map(field => (
                             <div key={field.id}>
                                 <Label htmlFor={field.id} className="text-sm text-slate-300">{field.label}</Label>
@@ -307,18 +318,14 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                             className="mt-2"
                         />
                     </div>
-                    <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="rounded-xl bg-[#0B1020] ring-1 ring-white/10 p-4">
-                            <div className="text-xs text-slate-400">{d.results.grossIncome}</div>
-                            <div className="mt-1 text-xl font-semibold tracking-tight text-emerald-300">{formatCurrency(roi.grossIncome)}</div>
+                            <div className="text-xs text-slate-400">{d.results.recyclingRate}</div>
+                            <div className="mt-1 text-xl font-semibold tracking-tight text-white">{roi.recyclableRate.toFixed(0)}%</div>
                         </div>
                         <div className="rounded-xl bg-[#0B1020] ring-1 ring-white/10 p-4">
-                            <div className="text-xs text-slate-400">{d.results.serviceCost}</div>
-                            <div className="mt-1 text-xl font-semibold tracking-tight text-red-400">{formatCurrency(roi.serviceCost)}</div>
-                        </div>
-                        <div className="rounded-xl bg-[#0B1020] ring-1 ring-white/10 p-4">
-                            <div className="text-xs text-slate-400">{d.results.netIncome}</div>
-                            <div className="mt-1 text-xl font-semibold tracking-tight text-white">{formatCurrency(roi.netIncome)}</div>
+                            <div className="text-xs text-slate-400">{d.results.avoidedDisposalCost}</div>
+                            <div className="mt-1 text-xl font-semibold tracking-tight text-emerald-300">{formatCurrency(roi.avoidedDisposalCost)}</div>
                         </div>
                     </div>
                      <div className="mt-6 flex items-center gap-3">
@@ -332,8 +339,8 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                     <h3 className="text-lg font-semibold tracking-tight text-white">{d.breakdownTitle}</h3>
                     <p className="mt-1 text-sm text-slate-300">{d.breakdownSubtitle}</p>
                     <div className="mt-6">
-                        <div className="relative h-64"><canvas ref={chartRef}></canvas></div>
-                        <div className="mt-6 grid grid-cols-2 gap-4">
+                        <div className="relative h-48"><canvas ref={chartRef}></canvas></div>
+                        <div className="mt-4 grid grid-cols-2 gap-4">
                             <div className="flex items-center gap-3">
                                 <span className="h-3 w-3 rounded-full bg-emerald-400"></span>
                                 <div>
@@ -345,15 +352,17 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                                 <span className="h-3 w-3 rounded-full bg-red-400"></span>
                                 <div>
                                     <div className="text-sm text-slate-300">{d.legend.cost}</div>
-                                    <div className="text-sm font-medium text-slate-200">{formatCurrency(roi.serviceCost)}</div>
+                                    <div className="text-sm font-medium text-slate-200">{formatCurrency(roi.disposalCost)}</div>
                                 </div>
                             </div>
                         </div>
-                        <div className="mt-6 rounded-xl bg-[#0B1020] ring-1 ring-white/10 p-4">
-                            <div className="flex items-start gap-3">
-                                <Info className="h-5 w-5 text-slate-400 mt-0.5 flex-shrink-0" />
-                                <p className="text-sm text-slate-300">{d.info}</p>
-                            </div>
+                        <div className="mt-4 rounded-xl bg-[#0B1020] ring-1 ring-white/10 p-4">
+                            <div className="text-xs text-slate-400">{d.results.netIncome}</div>
+                            <div className="mt-1 text-2xl font-semibold tracking-tight text-white">{formatCurrency(roi.netIncome)}</div>
+                        </div>
+                        <div className="mt-4 flex items-center gap-3 text-sm text-slate-400">
+                            <Info className="h-5 w-5 text-slate-500 mt-0.5 flex-shrink-0" />
+                            <p className="text-xs">{d.info}</p>
                         </div>
                     </div>
                 </div>
@@ -597,5 +606,7 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
+
+    
 
     

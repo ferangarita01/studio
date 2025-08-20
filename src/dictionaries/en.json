@@ -211,23 +211,26 @@
       "subtitle": "See potential income after service costs. Adjust contamination to see its impact.",
       "labels": {
         "wasteVolume": "Monthly Waste Volume (tons)",
-        "disposalCost": "Service Cost per Ton ($)",
+        "disposalCost": "Final Disposal Cost per Ton ($)",
         "employees": "Number of Employees",
         "sector": "Your Industry Sector",
-        "contaminationRate": "Contamination Rate"
+        "contaminationRate": "Contamination Rate",
+        "salePrice": "Avg. Sale Price per Ton ($)"
       },
       "results": {
-        "grossIncome": "Gross Recycling Income",
-        "serviceCost": "WasteWise Service Cost",
-        "netIncome": "Estimated Net Income"
+        "grossIncome": "Gross Material Sale Income",
+        "disposalCost": "Final Disposal Cost",
+        "netIncome": "Estimated Net Benefit",
+        "recyclingRate": "Est. Recycling Rate",
+        "avoidedDisposalCost": "Avoided Disposal Cost"
       },
       "cta": "Get a Custom Plan",
       "disclaimer": "Estimates only. Actual results vary by stream and region.",
-      "breakdownTitle": "Income Breakdown",
+      "breakdownTitle": "Benefit Breakdown",
       "breakdownSubtitle": "See how income and costs contribute to your total.",
       "legend": {
         "income": "Gross Income",
-        "cost": "Service Cost"
+        "cost": "Disposal Cost"
       },
       "info": "The better you separate, the lower your contamination and the higher your income. Prices paid depend on material type and market rates."
     },
@@ -958,32 +961,32 @@
     "scope": "Scope"
   },
   "valorizedResidueDialog": {
-      "title": "Add Valorized Residue",
-      "description": "Select the material and enter the quantity to calculate avoided emissions.",
-      "date": {
-          "label": "Date",
-          "placeholder": "Select a date"
-      },
-      "material": {
-          "label": "Material / Residue",
-          "placeholder": "Select a material"
-      },
-      "quantity": {
-          "label": "Quantity (unit based on material)",
-          "placeholder": "e.g., 150.5"
-      },
-      "emissionsResult": "Emissions Avoided with this action:",
-      "save": "Save Record",
-      "cancel": "Cancel",
-      "toast": {
-          "title": "Residue Recorded",
-          "description": "The valorized residue has been saved successfully."
-      },
-      "validation": {
-          "date": "Please select a date",
-          "material": "Please select a material",
-          "quantity": "Please enter a valid quantity"
-      }
+    "title": "Add Valorized Residue",
+    "description": "Select the material and enter the quantity to calculate avoided emissions.",
+    "date": {
+        "label": "Date",
+        "placeholder": "Select a date"
+    },
+    "material": {
+        "label": "Material / Residue",
+        "placeholder": "Select a material"
+    },
+    "quantity": {
+        "label": "Quantity (unit based on material)",
+        "placeholder": "e.g., 150.5"
+    },
+    "emissionsResult": "Emissions Avoided with this action:",
+    "save": "Save Record",
+    "cancel": "Cancel",
+    "toast": {
+        "title": "Residue Recorded",
+        "description": "The valorized residue has been saved successfully."
+    },
+    "validation": {
+        "date": "Please select a date",
+        "material": "Please select a material",
+        "quantity": "Please enter a valid quantity"
+    }
   },
   "companiesPage": {
     "title": "Company Management",
@@ -1050,5 +1053,7 @@
     }
   }
 }
+
+    
 
     

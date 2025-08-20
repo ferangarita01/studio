@@ -209,27 +209,30 @@
       }
     },
     "roiCalculator": {
-      "title": "Estima tu Ingreso Neto Mensual",
+      "title": "Estima tu Beneficio Neto Mensual",
       "subtitle": "Descubre tu potencial de ingresos después de costos del servicio. Ajusta la contaminación para ver su impacto.",
       "labels": {
         "wasteVolume": "Volumen de Residuos Mensual (Ton)",
-        "disposalCost": "Costo del Servicio por Tonelada (COP)",
+        "disposalCost": "Costo Disposición Final por Ton (COP)",
         "employees": "Número de Empleados",
         "sector": "Sector de tu Empresa",
-        "contaminationRate": "Porcentaje de Contaminación"
+        "contaminationRate": "Porcentaje de Contaminación",
+        "salePrice": "Precio Venta Promedio por Ton (COP)"
       },
       "results": {
-        "grossIncome": "Ingreso Bruto por Reciclaje",
-        "serviceCost": "Costo Servicio WasteWise",
-        "netIncome": "Ingreso Neto Estimado"
+        "grossIncome": "Ingreso por Venta de Material",
+        "disposalCost": "Costo por Disposición Final",
+        "netIncome": "Beneficio Neto Estimado",
+        "recyclingRate": "Tasa de Reciclaje Estimada",
+        "avoidedDisposalCost": "Ahorro Disposición Evitada"
       },
       "cta": "Obtener Plan Personalizado",
       "disclaimer": "Estimaciones basadas en promedios. Los resultados reales varían.",
-      "breakdownTitle": "Desglose de Ingresos",
+      "breakdownTitle": "Desglose de Beneficios",
       "breakdownSubtitle": "Observa cómo los ingresos y costos componen tu total.",
       "legend": {
         "income": "Ingreso Bruto",
-        "cost": "Costo del Servicio"
+        "cost": "Costo Disposición"
       },
       "info": "A mejor separación, menor contaminación y mayores ingresos. El precio de compra depende del tipo de material y tarifas de mercado."
     },
@@ -1052,5 +1055,7 @@
     }
   }
 }
+
+    
 
     
