@@ -612,14 +612,3 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
-
-    
-
-    
-
-    
-
-
-
-
-    
