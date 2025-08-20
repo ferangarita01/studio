@@ -160,22 +160,23 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
         const recalc = () => {
             const { wasteVolume, disposalCost, contaminationRate, salePrice } = values;
             
-            // 1. Tasa de reciclabilidad estimada (basada en la no contaminación)
+            // 1. Tasa de reciclabilidad (material útil)
             const recyclableRate = 1 - (contaminationRate / 100);
 
             // 2. Toneladas totales que se pueden aprovechar
             const totalRecyclableTons = wasteVolume * recyclableRate;
 
-            // 3. Ingreso por venta de material usable
+            // 3. Ingreso bruto por venta de material usable
             const gross = totalRecyclableTons * salePrice;
 
-            // 4. Costo del servicio (Costo por Disposición Final que cobra WasteWise)
+            // 4. Costo del servicio por disposición final (lo que cobra WasteWise)
             const cost = wasteVolume * disposalCost;
             
-            // 5. Beneficio Neto
+            // 5. Beneficio Neto (Ingreso por venta - Costo del servicio)
             const net = gross - cost;
 
-            // 6. Ahorro por disposición evitada (lo que se ahorra al no enviar al relleno)
+            // 6. Ahorro por disposición evitada (lo que el cliente se ahorra al no enviar al relleno)
+            // Este es un beneficio adicional que se puede mostrar para enfatizar el valor.
             const avoidedCost = totalRecyclableTons * disposalCost;
 
             // 7. Huella de carbono evitada (factor de 1.8 toneladas de CO2 por tonelada de material reciclado)
@@ -619,3 +620,6 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
     
 
 
+
+
+    
