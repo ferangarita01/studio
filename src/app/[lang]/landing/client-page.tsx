@@ -44,7 +44,8 @@ import {
   HardHat,
   Users,
   Building,
-  ArrowRight
+  ArrowRight,
+  Leaf
 } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import type { Dictionary } from "@/lib/get-dictionary";
@@ -146,7 +147,8 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
         disposalCost: 0,
         netIncome: 0,
         recyclableRate: 0,
-        avoidedDisposalCost: 0
+        avoidedDisposalCost: 0,
+        carbonFootprint: 0,
     });
 
     const chartRef = useRef<HTMLCanvasElement>(null);
@@ -176,12 +178,16 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
             // 6. Ahorro por disposición evitada (lo que se ahorra al no enviar al relleno)
             const avoidedCost = totalRecyclableTons * disposalCost;
 
+            // 7. Huella de carbono evitada (factor de 1.8 toneladas de CO2 por tonelada de material reciclado)
+            const carbonFootprint = totalRecyclableTons * 1800; // en Kg
+
             setRoi({ 
                 grossIncome: gross, 
                 disposalCost: cost, 
                 netIncome: net,
                 recyclableRate: recyclableRate * 100,
-                avoidedDisposalCost: avoidedCost
+                avoidedDisposalCost: avoidedCost,
+                carbonFootprint: carbonFootprint,
             });
         };
         recalc();
@@ -259,7 +265,6 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                         {[
                             { id: 'wasteVolume', label: d.labels.wasteVolume, icon: Trash2, value: values.wasteVolume },
                             { id: 'disposalCost', label: d.labels.disposalCost, icon: Banknote, value: values.disposalCost },
-                            { id: 'salePrice', label: d.labels.salePrice, icon: Coins, value: values.salePrice },
                         ].map(field => (
                             <div key={field.id}>
                                 <Label htmlFor={field.id} className="text-sm text-slate-300">{field.label}</Label>
@@ -276,6 +281,35 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                                 </div>
                             </div>
                         ))}
+                    </div>
+                     <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                           <Label htmlFor="salePrice" className="text-sm text-slate-300">{d.labels.salePrice}</Label>
+                            <div className="mt-2 flex items-center gap-2 rounded-xl bg-[#0B1020] ring-1 ring-white/10 px-3">
+                                <Coins className="h-4 w-4 text-slate-400" />
+                                <Input
+                                    id="salePrice"
+                                    type="number"
+                                    min="0"
+                                    value={values.salePrice}
+                                    onChange={handleInputChange}
+                                    className="w-full bg-transparent py-3 outline-none text-slate-200 placeholder-slate-500 border-none"
+                                />
+                            </div>
+                        </div>
+                         <div>
+                           <Label htmlFor="carbonFootprint" className="text-sm text-slate-300">{d.labels.carbonFootprint}</Label>
+                            <div className="mt-2 flex items-center gap-2 rounded-xl bg-[#0B1020] ring-1 ring-white/10 px-3">
+                                <Leaf className="h-4 w-4 text-slate-400" />
+                                <Input
+                                    id="carbonFootprint"
+                                    type="text"
+                                    value={roi.carbonFootprint.toLocaleString('es-CO', { maximumFractionDigits: 0 })}
+                                    readOnly
+                                    className="w-full bg-transparent py-3 outline-none text-slate-200 placeholder-slate-500 border-none"
+                                />
+                            </div>
+                        </div>
                     </div>
                      <div className="mt-4">
                         <Label htmlFor="contaminationRate" className="text-sm text-slate-300">{d.labels.contaminationRate} ({values.contaminationRate}%)</Label>
@@ -583,4 +617,5 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
     
 
     
+
 

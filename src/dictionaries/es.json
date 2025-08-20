@@ -215,7 +215,8 @@
         "wasteVolume": "Volumen de Residuos Mensual (Ton)",
         "disposalCost": "Costo Disposición Final por Ton (COP)",
         "contaminationRate": "Porcentaje de Contaminación",
-        "salePrice": "Precio Venta Promedio por Ton (COP)"
+        "salePrice": "Precio Venta Promedio por Ton (COP)",
+        "carbonFootprint": "Huella de Carbono Evitada (Kg CO₂e)"
       },
       "results": {
         "grossIncome": "Ingreso por Venta de Material",
@@ -1057,3 +1058,4 @@
     
 
     
+

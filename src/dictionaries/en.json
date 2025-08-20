@@ -96,14 +96,16 @@
         "item1": "High collection and disposal costs",
         "item2": "Fines and risk from non-compliance",
         "item3": "Slow manual record keeping",
-        "item4": "Low reuse and wasted resources"
+        "item4": "Low reuse and wasted resources",
+        "item5": "No sustainability strategy"
       },
       "to": {
         "title": "After",
         "item1": "New income from recyclable materials",
         "item2": "Green certifications and stronger reputation",
         "item3": "Automated classification and logging",
-        "item4": "Utilization up to 85% with AI routing"
+        "item4": "Utilization up to 85% with AI routing",
+        "item5": "Up to 60% reduction in environmental costs"
       }
     },
     "useCases": {
@@ -111,27 +113,27 @@
       "subtitle": "Discover how WasteWise adapts to your specific industry to maximize your results.",
       "companies": {
         "title": "For Companies",
-        "description": "Reduce operating costs and generate new revenue."
+        "description": "Ideal for manufacturing, commercial, and service companies looking to optimize costs and comply with environmental regulations."
       },
       "schools": {
         "title": "For Schools",
-        "description": "Meet regulations and fund educational programs."
+        "description": "Educational recycling programs that generate income for Colombian educational institutions."
       },
       "events": {
         "title": "For Events",
-        "description": "Optimize cleanup and enhance sustainability image."
+        "description": "Comprehensive waste management for events, meeting environmental standards and generating certifications."
       },
       "universities": {
         "title": "For Universities",
-        "description": "Foster sustainability culture and generate resources."
+        "description": "Sustainable solutions that reduce operational costs and improve the institutional environmental profile."
       },
       "recyclers": {
         "title": "For Recyclers",
-        "description": "Improve logistics and elevate recovery rates."
+        "description": "We connect local recyclers with companies, creating an efficient circular economy network."
       },
       "construction": {
         "title": "For Construction",
-        "description": "Manage construction waste and stay compliant."
+        "description": "Specialized construction waste management, complying with Colombian regulations and reducing costs."
       }
     },
     "caseStudies": {
@@ -190,20 +192,20 @@
     },
     "features": {
       "one": {
-        "title": "AI-Powered Analysis",
-        "description": "Leverage artificial intelligence to identify reduction opportunities and optimize your waste streams."
+        "title": "Intelligent Diagnostics",
+        "description": "Our AI analyzes your waste and identifies income opportunities specific to the Colombian market."
       },
       "two": {
-        "title": "Detailed Reporting",
-        "description": "Generate comprehensive financial and environmental reports to track your progress and stay compliant."
+        "title": "Official Certifications",
+        "description": "Generate reports that comply with all Colombian environmental regulations, ideal for public tenders."
       },
       "three": {
-        "title": "Automated Logging",
-        "description": "Easily log waste entries, track materials, and schedule pickups with our streamlined interface."
+        "title": "Guaranteed Compliance",
+        "description": "Automate registration with Colombian environmental authorities, avoiding fines and penalties."
       },
       "four": {
-        "title": "Regulatory Ready",
-        "description": "Built-in checks to prevent fines and ensure compliance by design."
+        "title": "100% Legal in Colombia",
+        "description": "We comply with all current Colombian environmental regulations and stay updated with changes."
       }
     },
     "roiCalculator": {
@@ -213,7 +215,8 @@
         "wasteVolume": "Monthly Waste Volume (tons)",
         "disposalCost": "Final Disposal Cost per Ton ($)",
         "contaminationRate": "Contamination Rate",
-        "salePrice": "Avg. Sale Price per Ton ($)"
+        "salePrice": "Avg. Sale Price per Ton ($)",
+        "carbonFootprint": "Carbon Footprint Avoided (Kg CO₂e)"
       },
       "results": {
         "grossIncome": "Gross Material Sale Income",
@@ -1055,3 +1058,4 @@
     
 
     
+
