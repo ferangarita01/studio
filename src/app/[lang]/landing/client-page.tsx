@@ -335,8 +335,10 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                         </div>
                     </div>
                      <div className="mt-6 flex items-center gap-3">
-                        <Button className="bg-gradient-to-br from-emerald-500 via-emerald-600 to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 hover:opacity-95 transition">
-                           <Handshake className="h-4 w-4" /><span>{d.cta}</span>
+                        <Button asChild className="bg-gradient-to-br from-emerald-500 via-emerald-600 to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 hover:opacity-95 transition">
+                           <Link href={`/${lang}/login`}>
+                            <Handshake className="h-4 w-4" /><span>{d.cta}</span>
+                           </Link>
                         </Button>
                         <p className="text-xs text-slate-400">{d.disclaimer}</p>
                     </div>
