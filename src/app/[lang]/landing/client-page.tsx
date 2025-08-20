@@ -55,6 +55,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { Label } from "@/components/ui/label";
+
 
 ChartJS.register(ArcElement, Tooltip, Legend, DoughnutController);
 
@@ -133,14 +136,15 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
     const [values, setValues] = useState({
         wasteVolume: 50,
         disposalCost: 150000,
+        contaminationRate: 15, // Porcentaje de contaminación
         employees: 100,
         sector: "manufacturing",
     });
 
     const [roi, setRoi] = useState({
-        avoidedDisposal: 0,
-        recyclingIncome: 0,
-        totalRoi: 0,
+        grossIncome: 0,
+        serviceCost: 0,
+        netIncome: 0,
     });
 
     const chartRef = useRef<HTMLCanvasElement>(null);
@@ -150,22 +154,32 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
 
     useEffect(() => {
         const recalc = () => {
-            const { wasteVolume, disposalCost, employees, sector } = values;
+            const { wasteVolume, disposalCost, employees, sector, contaminationRate } = values;
             
-            // Simplified logic: more employees/certain sectors produce more recyclables
-            let recyclableRate = 0.4; // Base rate
+            // Tasa de reciclabilidad estimada
+            let recyclableRate = 0.4;
             if (sector === 'manufacturing') recyclableRate = 0.6;
             if (sector === 'services') recyclableRate = 0.3;
             if (employees > 500) recyclableRate += 0.1;
 
-            const recyclableTons = wasteVolume * recyclableRate;
-            const recoveryPricePerTon = 250000; // Average recovery price
+            const totalRecyclableTons = wasteVolume * recyclableRate;
+            
+            // Descontar contaminación
+            const usableRecyclableTons = totalRecyclableTons * (1 - contaminationRate / 100);
 
-            const avoided = recyclableTons * disposalCost;
-            const income = recyclableTons * recoveryPricePerTon;
-            const total = avoided + income;
+            // Precio de compra (lo que WasteWise paga)
+            const recoveryPricePerTon = 250000;
 
-            setRoi({ avoidedDisposal: avoided, recyclingIncome: income, totalRoi: total });
+            // 1. Ingreso por venta de material usable
+            const gross = usableRecyclableTons * recoveryPricePerTon;
+
+            // 2. Costo del servicio (lo que el cliente paga a WasteWise)
+            const service = wasteVolume * disposalCost;
+            
+            // 3. Ingreso Neto
+            const net = gross - service;
+
+            setRoi({ grossIncome: gross, serviceCost: service, netIncome: net });
         };
         recalc();
     }, [values]);
@@ -180,11 +194,11 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                 chartInstance.current = new ChartJS(ctx, {
                     type: 'doughnut',
                     data: {
-                        labels: [d.legend.avoided, d.legend.income],
+                        labels: [d.legend.income, d.legend.cost],
                         datasets: [{
-                            data: [roi.avoidedDisposal, roi.recyclingIncome],
-                            backgroundColor: ['#34d399', '#60a5fa'],
-                            borderColor: ['#134e4a', '#1e3a8a'],
+                            data: [roi.grossIncome, roi.serviceCost],
+                            backgroundColor: ['#34d399', '#f87171'],
+                            borderColor: ['#134e4a', '#7f1d1d'],
                             borderWidth: 1
                         }]
                     },
@@ -194,23 +208,8 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                         plugins: {
                             legend: { display: false },
                             tooltip: {
-                                backgroundColor: 'rgba(15,23,42,0.95)',
-                                borderColor: 'rgba(255,255,255,0.1)',
-                                borderWidth: 1,
-                                padding: 12,
-                                titleColor: '#e2e8f0',
-                                bodyColor: '#e2e8f0',
                                 callbacks: {
-                                    label: function(context) {
-                                        let label = context.dataset.label || '';
-                                        if (label) {
-                                            label += ': ';
-                                        }
-                                        if (context.parsed !== null) {
-                                            label += formatCurrency(context.parsed);
-                                        }
-                                        return label;
-                                    }
+                                    label: (context) => formatCurrency(context.parsed)
                                 }
                             }
                         },
@@ -220,27 +219,30 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
             }
         }
         
-        const updateChart = () => {
-             if (chartInstance.current && chartInstance.current.canvas?.ownerDocument) {
-                chartInstance.current.data.datasets[0].data = [roi.avoidedDisposal, roi.recyclingIncome];
-                chartInstance.current.update();
-            }
-        }
-        updateChart();
-
         return () => {
             if (chartInstance.current) {
                 chartInstance.current.destroy();
                 chartInstance.current = null;
             }
         };
-    }, [roi.avoidedDisposal, roi.recyclingIncome, d.legend.avoided, d.legend.income]);
+    }, [d.legend.income, d.legend.cost]);
+
+    useEffect(() => {
+        if (chartInstance.current) {
+            chartInstance.current.data.datasets[0].data = [roi.grossIncome, roi.serviceCost];
+            chartInstance.current.update();
+        }
+    }, [roi]);
 
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
         setValues(prev => ({ ...prev, [id]: Number(value) }));
     };
+    
+    const handleSliderChange = (value: number[]) => {
+        setValues(prev => ({...prev, contaminationRate: value[0]}));
+    }
 
     const handleSelectChange = (value: string) => {
         setValues(prev => ({ ...prev, sector: value }));
@@ -256,12 +258,12 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                 <div className="lg:col-span-3 rounded-2xl p-6 ring-1 ring-white/10 bg-white/5">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {[
-                            { id: 'wasteVolume', label: d.labels.wasteVolume, icon: Trash2, value: values.wasteVolume, type: 'number' },
-                            { id: 'disposalCost', label: d.labels.disposalCost, icon: Banknote, value: values.disposalCost, type: 'number' },
-                            { id: 'employees', label: d.labels.employees, icon: Users, value: values.employees, type: 'number' },
+                            { id: 'wasteVolume', label: d.labels.wasteVolume, icon: Trash2, value: values.wasteVolume },
+                            { id: 'disposalCost', label: d.labels.disposalCost, icon: Banknote, value: values.disposalCost },
+                            { id: 'employees', label: d.labels.employees, icon: Users, value: values.employees },
                         ].map(field => (
-                            <label key={field.id} className="block">
-                                <span className="text-sm text-slate-300">{field.label}</span>
+                            <div key={field.id}>
+                                <Label htmlFor={field.id} className="text-sm text-slate-300">{field.label}</Label>
                                 <div className="mt-2 flex items-center gap-2 rounded-xl bg-[#0B1020] ring-1 ring-white/10 px-3">
                                     <field.icon className="h-4 w-4 text-slate-400" />
                                     <Input
@@ -273,10 +275,10 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                                         className="w-full bg-transparent py-3 outline-none text-slate-200 placeholder-slate-500 border-none"
                                     />
                                 </div>
-                            </label>
+                            </div>
                         ))}
-                         <label key="sector" className="block">
-                            <span className="text-sm text-slate-300">{d.labels.sector}</span>
+                         <div>
+                            <Label htmlFor="sector" className="text-sm text-slate-300">{d.labels.sector}</Label>
                              <div className="mt-2">
                                 <Select onValueChange={handleSelectChange} defaultValue={values.sector}>
                                     <SelectTrigger className="w-full bg-[#0B1020] ring-1 ring-white/10 border-none text-slate-200">
@@ -291,20 +293,32 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                                     </SelectContent>
                                 </Select>
                             </div>
-                        </label>
+                        </div>
+                    </div>
+                     <div className="mt-4">
+                        <Label htmlFor="contaminationRate" className="text-sm text-slate-300">{d.labels.contaminationRate} ({values.contaminationRate}%)</Label>
+                        <Slider
+                            id="contaminationRate"
+                            min={0}
+                            max={100}
+                            step={1}
+                            value={[values.contaminationRate]}
+                            onValueChange={handleSliderChange}
+                            className="mt-2"
+                        />
                     </div>
                     <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="rounded-xl bg-[#0B1020] ring-1 ring-white/10 p-4">
-                            <div className="text-xs text-slate-400">{d.results.avoidedDisposal}</div>
-                            <div className="mt-1 text-xl font-semibold tracking-tight text-emerald-300">{formatCurrency(roi.avoidedDisposal)}</div>
+                            <div className="text-xs text-slate-400">{d.results.grossIncome}</div>
+                            <div className="mt-1 text-xl font-semibold tracking-tight text-emerald-300">{formatCurrency(roi.grossIncome)}</div>
                         </div>
                         <div className="rounded-xl bg-[#0B1020] ring-1 ring-white/10 p-4">
-                            <div className="text-xs text-slate-400">{d.results.recyclingIncome}</div>
-                            <div className="mt-1 text-xl font-semibold tracking-tight text-blue-300">{formatCurrency(roi.recyclingIncome)}</div>
+                            <div className="text-xs text-slate-400">{d.results.serviceCost}</div>
+                            <div className="mt-1 text-xl font-semibold tracking-tight text-red-400">{formatCurrency(roi.serviceCost)}</div>
                         </div>
                         <div className="rounded-xl bg-[#0B1020] ring-1 ring-white/10 p-4">
-                            <div className="text-xs text-slate-400">{d.results.totalRoi}</div>
-                            <div className="mt-1 text-xl font-semibold tracking-tight text-white">{formatCurrency(roi.totalRoi)}</div>
+                            <div className="text-xs text-slate-400">{d.results.netIncome}</div>
+                            <div className="mt-1 text-xl font-semibold tracking-tight text-white">{formatCurrency(roi.netIncome)}</div>
                         </div>
                     </div>
                      <div className="mt-6 flex items-center gap-3">
@@ -323,15 +337,15 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                             <div className="flex items-center gap-3">
                                 <span className="h-3 w-3 rounded-full bg-emerald-400"></span>
                                 <div>
-                                    <div className="text-sm text-slate-300">{d.legend.avoided}</div>
-                                    <div className="text-sm font-medium text-slate-200">{formatCurrency(roi.avoidedDisposal)}</div>
+                                    <div className="text-sm text-slate-300">{d.legend.income}</div>
+                                    <div className="text-sm font-medium text-slate-200">{formatCurrency(roi.grossIncome)}</div>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
-                                <span className="h-3 w-3 rounded-full bg-blue-400"></span>
+                                <span className="h-3 w-3 rounded-full bg-red-400"></span>
                                 <div>
-                                    <div className="text-sm text-slate-300">{d.legend.income}</div>
-                                    <div className="text-sm font-medium text-slate-200">{formatCurrency(roi.recyclingIncome)}</div>
+                                    <div className="text-sm text-slate-300">{d.legend.cost}</div>
+                                    <div className="text-sm font-medium text-slate-200">{formatCurrency(roi.serviceCost)}</div>
                                 </div>
                             </div>
                         </div>
@@ -583,3 +597,5 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
+
+    

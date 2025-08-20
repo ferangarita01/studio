@@ -207,28 +207,29 @@
       }
     },
     "roiCalculator": {
-      "title": "Estimate Your Monthly ROI",
-      "subtitle": "Enter a few numbers to see potential savings and new income from recyclables.",
+      "title": "Estimate Your Monthly Net Income",
+      "subtitle": "See potential income after service costs. Adjust contamination to see its impact.",
       "labels": {
         "wasteVolume": "Monthly Waste Volume (tons)",
-        "disposalCost": "Disposal Cost per Ton ($)",
-        "recyclableRate": "Recyclable Rate (%)",
-        "recoveryPrice": "Recovery Price per Ton ($)"
+        "disposalCost": "Service Cost per Ton ($)",
+        "employees": "Number of Employees",
+        "sector": "Your Industry Sector",
+        "contaminationRate": "Contamination Rate"
       },
       "results": {
-        "avoidedDisposal": "Avoided Disposal",
-        "recyclingIncome": "Recycling Income",
-        "totalRoi": "Total Monthly ROI"
+        "grossIncome": "Gross Recycling Income",
+        "serviceCost": "WasteWise Service Cost",
+        "netIncome": "Estimated Net Income"
       },
       "cta": "Get a Custom Plan",
       "disclaimer": "Estimates only. Actual results vary by stream and region.",
-      "breakdownTitle": "ROI Breakdown",
-      "breakdownSubtitle": "See how savings and income contribute to your total.",
+      "breakdownTitle": "Income Breakdown",
+      "breakdownSubtitle": "See how income and costs contribute to your total.",
       "legend": {
-        "avoided": "Avoided Disposal",
-        "income": "Recycling Income"
+        "income": "Gross Income",
+        "cost": "Service Cost"
       },
-      "info": "Assumes internal logistics are constant and excludes secondary benefits like certification credits and brand uplift."
+      "info": "The better you separate, the lower your contamination and the higher your income. Prices paid depend on material type and market rates."
     },
     "cta": {
       "title": "Ready to Transform Your Waste Management?",
@@ -979,9 +980,9 @@
           "description": "The valorized residue has been saved successfully."
       },
       "validation": {
-        "date": "Please select a date",
-        "material": "Please select a material",
-        "quantity": "Please enter a valid quantity"
+          "date": "Please select a date",
+          "material": "Please select a material",
+          "quantity": "Please enter a valid quantity"
       }
   },
   "companiesPage": {

@@ -67,7 +67,7 @@
     },
     "hero": {
       "title": "Transforma tus Residuos en Ingresos para tu Empresa Colombiana",
-      "subtitle": "Convierte los costos de gestión de residuos en ganancias reales. Obtén certificados ambientales, cumple la normativa y genera ingresos adicionales",
+      "subtitle": "Convierte los costos de gestión de residuos en ganancias reales. Obtén certificados ambientales, cumple la normativa y genera ingresos adicionales.",
       "cta": "Descubre tu Potencial de Ingresos"
     },
     "valueProposition": {
@@ -78,11 +78,11 @@
         "stat1": {
           "title": "Fuga de Costos",
           "value": "Miles de millones perdidos en Colombia",
-          "subtitle": "Colombia—evitable en ineficiencias de disposición"
+          "subtitle": "Ineficiencias evitables en disposición"
         },
         "stat2": {
-          "title": "Utilización",
-          "value": "Solo 8% de empresas colombianas lo usan",
+          "title": "Aprovechamiento",
+          "value": "Solo 8% de empresas lo usan",
           "subtitle": "La tasa de recuperación está muy por debajo del potencial"
         },
         "stat3": {
@@ -209,28 +209,29 @@
       }
     },
     "roiCalculator": {
-      "title": "Calcula tu Ahorro e Ingresos Mensuales",
-      "subtitle": "Descubre cuánto puedes ahorrar y ganar gestionando mejor tus residuos",
+      "title": "Estima tu Ingreso Neto Mensual",
+      "subtitle": "Descubre tu potencial de ingresos después de costos del servicio. Ajusta la contaminación para ver su impacto.",
       "labels": {
         "wasteVolume": "Volumen de Residuos Mensual (Ton)",
-        "disposalCost": "Costo actual de disposición (COP)",
-        "employees": "Empleados en tu empresa",
-        "sector": "Sector de tu empresa"
+        "disposalCost": "Costo del Servicio por Tonelada (COP)",
+        "employees": "Número de Empleados",
+        "sector": "Sector de tu Empresa",
+        "contaminationRate": "Porcentaje de Contaminación"
       },
       "results": {
-        "avoidedDisposal": "Ahorro por Disposición",
-        "recyclingIncome": "Ingreso por Reciclaje",
-        "totalRoi": "Potencial Mensual Total"
+        "grossIncome": "Ingreso Bruto por Reciclaje",
+        "serviceCost": "Costo Servicio WasteWise",
+        "netIncome": "Ingreso Neto Estimado"
       },
-      "cta": "Ver mi Potencial de Ingresos",
-      "disclaimer": "Estimaciones basadas en promedios del sector. Los resultados reales pueden variar.",
-      "breakdownTitle": "Desglose del Potencial",
-      "breakdownSubtitle": "Cómo se componen tus ahorros e ingresos potenciales.",
+      "cta": "Obtener Plan Personalizado",
+      "disclaimer": "Estimaciones basadas en promedios. Los resultados reales varían.",
+      "breakdownTitle": "Desglose de Ingresos",
+      "breakdownSubtitle": "Observa cómo los ingresos y costos componen tu total.",
       "legend": {
-        "avoided": "Ahorro por Disposición",
-        "income": "Ingreso por Reciclaje"
+        "income": "Ingreso Bruto",
+        "cost": "Costo del Servicio"
       },
-      "info": "El cálculo excluye beneficios secundarios como créditos por certificaciones y mejora de la imagen de marca."
+      "info": "A mejor separación, menor contaminación y mayores ingresos. El precio de compra depende del tipo de material y tarifas de mercado."
     },
     "cta": {
       "title": "¿Listo para Rentabilizar tu Gestión de Residuos?",
@@ -1051,3 +1052,5 @@
     }
   }
 }
+
+    
