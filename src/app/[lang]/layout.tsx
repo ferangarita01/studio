@@ -15,14 +15,14 @@ const inter = Inter({
 
 const SEO_CONFIG = {
   en: {
-    title: "WasteWise: Digital Recycling & Waste Collection Platform | Smart Scrap Metal Solutions Colombia",
-    description: "Leading recycling and waste collection company in Colombia. Digital platform that automatically turns scrap into revenue. Smart waste management with AI. Request a free demo!",
-    keywords: ["recycling Colombia", "waste collection", "digital scrap yard", "business waste management", "WasteWise", "scrap metal purchase", "sale of recyclable materials"]
+    title: "WasteWise: AI-Powered Waste Management & Recycling Platform",
+    description: "Transform your waste management with WasteWise. Our AI-driven platform helps you optimize recycling, ensure compliance, and turn waste into revenue. Request a free demo!",
+    keywords: ["waste management platform", "AI recycling", "business waste solutions", "WasteWise", "sustainability software", "circular economy"]
   },
   es: {
-    title: "WasteWise: Plataforma Digital de Reciclaje y Recolección de Residuos | Chatarrería Inteligente Colombia",
-    description: "Empresa líder en reciclaje y recolección de residuos en Colombia. Plataforma digital que convierte chatarra en ingresos automáticamente. Gestión inteligente de residuos con IA. ¡Solicita demo gratis!",
-    keywords: ["reciclaje Colombia", "recolección residuos", "chatarrería digital", "gestión residuos empresarial", "WasteWise", "compra chatarra", "venta materiales reciclables"]
+    title: "WasteWise: Plataforma de Reciclaje y Gestión de Residuos con IA",
+    description: "Transforma tu gestión de residuos con WasteWise. Nuestra plataforma con IA te ayuda a optimizar el reciclaje, asegurar el cumplimiento y convertir residuos en ingresos. ¡Solicita una demo gratis!",
+    keywords: ["plataforma gestion residuos", "reciclaje con IA", "soluciones residuos empresas", "WasteWise", "software sostenibilidad", "economia circular"]
   }
 }
 
