@@ -1,103 +1,353 @@
+'use client';
 
-"use client";
+import React, { useState, useMemo, useEffect } from 'react';
+import { FileText, Database, Download, Plus, Search, Factory, Zap, Car, Building2, HardHat, Recycle, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useDictionaries } from '@/context/dictionary-context';
+import { getEmissionFactors, addValorizedResidue, getValorizedResidues } from '@/services/waste-data-service';
+import type { EmissionFactor, ValorizedResidue } from '@/lib/types';
+import { useAuth } from '@/context/auth-context';
+import { ValorizedResidueDialog } from '@/components/valorized-residue-dialog';
+import { useToast } from '@/hooks/use-toast';
 
-import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Dictionary } from "@/lib/get-dictionary";
-import { Gavel, FileText, ShieldCheck, PlusCircle, Pencil } from "lucide-react";
-import { useAuth } from "@/context/auth-context";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
-export function ComplianceClient({
-  dictionary,
-}: {
-  dictionary: Dictionary["compliancePage"];
-}) {
-  const { role, isLoading } = useAuth();
-  const [isClient, setIsClient] = useState(false);
+const GHGReportingSystem = () => {
+  const dictionary = useDictionaries();
+  const { user, isLoading: isAuthLoading } = useAuth();
+  const { toast } = useToast();
+  
+  const [activeTab, setActiveTab] = useState('database');
+  const [selectedStandard, setSelectedStandard] = useState('iso14064');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [reportData, setReportData] = useState({
+    organizacion: '',
+    periodo: new Date().getFullYear().toString(),
+    limiteOrganizacional: 'control-operacional',
+  });
+  const [emissionFactors, setEmissionFactors] = useState<EmissionFactor[]>([]);
+  const [valorizedResidues, setValorizedResidues] = useState<ValorizedResidue[]>([]);
+  const [isResidueDialogOpen, setResidueDialogOpen] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+
+  const d = dictionary?.compliancePage;
+  const dialogDictionary = dictionary?.valorizedResidueDialog;
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    const fetchData = async () => {
+      // Only fetch if user is authenticated
+      if (!user) {
+        setIsLoadingData(false);
+        return;
+      }
+      
+      setIsLoadingData(true);
+      try {
+        const [factors, residues] = await Promise.all([
+          getEmissionFactors(),
+          getValorizedResidues(user.uid),
+        ]);
+        setEmissionFactors(factors);
+        setValorizedResidues(residues);
+      } catch (error) {
+        console.error("Failed to fetch compliance data:", error);
+        toast({
+          title: d?.toast.errorTitle || "Error",
+          description: d?.toast.loadError || "Could not load data. Please try again later.",
+          variant: "destructive"
+        })
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
+    // We wait for the auth state to be resolved before fetching data
+    if (!isAuthLoading) {
+      fetchData();
+    }
+  }, [user, isAuthLoading, toast, d]);
+
+
+  const filteredFactors = useMemo(() => {
+    return emissionFactors.filter(factor =>
+      factor.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      factor.subcategory.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      factor.region.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm, emissionFactors]);
+
+  const totalEmissionsAvoided = useMemo(() => {
+    return valorizedResidues.reduce((acc, residue) => acc + residue.emissionsAvoided, 0);
+  }, [valorizedResidues]);
+
+  const handleResidueAdded = (newResidue: ValorizedResidue) => {
+    setValorizedResidues(prev => [newResidue, ...prev]);
+    toast({
+        title: dialogDictionary?.toast?.title || "Success",
+        description: dialogDictionary?.toast?.description || "Residue added successfully.",
+    });
+  };
+
+  const generateReport = () => {
+    // Implement report generation logic here
+    console.log("Generating report with data:", reportData, "and standard:", selectedStandard);
+    toast({ title: d?.toast.reportGeneration.devTitle, description: d?.toast.reportGeneration.devDescription });
+  };
+
+  const getCategoryIcon = (categoria?: string) => {
+    switch (categoria) {
+      case 'Combustibles': return <Factory className="w-4 h-4" />;
+      case 'Electricidad': return <Zap className="w-4 h-4" />;
+      case 'Transporte': return <Car className="w-4 h-4" />;
+      case 'Materiales': return <HardHat className="w-4 h-4" />;
+      case 'Residuos': return <Recycle className="w-4 h-4" />;
+      default: return <Building2 className="w-4 h-4" />;
+    }
+  };
+
+  const getScopeColor = (scope?: number) => {
+    switch (scope) {
+      case 1: return 'bg-red-100 text-red-800';
+      case 2: return 'bg-yellow-100 text-yellow-800';
+      case 3: return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
   
-  const showAdminFeatures = isClient && !isLoading && role === 'admin';
+  if (isAuthLoading || !d || !dialogDictionary) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+        <div className="flex h-screen w-full items-center justify-center">
+            <p>{d.pleaseLogin}</p>
+        </div>
+    );
+  }
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-      <div className="mx-auto grid w-full max-w-5xl gap-2">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div className="min-h-screen">
+      <div className="container mx-auto p-0 md:p-6">
+        <div className="bg-card rounded-2xl shadow-sm border p-6 md:p-8 mb-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
+            <div className="bg-gradient-to-br from-green-500 to-blue-600 p-3 rounded-xl">
+              <FileText className="w-8 h-8 text-white" />
+            </div>
             <div>
-                <h1 className="text-3xl font-semibold">{dictionary.title}</h1>
-                <p className="text-muted-foreground">{dictionary.description}</p>
+              <h1 className="text-3xl font-bold text-foreground">{d.reportingSystem.title}</h1>
+              <p className="text-muted-foreground">{d.reportingSystem.subtitle}</p>
             </div>
-            <div className={cn("mt-4 sm:mt-0", !showAdminFeatures && 'hidden')}>
-              <Button size="sm" className="h-8 gap-1">
-                  <PlusCircle className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      {dictionary.admin.addRegulation}
-                  </span>
-              </Button>
-            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <Button
+              onClick={() => setActiveTab('database')}
+              variant={activeTab === 'database' ? 'default' : 'outline'}
+              className="flex items-center gap-2"
+            >
+              <Database className="w-5 h-5" />
+              {d.tabs.database}
+            </Button>
+            <Button
+              onClick={() => setActiveTab('valorized')}
+              variant={activeTab === 'valorized' ? 'default' : 'outline'}
+              className="flex items-center gap-2"
+            >
+              <Recycle className="w-5 h-5" />
+              {d.tabs.valorizedResidues}
+            </Button>
+            <Button
+              onClick={() => setActiveTab('reports')}
+              variant={activeTab === 'reports' ? 'default' : 'outline'}
+              className="flex items-center gap-2"
+            >
+              <FileText className="w-5 h-5" />
+              {d.tabs.reports}
+            </Button>
+          </div>
         </div>
+        
+         {isLoadingData ? (
+             <div className="flex justify-center items-center p-12">
+                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
+             </div>
+         ) : (
+            <>
+              {activeTab === 'database' && (
+                <Card className="shadow-lg">
+                  <CardHeader>
+                    <CardTitle>{d.database.title}</CardTitle>
+                    <div className="relative mt-2">
+                      <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      <Input
+                        type="text"
+                        placeholder={d.database.searchPlaceholder}
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-4">
+                      {filteredFactors.map((factor) => (
+                        <div key={factor.id} className="border rounded-xl p-4 hover:shadow-md transition-shadow">
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-start gap-4">
+                              <div className="p-2 bg-muted rounded-lg mt-1">
+                                {getCategoryIcon(factor.category)}
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-1">
+                                  <h3 className="font-semibold text-foreground">{factor.subcategory}</h3>
+                                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getScopeColor(factor.scope)}`}>
+                                    {d.scope} {factor.scope}
+                                  </span>
+                                </div>
+                                <p className="text-sm text-muted-foreground mb-2">{factor.category}</p>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 text-sm">
+                                  <div><span className="font-medium">{d.database.factor}:</span> <span className="ml-1 text-primary font-mono">{factor.factor.toLocaleString()}</span></div>
+                                  <div><span className="font-medium">{d.database.unit}:</span> <span className="ml-1">{factor.unit}</span></div>
+                                  <div><span className="font-medium">{d.database.region}:</span> <span className="ml-1">{factor.region}</span></div>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="text-right flex-shrink-0 ml-4">
+                              <p className="text-xs text-muted-foreground">{d.database.source}</p>
+                              <p className="text-sm font-medium">{factor.source}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    {filteredFactors.length === 0 && (
+                      <div className="text-center py-12 text-muted-foreground">
+                        <Database className="w-12 h-12 mx-auto mb-4" />
+                        <p>{d.database.noResults}</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
+              {activeTab === 'valorized' && (
+                <Card className="shadow-lg">
+                  <CardHeader>
+                      <div className="flex justify-between items-center">
+                          <div>
+                              <CardTitle>{d.valorized.title}</CardTitle>
+                              <CardDescription>{d.valorized.description}</CardDescription>
+                          </div>
+                          <Button onClick={() => setResidueDialogOpen(true)}>
+                              <Plus className="mr-2 h-4 w-4" />
+                              {d.valorized.addButton}
+                          </Button>
+                      </div>
+                  </CardHeader>
+                  <CardContent>
+                      <Card className="mb-6">
+                          <CardHeader>
+                              <CardTitle className="text-primary">{d.valorized.totalAvoided.title}</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                              <p className="text-4xl font-bold text-primary">{(totalEmissionsAvoided / 1000).toFixed(4)} tCO2e</p>
+                              <p className="text-muted-foreground">{d.valorized.totalAvoided.description}</p>
+                          </CardContent>
+                      </Card>
+                      <h4 className="font-semibold mb-4">{d.valorized.listTitle}</h4>
+                      <div className="space-y-3">
+                          {valorizedResidues.length > 0 ? valorizedResidues.map(residue => (
+                              <div key={residue.id} className="border p-4 rounded-lg flex justify-between items-center">
+                                  <div>
+                                      <p className="font-semibold">{residue.type}</p>
+                                      <p className="text-sm text-muted-foreground">
+                                          {new Date(residue.date).toLocaleDateString()} - {residue.quantity} {residue.unit}
+                                      </p>
+                                  </div>
+                                  <div className="text-right">
+                                      <p className="font-bold text-green-600">{residue.emissionsAvoided.toFixed(2)} kg CO2e</p>
+                                      <p className="text-xs text-muted-foreground">{d.valorized.avoided}</p>
+                                  </div>
+                              </div>
+                          )) : (
+                              <p className="text-muted-foreground text-center py-4">{d.valorized.noResidues}</p>
+                          )}
+                      </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {activeTab === 'reports' && (
+                <Card className="shadow-lg">
+                  <CardHeader>
+                    <CardTitle>{d.reports.title}</CardTitle>
+                    <CardDescription>{d.reports.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                      <div className="space-y-6">
+                        <div>
+                          <label className="block text-sm font-medium text-muted-foreground mb-2">{d.reports.standardLabel}</label>
+                          <div className="grid grid-cols-2 gap-4">
+                            <Button onClick={() => setSelectedStandard('iso14064')} variant={selectedStandard === 'iso14064' ? 'default' : 'outline'} className="h-auto py-3"><div className="text-center"><FileText className="w-6 h-6 mx-auto mb-1" /><p className="font-medium text-xs">ISO 14064-1:2018</p></div></Button>
+                            <Button onClick={() => setSelectedStandard('ghg')} variant={selectedStandard === 'ghg' ? 'default' : 'outline'} className="h-auto py-3"><div className="text-center"><Building2 className="w-6 h-6 mx-auto mb-1" /><p className="font-medium text-xs">GHG Protocol</p></div></Button>
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-muted-foreground mb-2">{d.reports.orgInfoLabel}</label>
+                          <Input placeholder={d.reports.orgNamePlaceholder} value={reportData.organizacion} onChange={(e) => setReportData({...reportData, organizacion: e.target.value})} className="mb-2" />
+                          <Input placeholder={d.reports.periodPlaceholder} value={reportData.periodo} onChange={(e) => setReportData({...reportData, periodo: e.target.value})} />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-muted-foreground mb-2">{d.reports.limitLabel}</label>
+                          <Select value={reportData.limiteOrganizacional} onValueChange={(value) => setReportData({...reportData, limiteOrganizacional: value})}>
+                            <SelectTrigger><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="control-operacional">{d.reports.limits.operational}</SelectItem>
+                              <SelectItem value="control-financiero">{d.reports.limits.financial}</SelectItem>
+                              <SelectItem value="participacion-accionaria">{d.reports.limits.equity}</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div className="bg-muted rounded-xl p-6 flex flex-col justify-between">
+                          <div>
+                              <h3 className="text-lg font-semibold text-foreground mb-4">{d.reports.previewTitle}</h3>
+                              <div className="bg-background rounded-lg p-4 shadow-sm text-sm space-y-1">
+                                  <p><strong>{d.reports.standardLabel}:</strong> {selectedStandard === 'iso14064' ? 'ISO 14064-1:2018' : 'GHG Protocol'}</p>
+                                  <p><strong>{d.reports.orgNamePlaceholder}:</strong> {reportData.organizacion || 'N/A'}</p>
+                                  <p><strong>{d.reports.periodPlaceholder}:</strong> {reportData.periodo || 'N/A'}</p>
+                              </div>
+                          </div>
+                        <Button onClick={generateReport} className="w-full mt-4">
+                          <Download className="mr-2 h-4 w-4" />
+                          {d.reports.generateButton}
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </>
+         )}
       </div>
 
-      <div className="mx-auto grid w-full max-w-5xl gap-8 mt-4">
-        <Card>
-            <CardHeader>
-                <CardTitle>{dictionary.main.title}</CardTitle>
-                <CardDescription>{dictionary.main.description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-                 <p>{dictionary.main.content}</p>
-            </CardContent>
-            <CardFooter className={cn("border-t px-6 py-4", !showAdminFeatures && 'hidden')}>
-              <Button variant="outline" size="sm">
-                  <Pencil className="mr-2 h-4 w-4" />
-                  {dictionary.admin.editContent}
-              </Button>
-            </CardFooter>
-        </Card>
-
-        <div className="grid gap-6 md:grid-cols-3">
-          <Card className="flex flex-col">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{dictionary.cards.regulations.title}</CardTitle>
-              <Gavel className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent className="flex-grow">
-                <p className="text-sm text-muted-foreground">{dictionary.cards.regulations.description}</p>
-            </CardContent>
-            <CardFooter className={cn(!showAdminFeatures && "hidden")}>
-              <Button className="w-full">{dictionary.admin.manage}</Button>
-            </CardFooter>
-          </Card>
-          <Card className="flex flex-col">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{dictionary.cards.reports.title}</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent className="flex-grow">
-                 <p className="text-sm text-muted-foreground">{dictionary.cards.reports.description}</p>
-            </CardContent>
-            <CardFooter className={cn(!showAdminFeatures && "hidden")}>
-              <Button className="w-full">{dictionary.admin.manage}</Button>
-            </CardFooter>
-          </Card>
-          <Card className="flex flex-col">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{dictionary.cards.audits.title}</CardTitle>
-              <ShieldCheck className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent className="flex-grow">
-                 <p className="text-sm text-muted-foreground">{dictionary.cards.audits.description}</p>
-            </CardContent>
-            <CardFooter className={cn(!showAdminFeatures && "hidden")}>
-              <Button className="w-full">{dictionary.admin.manage}</Button>
-            </CardFooter>
-          </Card>
-        </div>
-      </div>
+       <ValorizedResidueDialog
+          open={isResidueDialogOpen}
+          onOpenChange={setResidueDialogOpen}
+          dictionary={dialogDictionary}
+          emissionFactors={emissionFactors}
+          onResidueAdded={handleResidueAdded}
+        />
     </div>
   );
-}
+};
+
+export default GHGReportingSystem;

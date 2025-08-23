@@ -911,55 +911,64 @@
     }
   },
   "compliancePage": {
-    "title": "GHG Reporting System",
-    "description": "Manage your greenhouse gas emissions inventory according to international standards.",
+    "title": "Sistema de Reporte GEI",
+    "description": "Gestiona tu inventario de emisiones de gases de efecto invernadero según estándares internacionales.",
     "reportingSystem": {
-        "title": "GHG Reporting System",
-        "subtitle": "ISO 14064-1:2018 & GHG Protocol Corporate Standard"
+      "title": "Sistema de Reporte GEI",
+      "subtitle": "Norma ISO 14064-1:2018 y Protocolo GEI Corporativo"
     },
     "tabs": {
-        "database": "Factors Database",
-        "valorizedResidues": "Valorized Residues",
-        "reports": "Report Generator"
+      "database": "Base de Datos de Factores",
+      "valorizedResidues": "Residuos Valorizados",
+      "reports": "Generador de Reportes"
     },
     "database": {
-        "title": "Emission Factors",
-        "searchPlaceholder": "Search factors...",
-        "factor": "Factor",
-        "unit": "Unit",
-        "region": "Region",
-        "source": "Source",
-        "noResults": "No emission factors found with that criteria."
+      "title": "Factores de Emisión",
+      "searchPlaceholder": "Buscar factores...",
+      "factor": "Factor",
+      "unit": "Unidad",
+      "region": "Región",
+      "source": "Fuente",
+      "noResults": "No se encontraron factores de emisión con ese criterio."
     },
     "valorized": {
-        "title": "My Valorized Residues",
-        "description": "Log the materials you have recycled to calculate your avoided emissions.",
-        "addButton": "Add Residue",
-        "listTitle": "Logged Residues",
-        "noResidues": "You have not logged any valorized residues yet.",
-        "avoided": "avoided",
-        "totalAvoided": {
-            "title": "Total Emissions Avoided",
-            "description": "Sum of all CO2e emissions avoided through recycling."
-        }
+      "title": "Mis Residuos Valorizados",
+      "description": "Registra los materiales que has reciclado para calcular tus emisiones evitadas.",
+      "addButton": "Añadir Residuo",
+      "listTitle": "Residuos Registrados",
+      "noResidues": "Aún no has registrado ningún residuo valorizado.",
+      "avoided": "evitados",
+      "totalAvoided": {
+        "title": "Total de Emisiones Evitadas",
+        "description": "Suma de todas las emisiones de CO2e evitadas mediante el reciclaje."
+      }
     },
     "reports": {
-        "title": "Report Generator",
-        "description": "Configure and generate your GHG inventory report.",
-        "standardLabel": "Reporting Standard",
-        "orgInfoLabel": "Organization Information",
-        "orgNamePlaceholder": "Organization Name",
-        "periodPlaceholder": "Reporting Period (e.g., 2024)",
-        "limitLabel": "Organizational Boundary",
-        "limits": {
-            "operational": "Operational Control",
-            "financial": "Financial Control",
-            "equity": "Equity Share"
-        },
-        "previewTitle": "Report Preview",
-        "generateButton": "Generate Report"
+      "title": "Generador de Reportes",
+      "description": "Configura y genera tu reporte de inventario de GEI.",
+      "standardLabel": "Norma de Reporte",
+      "orgInfoLabel": "Información de la Organización",
+      "orgNamePlaceholder": "Nombre de la Organización",
+      "periodPlaceholder": "Período de Reporte (ej., 2024)",
+      "limitLabel": "Límite Organizacional",
+      "limits": {
+        "operational": "Control Operacional",
+        "financial": "Control Financiero",
+        "equity": "Participación Accionaria"
+      },
+      "previewTitle": "Vista Previa del Reporte",
+      "generateButton": "Generar Reporte"
     },
-    "scope": "Scope"
+    "scope": "Alcance",
+    "pleaseLogin": "Por favor, inicia sesión para ver esta página.",
+    "toast": {
+      "errorTitle": "Error",
+      "loadError": "No se pudieron cargar los datos. Por favor, inténtalo más tarde.",
+      "reportGeneration": {
+        "devTitle": "Función en desarrollo",
+        "devDescription": "La generación de reportes se implementará próximamente."
+      }
+    }
   },
   "valorizedResidueDialog": {
     "title": "Añadir Residuo Valorizado",

@@ -55,8 +55,8 @@ const GHGReportingSystem = () => {
       } catch (error) {
         console.error("Failed to fetch compliance data:", error);
         toast({
-          title: "Error",
-          description: "Could not load data. Please try again later.",
+          title: d?.toast.errorTitle || "Error",
+          description: d?.toast.loadError || "Could not load data. Please try again later.",
           variant: "destructive"
         })
       } finally {
@@ -68,7 +68,7 @@ const GHGReportingSystem = () => {
     if (!isAuthLoading) {
       fetchData();
     }
-  }, [user, isAuthLoading, toast]);
+  }, [user, isAuthLoading, toast, d]);
 
 
   const filteredFactors = useMemo(() => {
@@ -94,7 +94,7 @@ const GHGReportingSystem = () => {
   const generateReport = () => {
     // Implement report generation logic here
     console.log("Generating report with data:", reportData, "and standard:", selectedStandard);
-    toast({ title: "Función en desarrollo", description: "La generación de reportes se implementará próximamente." });
+    toast({ title: d?.toast.reportGeneration.devTitle, description: d?.toast.reportGeneration.devDescription });
   };
 
   const getCategoryIcon = (categoria?: string) => {
@@ -128,7 +128,7 @@ const GHGReportingSystem = () => {
   if (!user) {
     return (
         <div className="flex h-screen w-full items-center justify-center">
-            <p>Please log in to view this page.</p>
+            <p>{d.pleaseLogin}</p>
         </div>
     );
   }
@@ -352,3 +352,5 @@ const GHGReportingSystem = () => {
 };
 
 export default GHGReportingSystem;
+
+    

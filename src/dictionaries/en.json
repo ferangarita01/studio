@@ -959,7 +959,16 @@
         "previewTitle": "Report Preview",
         "generateButton": "Generate Report"
     },
-    "scope": "Scope"
+    "scope": "Scope",
+    "pleaseLogin": "Please log in to view this page.",
+    "toast": {
+      "errorTitle": "Error",
+      "loadError": "Could not load data. Please try again later.",
+      "reportGeneration": {
+        "devTitle": "Function in development",
+        "devDescription": "Report generation will be implemented soon."
+      }
+    }
   },
   "valorizedResidueDialog": {
     "title": "Add Valorized Residue",
@@ -1056,7 +1065,3 @@
 }
 
     
-
-    
-
-
