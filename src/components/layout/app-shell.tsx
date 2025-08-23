@@ -569,7 +569,11 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
         {navItems.map((item) => {
           const label = navDictionary.links[item.labelKey as keyof typeof navDictionary.links];
           const href = getHref(item.href);
-          const isActive = item.href === '/' ? pathname === href : pathname.startsWith(href);
+          
+          // Exact match for the dashboard, startsWith for others to handle sub-routes.
+          const isActive = item.href === '/'
+            ? pathname === href
+            : pathname.startsWith(href) && (pathname.length === href.length || pathname[href.length] === '/');
 
           return (
              <Link
