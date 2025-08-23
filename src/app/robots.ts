@@ -1,7 +1,8 @@
+
 import { MetadataRoute } from 'next'
  
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://wastewise-hdbhk.web.app';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://wastewise.space';
   return {
     rules: {
       userAgent: '*',
