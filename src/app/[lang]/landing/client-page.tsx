@@ -442,9 +442,6 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                                  <Button asChild className="bg-gradient-to-br from-emerald-500 via-emerald-600 to-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 hover:opacity-95 transition h-auto rounded-xl">
                                     <a href="#roi"><Calculator /><span>{d.hero.cta}</span></a>
                                  </Button>
-                                 <Button asChild variant="outline" className="px-5 py-3 text-sm font-medium text-slate-200 ring-1 ring-white/10 hover:bg-white/5 transition h-auto rounded-xl bg-transparent border-white/10">
-                                     <a href="#how"><PlayCircle /><span>{d.valueProposition.cta}</span></a>
-                                 </Button>
                             </div>
                              <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3">
                                  <StatCard icon={<TrendingDown className="h-4 w-4" />} title={d.valueProposition.stats.stat1.title} value={d.valueProposition.stats.stat1.value} subtitle={d.valueProposition.stats.stat1.subtitle} />
