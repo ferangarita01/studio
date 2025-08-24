@@ -2,44 +2,49 @@
 {
   "rules": {
     "users": {
+      ".indexOn": ["role", "assignedCompanyId"],
       "$userId": {
-        ".read": "$userId === auth.uid",
-        ".write": "$userId === auth.uid",
+        ".read": "auth != null && (auth.uid === $userId || root.child('users').child(auth.uid).child('role').val() === 'admin')",
+        ".write": "auth != null && (auth.uid === $userId || root.child('users').child(auth.uid).child('role').val() === 'admin')",
         "residues": {
-          ".read": "$userId === auth.uid",
-          ".write": "$userId === auth.uid"
+          ".read": "auth.uid === $userId",
+          ".write": "auth.uid === $userId"
         }
       }
     },
     "companies": {
-      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
-      ".indexOn": "assignedUserUid",
-      "$companyId": {
-        ".read": "auth != null && (root.child('users').child(auth.uid).child('assignedCompanyId').val() == $companyId || root.child('users').child(auth.uid).child('role').val() == 'admin')",
-        ".write": "auth != null && (root.child('users').child(auth.uid).child('assignedCompanyId').val() == $companyId || root.child('users').child(auth.uid).child('role').val() == 'admin')"
-      }
+      ".read": "auth.uid != null",
+      ".write": "auth.uid != null && root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      ".indexOn": ["assignedUserUid"]
     },
     "materials": {
-      ".read": "auth != null",
-      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
+      ".read": "auth.uid != null",
+      ".write": "auth.uid != null && root.child('users').child(auth.uid).child('role').val() === 'admin'"
     },
     "factors": {
-      ".read": "auth != null",
-      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
+      ".read": "auth.uid != null",
+      ".write": "auth.uid != null && root.child('users').child(auth.uid).child('role').val() === 'admin'"
     },
     "wasteLog": {
-      ".read": "auth != null",
-      ".write": "auth != null"
+      ".indexOn": ["companyId"],
+      "$logId": {
+        ".read": "auth.uid != null && (root.child('users').child(auth.uid).child('assignedCompanyId').val() === data.child('companyId').val() || root.child('users').child(auth.uid).child('role').val() === 'admin')",
+        ".write": "auth.uid != null && (root.child('users').child(auth.uid).child('assignedCompanyId').val() === newData.child('companyId').val() || root.child('users').child(auth.uid).child('role').val() === 'admin')"
+      }
     },
     "disposalEvents": {
-       ".read": "auth != null",
-       ".write": "auth != null"
+      ".indexOn": ["companyId"],
+      "$eventId": {
+        ".read": "auth.uid != null && (root.child('users').child(auth.uid).child('assignedCompanyId').val() === data.child('companyId').val() || root.child('users').child(auth.uid).child('role').val() === 'admin')",
+        ".write": "auth.uid != null && (root.child('users').child(auth.uid).child('assignedCompanyId').val() === newData.child('companyId').val() || root.child('users').child(auth.uid).child('role').val() === 'admin')"
+      }
     },
     "disposalCertificates": {
-       ".read": "auth != null",
-       ".write": "auth != null"
+      ".indexOn": ["companyId"],
+      "$certId": {
+        ".read": "auth.uid != null && (root.child('users').child(auth.uid).child('assignedCompanyId').val() === data.child('companyId').val() || root.child('users').child(auth.uid).child('role').val() === 'admin')",
+        ".write": "auth.uid != null && root.child('users').child(auth.uid).child('role').val() === 'admin'"
+      }
     }
   }
 }
-
-    
