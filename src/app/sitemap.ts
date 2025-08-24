@@ -3,7 +3,7 @@ import { MetadataRoute } from 'next';
 import { i18n } from '@/i18n-config';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://wastewise.space';
+  const baseUrl = 'https://wastewise.space';
   const lastModified = new Date();
 
   const pages = ['landing', 'login', 'pricing', 'asorecifuentes'];
