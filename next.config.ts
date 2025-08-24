@@ -12,10 +12,8 @@ const nextConfig: NextConfig = {
       },
     ])
   },
-  experimental: {
-    sitemap: false,
-    robots: false,
-  },
+  sitemap: false,
+  robots: false,
   images: {
     remotePatterns: [
       {
