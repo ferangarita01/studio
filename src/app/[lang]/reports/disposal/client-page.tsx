@@ -8,12 +8,13 @@ import { Button } from "@/components/ui/button";
 import { useCompany } from "@/components/layout/app-shell";
 import { useAuth } from "@/context/auth-context";
 import type { DisposalCertificate } from "@/lib/types";
-import { Download, Loader2, PlusCircle } from "lucide-react";
+import { Download, Loader2, PlusCircle, Mail } from "lucide-react";
 import { UploadCertificateDialog } from '@/components/upload-certificate-dialog';
 import { cn } from '@/lib/utils';
 import type { Locale } from '@/i18n-config';
 import type { Dictionary } from '@/lib/get-dictionary';
-import { getDisposalCertificates } from '@/services/waste-data-service';
+import { getDisposalCertificates, sendCertificateByEmail } from '@/services/waste-data-service';
+import { useToast } from '@/hooks/use-toast';
 
 type PageDictionary = Dictionary["reportsPage"]["finalDisposal"];
 type NavDictionary = Dictionary["navigation"]["links"];
@@ -31,6 +32,7 @@ export function FinalDisposalClient({ dictionary, navDictionary, lang }: FinalDi
   const [isClient, setIsClient] = React.useState(false);
   const [isUploadDialogOpen, setUploadDialogOpen] = React.useState(false);
   const [isLoadingData, setIsLoadingData] = React.useState(true);
+  const { toast } = useToast();
 
 
   React.useEffect(() => {
@@ -59,6 +61,23 @@ export function FinalDisposalClient({ dictionary, navDictionary, lang }: FinalDi
 
   const handleCertificateAdded = (newCertificate: DisposalCertificate) => {
     setCertificates(prev => [newCertificate, ...prev].sort((a,b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()));
+  };
+
+  const handleSendEmail = async (certificateId: string) => {
+    if (!selectedCompany) return;
+    try {
+        await sendCertificateByEmail(certificateId, selectedCompany.id);
+        toast({
+            title: dictionary.toast.emailSent.title,
+            description: dictionary.toast.emailSent.description,
+        });
+    } catch (error) {
+        toast({
+            title: dictionary.toast.emailError.title,
+            description: dictionary.toast.emailError.description,
+            variant: "destructive"
+        });
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -119,7 +138,11 @@ export function FinalDisposalClient({ dictionary, navDictionary, lang }: FinalDi
             <TableRow key={cert.id}>
               <TableCell className="font-medium">{cert.fileName}</TableCell>
               <TableCell>{formatDate(cert.uploadedAt)}</TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-right space-x-2">
+                 <Button onClick={() => handleSendEmail(cert.id)} variant="outline" size="sm">
+                    <Mail className="mr-2 h-4 w-4" />
+                    {dictionary.table.sendEmail}
+                 </Button>
                 <Button asChild variant="outline" size="sm">
                   <a href={cert.fileUrl} target="_blank" rel="noopener noreferrer" download={cert.fileName}>
                     <Download className="mr-2 h-4 w-4" />

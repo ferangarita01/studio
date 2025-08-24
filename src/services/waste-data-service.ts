@@ -396,6 +396,45 @@ export async function addDisposalCertificate(
   return { id: newCertificateRef.key!, ...certificateData };
 }
 
+export async function sendCertificateByEmail(certificateId: string, companyId: string): Promise<void> {
+    // 1. Get Company to find assigned user
+    const company = await getCompanyById(companyId);
+    if (!company || !company.assignedUserUid) {
+        throw new Error("No user assigned to this company.");
+    }
+
+    // 2. Get User Profile to find email
+    const userProfile = await getUserProfile(company.assignedUserUid);
+    if (!userProfile || !userProfile.email) {
+        throw new Error("Assigned user does not have an email address.");
+    }
+
+    // 3. Get Certificate details
+    const certRef = ref(db, `disposalCertificates/${certificateId}`);
+    const certSnapshot = await get(certRef);
+    if (!certSnapshot.exists()) {
+        throw new Error("Certificate not found.");
+    }
+    const certificate = certSnapshot.val();
+
+    // 4. Simulate sending email (in a real app, you'd use a service like SendGrid, Resend, etc.)
+    console.log("--- SIMULATING EMAIL ---");
+    console.log(`To: ${userProfile.email}`);
+    console.log(`From: no-reply@wastewise.space`);
+    console.log(`Subject: Your Disposal Certificate: ${certificate.fileName}`);
+    console.log(`Body:`);
+    console.log(`Hello ${userProfile.fullName || 'User'},`);
+    console.log(`Here is your requested disposal certificate:`);
+    console.log(`File: ${certificate.fileName}`);
+    console.log(`Download Link: ${certificate.fileUrl}`);
+    console.log("--- END SIMULATION ---");
+
+    // In a real app, the code below would be replaced by an API call to your email service.
+    // For now, we just resolve the promise.
+    return Promise.resolve();
+}
+
+
 // --- GHG / Carbon Footprint Service ---
 
 export async function getEmissionFactors(): Promise<EmissionFactor[]> {
@@ -416,7 +455,9 @@ export async function getValorizedResidues(userId: string): Promise<ValorizedRes
     const residuesRef = ref(db, `users/${userId}/residues`);
     const snapshot = await get(residuesRef);
     if (snapshot.exists()) {
-        return snapshotToArray(snapshot).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        const residues = snapshotToArray(snapshot);
+        return residues.map(r => ({ ...r, date: new Date(r.date) }))
+                       .sort((a, b) => b.date.getTime() - a.date.getTime());
     }
     return [];
 }

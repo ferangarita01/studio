@@ -778,7 +778,8 @@
         "fileName": "Nombre del Archivo",
         "uploadDate": "Fecha de Subida",
         "actions": "Acciones",
-        "download": "Descargar"
+        "download": "Descargar",
+        "sendEmail": "Enviar Email"
       },
       "uploadDialog": {
         "title": "Añadir Nuevo Certificado por Enlace",
@@ -805,6 +806,16 @@
           "company": "Por favor, seleccione una empresa.",
           "fileUrl": "Por favor, ingrese una URL pública válida.",
           "fileName": "Por favor, ingrese un nombre para el certificado."
+        }
+      },
+      "toast": {
+        "emailSent": {
+          "title": "Correo Enviado",
+          "description": "El certificado ha sido enviado al correo registrado de la empresa."
+        },
+        "emailError": {
+          "title": "Error de Envío",
+          "description": "No se pudo enviar el correo. La empresa podría no tener un usuario asignado."
         }
       }
     },
