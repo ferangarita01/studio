@@ -1,9 +1,8 @@
 
 import { getDictionary } from "@/lib/get-dictionary";
 import { DashboardPageContent } from "@/components/dashboard-client";
-import type { Locale } from "@/i18n-config";
 import type { Metadata } from 'next';
-import type { PageProps } from '../../../.next/types/app/[lang]/page';
+import type { PageProps } from '@/lib/types';
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const dictionary = await getDictionary(params.lang);

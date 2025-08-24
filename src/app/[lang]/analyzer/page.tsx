@@ -1,8 +1,7 @@
 
 import { getDictionary } from "@/lib/get-dictionary";
 import { AIAnalyzerClient } from "./client-page";
-import type { Locale } from "@/i18n-config";
-import type { PageProps } from "../../../../.next/types/app/[lang]/page";
+import type { PageProps } from "@/lib/types";
 
 
 export default async function AIAnalyzerPage({

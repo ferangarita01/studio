@@ -1,10 +1,9 @@
 
 import { getDictionary } from "@/lib/get-dictionary";
-import type { Locale } from "@/i18n-config";
 import { MaterialsClient } from "./client-page";
 import { getMaterials } from "@/services/waste-data-service";
 import type { Material } from "@/lib/types";
-import type { PageProps } from "../../../../.next/types/app/[lang]/page";
+import type { PageProps } from "@/lib/types";
 
 export const revalidate = 3600; // Revalidate the data every hour
 

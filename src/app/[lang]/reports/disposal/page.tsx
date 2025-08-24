@@ -1,10 +1,9 @@
 
 import * as React from 'react';
 import { getDictionary } from '@/lib/get-dictionary';
-import type { Locale } from '@/i18n-config';
 import { FinalDisposalClient } from './client-page';
 import { Loader2 } from 'lucide-react';
-import type { PageProps } from '../../../../../.next/types/app/[lang]/reports/disposal/page';
+import type { PageProps } from '@/lib/types';
 
 // This page is now a Server Component to fetch initial dictionary data.
 export default async function FinalDisposalPage({ params }: PageProps) {

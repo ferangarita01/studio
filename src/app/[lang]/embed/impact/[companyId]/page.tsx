@@ -1,8 +1,7 @@
 
 import { getCompanyById, getWasteChartData } from "@/services/waste-data-service";
 import { EmbeddableImpactPanelClient } from "./client-page";
-import type { Locale } from "@/i18n-config";
-import type { PageProps } from "../../../../../../.next/types/app/[lang]/embed/impact/[companyId]/page";
+import type { PageProps } from "@/lib/types";
 
 export const revalidate = 60; // Revalidate the data every 60 seconds
 
@@ -27,7 +26,7 @@ async function getImpactData(companyId: string) {
 }
 
 
-export default async function EmbeddableImpactPanel({ params }: PageProps) {
+export default async function EmbeddableImpactPanel({ params }: PageProps<{ companyId: string }>) {
     const data = await getImpactData(params.companyId);
 
     if (!data) {

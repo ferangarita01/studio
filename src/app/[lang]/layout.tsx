@@ -7,7 +7,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import Script from 'next/script';
-import type { PageProps } from '../../../.next/types/app/[lang]/page';
+import type { PageProps } from '@/lib/types';
 
 const inter = Inter({
   subsets: ['latin'],

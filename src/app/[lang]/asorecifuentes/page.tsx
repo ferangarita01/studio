@@ -1,8 +1,7 @@
 
 import { getDictionary } from "@/lib/get-dictionary";
-import type { Locale } from "@/i18n-config";
+import type { PageProps } from "@/lib/types";
 import { AsorecifuentesClient } from "./client-page";
-import type { PageProps } from "../../../../.next/types/app/[lang]/page";
 
 export default async function AsorecifuentesPage({
   params: { lang },
