@@ -15,6 +15,7 @@ const adminApp =
   initializeApp(
     {
       credential: serviceAccount ? cert(serviceAccount) : undefined,
+      databaseURL: "https://wastewise-hdbhk-default-rtdb.firebaseio.com"
     },
     'firebase-admin'
   );
