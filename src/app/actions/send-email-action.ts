@@ -42,19 +42,33 @@ async function sendEmail(payload: EmailPayload): Promise<void> {
 }
 
 export async function sendCertificateByEmail(certificateId: string, companyId: string): Promise<void> {
-    // 1. Get Company to find assigned user
+    // 1. Get Company to find assigned user and check for special cases
     const company = await getCompanyById(companyId);
-    if (!company || !company.assignedUserUid) {
-        throw new Error("No user assigned to this company.");
+    if (!company) {
+        throw new Error("Company not found.");
     }
 
-    // 2. Get User Profile to find email
-    const userProfile = await getUserProfile(company.assignedUserUid);
-    if (!userProfile || !userProfile.email) {
-        throw new Error("Assigned user does not have an email address.");
+    let recipientEmail: string | undefined;
+    let recipientName: string = 'Usuario';
+
+    // SPECIAL CASE: If the company is Ecocircle, send to a specific email
+    if (company.name.toLowerCase() === 'ecocircle') {
+        recipientEmail = 'ferangaritam@gmail.com';
+    } else if (company.assignedUserUid) {
+        // Standard case: Get User Profile to find email
+        const userProfile = await getUserProfile(company.assignedUserUid);
+        if (userProfile) {
+            recipientEmail = userProfile.email;
+            recipientName = userProfile.fullName || 'Usuario';
+        }
+    }
+    
+    if (!recipientEmail) {
+        throw new Error("Recipient email could not be determined. The company may not have a user assigned or is not configured for special email routing.");
     }
 
-    // 3. Get Certificate details
+
+    // 2. Get Certificate details
     const certRef = ref(db, `disposalCertificates/${certificateId}`);
     const certSnapshot = await get(certRef);
     if (!certSnapshot.exists()) {
@@ -62,14 +76,14 @@ export async function sendCertificateByEmail(certificateId: string, companyId: s
     }
     const certificate = certSnapshot.val();
 
-    // 4. Construct and send the email
+    // 3. Construct and send the email
     const emailPayload: EmailPayload = {
-        to: userProfile.email,
+        to: recipientEmail,
         from: "WasteWise <onboarding@resend.dev>", // IMPORTANT: Resend requires a verified domain. 'onboarding@resend.dev' is for testing.
         subject: `Tu Certificado de Disposición: ${certificate.fileName}`,
         html: `
             <h1>Certificado de Disposición Final</h1>
-            <p>Hola ${userProfile.fullName || 'Usuario'},</p>
+            <p>Hola ${recipientName},</p>
             <p>Adjunto encontrarás el certificado de disposición final que solicitaste:</p>
             <ul>
                 <li><strong>Archivo:</strong> ${certificate.fileName}</li>
