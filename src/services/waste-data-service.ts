@@ -18,6 +18,10 @@ import { db, storage } from "@/lib/firebase";
 import { wasteData, weeklyReportData, monthlyReportData } from "@/lib/data";
 import type { WasteEntry, Material, DisposalEvent, ReportData, Company, UserRole, UserProfile, PlanType, DisposalCertificate, EmissionFactor, ValorizedResidue } from "@/lib/types";
 import { string } from "zod";
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 
 // Helper to convert snapshot to array
 const snapshotToArray = (snapshot: any) => {
@@ -396,7 +400,7 @@ export async function addDisposalCertificate(
   return { id: newCertificateRef.key!, ...certificateData };
 }
 
-// --- Email Service (Simulated) ---
+// --- Email Service (Real Implementation) ---
 
 interface EmailPayload {
     to: string;
@@ -406,23 +410,19 @@ interface EmailPayload {
 }
 
 async function sendEmail(payload: EmailPayload): Promise<void> {
-    // THIS IS WHERE YOU WOULD INTEGRATE A REAL EMAIL SERVICE
-    // For example, using Resend, SendGrid, Mailgun, etc.
-    //
-    // Example with Resend (if you were to use it):
-    // const resend = new Resend(process.env.RESEND_API_KEY);
-    // await resend.emails.send(payload);
-    
-    console.log("--- SIMULATING EMAIL ---");
-    console.log(`To: ${payload.to}`);
-    console.log(`From: ${payload.from}`);
-    console.log(`Subject: ${payload.subject}`);
-    console.log(`Body:`);
-    console.log(payload.html);
-    console.log("--- END SIMULATION ---");
+    try {
+        const { data, error } = await resend.emails.send(payload);
 
-    // For now, we just resolve the promise to simulate a successful send.
-    return Promise.resolve();
+        if (error) {
+            console.error("Resend API Error:", error);
+            throw new Error(error.message);
+        }
+
+        console.log("Email sent successfully:", data);
+    } catch (error) {
+        console.error("Failed to send email:", error);
+        throw error;
+    }
 }
 
 export async function sendCertificateByEmail(certificateId: string, companyId: string): Promise<void> {
@@ -449,7 +449,7 @@ export async function sendCertificateByEmail(certificateId: string, companyId: s
     // 4. Construct and send the email
     const emailPayload: EmailPayload = {
         to: userProfile.email,
-        from: "WasteWise <no-reply@wastewise.space>",
+        from: "WasteWise <onboarding@resend.dev>", // IMPORTANT: Resend requires a verified domain. 'onboarding@resend.dev' is for testing.
         subject: `Tu Certificado de Disposición: ${certificate.fileName}`,
         html: `
             <h1>Certificado de Disposición Final</h1>
