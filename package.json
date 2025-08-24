@@ -46,7 +46,6 @@
         "@hookform/resolvers": "^3.4.2",
         "@paypal/react-paypal-js": "^8.3.0",
         "@mercadopago/sdk-react": "^0.0.19",
-        "mercadopago": "^2.0.10",
         "firebase": "^10.12.2",
         "firebase-admin": "^12.1.1",
         "genkit": "^1.0.0-beta.23",
