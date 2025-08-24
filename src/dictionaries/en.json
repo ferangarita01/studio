@@ -58,7 +58,7 @@
     "header": {
       "title": "WasteWise",
       "login": "Log In",
-      "getStarted": "Request Collection",
+      "getStarted": "Solicitar Recolección",
       "nav": {
         "useCases": "Use Cases",
         "features": "Features",
@@ -68,7 +68,7 @@
     "hero": {
       "title": "Turn Your Waste into Revenue Automatically",
       "subtitle": "Optimize recycling with AI, ensure regulatory compliance, and generate additional income for your business or event.",
-      "cta": "Quote and Sell Your Recycling"
+      "cta": "Cotiza y Vende tu Reciclaje"
     },
     "valueProposition": {
       "title": "From Cost Center to Profit Generator",
