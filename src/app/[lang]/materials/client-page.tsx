@@ -30,8 +30,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MaterialDialog } from "@/components/material-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Skeleton } from "@/components/ui/skeleton";
-import { getMaterials, addMaterial, updateMaterial, deleteMaterial } from "@/services/waste-data-service";
+import { addMaterial, updateMaterial, deleteMaterial } from "@/services/waste-data-service";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -49,11 +48,12 @@ import { cn } from "@/lib/utils";
 
 interface MaterialsClientProps {
   dictionary: Dictionary["materialsPage"];
+  initialMaterials: Material[];
 }
 
-export function MaterialsClient({ dictionary }: MaterialsClientProps) {
-  const [materials, setMaterials] = useState<Material[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClientProps) {
+  const [materials, setMaterials] = useState<Material[]>(initialMaterials);
+  const [isLoading, setIsLoading] = useState(false); // Only for actions, not for initial load
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(null);
   const { toast } = useToast();
@@ -62,17 +62,8 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
 
   useEffect(() => {
     setIsClient(true);
-  }, []);
-  
-  useEffect(() => {
-    const fetchMaterials = async () => {
-        setIsLoading(true);
-        const fetchedMaterials = await getMaterials();
-        setMaterials(fetchedMaterials);
-        setIsLoading(false);
-    };
-    fetchMaterials();
-  }, []);
+    setMaterials(initialMaterials);
+  }, [initialMaterials]);
 
   const handleAdd = () => {
     setSelectedMaterial(null);
@@ -86,6 +77,7 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
 
   const handleDelete = async (materialId: string) => {
     if (!user) return;
+    setIsLoading(true);
     try {
       await deleteMaterial(materialId, user.uid);
       setMaterials(materials.filter(m => m.id !== materialId));
@@ -99,11 +91,14 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
         description: error.message || "Failed to delete material.",
         variant: "destructive"
       });
+    } finally {
+      setIsLoading(false);
     }
   };
   
   const handleSave = useCallback(async (materialData: Material) => {
     if (!user) return;
+    setIsLoading(true);
     try {
       if (materialData.id) { // Editing existing material
         await updateMaterial(materialData, user.uid);
@@ -123,6 +118,8 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
         description: error.message || "Failed to save material.",
         variant: "destructive"
       });
+    } finally {
+      setIsLoading(false);
     }
   }, [materials, toast, dictionary, user]);
 
@@ -176,13 +173,7 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {isLoading ? (
-                     <TableRow>
-                      <TableCell colSpan={5} className="h-24 text-center">
-                         <Loader2 className="h-6 w-6 animate-spin mx-auto" />
-                      </TableCell>
-                    </TableRow>
-                  ) : materials.length > 0 ? (
+                  {materials.length > 0 ? (
                     materials.map((material) => (
                       <TableRow key={material.id}>
                         <TableCell className="font-medium">{material.name}</TableCell>
@@ -199,7 +190,7 @@ export function MaterialsClient({ dictionary }: MaterialsClientProps) {
                           <AlertDialog>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                <Button variant="ghost" className="h-8 w-8 p-0" disabled={isLoading}>
                                   <span className="sr-only">{dictionary.table.openMenu}</span>
                                   <MoreHorizontal className="h-4 w-4" />
                                 </Button>
