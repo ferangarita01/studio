@@ -5,14 +5,27 @@
 build:
   run:
     - npm i && npm run build
-  envs:
-    # Example: Make a Google Maps API key available during the build process
-    # The value for this key should be set as a secret in the App Hosting settings.
-    GOOGLE_GENAI_API_KEY: ''
-    RESEND_API_KEY: ''
+  env:
+    # Environment variables available during build and runtime
+    - variable: GOOGLE_GENAI_API_KEY
+      secret: GOOGLE_GENAI_API_KEY
+      availability:
+        - BUILD
+        - RUNTIME
+    - variable: RESEND_API_KEY
+      secret: RESEND_API_KEY
+      availability:
+        - BUILD
+        - RUNTIME
+
 runConfig:
   # Increase this value if you'd like to automatically spin up
   # more instances in response to increased traffic.
   maxInstances: 1
   # The command to start the Next.js production server.
-  args: ['npm', 'run', 'start']
+  args: [ 'npm', 'run', 'start' ]
+env:
+  - variable: GOOGLE_GENAI_API_KEY
+    secret: GOOGLE_GENAI_API_KEY
+  - variable: RESEND_API_KEY
+    secret: RESEND_API_KEY
