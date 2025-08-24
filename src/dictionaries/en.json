@@ -213,7 +213,7 @@
       "subtitle": "See potential income after service costs. Adjust contamination to see its impact.",
       "labels": {
         "wasteVolume": "Monthly Waste Volume (Kg)",
-        "disposalCost": "Final Disposal Cost / Kg (COP)",
+        "disposalCost": "Costo Disposición Final / Kg (COP)",
         "contaminationRate": "Contamination Rate",
         "salePrice": "Avg. Sale Price per Kg (COP)",
         "carbonFootprint": "Carbon Footprint Avoided (Kg CO₂e)"
@@ -999,66 +999,66 @@
     }
   },
   "companiesPage": {
-    "title": "Gestión de Empresas",
-    "cardTitle": "Todas las Empresas",
-    "cardDescription": "Asigne usuarios clientes a cada empresa.",
-    "noCompanies": "Aún no se han creado empresas. Añada una desde el menú desplegable de la barra lateral.",
+    "title": "Company Management",
+    "cardTitle": "All Companies",
+    "cardDescription": "Assign client users to each company.",
+    "noCompanies": "No companies have been created yet. Add one from the sidebar dropdown.",
     "table": {
-      "companyName": "Nombre de la Empresa",
-      "assignedClient": "Cliente Asignado",
+      "companyName": "Company Name",
+      "assignedClient": "Assigned Client",
       "plan": "Plan",
-      "actions": "Acciones",
-      "assign": "Asignar Cliente",
-      "reassign": "Re-asignar",
-      "unassigned": "Sin asignar",
-      "edit": "Editar",
-      "delete": "Eliminar"
+      "actions": "Actions",
+      "assign": "Assign Client",
+      "reassign": "Re-assign",
+      "unassigned": "Unassigned",
+      "edit": "Edit",
+      "delete": "Delete"
     },
     "assignDialog": {
-      "title": "Asignar Cliente",
-      "description": "Seleccione un cliente para asignar a",
-      "selectLabel": "Usuario Cliente",
-      "selectPlaceholder": "Seleccionar un cliente...",
-      "searchPlaceholder": "Buscar clientes...",
-      "cancel": "Cancelar",
-      "assign": "Asignar Cliente",
-      "unassign": "Ninguno (Desasignar)"
+      "title": "Assign Client",
+      "description": "Select a client to assign to",
+      "selectLabel": "Client User",
+      "selectPlaceholder": "Select a client...",
+      "searchPlaceholder": "Search clients...",
+      "cancel": "Cancel",
+      "assign": "Assign Client",
+      "unassign": "None (Unassign)"
     },
     "editDialog": {
-      "title": "Editar Empresa",
-      "description": "Actualice los detalles de esta empresa.",
-      "nameLabel": "Nombre de la Empresa",
-      "namePlaceholder": "ej., Exportaciones Globales S.A.",
-      "planLabel": "Plan de Suscripción",
-      "planStartDate": "Fecha de Inicio del Plan",
-      "planExpiryDate": "Fecha de Vencimiento del Plan",
-      "planPlaceholder": "Seleccione un plan",
+      "title": "Edit Company",
+      "description": "Update the details for this company.",
+      "nameLabel": "Company Name",
+      "namePlaceholder": "e.g., Global Exports Ltd.",
+      "planLabel": "Subscription Plan",
+      "planStartDate": "Plan Start Date",
+      "planExpiryDate": "Plan Expiry Date",
+      "planPlaceholder": "Select a plan",
       "plans": {
-        "Free": "Gratis",
+        "Free": "Free",
         "Premium": "Premium",
-        "Custom": "Personalizado"
+        "Custom": "Custom"
       },
-      "cancel": "Cancelar",
-      "update": "Actualizar"
+      "cancel": "Cancel",
+      "update": "Update"
     },
     "deleteDialog": {
-      "title": "¿Estás completamente seguro?",
-      "description": "Esta acción no se puede deshacer. Esto eliminará permanentemente la empresa y todos sus datos asociados (incluidos los usuarios asignados, registros de residuos y cronogramas).",
-      "cancel": "Cancelar",
-      "confirm": "Sí, eliminar empresa"
+      "title": "Are you absolutely sure?",
+      "description": "This action cannot be undone. This will permanently delete the company and all its associated data (including assigned users, waste logs, and schedules).",
+      "cancel": "Cancel",
+      "confirm": "Yes, delete company"
     },
     "toast": {
       "assign": {
-        "title": "Cliente Asignado",
-        "description": "El cliente ha sido asignado exitosamente a la empresa."
+        "title": "Client Assigned",
+        "description": "The client has been successfully assigned to the company."
       },
       "update": {
-        "title": "Empresa Actualizada",
-        "description": "Los detalles de la empresa se han actualizado correctamente."
+        "title": "Company Updated",
+        "description": "The company details have been successfully updated."
       },
       "delete": {
-        "title": "Empresa Eliminada",
-        "description": "La empresa y todos sus datos han sido eliminados."
+        "title": "Company Deleted",
+        "description": "The company and all its data have been deleted."
       }
     }
   }

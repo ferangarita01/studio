@@ -158,12 +158,12 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
                                   <DropdownMenuItem onClick={() => handleOpenAssignDialog(company)}>
                                     {company.assignedUserUid ? dictionary.table.reassign : dictionary.table.assign}
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem asChild>
-                                      <AlertDialogTrigger className="w-full text-destructive">
+                                  <AlertDialogTrigger asChild>
+                                      <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()}>
                                         <Trash2 className="mr-2 h-4 w-4" />
                                         {dictionary.table.delete}
-                                      </AlertDialogTrigger>
-                                  </DropdownMenuItem>
+                                      </DropdownMenuItem>
+                                  </AlertDialogTrigger>
                                 </DropdownMenuContent>
                               </DropdownMenu>
                               <AlertDialogContent>
@@ -213,5 +213,3 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
     </>
   );
 }
-
-    
