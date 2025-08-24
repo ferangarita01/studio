@@ -191,20 +191,22 @@ function CompanySwitcher() {
   }
 
   // Admin view
-  if (!selectedCompany && companies.length === 0) {
+  if (role === 'admin' && companies.length === 0) {
     return (
-      <div className="text-sm text-muted-foreground p-2 text-center">
-        {dictionary.companySwitcher.noCompanies}
-        {role === 'admin' && (
-           <Button variant="link" size="sm" onClick={() => setCreateOpen(true)} className="p-1">{dictionary.companySwitcher.createOne}</Button>
-        )}
-         <CreateCompanyDialog
-            dictionary={dictionary.createCompanyDialog}
-            open={isCreateOpen}
-            onOpenChange={setCreateOpen}
-            onCreate={handleCreateCompany}
-          />
-      </div>
+      <>
+        <div className="text-sm text-muted-foreground p-2 text-center">
+          {dictionary.companySwitcher.noCompanies}
+          <Button variant="link" size="sm" onClick={() => setCreateOpen(true)} className="p-1 h-auto">
+            {dictionary.companySwitcher.createOne}
+          </Button>
+        </div>
+        <CreateCompanyDialog
+          dictionary={dictionary.createCompanyDialog}
+          open={isCreateOpen}
+          onOpenChange={setCreateOpen}
+          onCreate={handleCreateCompany}
+        />
+      </>
     );
   }
 
