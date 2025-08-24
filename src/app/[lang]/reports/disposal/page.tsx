@@ -4,9 +4,10 @@ import { getDictionary } from '@/lib/get-dictionary';
 import type { Locale } from '@/i18n-config';
 import { FinalDisposalClient } from './client-page';
 import { Loader2 } from 'lucide-react';
+import type { PageProps } from '../../../../../.next/types/app/[lang]/reports/disposal/page';
 
 // This page is now a Server Component to fetch initial dictionary data.
-export default async function FinalDisposalPage({ params }: { params: { lang: Locale }}) {
+export default async function FinalDisposalPage({ params }: PageProps) {
   const dictionary = await getDictionary(params.lang);
 
   const pageDictionary = dictionary?.reportsPage?.finalDisposal;

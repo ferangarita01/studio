@@ -7,6 +7,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import Script from 'next/script';
+import type { PageProps } from '../../../.next/types/app/[lang]/page';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -26,8 +27,7 @@ const SEO_CONFIG = {
   }
 }
 
-export async function generateMetadata({ params: p }: { params: { lang: Locale } }): Promise<Metadata> {
-  const params = await Promise.resolve(p);
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const lang = params.lang;
   const seo = SEO_CONFIG[lang];
   
@@ -74,12 +74,11 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({
   children,
-  params: p,
+  params,
 }: Readonly<{
   children: React.ReactNode;
   params: { lang: Locale };
 }>) {
-  const params = await Promise.resolve(p);
   const { lang } = params;
   const dictionary = await getDictionary(lang);
 

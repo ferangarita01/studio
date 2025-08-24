@@ -2,14 +2,12 @@
 import { getDictionary } from "@/lib/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import { LoginClient } from "./client-page";
+import type { PageProps } from "../../../../.next/types/app/[lang]/page";
 
 export default async function LoginPage({
-  params: p,
-}: {
-  params: { lang: Locale };
-}) {
-  const params = await Promise.resolve(p);
-  const dictionary = await getDictionary(params.lang);
+  params: { lang },
+}: PageProps) {
+  const dictionary = await getDictionary(lang);
 
   // Robust check to ensure the validation dictionary is present before rendering.
   // This prevents runtime errors if the dictionary structure is incomplete.

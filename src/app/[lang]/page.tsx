@@ -3,9 +3,9 @@ import { getDictionary } from "@/lib/get-dictionary";
 import { DashboardPageContent } from "@/components/dashboard-client";
 import type { Locale } from "@/i18n-config";
 import type { Metadata } from 'next';
+import type { PageProps } from '../../../.next/types/app/[lang]/page';
 
-export async function generateMetadata({ params: p }: { params: { lang: Locale } }): Promise<Metadata> {
-  const params = await Promise.resolve(p);
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const dictionary = await getDictionary(params.lang);
   return {
     title: dictionary.navigation.links.dashboard,
@@ -15,12 +15,8 @@ export async function generateMetadata({ params: p }: { params: { lang: Locale }
 
 
 export default async function DashboardPage({
-  params: p
-}: {
-  params: { lang: Locale };
-}) {
-  const params = await Promise.resolve(p);
-  const { lang } = params;
+  params: { lang }
+}: PageProps) {
   const dictionary = await getDictionary(lang);
   
   if (!dictionary?.dashboard) {
