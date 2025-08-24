@@ -3,14 +3,14 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
-   async redirects() {
-    return [
+   redirects() {
+    return Promise.resolve([
       {
         source: '/',
         destination: '/es/landing',
         permanent: true,
       },
-    ]
+    ])
   },
   images: {
     remotePatterns: [
@@ -64,6 +64,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  sitemap: false,
+  robots: false,
 };
 
 export default nextConfig;
