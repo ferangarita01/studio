@@ -42,33 +42,27 @@ async function sendEmail(payload: EmailPayload): Promise<void> {
 }
 
 export async function sendCertificateByEmail(certificateId: string, companyId: string): Promise<void> {
-    // 1. Get Company to find assigned user and check for special cases
+    // 1. Get Company to find assigned user
     const company = await getCompanyById(companyId);
     if (!company) {
         throw new Error("Company not found.");
     }
 
-    let recipientEmail: string | undefined;
-    let recipientName: string = 'Usuario';
+    // 2. Get the assigned user's profile to find their email
+    if (!company.assignedUserUid) {
+        throw new Error(`Company "${company.name}" does not have a user assigned.`);
+    }
 
-    // SPECIAL CASE: If the company is Ecocircle, send to a specific email
-    if (company.name.toLowerCase() === 'ecocircle') {
-        recipientEmail = 'ferangaritam@gmail.com';
-    } else if (company.assignedUserUid) {
-        // Standard case: Get User Profile to find email
-        const userProfile = await getUserProfile(company.assignedUserUid);
-        if (userProfile) {
-            recipientEmail = userProfile.email;
-            recipientName = userProfile.fullName || 'Usuario';
-        }
+    const userProfile = await getUserProfile(company.assignedUserUid);
+    if (!userProfile || !userProfile.email) {
+        throw new Error(`Could not find a valid email for the user assigned to company "${company.name}".`);
     }
     
-    if (!recipientEmail) {
-        throw new Error("Recipient email could not be determined. The company may not have a user assigned or is not configured for special email routing.");
-    }
+    const recipientEmail = userProfile.email;
+    const recipientName = userProfile.fullName || 'Usuario';
 
 
-    // 2. Get Certificate details
+    // 3. Get Certificate details
     const certRef = ref(db, `disposalCertificates/${certificateId}`);
     const certSnapshot = await get(certRef);
     if (!certSnapshot.exists()) {
@@ -76,7 +70,7 @@ export async function sendCertificateByEmail(certificateId: string, companyId: s
     }
     const certificate = certSnapshot.val();
 
-    // 3. Construct and send the email
+    // 4. Construct and send the email
     const emailPayload: EmailPayload = {
         to: recipientEmail,
         from: "WasteWise <onboarding@resend.dev>", // IMPORTANT: Resend requires a verified domain. 'onboarding@resend.dev' is for testing.
