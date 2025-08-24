@@ -12,6 +12,10 @@ const nextConfig: NextConfig = {
       },
     ])
   },
+  experimental: {
+    sitemap: false,
+    robots: false,
+  },
   images: {
     remotePatterns: [
       {
@@ -64,8 +68,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  sitemap: false,
-  robots: false,
 };
 
 export default nextConfig;
