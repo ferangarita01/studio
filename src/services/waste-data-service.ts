@@ -396,6 +396,35 @@ export async function addDisposalCertificate(
   return { id: newCertificateRef.key!, ...certificateData };
 }
 
+// --- Email Service (Simulated) ---
+
+interface EmailPayload {
+    to: string;
+    from: string;
+    subject: string;
+    html: string;
+}
+
+async function sendEmail(payload: EmailPayload): Promise<void> {
+    // THIS IS WHERE YOU WOULD INTEGRATE A REAL EMAIL SERVICE
+    // For example, using Resend, SendGrid, Mailgun, etc.
+    //
+    // Example with Resend (if you were to use it):
+    // const resend = new Resend(process.env.RESEND_API_KEY);
+    // await resend.emails.send(payload);
+    
+    console.log("--- SIMULATING EMAIL ---");
+    console.log(`To: ${payload.to}`);
+    console.log(`From: ${payload.from}`);
+    console.log(`Subject: ${payload.subject}`);
+    console.log(`Body:`);
+    console.log(payload.html);
+    console.log("--- END SIMULATION ---");
+
+    // For now, we just resolve the promise to simulate a successful send.
+    return Promise.resolve();
+}
+
 export async function sendCertificateByEmail(certificateId: string, companyId: string): Promise<void> {
     // 1. Get Company to find assigned user
     const company = await getCompanyById(companyId);
@@ -417,21 +446,26 @@ export async function sendCertificateByEmail(certificateId: string, companyId: s
     }
     const certificate = certSnapshot.val();
 
-    // 4. Simulate sending email (in a real app, you'd use a service like SendGrid, Resend, etc.)
-    console.log("--- SIMULATING EMAIL ---");
-    console.log(`To: ${userProfile.email}`);
-    console.log(`From: no-reply@wastewise.space`);
-    console.log(`Subject: Your Disposal Certificate: ${certificate.fileName}`);
-    console.log(`Body:`);
-    console.log(`Hello ${userProfile.fullName || 'User'},`);
-    console.log(`Here is your requested disposal certificate:`);
-    console.log(`File: ${certificate.fileName}`);
-    console.log(`Download Link: ${certificate.fileUrl}`);
-    console.log("--- END SIMULATION ---");
+    // 4. Construct and send the email
+    const emailPayload: EmailPayload = {
+        to: userProfile.email,
+        from: "WasteWise <no-reply@wastewise.space>",
+        subject: `Tu Certificado de Disposición: ${certificate.fileName}`,
+        html: `
+            <h1>Certificado de Disposición Final</h1>
+            <p>Hola ${userProfile.fullName || 'Usuario'},</p>
+            <p>Adjunto encontrarás el certificado de disposición final que solicitaste:</p>
+            <ul>
+                <li><strong>Archivo:</strong> ${certificate.fileName}</li>
+                <li><strong>Fecha de subida:</strong> ${new Date(certificate.uploadedAt).toLocaleDateString()}</li>
+            </ul>
+            <p><a href="${certificate.fileUrl}" target="_blank" rel="noopener noreferrer"><strong>Descargar Certificado</strong></a></p>
+            <br/>
+            <p>Gracias por usar WasteWise.</p>
+        `,
+    };
 
-    // In a real app, the code below would be replaced by an API call to your email service.
-    // For now, we just resolve the promise.
-    return Promise.resolve();
+    await sendEmail(emailPayload);
 }
 
 

@@ -28,7 +28,7 @@
       "label": "Cambiar Empresa",
       "searchPlaceholder": "Buscar empresa...",
       "createCompany": "Crear Nueva Empresa",
-      "noCompanies": "No se encontraron empresas.",
+      "noCompanies": "No se encontraron empresas. ¿Crear una?",
       "createOne": "¿Crear una?"
     },
     "createCompanyDialog": {
@@ -779,7 +779,7 @@
         "uploadDate": "Fecha de Subida",
         "actions": "Acciones",
         "download": "Descargar",
-        "sendEmail": "Enviar Email"
+        "sendEmail": "Enviar por Correo"
       },
       "uploadDialog": {
         "title": "Añadir Nuevo Certificado por Enlace",
@@ -922,8 +922,6 @@
     }
   },
   "compliancePage": {
-    "title": "Sistema de Reporte GEI",
-    "description": "Gestiona tu inventario de emisiones de gases de efecto invernadero según estándares internacionales.",
     "reportingSystem": {
       "title": "Sistema de Reporte GEI",
       "subtitle": "Norma ISO 14064-1:2018 y Protocolo GEI Corporativo"
@@ -940,7 +938,8 @@
       "unit": "Unidad",
       "region": "Región",
       "source": "Fuente",
-      "noResults": "No se encontraron factores de emisión con ese criterio."
+      "noResults": "No se encontraron factores de emisión con ese criterio.",
+      "scope": "Alcance"
     },
     "valorized": {
       "title": "Mis Residuos Valorizados",

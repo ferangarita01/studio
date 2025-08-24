@@ -32,6 +32,7 @@ export function FinalDisposalClient({ dictionary, navDictionary, lang }: FinalDi
   const [isClient, setIsClient] = React.useState(false);
   const [isUploadDialogOpen, setUploadDialogOpen] = React.useState(false);
   const [isLoadingData, setIsLoadingData] = React.useState(true);
+  const [isSendingEmail, setIsSendingEmail] = React.useState<string | null>(null);
   const { toast } = useToast();
 
 
@@ -65,6 +66,7 @@ export function FinalDisposalClient({ dictionary, navDictionary, lang }: FinalDi
 
   const handleSendEmail = async (certificateId: string) => {
     if (!selectedCompany) return;
+    setIsSendingEmail(certificateId);
     try {
         await sendCertificateByEmail(certificateId, selectedCompany.id);
         toast({
@@ -77,6 +79,8 @@ export function FinalDisposalClient({ dictionary, navDictionary, lang }: FinalDi
             description: dictionary.toast.emailError.description,
             variant: "destructive"
         });
+    } finally {
+        setIsSendingEmail(null);
     }
   };
 
@@ -139,8 +143,12 @@ export function FinalDisposalClient({ dictionary, navDictionary, lang }: FinalDi
               <TableCell className="font-medium">{cert.fileName}</TableCell>
               <TableCell>{formatDate(cert.uploadedAt)}</TableCell>
               <TableCell className="text-right space-x-2">
-                 <Button onClick={() => handleSendEmail(cert.id)} variant="outline" size="sm">
-                    <Mail className="mr-2 h-4 w-4" />
+                 <Button onClick={() => handleSendEmail(cert.id)} variant="outline" size="sm" disabled={!!isSendingEmail}>
+                    {isSendingEmail === cert.id ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                        <Mail className="mr-2 h-4 w-4" />
+                    )}
                     {dictionary.table.sendEmail}
                  </Button>
                 <Button asChild variant="outline" size="sm">
