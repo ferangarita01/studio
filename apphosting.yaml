@@ -7,10 +7,9 @@ build:
     - npm i && npm run build
   envs:
     # Example: Make a Google Maps API key available during the build process
-    # GOOGLE_MAPS_API_KEY: "your-api-key-here"
     # The value for this key should be set as a secret in the App Hosting settings.
-    GOOGLE_GENAI_API_KEY: "AIzaSyDo2m-ODsWSVbm1yOU4FJFZYpo1EMWKlb4"
-    RESEND_API_KEY: "re_5ASw3HUc_8eVwM4hhTHtGyPMrUVr3LTb4"
+    GOOGLE_GENAI_API_KEY: ''
+    RESEND_API_KEY: ''
 runConfig:
   # Increase this value if you'd like to automatically spin up
   # more instances in response to increased traffic.
