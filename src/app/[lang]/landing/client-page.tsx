@@ -181,12 +181,9 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
     }, [values]);
 
     useEffect(() => {
-        if (chartRef.current) {
+        if (chartRef.current && !chartInstance.current) {
             const ctx = chartRef.current.getContext('2d');
             if (ctx) {
-                if (chartInstance.current) {
-                    chartInstance.current.destroy();
-                }
                 chartInstance.current = new ChartJS(ctx, {
                     type: 'doughnut',
                     data: {
