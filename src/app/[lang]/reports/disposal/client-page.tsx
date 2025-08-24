@@ -13,7 +13,8 @@ import { UploadCertificateDialog } from '@/components/upload-certificate-dialog'
 import { cn } from '@/lib/utils';
 import type { Locale } from '@/i18n-config';
 import type { Dictionary } from '@/lib/get-dictionary';
-import { getDisposalCertificates, sendCertificateByEmail } from '@/services/waste-data-service';
+import { getDisposalCertificates } from '@/services/waste-data-service';
+import { sendCertificateByEmail } from '@/app/actions/send-email-action';
 import { useToast } from '@/hooks/use-toast';
 
 type PageDictionary = Dictionary["reportsPage"]["finalDisposal"];
