@@ -108,7 +108,7 @@ export function PublicHeader({ dictionary, lang }: PublicHeaderProps) {
                                 <Link href={`/${lang}/login`}>{d.header.login}</Link>
                             </Button>
                             <Button asChild className="bg-gradient-to-br from-emerald-500 via-emerald-600 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 hover:opacity-95 transition h-auto rounded-lg">
-                                <Link href={`/${lang}/landing#demo`}><Sparkles /><span>{d.header.getStarted}</span></Link>
+                               <Link href={`/${lang}/login`}><Sparkles /><span>{d.header.getStarted}</span></Link>
                             </Button>
                            </>
                        )}

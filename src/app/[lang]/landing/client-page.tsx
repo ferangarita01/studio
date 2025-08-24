@@ -160,26 +160,12 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
         const recalc = () => {
             const { wasteVolume, disposalCost, contaminationRate, salePrice } = values;
             
-            // 1. Tasa de reciclabilidad (material útil)
             const recyclableRate = 1 - (contaminationRate / 100);
-
-            // 2. Toneladas totales que se pueden aprovechar
             const totalRecyclableTons = wasteVolume * recyclableRate;
-
-            // 3. Ingreso bruto por venta de material usable
             const gross = totalRecyclableTons * salePrice;
-
-            // 4. Costo del servicio por disposición final (lo que cobra WasteWise)
             const cost = wasteVolume * disposalCost;
-            
-            // 5. Beneficio Neto (Ingreso por venta - Costo del servicio)
             const net = gross - cost;
-
-            // 6. Ahorro por disposición evitada (lo que el cliente se ahorra al no enviar al relleno)
-            // Este es un beneficio adicional que se puede mostrar para enfatizar el valor.
             const avoidedCost = totalRecyclableTons * disposalCost;
-
-            // 7. Huella de carbono evitada (factor de 1.8 toneladas de CO2 por tonelada de material reciclado)
             const carbonFootprint = totalRecyclableTons * 1800; // en Kg
 
             setRoi({ 
@@ -336,7 +322,7 @@ const ROICalculator = ({ dictionary, lang }: { dictionary: Dictionary["landingPa
                     </div>
                      <div className="mt-6 flex items-center gap-3">
                         <Button asChild className="bg-gradient-to-br from-emerald-500 via-emerald-600 to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 hover:opacity-95 transition">
-                           <Link href={`/${lang}/login`}>
+                           <Link href={`/${lang}/pricing`}>
                             <Handshake className="h-4 w-4" /><span>{d.cta}</span>
                            </Link>
                         </Button>
@@ -418,6 +404,14 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
         <ShieldCheck key="four" className="h-6 w-6 text-purple-300" />
     ];
 
+    const handleScrollToCalculator = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
+        const calculatorSection = document.getElementById('roi');
+        if (calculatorSection) {
+            calculatorSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     return (
         <div className="flex flex-col min-h-screen bg-[#0B1020] text-slate-200">
             <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10">
@@ -440,7 +434,9 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                             <p className="mt-5 text-base sm:text-lg text-slate-300">{d.hero.subtitle}</p>
                              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
                                  <Button asChild className="bg-gradient-to-br from-emerald-500 via-emerald-600 to-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 hover:opacity-95 transition h-auto rounded-xl">
-                                    <a href="#roi"><Calculator /><span>{d.hero.cta}</span></a>
+                                    <a href="#roi" onClick={handleScrollToCalculator}>
+                                      <Calculator /><span>{d.hero.cta}</span>
+                                    </a>
                                  </Button>
                             </div>
                              <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3">

@@ -58,7 +58,7 @@
     "header": {
       "title": "WasteWise",
       "login": "Iniciar Sesión",
-      "getStarted": "Solicitar Demo",
+      "getStarted": "Solicitar Recolección",
       "nav": {
         "useCases": "Casos de Uso",
         "features": "Funcionalidades",
@@ -68,7 +68,7 @@
     "hero": {
       "title": "Transforma tus Residuos en Ingresos para tu Empresa Colombiana",
       "subtitle": "Convierte los costos de gestión de residuos en ganancias reales. Obtén certificados ambientales, cumple la normativa y genera ingresos adicionales.",
-      "cta": "Descubre tu Potencial de Ingresos"
+      "cta": "Cotiza y Vende tu Reciclaje"
     },
     "valueProposition": {
       "title": "Convierte Gastos en Ganancias con WasteWise",
@@ -1063,5 +1063,3 @@
     }
   }
 }
-
-    
