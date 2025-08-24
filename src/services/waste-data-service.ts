@@ -20,7 +20,7 @@ import type { WasteEntry, Material, DisposalEvent, ReportData, Company, UserRole
 import { string } from "zod";
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 
 // Helper to convert snapshot to array
@@ -410,6 +410,10 @@ interface EmailPayload {
 }
 
 async function sendEmail(payload: EmailPayload): Promise<void> {
+    if (!resend) {
+        console.error("Resend is not initialized. Make sure RESEND_API_KEY is set.");
+        throw new Error("Email service is not configured.");
+    }
     try {
         const { data, error } = await resend.emails.send(payload);
 
