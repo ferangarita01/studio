@@ -18,9 +18,7 @@ import { db, storage } from "@/lib/firebase";
 import { wasteData, weeklyReportData, monthlyReportData } from "@/lib/data";
 import type { WasteEntry, Material, DisposalEvent, ReportData, Company, UserRole, UserProfile, PlanType, DisposalCertificate, EmissionFactor, ValorizedResidue } from "@/lib/types";
 import { string } from "zod";
-import { Resend } from 'resend';
-
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+import nodemailer from 'nodemailer';
 
 
 // Helper to convert snapshot to array
@@ -410,21 +408,27 @@ interface EmailPayload {
 }
 
 async function sendEmail(payload: EmailPayload): Promise<void> {
-    if (!resend) {
-        console.error("Resend is not initialized. Make sure RESEND_API_KEY is set.");
+    const RESEND_API_KEY = process.env.RESEND_API_KEY;
+    if (!RESEND_API_KEY) {
+        console.error("Resend API key is not set. Cannot send email.");
         throw new Error("Email service is not configured.");
     }
+
+    const transporter = nodemailer.createTransport({
+        host: 'smtp.resend.com',
+        secure: true,
+        port: 465,
+        auth: {
+            user: 'resend',
+            pass: RESEND_API_KEY,
+        },
+    });
+
     try {
-        const { data, error } = await resend.emails.send(payload);
-
-        if (error) {
-            console.error("Resend API Error:", error);
-            throw new Error(error.message);
-        }
-
-        console.log("Email sent successfully:", data);
+        const info = await transporter.sendMail(payload);
+        console.log("Email sent successfully:", info.messageId);
     } catch (error) {
-        console.error("Failed to send email:", error);
+        console.error("Failed to send email via SMTP:", error);
         throw error;
     }
 }
