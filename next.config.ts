@@ -12,8 +12,8 @@ const nextConfig: NextConfig = {
       },
     ])
   },
-  experimental: {
-    allowedDevOrigins: ['*'],
+ experimental: { 
+    allowedDevOrigins: ['http://localhost:3000', 'https://wastewise.space','https://wastewise-hdbhk.web.app'],
   },
   images: {
     remotePatterns: [
