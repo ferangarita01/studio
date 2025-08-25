@@ -4,9 +4,9 @@ import { LandingClient } from "./client-page";
 import type { PageProps } from "@/lib/types";
 
 export default async function LandingPage({
-  params: { lang },
+  params,
 }: PageProps) {
+  const { lang } = await params;
   const dictionary = await getDictionary(lang);
-
   return <LandingClient dictionary={dictionary} lang={lang} />;
 }
