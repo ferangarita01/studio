@@ -12,6 +12,9 @@ const nextConfig: NextConfig = {
       },
     ])
   },
+  experimental: {
+    allowedDevOrigins: ['*'],
+  },
   images: {
     remotePatterns: [
       {
