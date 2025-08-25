@@ -8,7 +8,6 @@
     },
     "dependencies": {
         "@formatjs/intl-localematcher": "^0.5.4",
-        "@genkit-ai/googleai": "^1.0.0-beta.23",
         "@hookform/resolvers": "^3.4.2",
         "@mercadopago/sdk-react": "^0.0.19",
         "@paypal/react-paypal-js": "^8.3.0",
@@ -40,7 +39,6 @@
         "embla-carousel-react": "^8.1.5",
         "firebase": "^10.12.2",
         "firebase-admin": "^12.1.1",
-        "genkit": "^1.0.0-beta.23",
         "html2canvas": "^1.4.1",
         "jspdf": "^2.5.1",
         "lucide-react": "^0.395.0",
@@ -64,6 +62,7 @@
         "@types/react": "18.3.3",
         "@types/react-dom": "18.3.0",
         "dotenv": "^16.4.5",
-        "tailwindcss": "^3.4.4"
+        "tailwindcss": "^3.4.4",
+        "typescript": "5.9.2"
     }
 }
