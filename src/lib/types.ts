@@ -1,135 +1,125 @@
 
-
-import type { Locale } from "@/i18n-config";
+import type { Locale } from '@/i18n-config';
 
 export type WasteType = "Recycling" | "Organic" | "General" | "Hazardous";
-export type UserRole = "admin" | "client";
-export type AccountType = "company" | "individual";
 export type PlanType = "Free" | "Premium" | "Custom";
+export type AccountType = "individual" | "company";
 
-export interface PageProps<T = {}> {
-  params: T & { lang: Locale };
-  searchParams?: { [key: string]: string | string[] | undefined };
-}
-
-export type UserProfile = {
-  id: string; // Firebase UID
-  email: string;
-  role: UserRole;
-  fullName?: string;
-  companyName?: string;
-  accountType?: AccountType;
-  taxId?: string; // For companies (NIT)
-  idNumber?: string; // For individuals (Cédula)
-  jobTitle?: string;
-  address?: string;
-  city?: string;
-  country?: string;
-  phone?: string;
-  assignedCompanyId?: string;
-  assignedCompany?: Company; // Denormalized for performance
-  plan?: PlanType;
-}
-
-export type Company = {
+export interface WasteEntry {
   id: string;
-  name: string;
-  createdBy: string; // UID of the admin user who created it
-  assignedUserUid?: string; // UID of the client user assigned to this company
-  assignedUserName?: string; // email of the assigned user, for display
-  logoUrl?: string; // URL for the company's logo, for embeddable modules
-  coverImageUrl?: string; // URL for the company's cover/hero image
-  plan?: PlanType;
-  planStartDate?: string; // ISO 8601 date string
-  planExpiryDate?: string; // ISO 8601 date string
-};
-
-export type Material = {
-  id: string;
-  name: string;
-  type: WasteType;
-  pricePerKg: number; // price per kg, for recyclables
-  serviceCostPerKg: number;
-};
-
-export type WasteEntry = {
-  id:string;
   companyId: string;
-  date: Date;
   type: WasteType;
-  materialId?: string; // ID of the material from the materials list
-  materialName?: string; // Name of the material
-  quantity: number; // in kg
-  price?: number; // price per kg, for recyclables
-  serviceCost?: number; // cost for disposal service
-  notes?: string;
-};
+  materialId: string;
+  materialName: string;
+  quantity: number;
+  date: Date;
+  price?: number;
+  serviceCost?: number;
+  createdBy: string;
+}
 
-export type Attachment = {
+export interface Material {
   id: string;
   name: string;
-  type: "image" | "pdf" | "audio";
-  url: string;
-};
+  type: WasteType;
+  pricePerKg: number;
+  serviceCostPerKg: number;
+}
 
-export type DisposalEvent = {
+export interface DisposalEvent {
   id: string;
   companyId: string;
   date: Date;
   wasteTypes: WasteType[];
-  status: "Scheduled" | "Completed" | "Cancelled" | "Ongoing";
-  instructions?: string;
-  attachments?: Attachment[];
-};
+  status: "Scheduled" | "Ongoing" | "Completed" | "Cancelled";
+  instructions: string;
+}
 
-export type TransactionType = "payment" | "income";
+export interface DisposalCertificate {
+    id: string;
+    companyId: string;
+    fileName: string;
+    fileUrl: string;
+    uploadedAt: string;
+    uploadedBy: string;
+}
 
-export type FinancialTransaction = {
-  id: string;
-  date: string;
-  description: string;
-  amount: number;
-  type: TransactionType;
-};
-
-export type ReportData = {
+export interface ReportData {
   companyId: string;
   totalCosts: number;
   totalIncome: number;
   netResult: number;
-  chartData: {
-    name: string;
-    costs: number;
-    income: number;
+  chartData: { name: string; costs: number; income: number }[];
+  transactions: {
+    id: string;
+    date: string;
+    description: string;
+    amount: number;
+    type: "income" | "payment";
   }[];
-  transactions: FinancialTransaction[];
-};
+}
 
-export type DisposalCertificate = {
+export interface UserProfile {
   id: string;
-  companyId: string;
-  fileName: string;
-  fileUrl: string;
-  uploadedAt: string; // ISO 8601 string
-};
-
-export type EmissionFactor = {
+  email: string;
+  role: "admin" | "client";
+  fullName: string;
+  assignedCompanyId?: string;
+  assignedCompany?: {
     id: string;
-    category: string;
-    subcategory: string;
-    factor: number;
-    unit: string;
-    source: string;
-    region: string;
-    scope?: number;
-};
+    name: string;
+    logoUrl?: string;
+    coverImageUrl?: string;
+  };
+  plan: PlanType;
+  // New onboarding fields
+  accountType?: AccountType;
+  companyName?: string;
+  taxId?: string;
+  idNumber?: string;
+  // Optional profile fields
+  phone?: string;
+  jobTitle?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+}
 
-export type ValorizedResidue = {
-    id: string;
-    userId: string;
-    type: string;
-    quantity: number;
-    unit: string;
-    date: Date;
-    emissionsAvoided: number; // kgCO2e
+export interface Company {
+  id: string;
+  name: string;
+  createdBy: string;
+  assignedUserUid?: string;
+  logoUrl?: string;
+  coverImageUrl?: string;
+  plan: PlanType;
+  planStartDate?: string;
+  planExpiryDate?: string;
+}
+
+export interface EmissionFactor {
+  id: string;
+  category: string;
+  subcategory: string;
+  factor: number;
+  unit: string;
+  source: string;
+  region: string;
+  scope?: number;
+}
+
+export interface ValorizedResidue {
+  id: string;
+  userId: string;
+  date: Date;
+  type: string;
+  quantity: number;
+  unit: string;
+  emissionsAvoided: number;
+}
+
+// Correct PageProps for Next.js App Router
+export type PageProps<T extends Record<string, string> = {}> = {
+  params: { lang: Locale } & T;
+  searchParams?: { [key: string]: string | string[] | undefined };
 };

@@ -27,8 +27,7 @@ const SEO_CONFIG = {
   }
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const lang = params.lang;
+export async function generateMetadata({ params: { lang } }: PageProps): Promise<Metadata> {
   const seo = SEO_CONFIG[lang];
   
   return {
