@@ -631,6 +631,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
             <div className="px-4">
               <Logo />
             </div>
+            <CompanySwitcher />
             <NavContent />
           </div>
         </aside>
@@ -649,6 +650,9 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
               </SheetTrigger>
               <SheetContent side="left" className="flex flex-col p-4 w-full max-w-sm">
                  <Logo />
+                 <div className="mt-8">
+                    <CompanySwitcher />
+                 </div>
                  <div className="mt-8 flex-1">
                     <NavContent />
                  </div>
@@ -666,7 +670,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
               <UserMenu />
             </div>
           </header>
-          <main className="flex-1 overflow-auto bg-background p-6">
+          <main className="flex-1 overflow-auto bg-background">
             {children}
           </main>
         </div>
