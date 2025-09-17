@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import type { Dictionary } from "@/lib/get-dictionary";
 import type { Company, PlanType } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
-import { uploadFile, updateCompanyCoverImage, updateCompany } from "@/services/waste-data-service";
+import { uploadFile, updateCompanyCoverImage } from "@/services/waste-data-service";
 import { Loader2 } from "lucide-react";
 import {
   Select,
@@ -25,7 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, isValid } from "date-fns";
 
 interface EditCompanyDialogProps {
   open: boolean;
@@ -44,12 +44,18 @@ export function EditCompanyDialog({ open, onOpenChange, onUpdate, dictionary, co
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
 
+  const formatDateForInput = (dateString: string | undefined): string => {
+    if (!dateString) return "";
+    const date = parseISO(dateString);
+    return isValid(date) ? format(date, 'yyyy-MM-dd') : "";
+  };
+
   useEffect(() => {
     if (company) {
       setName(company.name || "");
       setPlan(company.plan || "Free");
-      setPlanStartDate(company.planStartDate ? format(parseISO(company.planStartDate), 'yyyy-MM-dd') : "");
-      setPlanExpiryDate(company.planExpiryDate ? format(parseISO(company.planExpiryDate), 'yyyy-MM-dd') : "");
+      setPlanStartDate(formatDateForInput(company.planStartDate));
+      setPlanExpiryDate(formatDateForInput(company.planExpiryDate));
     }
   }, [company, open]);
 
@@ -75,7 +81,7 @@ export function EditCompanyDialog({ open, onOpenChange, onUpdate, dictionary, co
         const imageUrl = await uploadFile(file, path);
         await updateCompanyCoverImage(company.id, imageUrl);
         
-        onUpdate(company.id, { name, plan }); // re-call onUpdate to trigger a re-fetch in the parent
+        onUpdate(company.id, { ...company, coverImageUrl: imageUrl });
 
         toast({
           title: "Cover Image Updated",

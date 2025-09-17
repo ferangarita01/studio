@@ -1,13 +1,15 @@
+
 "use client";
 
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/auth-context";
-import { updateUserPlan, type PlanType } from "@/services/waste-data-service";
+import { type PlanType } from "@/services/waste-data-service";
 import { useState, useEffect } from 'react';
 import { Skeleton } from './ui/skeleton';
 import { Button } from './ui/button';
 import { AlertCircle, CreditCard } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const MERCADOPAGO_PUBLIC_KEY = process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY;
 
@@ -28,6 +30,7 @@ export function MercadoPagoButtonWrapper({
 }: MercadoPagoButtonProps) {
     const { toast } = useToast();
     const { user, refreshUserProfile } = useAuth();
+    const router = useRouter();
     const [preferenceId, setPreferenceId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isClient, setIsClient] = useState(false);
@@ -48,9 +51,39 @@ export function MercadoPagoButtonWrapper({
                 setError("Error al inicializar MercadoPago");
             }
         } else {
-            setError("MercadoPago no está configurado correctamente");
+            console.warn("Mercado Pago Public Key is not configured.");
         }
     }, []);
+    
+    // Check for payment status from URL (for one-time feedback)
+    useEffect(() => {
+      if (!isClient) return;
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const status = urlParams.get('status');
+
+      if (status === 'approved') {
+        toast({
+            title: "¡Pago Exitoso!",
+            description: `Tu plan ${planType} ha sido activado. Redirigiendo...`,
+        });
+        refreshUserProfile();
+        setTimeout(() => router.push('/dashboard'), 2000);
+      } else if (status === 'failure') {
+         toast({
+            title: "Pago Rechazado",
+            description: "El pago no pudo ser procesado. Verifica tus datos e inténtalo nuevamente.",
+            variant: "destructive",
+        });
+      }
+      
+      // Clean URL to avoid re-triggering
+      if (status) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
+    }, [isClient, refreshUserProfile, router, planType, toast]);
+
 
     // Create preference through your secure backend
     const createPreference = async () => {
@@ -103,87 +136,24 @@ export function MercadoPagoButtonWrapper({
         }
     };
 
-    // Handle payment status from URL parameters
-    useEffect(() => {
-        if (!isClient || !user) return;
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const status = urlParams.get('collection_status');
-        const paymentId = urlParams.get('payment_id');
-        const externalReference = urlParams.get('external_reference');
-
-        if (status && paymentId) {
-            handlePaymentResult(status, paymentId, externalReference);
-            // Clean URL parameters
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
-    }, [isClient, user]);
-
-    const handlePaymentResult = async (status: string, paymentId: string, externalReference: string | null) => {
-        try {
-            switch (status) {
-                case 'approved':
-                    await updateUserPlan(user!.uid, planType);
-                    await refreshUserProfile();
-                    toast({
-                        title: "¡Pago Exitoso!",
-                        description: `Tu plan ${planType} ha sido activado correctamente.`,
-                    });
-                    onSuccess?.();
-                    break;
-                
-                case 'pending':
-                    toast({
-                        title: "Pago Pendiente",
-                        description: "Tu pago está siendo procesado. Te notificaremos cuando se complete.",
-                        variant: "default",
-                    });
-                    break;
-                
-                case 'rejected':
-                case 'failure':
-                    toast({
-                        title: "Pago Rechazado",
-                        description: "El pago no pudo ser procesado. Verifica tus datos e inténtalo nuevamente.",
-                        variant: "destructive",
-                    });
-                    onError?.("Pago rechazado");
-                    break;
-                
-                default:
-                    console.warn("Status de pago desconocido:", status);
-            }
-        } catch (error) {
-            console.error("Error handling payment result:", error);
-            toast({
-                title: "Error",
-                description: "Hubo un problema al procesar el resultado del pago.",
-                variant: "destructive",
-            });
-        }
-    };
 
     // Loading state
     if (!isClient || isLoading) {
         return (
             <div className="space-y-3">
                 <Skeleton className="h-12 w-full" />
-                <Skeleton className="h-8 w-3/4 mx-auto" />
             </div>
         );
     }
 
     // Error state
-    if (error || !MERCADOPAGO_PUBLIC_KEY || !isInitialized) {
+    if (error || !isInitialized) {
         return (
             <div className="flex items-center gap-2 text-destructive text-center p-4 text-sm rounded-md bg-destructive/10 border border-destructive/20">
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                <div>
-                    <p className="font-medium">Error de configuración</p>
-                    <p className="text-xs opacity-80">
-                        {error || "MercadoPago no está configurado correctamente"}
-                    </p>
-                </div>
+                <p className="font-medium">
+                  {error || "MercadoPago no está disponible."}
+                </p>
             </div>
         );
     }
@@ -198,7 +168,7 @@ export function MercadoPagoButtonWrapper({
                 size="lg"
             >
                 <CreditCard className="h-4 w-4 mr-2" />
-                {isLoading ? "Inicializando pago..." : "Proceder al Pago"}
+                {isLoading ? "Inicializando pago..." : "Pagar con Mercado Pago"}
             </Button>
         );
     }
@@ -212,29 +182,12 @@ export function MercadoPagoButtonWrapper({
             <Wallet
                 initialization={{ 
                     preferenceId: preferenceId,
-                    redirectMode: 'self'
                 }}
                 customization={{
                     visual: {
                         buttonBackground: 'default',
                         borderRadius: '8px',
                     }
-                }}
-                onReady={() => {
-                    console.log('MercadoPago Wallet ready');
-                }}
-                onSubmit={async () => {
-                    // Optional: Add pre-submit logic here
-                    console.log('Payment submitted');
-                }}
-                onError={(error) => {
-                    console.error('MercadoPago Wallet Error:', error);
-                    toast({
-                        title: "Error en el pago",
-                        description: "Hubo un problema con el procesador de pagos. Inténtalo nuevamente.",
-                        variant: "destructive",
-                    });
-                    onError?.("Error en el widget de pago");
                 }}
             />
         </div>
