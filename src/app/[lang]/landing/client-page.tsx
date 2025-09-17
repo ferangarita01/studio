@@ -370,39 +370,21 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
     const d = dictionary.landingPage;
     const [selectedUseCase, setSelectedUseCase] = useState<any | null>(null);
 
-    const useCases = [
-      {
-        icon: <Building className="h-5 w-5 text-emerald-300" />,
-        key: 'companies',
-      },
-      {
-        icon: <GraduationCap className="h-5 w-5 text-blue-300" />,
-        key: 'schools',
-      },
-      {
-        icon: <Ticket className="h-5 w-5 text-indigo-300" />,
-        key: 'events',
-      },
-      {
-        icon: <Library className="h-5 w-5 text-purple-300" />,
-        key: 'universities',
-      },
-      {
-        icon: <Recycle className="h-5 w-5 text-emerald-300" />,
-        key: 'recyclers',
-      },
-      {
-        icon: <HardHat className="h-5 w-5 text-amber-300" />,
-        key: 'construction',
-      },
-    ];
-    
-    const featureIcons = [
-        <Bot key="one" className="h-6 w-6 text-emerald-300" />,
-        <FileBarChart key="two" className="h-6 w-6 text-blue-300" />,
-        <ClipboardCheck key="three" className="h-6 w-6 text-amber-300" />,
-        <ShieldCheck key="four" className="h-6 w-6 text-purple-300" />
-    ];
+    const useCases = {
+        companies: { icon: <Building className="h-5 w-5 text-emerald-300" /> },
+        schools: { icon: <GraduationCap className="h-5 w-5 text-blue-300" /> },
+        events: { icon: <Ticket className="h-5 w-5 text-indigo-300" /> },
+        universities: { icon: <Library className="h-5 w-5 text-purple-300" /> },
+        recyclers: { icon: <Recycle className="h-5 w-5 text-emerald-300" /> },
+        construction: { icon: <HardHat className="h-5 w-5 text-amber-300" /> },
+    };
+
+    const features = {
+        one: { icon: <Bot key="one" className="h-6 w-6 text-emerald-300" /> },
+        two: { icon: <FileBarChart key="two" className="h-6 w-6 text-blue-300" /> },
+        three: { icon: <ClipboardCheck key="three" className="h-6 w-6 text-amber-300" /> },
+        four: { icon: <ShieldCheck key="four" className="h-6 w-6 text-purple-300" /> },
+    };
 
     const handleScrollToCalculator = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
@@ -465,19 +447,24 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                         <p className="mt-3 text-slate-300">{d.useCases.subtitle}</p>
                     </div>
                     <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                       {useCases.map((useCase, index) => {
-                          const caseData = d.useCases[useCase.key as keyof typeof d.useCases];
-                          const caseStudy = d.caseStudies[useCase.key as keyof typeof d.caseStudies];
+                       {Object.keys(useCases).map((key) => {
+                          const useCaseKey = key as keyof typeof useCases;
+                          const caseData = d.useCases[useCaseKey];
+                          const caseStudy = d.caseStudies[useCaseKey];
+                          const icon = useCases[useCaseKey].icon;
+
+                          if (!caseData || !caseStudy) return null;
+                          
                           return (
                             <div
-                                key={index}
+                                key={key}
                                 role="button"
                                 onClick={() => setSelectedUseCase(caseStudy)}
                                 className="rounded-2xl p-5 ring-1 ring-white/10 bg-white/5 hover:bg-white/7.5 transition cursor-pointer"
                               >
                                 <div className="flex items-center gap-3">
                                      <span className="h-10 w-10 inline-flex items-center justify-center rounded-xl bg-emerald-500/15 ring-1 ring-emerald-300/20">
-                                        {useCase.icon}
+                                        {icon}
                                     </span>
                                     <h3 className="font-semibold tracking-tight text-white">{caseData.title}</h3>
                                 </div>
@@ -495,15 +482,21 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                             <p className="mt-3 text-slate-300">{d.features.subtitle}</p>
                         </div>
                         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                           {Object.values(d.features).map((feature: any, index: number) => (
-                             'title' in feature && (
-                               <div key={index} className="rounded-2xl p-5 bg-[#0B1020] ring-1 ring-white/10">
-                                  {featureIcons[index]}
-                                  <h3 className="mt-4 text-lg font-semibold tracking-tight text-white">{feature.title}</h3>
-                                  <p className="mt-2 text-sm text-slate-300">{feature.description}</p>
+                           {Object.keys(features).map((key) => {
+                              const featureKey = key as keyof typeof features;
+                              const featureData = d.features[featureKey];
+                              const icon = features[featureKey].icon;
+                              
+                              if (!featureData) return null;
+
+                               return (
+                                 <div key={key} className="rounded-2xl p-5 bg-[#0B1020] ring-1 ring-white/10">
+                                  {icon}
+                                  <h3 className="mt-4 text-lg font-semibold tracking-tight text-white">{featureData.title}</h3>
+                                  <p className="mt-2 text-sm text-slate-300">{featureData.description}</p>
                                </div>
                              )
-                           ))}
+                           })}
                         </div>
                     </div>
                 </section>
