@@ -96,13 +96,13 @@ export function MaterialsClient({ dictionary, initialMaterials }: MaterialsClien
     }
   };
   
-  const handleSave = useCallback(async (materialData: Material) => {
+  const handleSave = useCallback(async (materialData: Omit<Material, 'id'> & { id?: string }) => {
     if (!user) return;
     setIsLoading(true);
     try {
       if (materialData.id) { // Editing existing material
-        await updateMaterial(materialData, user.uid);
-        setMaterials(materials.map(m => m.id === materialData.id ? materialData : m));
+        await updateMaterial(materialData as Material, user.uid);
+        setMaterials(materials.map(m => m.id === materialData.id ? (materialData as Material) : m));
       } else { // Adding new material
         const newMaterial = await addMaterial(materialData, user.uid);
         setMaterials(currentMaterials => [...currentMaterials, newMaterial].sort((a,b) => a.name.localeCompare(b.name)));
