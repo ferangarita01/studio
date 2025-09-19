@@ -184,10 +184,10 @@ export function MercadoPagoButtonWrapper({
                     preferenceId: preferenceId,
                 }}
                 customization={{
-                    visual: {
-                        buttonBackground: 'default',
+                    theme: 'dark',
+                    customStyle: {
                         borderRadius: '8px',
-                    }
+                    },
                 }}
             />
         </div>
