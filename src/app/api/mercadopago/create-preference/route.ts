@@ -1,33 +1,28 @@
+
 // src/app/api/mercadopago/create-preference/route.ts
 
 import { NextResponse } from 'next/server';
 import { MercadoPagoConfig, Preference } from 'mercadopago';
 
-// Ensure your access token is stored securely in environment variables
-const MERCADOPAGO_ACCESS_TOKEN = process.env.MERCADOPAGO_ACCESS_TOKEN;
-
-if (!MERCADOPAGO_ACCESS_TOKEN) {
-  console.error("Mercado Pago access token is not configured.");
-}
-
-const client = new MercadoPagoConfig({
-  accessToken: MERCADOPAGO_ACCESS_TOKEN!,
-});
-const preference = new Preference(client);
-
 export async function POST(request: Request) {
+  const MERCADOPAGO_ACCESS_TOKEN = process.env.MERCADOPAGO_ACCESS_TOKEN;
+
   if (!MERCADOPAGO_ACCESS_TOKEN) {
     return NextResponse.json({ error: "Mercado Pago is not configured." }, { status: 500 });
   }
 
   try {
+    const client = new MercadoPagoConfig({
+        accessToken: MERCADOPAGO_ACCESS_TOKEN,
+    });
+    const preference = new Preference(client);
+
     const { amount, description, userId, planType, userEmail } = await request.json();
 
     if (!amount || !description || !userId) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
     
-    // It's a good practice to have a base URL from environment variables
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:9002';
 
     const preferenceData = {
