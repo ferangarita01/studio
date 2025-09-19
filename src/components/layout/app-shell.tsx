@@ -50,7 +50,7 @@ import {
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import type { Company, UserProfile, PlanType } from "@/lib/types";
+import type { Company, UserProfile, PlanType, Locale } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { CreateCompanyDialog } from "@/components/create-company-dialog";
 import { useAuth, AuthProvider } from "@/context/auth-context";
@@ -455,7 +455,7 @@ function UserMenu() {
 }
 
 
-function AppShellContent({ children, lang }: { children: React.ReactNode, lang: string }) {
+function AppShellContent({ children, lang }: { children: React.ReactNode, lang: Locale }) {
   const NavSkeleton = () => (
      <div className="space-y-2 p-4">
         {[...Array(6)].map((_, i) => (
@@ -541,8 +541,8 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     return allNavItems.filter(item => item.roles.includes(role));
   }, [role]);
 
-  const handlePremiumClick = (e: React.MouseEvent<HTMLAnchorElement>, item: { plan?: string }) => {
-    const isPremiumFeature = item.plan === 'Premium';
+  const handlePremiumClick = (e: React.MouseEvent<HTMLAnchorElement>, item: (typeof allNavItems)[number]) => {
+    const isPremiumFeature = 'plan' in item && item.plan === 'Premium';
     const isFreeUser = role === 'client' && userProfile?.plan !== 'Premium';
 
     if (isPremiumFeature && isFreeUser) {
@@ -590,7 +590,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
                   <item.icon className="h-5 w-5" />
                   <span className="font-medium">{label}</span>
                 </div>
-                {item.plan === 'Premium' && (
+                {'plan' in item && item.plan === 'Premium' && (
                   <span className="px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
                     {navDictionary.premium}
                   </span>
@@ -687,7 +687,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
   );
 }
 
-export function AppShell({ children, lang, dictionary }: { children: React.ReactNode, lang: string, dictionary: Dictionary }) {
+export function AppShell({ children, lang, dictionary }: { children: React.ReactNode, lang: Locale, dictionary: Dictionary }) {
    return (
     <ThemeProvider
         attribute="class"
