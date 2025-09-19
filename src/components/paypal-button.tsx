@@ -35,6 +35,7 @@ export function PayPalButtonWrapper({ amount, description }: PayPalButtonProps) 
                                 {
                                     description: description,
                                     amount: {
+                                        currency_code: "COP",
                                         value: amount,
                                     },
                                 },
@@ -48,12 +49,12 @@ export function PayPalButtonWrapper({ amount, description }: PayPalButtonProps) 
                                 await refreshUserProfile(); // Refresh user profile to get the new plan
                                 toast({
                                     title: "Payment Successful & Plan Upgraded!",
-                                    description: `Thank you, ${details.payer.name?.given_name}! You are now on the Premium plan.`,
+                                    description: `Thank you, ${details.payer?.name?.given_name}! You are now on the Premium plan.`,
                                 });
                             } else {
                                 toast({
                                     title: "Payment Successful",
-                                    description: `Thank you, ${details.payer.name?.given_name}! Your transaction is complete.`,
+                                    description: `Thank you, ${details.payer?.name?.given_name}! Your transaction is complete.`,
                                 });
                             }
                         });
