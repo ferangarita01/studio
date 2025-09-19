@@ -443,13 +443,13 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
 
                 <section id="use-cases" className="container-responsive mt-20">
                     <div className="mx-auto max-w-3xl text-center">
-                        <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white">{d.useCases.title}</h2>
-                        <p className="mt-3 text-slate-300">{d.useCases.subtitle}</p>
+                        <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white">{(d.useCases as any).title}</h2>
+                        <p className="mt-3 text-slate-300">{(d.useCases as any).subtitle}</p>
                     </div>
                     <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                        {Object.keys(useCases).map((key) => {
                           const useCaseKey = key as keyof typeof useCases;
-                          const caseData = d.useCases[useCaseKey];
+                          const caseData = (d.useCases as any)[useCaseKey];
                           const caseStudy = d.caseStudies[useCaseKey];
                           const icon = useCases[useCaseKey].icon;
 
@@ -478,13 +478,13 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                 <section id="features" className="mt-20 bg-white/5 ring-1 ring-white/10">
                     <div className="container-responsive py-16">
                         <div className="mx-auto max-w-3xl text-center">
-                            <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white">{d.features.title}</h2>
-                            <p className="mt-3 text-slate-300">{d.features.subtitle}</p>
+                            <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white">{(d.features as any).title}</h2>
+                            <p className="mt-3 text-slate-300">{(d.features as any).subtitle}</p>
                         </div>
                         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                            {Object.keys(features).map((key) => {
                               const featureKey = key as keyof typeof features;
-                              const featureData = d.features[featureKey];
+                              const featureData = (d.features as any)[featureKey];
                               const icon = features[featureKey].icon;
                               
                               if (!featureData) return null;
@@ -600,3 +600,5 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
+
+    
