@@ -53,7 +53,8 @@ export function AssignUserDialog({
 
   const handleSubmit = () => {
     if (company) {
-      onAssign(company.id, selectedClientId);
+      // Ensure we pass null instead of undefined
+      onAssign(company.id, selectedClientId ?? null);
     }
   };
 
