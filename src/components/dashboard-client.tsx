@@ -157,7 +157,7 @@ function WelcomeMessage({ dictionary }: { dictionary: Dictionary["dashboard"]["w
 export function DashboardPageContent({
   dictionary,
 }: DashboardPageContentProps) {
-  const { isAuthLoading, lang, role, userProfile } = useAuth();
+  const { isLoading: isAuthLoading, lang, role, userProfile } = useAuth();
   const { selectedCompany, isLoading: isCompanyContextLoading } = useCompany();
   const fullDictionary = useDictionaries();
   
@@ -289,7 +289,7 @@ export function DashboardPageContent({
   const totalRecycling = wasteLog.filter(e => e.type === 'Recycling').reduce((acc, entry) => acc + entry.quantity, 0);
   const recyclingRate = totalWaste > 0 ? (totalRecycling / totalWaste) * 100 : 0;
   
-  const totalIncome = wasteLog.reduce((acc, entry) => {
+  const totalIncome = wasteLog.reduce((acc: number, entry) => {
     const entryValue = (entry.price || 0) * entry.quantity - (entry.serviceCost || 0);
     return acc + entryValue;
   }, 0);
