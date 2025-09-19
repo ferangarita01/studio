@@ -285,12 +285,16 @@ export function DashboardPageContent({
 
   const upcomingDisposals = disposalEvents.filter(d => (d.status === 'Scheduled' || d.status === 'Ongoing'));
 
-  const totalWaste = wasteLog.reduce((acc, entry) => acc + entry.quantity, 0);
-  const totalRecycling = wasteLog.filter(e => e.type === 'Recycling').reduce((acc, entry) => acc + entry.quantity, 0);
+  const totalWaste = wasteLog.reduce<number>((acc, entry) => acc + (entry.quantity ?? 0), 0);
+  
+  const totalRecycling = wasteLog
+    .filter(e => e.type === 'Recycling')
+    .reduce<number>((acc, entry) => acc + (entry.quantity ?? 0), 0);
+
   const recyclingRate = totalWaste > 0 ? (totalRecycling / totalWaste) * 100 : 0;
   
-  const totalIncome = wasteLog.reduce((acc: number, entry) => {
-    const entryValue = (entry.price || 0) * entry.quantity - (entry.serviceCost || 0);
+  const totalIncome = wasteLog.reduce<number>((acc, entry) => {
+    const entryValue = ((entry.price ?? 0) * (entry.quantity ?? 0)) - (entry.serviceCost ?? 0);
     return acc + entryValue;
   }, 0);
 
