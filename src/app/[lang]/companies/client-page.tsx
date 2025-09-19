@@ -88,7 +88,7 @@ export function CompaniesClient({ dictionary }: CompaniesClientProps) {
       setAssignDialogOpen(false);
   }
 
-  const onUpdate = async (companyId: string, data: { name: string; plan: PlanType }) => {
+  const onUpdate = async (companyId: string, data: Partial<Company>) => {
       await handleUpdateCompany(companyId, data);
       setEditDialogOpen(false);
   }
