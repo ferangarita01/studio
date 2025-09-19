@@ -4,7 +4,7 @@
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/auth-context";
-import { type PlanType } from "@/services/waste-data-service";
+import { type PlanType } from "@/lib/types";
 import { useState, useEffect } from 'react';
 import { Skeleton } from './ui/skeleton';
 import { Button } from './ui/button';
@@ -184,9 +184,13 @@ export function MercadoPagoButtonWrapper({
                     preferenceId: preferenceId,
                 }}
                 customization={{
-                    visual: {
-                        buttonBackground: 'default',
-                        borderRadius: '8px',
+                    texts: {
+                        action: 'pay',
+                        valueProp: 'security_details',
+                    },
+                    button: {
+                      backgroundColor: 'default',
+                      borderRadius: '8px',
                     }
                 }}
             />

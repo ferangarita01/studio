@@ -1,5 +1,6 @@
 
 
+
 export type WasteType = "Recycling" | "Organic" | "General" | "Hazardous";
 export type UserRole = "admin" | "client";
 export type AccountType = "company" | "individual";
