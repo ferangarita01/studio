@@ -40,6 +40,7 @@ export function PayPalButtonWrapper({ amount, description }: PayPalButtonProps) 
                                     },
                                 },
                             ],
+                            intent: "CAPTURE"
                         });
                     }}
                     onApprove={(data, actions) => {
