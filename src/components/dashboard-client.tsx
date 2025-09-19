@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -155,7 +156,7 @@ function WelcomeMessage({ dictionary }: { dictionary: Dictionary["dashboard"]["w
 export function DashboardPageContent({
   dictionary,
 }: DashboardPageContentProps) {
-  const { isLoading: isAuthLoading, lang, role, userProfile } = useAuth();
+  const { isLoading, lang, role, userProfile } = useAuth();
   const { selectedCompany, isLoading: isCompanyContextLoading } = useCompany();
   const fullDictionary = useDictionaries();
   
@@ -263,7 +264,7 @@ export function DashboardPageContent({
        </div>
   )
 
-  if (isCompanyContextLoading || isAuthLoading || !isClient || !dictionary?.cards?.income) {
+  if (isCompanyContextLoading || isLoading || !isClient || !dictionary?.cards?.income) {
       return renderLoadingState();
   }
   
