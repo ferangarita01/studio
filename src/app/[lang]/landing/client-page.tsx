@@ -407,7 +407,13 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
             <main className="relative pt-28 sm:pt-32">
                 <section className="relative">
                     <div className="absolute inset-0 -z-10 overflow-hidden rounded-b-[2rem]">
-                        <Image src="https://firebasestorage.googleapis.com/v0/b/wastewise-hdbhk.firebasestorage.app/o/img.jpg?alt=media&token=ad081ca2-8ba5-4309-9d71-b5d409d1e07d" alt="Earth from space, sustainability" layout="fill" objectFit="cover" className="opacity-30" data-ai-hint="earth space sustainability" />
+                        <Image 
+                          src="https://firebasestorage.googleapis.com/v0/b/wastewise-hdbhk.firebasestorage.app/o/img.jpg?alt=media&token=ad081ca2-8ba5-4309-9d71-b5d409d1e07d" 
+                          alt="Earth from space, sustainability" 
+                          fill 
+                          priority
+                          className="opacity-30 object-cover" 
+                          data-ai-hint="earth space sustainability" />
                         <div className="absolute inset-0 bg-gradient-to-b from-[#0B1020]/40 via-[#0B1020]/60 to-[#0B1020]"></div>
                     </div>
                     <div className="container-responsive">
@@ -506,7 +512,12 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
                 <section id="demo" className="mt-20">
                     <div className="container-responsive">
                         <div className="relative overflow-hidden rounded-3xl p-8 sm:p-12 ring-1 ring-white/10 bg-gradient-to-br from-[#0B1020] to-slate-900">
-                             <Image src="https://images.unsplash.com/photo-1621619856624-42fd193a0661?w=1080&q=80" alt="Minimal 3D render background" layout="fill" objectFit="cover" className="absolute inset-0 opacity-10 -z-10" data-ai-hint="abstract background" />
+                             <Image 
+                                src="https://images.unsplash.com/photo-1621619856624-42fd193a0661?w=1080&q=80" 
+                                alt="Minimal 3D render background" 
+                                fill 
+                                className="absolute inset-0 opacity-10 -z-10 object-cover" 
+                                data-ai-hint="abstract background" />
                              <div className="max-w-2xl">
                                 <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white">{d.cta.title}</h2>
                                 <p className="mt-3 text-slate-300">{d.cta.subtitle}</p>
@@ -600,5 +611,6 @@ export function LandingClient({ dictionary, lang }: { dictionary: Dictionary, la
         </div>
     );
 }
+
 
     
