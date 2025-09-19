@@ -50,7 +50,8 @@ import {
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import type { Company, UserProfile, PlanType, Locale } from "@/lib/types";
+import type { Company, UserProfile, PlanType } from "@/lib/types";
+import type { Locale } from "@/i18n-config";
 import { Input } from "@/components/ui/input";
 import { CreateCompanyDialog } from "@/components/create-company-dialog";
 import { useAuth, AuthProvider } from "@/context/auth-context";
@@ -541,7 +542,7 @@ function AppShellContent({ children, lang }: { children: React.ReactNode, lang: 
     return allNavItems.filter(item => item.roles.includes(role));
   }, [role]);
 
-  const handlePremiumClick = (e: React.MouseEvent<HTMLAnchorElement>, item: (typeof allNavItems)[number]) => {
+  const handlePremiumClick = (e: React.MouseEvent<HTMLAnchorElement>, item: typeof allNavItems[number]) => {
     const isPremiumFeature = 'plan' in item && item.plan === 'Premium';
     const isFreeUser = role === 'client' && userProfile?.plan !== 'Premium';
 
